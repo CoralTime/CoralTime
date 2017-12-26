@@ -19,3 +19,147 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+This software includes third party open source software components, listed below. 
+Each of these software components have their own license. Please see License.txt files in appropriate subfolders.
+
+CoralTime BackEnd Libraries by other Authors:
+AutoMapper 
+https://github.com/AutoMapper/AutoMapper/blob/master/LICENSE.txt (MIT)
+AutoMapper.Extensions.Microsoft.DependencyInjection 
+https://github.com/AutoMapper/AutoMapper/blob/master/LICENSE.txt (MIT)
+CoreCompat.System.Drawing 
+https://github.com/CoreCompat/CoreCompat/blob/master/LICENSE (MIT)
+DocumentFormat.OpenXml 
+https://github.com/OfficeDev/Open-XML-SDK/blob/vNext/LICENSE.txt (Apache License 2.0)
+GeekLearning.Testavior 
+https://github.com/geeklearningio/Testavior/blob/develop/LICENSE.md (MIT)
+GeekLearning.Testavior.Configuration 
+https://github.com/geeklearningio/Testavior/blob/develop/LICENSE.md (MIT)
+IdentityModel 
+https://github.com/IdentityModel/IdentityModel2/blob/release/LICENSE (Apache License 2.0)
+IdentityServer4 
+https://github.com/IdentityServer/IdentityServer4/blob/release/LICENSE (Apache License 2.0)
+IdentityServer4.AccessTokenValidation 
+https://github.com/IdentityServer/IdentityServer4.AccessTokenValidation/LICENSE (Apache License 2.0)
+IdentityServer4.AspNetIdentity 
+https://github.com/IdentityServer/IdentityServer4.AspNetIdentity/blob/release/LICENSE (Apache License 2.0)
+IdentityServer4.EntityFramework 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.OData 
+https://www.nuget.org/packages/Microsoft.AspNetCore.OData/1.0.0-rtm-00015/ReportAbuse
+NETCore.MailKit 
+https://github.com/myloveCc/NETCore.MailKit/blob/master/LICENSE (MIT)
+Newtonsoft.Json 
+https://raw.github.com/JamesNK/Newtonsoft.Json/master/LICENSE.md (MIT)
+NLog.Extensions.Logging 
+https://github.com/NLog/NLog.Extensions.Logging/blob/master/LICENSE (BSD 2-clause "Simplified")
+NLog.Web.AspNetCore 
+https://github.com/NLog/NLog.Web/blob/master/LICENSE (BSD 3-clause "Revised")
+Novell.Directory.Ldap.NETStandard 
+https://github.com/dsbenghe/Novell.Directory.Ldap.NETStandard/blob/master/LICENSE (MIT)
+RazorLight 
+https://github.com/toddams/RazorLight/blob/master/LICENSE
+runtime.linux-x64.CoreCompat.System.Drawing 
+https://raw.githubusercontent.com/CoreCompat/CoreCompat (MIT)
+runtime.osx.10.10-x64.CoreCompat.System.Drawing 
+https://raw.githubusercontent.com/CoreCompat/CoreCompat (MIT)
+SapientGuardian.EntityFrameworkCore.MySql 
+http://www.gnu.org/licenses/old-licenses/gpl-2.0.html (GPLv2) 
+Swashbuckle.AspNetCore 
+https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE (MIT)
+WkWrap.Core 
+https://github.com/henkmollema/WkWrap/blob/master/LICENSE (MIT)
+
+CoralTime BackEnd Libraries by Microsoft Author:
+Microsoft.AspNetCore 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Authentication.JwtBearer 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Diagnostics 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Identity.EntityFrameworkCore 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Mvc 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Mvc.Core
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Routing 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Server.IISIntegration 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.Server.Kestrel 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.AspNetCore.StaticFiles 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.EntityFrameworkCore 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.EntityFrameworkCore.Design 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.EntityFrameworkCore.SqlServer 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.EntityFrameworkCore.SqlServer.Design 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.EntityFrameworkCore.Tools 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Caching.Abstractions 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Caching.Memory 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Configuration.EnvironmentVariables 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Configuration.Json 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Configuration.UserSecrets 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Logging 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Logging.Console
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.Extensions.Options.ConfigurationExtensions 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.NET.Test.Sdk 
+https://github.com/Microsoft/vstest/blob/master/LICENSE (MIT)
+Microsoft.NETCore.App 
+https://github.com/dotnet/core-setup/blob/master/LICENSE.TXT (MIT)
+Microsoft.VisualStudio.Web.BrowserLink 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+Microsoft.VisualStudio.Web.CodeGeneration.Design 
+https://raw.githubusercontent.com/aspnet/Home/2.0.0/LICENSE.txt (Apache License 2.0)
+MSTest.TestAdapter 
+https://github.com/Microsoft/testfx/blob/master/LICENSE (MIT)
+MSTest.TestFramework 
+https://github.com/Microsoft/testfx/blob/master/LICENSE (MIT)
+System.ComponentModel.Annotations 
+https://github.com/dotnet/corefx/blob/master/LICENSE.TXT (MIT)
+System.Runtime 
+https://www.microsoft.com/net/dotnet_library_licens (MIT)
+
+CoralTime FrontEnd Libraries by other Authors:
+@angular/material (2.0.0-beta.3) 
+https://github.com/angular/material2
+adal-ts	(0.5.6-alpha1) 
+https://github.com/HNeukermans/adal-ts
+bootstrap-sass (3.3.7) 
+https://github.com/twbs/bootstrap-sass
+file-saver (^1.3.3)	
+https://github.com/koffsyrup/FileSaver.js
+font-awesome (4.7.0) 
+http://fontawesome.io
+jwt-decode (2.2.0) 
+https://github.com/auth0/jwt-decode
+moment (2.17.1) https://github.com/moment/moment/
+ng2-date-picker (^1.4.3) 
+https://github.com/vlio20/angular-datepicker
+ng2-img-cropper	(^0.9.0) 
+https://github.com/cstefanache/angular2-img-cropper
+ng2-file-upload	(^1.2.1) 
+https://github.com/valor-software/ng2-file-upload
+ng2-slimscroll (^2.0.1) 
+https://github.com/jkuri/ngx-slimscroll
+raven-js (3.14.2) 
+https://docs.sentry.io/clients/javascript/install/
+primeng (4)	
+http://www.primefaces.org/primeng
