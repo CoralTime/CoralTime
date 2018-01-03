@@ -1,0 +1,815 @@
+$fullBackground: #f1f1f1;
+
+$calendarShadowColor: #d9d9d9;
+
+$calendarJobTimePeriod: rgba(0, 0, 0, 0.13);
+
+$inactiveText: #333333;
+$titleDay: rgba(55, 68, 86, 0.74);
+$titleDate: #374456;
+$activeText: #0099cc;
+
+$plannedTime: #cbd1d4;
+$trackedTime: #fafafa;
+
+$timestamp: 19px;
+
+$calendarTabletWidth: 1299px;
+$calendarPhoneWidth: 809px;
+
+.ct-calendar-page {
+  .ct-page-header {
+    position: fixed !important;
+    width: calc(100% - 40px);
+    background: white;
+    z-index: 995;
+
+    &:before {
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 20px;
+      background: white;
+      top: -20px;
+    }
+
+    &:after {
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 10px;
+      background: white;
+      bottom: -10px;
+      left: 0;
+    }
+  }
+
+  .ct-day-tab {
+    a {
+      width: 60px;
+    }
+  }
+
+  .ct-week-tab {
+    a {
+      width: 120px;
+    }
+  }
+
+  .ct-calendar-periods {
+    margin-left: 60px;
+
+    a {
+      margin: 0 !important;
+      text-align: center;
+
+      &:before {
+        position: absolute;
+        font-size: 30px;
+        top: -10px;
+      }
+
+      &:first-child {
+        &:before {
+          left: -15px;
+        }
+      }
+
+      &:last-child:before {
+        right: -15px;
+      }
+    }
+
+    .ct-active-tab {
+      border-bottom: 2px solid transparent !important;
+    }
+  }
+
+  .ct-calendar-projects {
+    float: right;
+    width: 250px;
+
+    .ct-multiselect {
+      border: none !important;
+      position: relative;
+
+      .ct-select {
+        height: 27px;
+      }
+    }
+
+    .ct-multiselect .mat-select-value-text:after {
+      content: "\f0dd";
+      display: inline-block;
+      font-family: FontAwesome;
+      font-size: 19px;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      top: -3px;
+      margin-left: 5px;
+      color: $nav-link-border;
+    }
+
+    .ct-multiselect.active .mat-select-value-text:after {
+      content: "\f0de" !important;
+      top: 5px;
+    }
+
+    .ct-select {
+      border: none;
+      box-shadow: none;
+      text-align: right;
+
+      .mat-select-trigger {
+        font-family: inherit;
+
+        .mat-select-value-text {
+          font-family: inherit;
+          line-height: 28px;
+        }
+      }
+
+      .mat-select-arrow {
+        display: none;
+      }
+
+      &:after {
+        display: none;
+      }
+    }
+  }
+
+  .ct-calendar {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    display: flex;
+    width: 100%;
+    border-top: 10px solid white;
+
+    .ct-calendar-day {
+      min-height: calc(100vh - 110px);
+      margin-left: 6px;
+      padding-bottom: $timestamp;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      background: url(/assets/ct-bg-calendar.jpg);
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      .ct-calendar-day-tasks {
+        margin-top: 80px;
+      }
+
+      .ct-calendar-task,
+      .ct-calendar-day-title {
+        position: relative;
+        background-color: $calendarTaskColor;
+        box-shadow: none;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        word-wrap: break-word;
+      }
+
+      .ct-calendar-task:hover {
+        .ct-menu-open-link {
+          opacity: 1;
+        }
+      }
+
+      .ct-calendar-task-stop-timer {
+        bottom: 10px;
+        width: 88px;
+        height: 36px;
+        background: transparent;
+        z-index: 2;
+        position: absolute;
+        overflow: hidden;
+        border-radius: 18px;
+        left: 15px;
+      }
+
+      .ct-calendar-day-title {
+        margin-bottom: 5px;
+
+        .ct-calendar-date {
+          height: 46px;
+          line-height: 46px;
+          color: $titleDate;
+          font-size: 24px;
+          font-family: inherit;
+          padding-left: 15px;
+
+          span {
+            position: relative;
+            top: -6px;
+            color: $titleDay;
+            font-family: $roboto;
+            font-weight: 300;
+            font-size: 15px;
+          }
+        }
+        .ct-calendar-day-hours {
+          height: 34px;
+          line-height: 34px;
+          background: $titleDate;
+          font-size: 0;
+          padding-left: 14px;
+
+          .ct-calendar-day-hours-planned,
+          .ct-calendar-day-hours-tracked {
+            position: relative;
+            display: inline-block;
+            margin-right: 12px;
+            padding-left: 24px;
+            color: $trackedTime;
+            font-size: 17px;
+            line-height: 35px;
+            text-align: center;
+            font-family: inherit;
+
+            &:before {
+              position: absolute;
+              content: '';
+              width: 30px;
+              height: 30px;
+              top: 2px;
+              left: -5px;
+              background: url(/assets/icons/time.actual2.svg) no-repeat center center;
+              background-size: 45px 45px;
+            }
+          }
+          .ct-calendar-day-hours-planned {
+            color: $plannedTime;
+
+            &:before {
+              background: url(/assets/icons/time.estimated1.svg) no-repeat center center;
+              background-size: 45px 45px;
+            }
+          }
+        }
+        &.ct-calendar-day-active {
+          .ct-calendar-date {
+            color: $activeText;
+
+            span {
+              color: $activeText;
+            }
+          }
+
+          .ct-calendar-day-hours {
+            background: $activeText;
+          }
+        }
+      }
+      .ct-calendar-task {
+        font-family: inherit;
+        display: inline-block;
+        margin-top: 5px;
+        font-size: $baseFont;
+
+        .ct-lock-icon {
+          position: absolute;
+          right: 3px;
+          top: 3px;
+          color: $titleDay;
+          z-index: 1;
+          cursor: pointer;
+        }
+        .ct-calendar-time-entry-container {
+          position: relative;
+          cursor: pointer;
+
+          &.ct-lock-overlay {
+            .ct-calendar-time-entry-title {
+              color: $titleDay;
+            }
+
+            &:after {
+              position: absolute;
+              top: 0;
+              left: 0;
+              height: calc(100% + 11px);
+              width: 100%;
+              content: '';
+              background: rgba(255, 255, 255, .5);
+            }
+          }
+
+          > div {
+            transition: height .3s;
+          }
+        }
+
+        .ct-calendar-time-entry-container .slimscroll-wrapper {
+          width: calc(100% - 24px) !important;
+          margin: 10px 0 30px !important;
+          z-index: 0;
+        }
+
+        .ct-calendar-time-entry-title {
+          min-height: 16px;
+          line-height: 16px;
+          font-size: 11px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          padding: 10px 5px 3px 20px;
+          color: $gray-text;
+          font-family: inherit;
+        }
+
+        .ct-calendar-time-entry-type {
+          margin-top: 0;
+          padding: 1px 5px 0 20px;
+          height: 18px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 16px;
+          font-family: $roboto;
+          color: $nav-background;
+          font-weight: 500;
+          cursor: pointer;
+        }
+
+        .ct-calendar-time-entry-description {
+          box-sizing: border-box;
+          position: relative;
+          max-height: calc(100% - 48px);
+          line-height: 16px;
+          word-wrap: break-word;
+          overflow: hidden;
+          padding: 6px 20px 0 20px;
+          white-space: pre-line;
+          font-size: 13px;
+          font-family: $baseFontFamily;
+          cursor: pointer;
+
+          &:before {
+            position: absolute;
+            content: '...';
+            right: 4px;
+            bottom: -4px;
+            width: 17px;
+            height: 20px;
+          }
+
+          &:after {
+            position: absolute;
+            content: '';
+            right: 4px;
+            width: 17px;
+            height: 20px;
+            background: $trackedTime;
+          }
+
+          p {
+            position: relative;
+
+            &:after {
+              position: absolute;
+              content: '';
+              width: 100%;
+              height: 1.3em;
+              margin-left: 15px;
+              background: $trackedTime;
+              z-index: 1;
+            }
+          }
+        }
+
+        .ct-calendar-time-entry-period {
+          height: 15px;
+          line-height: 15px;
+          overflow: hidden;
+          font-size: $smallFont;
+          color: $gray-text;
+          padding-left: 20px;
+          padding-top: 10px;
+        }
+
+        .ct-menu-open-link {
+          position: absolute;
+          right: 2px;
+          top: 0;
+          background-color: #f1f1f1;
+          cursor: pointer;
+          opacity: 0;
+          z-index: 2;
+        }
+
+        .ct-calendar-time-entry-time {
+          margin: 5px 0 0 15px;
+          padding: 0 0 10px 0;
+          max-width: 100%;
+          box-sizing: border-box;
+
+          .ct-calendar-time-entry-hours-planned,
+          .ct-calendar-time-entry-hours-tracked {
+            position: relative;
+            display: inline-block;
+            padding: 8px 0 8px 22px;
+            font-size: 14px;
+            font-family: inherit;
+            text-align: center;
+
+            &:before {
+              position: absolute;
+              content: '';
+              width: 20px;
+              height: 20px;
+              top: 6px;
+              left: 0;
+              background: url(/assets/icons/tasktile.time.actual.svg) no-repeat center center;
+              background-size: 20px 20px;
+            }
+
+            span {
+              position: relative;
+              top: 1px;
+            }
+          }
+
+          .ct-calendar-time-entry-hours-tracked {
+            margin-left: 3px;
+          }
+
+          .ct-calendar-time-entry-hours-planned {
+            margin-left: 12px;
+
+            &:before {
+              background: url(/assets/icons/tasktile.time.estimated.svg) no-repeat center center;
+              background-size: 20px 20px;
+            }
+          }
+
+          .ct-clock {
+            top: 7px;
+            left: 9px;
+            position: absolute;
+            display: block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-radius: 30px;
+
+            &:before {
+              content: "";
+              margin-left: 9px;
+              margin-top: -5px;
+              width: 2px;
+              height: 5px;
+              display: block;
+              background: #fff;
+            }
+
+            &:after {
+              transform: rotate(30deg);
+              content: "";
+              margin-left: 14px;
+              margin-top: -3px;
+              width: 2px;
+              height: 3px;
+              display: block;
+              background: #fff;
+            }
+
+            @keyframes ClockRotate {
+              0% {
+                transform: rotate(0deg)
+              }
+              to {
+                transform: rotate(359deg)
+              }
+            }
+
+            i {
+              position: absolute;
+              background: url(/assets/icons/tick.png) no-repeat;
+              background-size: 4px 13px;
+              display: block;
+              width: 4px;
+              height: 13px;
+              top: 0;
+              left: 7px;
+              -webkit-transform-origin: 2px 9px;
+              transform-origin: 2px 9px;
+              animation: ClockRotate 10s linear;
+              animation-iteration-count: infinite;
+            }
+          }
+        }
+
+        .ct-timer-block {
+          position: relative;
+          display: inline-block;
+          padding: 8px 8px 8px 33px;
+          background-color: $nav-link-border;
+          border-radius: 20px;
+          line-height: 19px;
+
+          span {
+            display: inline-block;
+            width: 47px;
+            text-align: center;
+            font-size: 16px;
+            font-family: inherit;
+            color: #fff;
+            position: relative;
+            top: 1px;
+          }
+        }
+      }
+
+      .ct-calendar-add-task {
+        display: inline-block;
+        position: relative;
+        margin-top: 5px;
+        height: 57px;
+        width: 100%;
+        opacity: 0;
+        background: $fullBackground;
+        transition: opacity ease .3s;
+
+        .ct-open-right {
+          .ct-form-container {
+            &:before,
+            &:after {
+              top: 12px;
+            }
+          }
+        }
+
+        .ct-direction-top.ct-open-right {
+          .ct-form-container {
+            &:before,
+            &:after {
+              top: auto;
+            }
+          }
+        }
+
+        &.ct-form-opened {
+          opacity: 1;
+        }
+
+        > div {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+
+          &:before,
+          &:after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 31px;
+            background: $titleDate;
+            left: 50%;
+            margin-left: -1px;
+            top: 13px;
+          }
+
+          &:after {
+            width: 31px;
+            height: 2px;
+            margin-left: -15.5px;
+            top: 27.5px;
+          }
+        }
+      }
+
+      &:hover {
+        .ct-calendar-add-task {
+          opacity: 1;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  .ct-fake-task {
+    background: rgba(241, 241, 241, .8);
+    height: 0;
+    transition: height linear .2s;
+  }
+
+  .ct-dragged-task {
+    opacity: .6;
+  }
+
+  .ct-calendar-weekly-view .ct-calendar {
+    padding-top: 30px;
+    $oneDayWidth: calc(100% / 7 - 37px / 7);
+    $oneDayWidthMargin: calc(100% / 7 - 36px / 7 + 6px);
+
+    .ct-calendar-day {
+      width: $oneDayWidth;
+      .ct-calendar-day-title {
+        position: fixed;
+        top: 110px;
+        z-index: 995;
+        width: calc(100% / 7 - 74px / 7);
+      }
+
+      .ct-calendar-day-container {
+        height: 100%;
+
+        .ct-calendar-day-tasks {
+          position: relative;
+
+          > *:before {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 0;
+            width: calc(100% + 6px);
+            height: 100%;
+          }
+        }
+      }
+    }
+
+    @media (max-width: $calendarTabletWidth) {
+      $tabletOneDayWidth: calc(25% - 4.5px);
+      $tabletOneDayWidthMargin: calc(25% + 1.5px);
+      .ct-calendar-day {
+        width: $tabletOneDayWidth;
+        .ct-calendar-day-title {
+          width: calc(25% - 14.5px);
+        }
+      }
+    }
+
+    @media (max-width: $calendarPhoneWidth) {
+      .ct-calendar-day {
+        width: 100%;
+        .ct-calendar-day-title {
+          width: calc(100% - 40px);
+        }
+      }
+    }
+  }
+
+  .ct-calendar-daily-view .ct-calendar {
+    .ct-calendar-day {
+      width: 100%;
+      min-height: calc(100vh - 90px);
+
+      .ct-calendar-day-title {
+        position: fixed;
+        width: calc(100% - 40px);
+        z-index: 995;
+        margin-top: 30px;
+      }
+
+      .ct-calendar-day-tasks {
+        position: relative;
+        display: inline-block;
+        width: calc(100% + 6px);
+        margin: 109px -3px 0;
+      }
+
+      .ct-calendar-task {
+        width: calc(100% / 7 - 36px / 6);
+        float: left;
+        margin: 5px 3px 0;
+
+        @media (max-width: $calendarTabletWidth) {
+          width: calc(25% - 6px);
+        }
+
+        @media (max-width: $calendarPhoneWidth) {
+          width: calc(100% - 6px);
+        }
+      }
+
+      .ct-calendar-add-task {
+        position: absolute;
+        bottom: -62px;
+        left: 3px;
+        width: calc(100% - 6px);
+      }
+
+      .ct-fake-task {
+        display: none;
+      }
+    }
+  }
+}
+
+.ct-total-tracked-time {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 996;
+  margin: auto;
+  width: 261px;
+  text-align: center;
+  height: $nav-height;
+  line-height: $nav-height;
+
+  @media (max-width: $calendarPhoneWidth) {
+    width: 130px;
+  }
+
+  .ct-hours-tracked,
+  .ct-hours-planned {
+    position: relative;
+    color: #fff;
+    font-size: 19px;
+    font-family: $robotoRegular;
+    top: 0;
+    margin-left: 40px;
+
+    @media (max-width: $calendarPhoneWidth) {
+      font-size: 14px;
+      margin-left: 27px;
+    }
+
+    &:before {
+      position: absolute;
+      content: '';
+      width: 30px;
+      height: 30px;
+      top: -6px;
+      left: -32px;
+
+      @media (max-width: $calendarPhoneWidth) {
+        top: -7px;
+        left: -28px;
+        background-size: 35px!important;
+      }
+    }
+  }
+
+  .ct-hours-tracked {
+    &:before {
+      background: url(/assets/icons/time.actual2.svg) no-repeat center center;
+      background-size: 45px 45px;
+    }
+  }
+
+  .ct-hours-planned {
+    color: $plannedTime;
+
+    &:before {
+      background: url(/assets/icons/time.estimated1.svg) no-repeat center center;
+      background-size: 45px 45px;
+    }
+  }
+}
+
+.ct-impersonation-header + .ct-wrapper .ct-total-tracked-time {
+  top: 50px;
+}
+
+.ct-calendar-multiselect.ui-multiselect-panel > div {
+  position: fixed;
+  z-index: 996 !important;
+  top: 97px !important;
+  right: 20px;
+  left: auto !important;
+  font-family: inherit;
+}
+
+.ct-submenu {
+  .ct-menu {
+    right: calc(100% + 8px);
+    top: -14px;
+    font-size: 14px;
+    line-height: 28px;
+
+    &.ct-menu-opened {
+      .ct-menu-content {
+        box-shadow: none;
+      }
+
+      &:after {
+        position: absolute;
+        content: '';
+        top: 24px;
+        right: -30px;
+        border: 16px solid transparent;
+        border-left: 16px solid #fff;
+        z-index: 1;
+      }
+    }
+  }
+
+  .ct-menu-content {
+    box-shadow: none;
+    padding: 0;
+  }
+}

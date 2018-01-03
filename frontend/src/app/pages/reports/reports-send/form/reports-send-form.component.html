@@ -1,0 +1,28 @@
+<form [formGroup]="form" class="ct-form" ctEmailsEqualValidator ctEmailsInvalidValidator>
+    <div formArrayName="emails">
+        <div>
+            <table class="ct-table">
+                <tr *ngFor="let control of emails.controls; let i = index">
+                    <td>
+                        <div class="ct-required-field-container">
+                            <ct-input-list formControlName="{{i}}"
+                                           [displayName]="'email'" [trackBy]="'id'"
+                                           [options]="clients"
+                                           [(ngModel)]="emailValues[i]"></ct-input-list>
+                        </div>
+                    </td>
+                    <td>
+                        <button (click)="delEmail(i)"
+                                class="ct-del-button">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            <div class="ct-error-text" *ngIf="form.hasError('ctEmailsEqual')">Emails can't be equal.</div>
+            <div class="ct-error-text" *ngIf="isFormErrorsShown && form.hasError('ctEmailInvalid')">Invalid email.</div>
+            <div class="ct-error-text" *ngIf="isFormErrorsShown && form.hasError('ctEmailEmpty')">Email required.</div>
+        </div>
+        <button class="ct-link-text" (click)="addNewEmail()">Add {{buttonText}} Email</button>
+    </div>
+</form>

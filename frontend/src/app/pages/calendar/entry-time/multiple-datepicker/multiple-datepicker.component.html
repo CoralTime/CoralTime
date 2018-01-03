@@ -1,0 +1,48 @@
+<form #form="ngForm" class="ct-multiple-datepicker">
+    <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+    <div class="ct-datepicker-container">
+        <ct-datepicker class="ct-datepicker" [required]="true" *ngIf="isCalendarShown"
+                       [name]="'date'" ngModel
+                       [firstDayOfWeek]="firstDayOfWeek"
+                       [disabledDays]="[timeEntry.date]"
+                       [displayDate]="timeEntry.date"
+                       [multiselect]="true"
+                       (dateChanged)="dateOnChange($event)"></ct-datepicker>
+    </div>
+    <div class="ct-output-results">
+        <div class="ct-field">
+            <label class="ct-field-head">Copy Entry:</label>
+            <div class="ct-field-details">
+                <em>{{timeEntry.projectName}}</em>
+            </div>
+        </div>
+        <div class="ct-field">
+            <label class="ct-field-head">In total:</label>
+            <div class="ct-field-details">
+                <em>{{actualTime.hours}}h {{actualTime.minutes}}m</em> logged time<br>
+                <em>{{plannedTime.hours}}h {{plannedTime.minutes}}m</em> estimated time
+            </div>
+        </div>
+        <div class="ct-field">
+            <label class="ct-field-head">To:</label>
+            <div class="ct-field-details">
+                <span *ngIf="dateList?.length == 1">
+                    <em>{{dateList?.length}} day</em>
+                </span>
+                <span *ngIf="dateList?.length > 1">
+                    <em>{{dateList?.length}} days</em>
+                </span>
+                <span *ngIf="!dateList?.length" class="ct-placeholder">
+                    Click days to copy the entry to...
+                </span>
+            </div>
+        </div>
+        <div md-dialog-actions class="ct-form-actions ct-datepicker-button-block">
+            <button class="ct-close" md-dialog-close>Cancel</button>
+            <button md-button md-dialog-close class="ct-submit ct-blue-button"
+                    (click)="submit()"
+                    [disabled]="!form.valid">Add hours
+            </button>
+        </div>
+    </div>
+</form>

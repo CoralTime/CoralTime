@@ -1,0 +1,60 @@
+$gray: #d6d6d6;
+$blue: #45818e;
+
+$main-blue: #0099cc;
+//TODO: rename var
+
+$nav-background: #374456;
+$nav-link: #cbd1d4;
+$nav-link-hover: #ffffff;
+$nav-link-border: #099cce;
+$nav-menu-hover: #4e5d70;
+$primary-btn: #50bce0;
+$primary-btn-hover: #3399c8;
+$primary-btn-text: #ffffff;
+$error-text: #ee5e5e;
+$calendarTaskColor: #fafafa;
+$gray-text: #979797;
+$gray-button: #aaaeb8;
+$border-сolor: #f1f1f1;
+$gray-icons: #f1f1f1;
+$form-border: #cccccc;
+$title: #67696f;
+$impers-header: #ea5b5b;
+
+$grid-manage-bg: #f0f8fc;
+$grid-manage-text: #4f4f4f;
+
+$grid-text: rgba(0, 0, 0, .5);
+$black: #374456;
+$green: #27ae61;
+
+// Calendar colors
+
+$color0: #d7dee2;
+$color1: #d0e9b3;
+$color2: #f9f3ae;
+$color3: #fdd49e;
+$color4: #d7e9e9;
+$color5: #b3e7e9;
+$color6: #fcbfd9;
+$color7: #dec4e8;
+
+$colors: $color0, $color1, $color2, $color3, $color4, $color5, $color6, $color7;
+
+$i: -1;
+@each $color in $colors {
+  $i: $i + 1;
+
+  .ct-color-#{$i} {
+    background-color: $color;
+  }
+
+  .ct-border-#{$i} {
+    border-left: 5px solid $color;
+  }
+}
+
+.ct-border- {
+  border-left: 5px solid $form-border;
+}

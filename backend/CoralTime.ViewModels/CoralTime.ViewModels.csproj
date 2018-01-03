@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1.2</TargetFramework>
+    <AssemblyName>CoralTime.ViewModels</AssemblyName>
+    <PackageId>CoralTime.ViewModels</PackageId>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Reports\ReportsDetails\**" />
+    <EmbeddedResource Remove="Reports\ReportsDetails\**" />
+    <None Remove="Reports\ReportsDetails\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Timesheet" />
+  </ItemGroup>
+</Project>

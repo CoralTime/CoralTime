@@ -1,0 +1,11 @@
+<ct-entry-time-form *ngIf="isOpen" [timeEntry]="timeEntry"
+                    [class.ct-open]="isOpen"
+                    [class.ct-open-left]="isOpenLeft"
+                    [class.ct-open-right]="isOpenRight"
+                    [class.ct-open-mobile]="isOpenMobile"
+                    [class.ct-direction-top]="isDirectionTop"
+                    (closeEntryTimeForm)="closeTimeEntryForm()"
+                    (clickOutside)="closeTimeEntryForm(true)"
+                    (deleted)="deleteTimeEntry()"
+                    (timerUpdated)="timerUpdated.emit()"
+                    #entryForm></ct-entry-time-form>

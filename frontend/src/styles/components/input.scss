@@ -1,0 +1,57 @@
+.ct-input {
+  background: #ffffff;
+  border: 1px solid $gray;
+  padding: 5px 10px;
+  width: auto;
+  box-sizing: border-box;
+  outline: none;
+  height: $selectHeight;
+  font-size: 14px;
+  font-family: inherit;
+  color: $nav-background;
+
+  &[disabled] {
+    background-color: #ececec;
+    cursor: default;
+    opacity: 0.6;
+  }
+}
+
+.ct-input:focus {
+  border: 1px solid $nav-link-border;
+}
+
+.ct-required-field-container {
+  position: relative;
+  max-height: $selectHeight;
+
+  .ct-select-opened-control {
+    display: inline !important;
+  }
+
+  .ct-select-component {
+    margin-top: -16px;
+  }
+
+  &:before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    content: '';
+    height: 100%;
+    width: 2px;
+    background: $nav-link-border;
+    z-index: 1;
+  }
+}
+
+.ct-project-name-container {
+  margin-top: -2px;
+}
+
+.ct-input-hidden-control {
+  width: 0;
+  height: 0;
+  border: none;
+  padding: 0;
+}

@@ -1,0 +1,12 @@
+<ct-loading-bar></ct-loading-bar>
+<div *ngIf="impersonationService.impersonationMember" class="ct-impersonation-header">
+    You are viewing the CoralTime as
+    <span class="ct-impersonation-user">{{impersonationService.impersonationUser.fullName}}</span>
+    <span class="ct-impersonation-stop" (click)="stopImpersonation()">Go back to your own account</span>
+</div>
+<div class="ct-wrapper">
+    <ct-navigation *ctIsGranted="'roleAuthenticatedUser'"></ct-navigation>
+    <div class="ct-content">
+        <router-outlet></router-outlet>
+    </div>
+</div>

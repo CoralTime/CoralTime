@@ -1,0 +1,882 @@
+$calendarWidgetBg: #fff;
+$titleHeight: 35px;
+
+$formPadding: 20px;
+
+ct-entry-time {
+  position: absolute;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.ct-entry-time-form {
+  position: absolute;
+  top: 0;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 1001;
+  transition: opacity .3s;
+  font-family: inherit;
+  color: $inactiveText;
+  display: none;
+
+  // Entry Time Form displaying
+
+  &.ct-open {
+    opacity: 1;
+    visibility: visible;
+    display: inline-block;
+  }
+
+  &.ct-open-right {
+    left: 105%;
+  }
+
+  &.ct-open-left {
+    right: 105%;
+
+    .ct-form-container {
+      &:before {
+        border-right-color: transparent;
+        border-left-color: #dfdfdf;
+        left: auto;
+        right: -32px;
+      }
+
+      &:after {
+        border-right-color: transparent;
+        border-left-color: $calendarTaskColor;
+        left: auto;
+        right: -30px;
+      }
+    }
+  }
+
+  &.ct-open-mobile {
+    left: 0;
+    top: 105%;
+
+    .ct-form-container {
+      &:before {
+        border-right-color: transparent;
+        border-bottom-color: #dfdfdf;
+        left: 16px;
+        top: -32px;
+      }
+
+      &:after {
+        border-right-color: transparent;
+        border-bottom-color: $calendarTaskColor;
+        left: 16px;
+        top: -30px;
+      }
+    }
+  }
+
+  &.ct-direction-top {
+    top: auto;
+    bottom: 0;
+
+    .ct-form-container {
+      &:before {
+        top: auto;
+        bottom: 10px;
+      }
+
+      &:after {
+        top: auto;
+        bottom: 10px;
+      }
+    }
+  }
+
+  &.ct-direction-top.ct-open-mobile {
+    top: auto;
+    bottom: 105%;
+
+    .ct-form-container {
+      &:before {
+        border-bottom-color: transparent;
+        border-top-color: #dfdfdf;
+        bottom: -32px;
+      }
+
+      &:after {
+        border-bottom-color: transparent;
+        border-top-color: $calendarTaskColor;
+        bottom: -30px;
+      }
+    }
+  }
+
+  // Shared styles
+
+  .ct-title {
+    .ct-select-component {
+      margin-top: -20px;
+    }
+  }
+
+  .ct-select {
+    box-shadow: none;
+    border: 1px solid $form-border;
+  }
+
+  .mat-input-container, .mat-button {
+    font-family: inherit;
+  }
+
+  // General styles
+
+  .ct-form-container {
+    margin: auto;
+    box-sizing: border-box;
+    position: relative;
+    width: 290px;
+    padding: 30px $formPadding $formPadding $formPadding;
+    border: 1px solid #dfdfdf;
+    background: $calendarTaskColor;
+
+    &:before {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: -33px;
+      border: 16px solid transparent;
+      border-right: 16px solid #dfdfdf;
+    }
+
+    &:after {
+      position: absolute;
+      content: '';
+      top: 0;
+      left: -32px;
+      border: 16px solid transparent;
+      border-right: 16px solid $calendarTaskColor;
+    }
+  }
+
+  .ct-title {
+    margin: 0;
+    height: $titleHeight;
+    padding: 0;
+    font-size: 20px;
+
+    > button {
+      float: right;
+      min-width: inherit;
+      padding: 0 10px 0 0;
+      border-radius: 3px;
+      line-height: 30px;
+      right: 7px;
+      top: 0;
+      position: absolute;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      outline: none;
+
+      .material-icons {
+        font-size: 33px;
+        color: $nav-background;
+      }
+    }
+
+    .ct-menu-content {
+      padding: 0;
+      top: -30px;
+    }
+
+    .ct-select-component {
+      height: $titleHeight;
+
+      .ct-select {
+        height: $titleHeight;
+      }
+
+      .ct-select-selected-options-text {
+        line-height: $titleHeight;
+      }
+    }
+
+    .mat-button-wrapper {
+      height: $titleHeight;
+      display: inline-block;
+    }
+
+    .material-icons {
+      line-height: 32px;
+      vertical-align: top;
+      font-size: 20px;
+    }
+
+    .ct-menu {
+      top: 30px;
+    }
+
+    .ct-project {
+      height: 33px;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 0 10px;
+      font-size: 14px;
+      line-height: 33px;
+    }
+  }
+
+  .ct-task {
+    padding: 0;
+
+    .ct-textarea-component {
+      background: #ffffff;
+    }
+
+    .ct-select-component {
+      .ct-select-selected-options-text {
+        line-height: 35px;
+        font-size: $baseFont;
+      }
+    }
+  }
+
+  .ct-task-name {
+    margin-bottom: 18px;
+    height: 30px;
+    width: 100%;
+    padding-top: 15px;
+
+    .ct-select-selected-options-text {
+      padding: 0 20px 0 10px !important;
+      line-height: 29.5px;
+    }
+
+    .ct-select-component {
+      margin-top: -15px;
+      padding-left: 0;
+    }
+  }
+
+  .ct-task-description {
+    min-height: 40px;
+    max-height: 115px;
+    padding-right: 10px;
+
+    label {
+      left: 8px !important;
+      top: 4px !important;
+      font-family: $baseFontFamily;
+      font-size: $baseFont;
+      position: absolute;
+    }
+
+    .mat-input-container {
+      width: 100%;
+    }
+
+    .mat-input-element {
+      width: 100%;
+      font-family: $robotoRegular;
+      font-size: $baseFont;
+      line-height: 1.25;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .mat-input-wrapper {
+      margin: 0;
+      padding: 0;
+    }
+
+    .mat-input-placeholder-wrapper {
+      padding-top: 17px;
+      top: -19px !important;
+      left: -8px !important;
+      height: 30px;
+    }
+
+    .mat-input-placeholder {
+      color: $inactiveText;
+    }
+
+    .mat-input-placeholder:not(.mat-empty),
+    .mat-focused .mat-input-placeholder,
+    .mat-input-subscript-wrapper,
+    .mat-input-underline {
+      display: none;
+    }
+  }
+
+  .ct-time-actions {
+    padding: 14px 0 12px;
+    font-size: 0;
+
+    > button {
+      display: inline-block;
+      box-sizing: border-box;
+      border: 0;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 5px;
+      padding-top: 15px;
+      font-size: 15px;
+      text-align: center;
+      cursor: pointer;
+      color: $nav-background !important;
+
+      &:focus {
+        outline: 1px solid rgba(9, 156, 206, .3);
+      }
+
+      &.ct-no-clickable, &[disabled] {
+        &:after {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          content: '';
+          background-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+
+      &.ct-no-clickable, &[disabled] {
+        position: relative;
+        cursor: default;
+        pointer-events: none;
+
+        .mat-button-focus-overlay {
+          background-color: rgba(255, 255, 255, 0.3);
+          opacity: 1;
+        }
+      }
+
+      &.ct-timer {
+        float: left;
+
+        .ct-actions-icon {
+          background: url('/assets/icons/runtimer.svg') no-repeat center;
+        }
+      }
+      &.ct-time-path {
+        float: right;
+
+        .ct-actions-icon {
+          background: url('/assets/icons/fromto.svg') no-repeat center;
+        }
+      }
+    }
+
+    .ct-actions-icon {
+      display: block;
+      height: 53px;
+    }
+
+    .ct-hidden {
+      display: none;
+    }
+
+    .ct-from-to-form {
+      position: relative;
+      margin-top: -15px;
+
+      label {
+        margin-right: 3px;
+      }
+
+      input {
+        background: none;
+        border: none;
+        width: 20px;
+        font-family: inherit;
+        text-align: center;
+      }
+
+      .mat-button-wrapper {
+        display: block;
+        height: 100%;
+      }
+
+      .ct-from-time, .ct-to-time {
+        margin-left: -10px;
+        line-height: 1.3;
+        font-size: 0;
+        text-align: right;
+        > * {
+          font-size: 16px;
+        }
+      }
+
+      .ct-actions-icon {
+        height: 48px;
+      }
+    }
+
+    .ct-timer-container {
+      font-size: 0;
+      height: 28px;
+      line-height: 28px;
+      margin-bottom: 3px;
+
+      span {
+        font-family: inherit;
+        font-size: 24px;
+
+        &:not(.ct-divider) {
+          display: inline-block;
+          width: 30px;
+          text-align: center;
+        }
+      }
+    }
+
+    .ct-timer-started {
+      padding: 10px 0;
+
+      .ct-actions-icon {
+        height: 23px;
+        background-size: 23px !important;
+        margin-bottom: 10px;
+      }
+    }
+  }
+
+  .ct-time-period {
+    border-top: 3px solid;
+    border-bottom: 3px solid;
+    padding: 7px 0;
+
+    > div {
+      width: 50%;
+      box-sizing: border-box;
+      font-size: 0;
+      position: relative;
+      bottom: 4px;
+      text-align: center;
+      display: inline-block;
+
+      &, input {
+        font-family: inherit;
+        color: $nav-background !important;
+      }
+
+      &.ct-actual-time {
+        .ct-period-icon {
+          background-image: url(/assets/icons/tasktile.time.actual.svg);
+        }
+
+        .ct-divider {
+          color: $gray-text;
+        }
+      }
+      &.ct-planned-time {
+        float: right;
+        padding-right: 25px;
+        text-align: right;
+
+        .ct-period-icon {
+          background-image: url(/assets/icons/tasktile.time.estimated.svg);
+        }
+
+        .ct-divider {
+          color: $gray-text;
+        }
+      }
+    }
+
+    input {
+      width: 28px;
+      border: none;
+      outline: none;
+      background: $calendarTaskColor;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .ct-divider {
+      display: inline-block;
+      font-size: 17px;
+      position: relative;
+      bottom: 2px;
+    }
+
+    .ct-period-icon {
+      display: inline-block;
+      position: relative;
+      top: 7px;
+      margin-right: 3px;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      width: 27px;
+      height: 27px;
+    }
+
+    .ct-disabled-form {
+      position: relative;
+
+      &:before {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(250, 250, 250, 0.4);
+        z-index: 1;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .ct-form-actions {
+    padding: $formPadding 0 0;
+
+    .ct-close {
+      padding: 0;
+      cursor: pointer;
+      background-color: transparent;
+      border: 0;
+      outline: none;
+      transition-duration: .3s;
+      top: 13px;
+
+      &:focus {
+        color: #374456;
+      }
+    }
+  }
+
+  div.mat-button-focus-overlay {
+    background-color: rgba(0, 0, 0, .03);
+    transition: opacity .3s;
+  }
+
+  &.ct-open {
+    .ct-form-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+$i: -1;
+@each $color in $colors {
+  $i: $i + 1;
+
+  .ct-container-color-#{$i} {
+    .ct-time-period {
+      border-top-color: $color;
+      border-bottom-color: $color;
+    }
+
+    .ct-time-path, .ct-timer {
+      background-color: $color;
+      border-radius: 0;
+    }
+
+    .slimscroll-grid {
+      background-color: $color !important;
+    }
+  }
+}
+
+.ct-container-color-0 {
+  .ct-time-period {
+    border-top-color: $color0;
+    border-bottom-color: $color0;
+  }
+
+  .slimscroll-grid {
+    background-color: $color0 !important;
+  }
+}
+
+.slimscroll-wrapper {
+  width: 100% !important;
+}
+
+.ct-actions-drop-menu {
+  background-color: $calendarTaskColor;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+
+  > .ct-menu:nth-child(1) {
+    > .ct-menu-content:nth-child(1) {
+      border: 1px solid $form-border;
+    }
+  }
+
+  .ct-menu-content {
+    top: 14px;
+    width: calc(100% - 2px);
+  }
+
+  ul {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  li {
+    padding: 0;
+
+    a {
+      display: block;
+      padding: 0 16px 0 23px;
+    }
+  }
+
+  .mat-menu-content {
+    padding: 0;
+  }
+
+  .mat-menu-item {
+    font-family: inherit;
+    line-height: 36px;
+    height: 36px;
+  }
+
+  .ct-menu-item {
+    .ct-menu-hint {
+      float: right;
+    }
+  }
+}
+
+#datepicker {
+  border: 1px solid $form-border;
+  > div {
+    &:first-child {
+      display: none;
+    }
+    &:last-child {
+      position: static !important;
+    }
+  }
+
+  .dp-popup {
+    box-shadow: none;
+    border: none;
+  }
+}
+
+.ct-datepicker-menu {
+  .ct-menu-content {
+    padding: 0;
+    position: relative;
+    top: 0;
+    z-index: 102;
+  }
+
+  .ct-menu-opened {
+    top: -59px;
+
+    &:after {
+      display: none;
+    }
+
+    #datepicker:before, #datepicker:after {
+      position: absolute;
+      content: '';
+      top: 24px;
+      border: 16px solid transparent;
+      border-left: 16px solid #fff;
+      z-index: 1;
+    }
+  }
+
+  &.ct-open-right {
+    .ct-menu-opened {
+      left: calc(100% + 8px);
+      right: auto;
+    }
+
+    #datepicker {
+      &:before {
+        left: -31px;
+        border: 16px solid transparent;
+        border-right: 16px solid #ccc;
+      }
+
+      &:after {
+        left: -30px;
+        right: auto;
+        border: 16px solid transparent;
+        border-right: 16px solid #fff;
+      }
+    }
+  }
+
+  &.ct-open-left {
+    .ct-menu-opened {
+      right: 285px;
+      left: auto;
+    }
+
+    #datepicker {
+      &:before {
+        left: auto;
+        right: -31px;
+        border-left: 16px solid #ccc;
+      }
+
+      &:after {
+        left: auto;
+        right: -30px;
+        border-left: 16px solid #fff;
+      }
+    }
+  }
+
+  &.ct-open-mobile {
+    .ct-menu-opened {
+      top: 10px;
+      left: -1px;
+      right: auto;
+    }
+
+    #datepicker {
+      &:before, &:after {
+        left: 14px;
+        right: auto;
+        border: 16px solid transparent;
+      }
+
+      &:before {
+        top: -31px;
+        border-bottom: 16px solid #ccc;
+      }
+
+      &:after {
+        top: -30px;
+        border-bottom: 16px solid #fff;
+      }
+    }
+  }
+
+  .ct-datepicker {
+    &:before {
+      right: -30px;
+      border: 16px solid transparent;
+      border-left: 16px solid #fff;
+    }
+
+    &:after {
+      right: -30px;
+      border: 16px solid transparent;
+      border-left: 16px solid #fff;
+    }
+  }
+}
+
+.ct-multiple-datepicker {
+  margin: -20px;
+  display: flex;
+
+  .ct-datepicker-button-block {
+    text-align: right;
+    padding: 0;
+    vertical-align: bottom;
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    height: 40px;
+    margin-bottom: 0 !important;
+
+    .ct-close {
+      display: inline-block;
+      line-height: 40px;
+      margin-right: 30px;
+      color: $nav-link-border;
+    }
+  }
+
+  #datepicker {
+    border: none;
+  }
+
+  .ct-dialog-close {
+    right: 10px;
+    top: 10px;
+  }
+
+  .ct-datepicker-container {
+    width: 50%;
+    background: $calendarWidgetBg;
+    text-align: center;
+  }
+
+  .ct-datepicker {
+    display: inline-block;
+    padding: 0 15px;
+  }
+
+  .ct-output-results {
+    width: 50%;
+    box-sizing: border-box;
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 20px;
+  }
+
+  .ct-field-head {
+    display: block;
+    margin-bottom: 10px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 12px;
+    color: #b6b6b6;
+    text-transform: uppercase;
+  }
+
+  .ct-field-details {
+    margin: 0 0 15px 10px;
+    color: #596063;
+    line-height: 1.3;
+
+    em {
+      font-family: inherit;
+      font-weight: 700;
+    }
+
+    .ct-placeholder {
+      font-style: italic;
+    }
+  }
+
+  .ct-form-actions {
+    .ct-submit {
+      font-family: inherit;
+      font-weight: 700;
+      font-size: $smallFont;
+      border-color: transparent;
+      color: #fff;
+      transition-duration: .3s;
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.87);
+      }
+
+      &[disabled] {
+        color: rgba(255, 255, 255, 0.54);
+      }
+
+      .mat-button-focus-overlay {
+        display: none;
+      }
+    }
+
+    .ct-close {
+      padding: 0;
+      background-color: transparent;
+      border: 0;
+      outline: none;
+      transition-duration: .3s;
+    }
+  }
+}

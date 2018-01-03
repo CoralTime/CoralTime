@@ -1,0 +1,98 @@
+@import 'profile-page';
+@import 'profile-settings';
+
+.ct-profile {
+  h2 {
+    display: inline-block;
+    font-family: inherit;
+    font-size: 15px;
+    color: $nav-link-border;
+  }
+
+  .ct-page-header {
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    border-bottom: 3px solid #f1f1f1;
+  }
+
+  .ct-page-content {
+    padding-top: 20px;
+
+    > div {
+      padding: 20px;
+      box-sizing: border-box;
+    }
+  }
+
+  .ct-user-pic-container {
+    float: left;
+    width: 320px;
+    text-align: center;
+
+    .ct-link-text {
+      margin-top: 15px;
+    }
+  }
+
+  .ct-user-settings {
+    min-height: calc(100vh - 140px);
+    margin-left: 320px;
+    border-left: 3px solid #f1f1f1;
+
+    .ct-add-button {
+      float: left;
+      cursor: pointer;
+      position: relative;
+      top: -7px;
+      padding-right: 8px;
+
+      .material-icons {
+        background: #979797;
+        color: #ffffff;
+        border-radius: 4px;
+        font-size: 28px;
+      }
+    }
+
+    .ct-form-header:hover {
+      .material-icons {
+        background: #099cce;
+      }
+      .ct-link-text {
+        color: #099cce;
+      }
+    }
+
+    .ct-form-block {
+      margin-bottom: 30px;
+    }
+
+    .ct-form {
+      width: 480px;
+      margin-top: 20px;
+      padding: 10px 20px 20px;
+      background: #f1f1f1;
+
+      > div {
+        margin-bottom: 10px;
+      }
+
+      .ct-button {
+        margin-top: 10px;
+      }
+    }
+
+    .ct-form-label + div {
+      margin-bottom: 10px;
+    }
+
+    .ct-reset-password-button, .ct-reset-password-message {
+      margin-top: 10px;
+    }
+
+    .mat-checkbox {
+      display: block;
+    }
+  }
+}

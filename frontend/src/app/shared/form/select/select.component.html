@@ -1,0 +1,21 @@
+<!--Added to allow select be focused-->
+<input class="ct-input-hidden-control" (focus)="toggleSelect()">
+<div class="ct-select-component" [class.ct-select-opened]="isOpen" [class.ct-select-animate]="isAnimate">
+    <div class="ct-select-options" role="listbox" [canClickOverlay]="canClickOverlay" [isOpen]="isOpen" [class.ct-show-to-top]="isListShowToTop"
+         (clickOutside)="closeSelect()">
+        <div class="ct-select" [class.ct-disabled]="disabled"
+             (click)="toggleSelect()">
+            <div class="ct-select-selected-options-text">{{getSelectedOptionsText()}}</div>
+            <i *ngIf="icon" class="fa ct-users-project-edit-role fa-{{icon}}"></i>
+        </div>
+        <md-list class="ct-select-options-list" [style.maxHeight.px]="maxHeight" #mdList>
+            <div class="ct-select-options-wrapper" #slimScroll="slimScroll" slimScroll [style.maxHeight.px]="maxHeight">
+                <md-list-item class="ct-select-option" role="option" *ngFor="let option of options; let i = index"
+                              (click)="selectOption(option)" md-ripple
+                              [ngClass]="{ 'ct-select-option-selected': isOptionSelected(option), 'ct-select-option-disabled': option?.disabled }">
+                    <label class="ct-label-item">{{getDisplayedName(option)}}</label>
+                </md-list-item>
+            </div>
+        </md-list>
+    </div>
+</div>

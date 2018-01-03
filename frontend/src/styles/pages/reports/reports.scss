@@ -1,0 +1,456 @@
+$fieldHeight: 30px;
+
+.ui-multiselect-panel.ct-reports-multiselect > div {
+  z-index: 996 !important;
+  position: fixed;
+  top: 152px !important;
+}
+
+.ui-multiselect-panel.ct-reports-settings-multiselect {
+  z-index: 996 !important;
+  position: fixed;
+  top: 101px !important;
+}
+
+.ct-reports-page {
+  .ct-grid-container.ct-total-time-container {
+    position: relative;
+    border-top: 2px solid #f1f1f1;
+    border-bottom: 2px solid #f1f1f1;
+    margin: 0 0 40px;
+
+    table {
+      width: 100%;
+      margin-bottom: 0 !important;
+    }
+
+    td {
+      box-sizing: border-box;
+    }
+
+    label {
+      position: absolute;
+      top: 0;
+      left: 20px;
+      height: 38px;
+      line-height: 38px;
+      font-size: 14px;
+      color: $main-blue;
+      text-transform: uppercase;
+    }
+  }
+
+  .ct-reports-grid {
+    .ct-total-time-container {
+      margin: -12px 0 0;
+
+      span {
+        display: inline-block;
+        max-width: 401px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: bottom;
+      }
+    }
+  }
+
+  .ct-total-time-container {
+    td {
+      font-weight: bold;
+    }
+  }
+
+  .ct-page-container .ct-page-header {
+    height: auto;
+    position: fixed;
+    z-index: 995;
+    background: white;
+    width: calc(100% - 40px);
+    &:before {
+      content: '';
+      position: absolute;
+      height: 20px;
+      width: 100%;
+      background: white;
+      top: -20px;
+    }
+  }
+
+  .ct-grid-container .ui-cell-data {
+    top: 0;
+  }
+
+  .ct-reports-settings {
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+
+    > div {
+      float: right;
+      position: relative;
+
+      > * {
+        display: inline-block;
+      }
+    }
+  }
+
+  .ct-reports-time-period {
+    position: relative;
+
+    > div {
+      cursor: pointer;
+    }
+
+    > a {
+      display: inline-block;
+      position: relative;
+      margin-top: -9px;
+      width: 15px;
+      height: 30px;
+      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
+
+      &:before {
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    > div {
+      display: inline-block;
+      padding: 0 13px 0 11px;
+
+      &:hover {
+        .fa {
+          color: $nav-link-border;;
+        }
+      }
+    }
+
+    .fa {
+      width: 15px;
+      text-align: center;
+    }
+
+    .fa-sort-desc {
+      position: relative;
+      top: -3px;
+    }
+  }
+
+  .ct-btn-block {
+    height: 24px;
+    border-left: 1px solid $border-сolor;
+
+    [class *="-button"] {
+      position: relative;
+      top: 4px;
+      display: inline-block;
+      margin: 0 20px;
+      cursor: pointer;
+
+      &:before {
+        display: inline-block;
+        content: '';
+        height: 20px;
+        width: 18px;
+      }
+    }
+
+    .ct-columns-multiselect {
+      position: relative;
+
+      .ct-multiselect {
+        position: absolute;
+        left: 0;
+        top: -3px;
+        height: 100%;
+        background: none;
+        border: 0;
+      }
+
+      .ct-select {
+        display: none;
+      }
+    }
+
+    .ct-export-as {
+      position: relative;
+      display: inline-block;
+
+      .ct-actions-drop-menu {
+        top: 16px;
+        background: #fff;
+      }
+    }
+  }
+
+  .ct-report-filters {
+    margin-top: 11px;
+    line-height: 50px;
+    background: $border-сolor;
+
+    .ct-report-filters-block {
+      display: inline-block;
+      margin-left: 20px;
+
+      &:first-child {
+        margin: 0;
+      }
+
+      .ct-multiselect {
+        background: none;
+
+        .ct-select {
+          margin-bottom: 2px;
+        }
+      }
+    }
+
+    .ct-filter-label {
+      margin-left: 20px;
+      font-family: inherit;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: $main-blue;
+    }
+
+    .ui-multiselect {
+      vertical-align: middle;
+      width: 210px !important;
+      margin-left: 8px;
+      border: none;
+
+      .ct-select {
+        padding: 0 15px 0 10px;
+      }
+    }
+
+    .ct-select {
+      width: 210px;
+      height: $fieldHeight;
+      border-color: transparent;
+      line-height: $fieldHeight;
+
+      .ct-select-selected-options-text {
+        font-size: $baseFont;
+        line-height: $fieldHeight;
+      }
+    }
+
+    .ct-select-component {
+      display: inline-block;
+      margin: -2px 0 0 4px;
+      vertical-align: middle;
+      height: $fieldHeight;
+      line-height: $fieldHeight;
+
+      .mat-list-item-content {
+        font-size: $baseFont;
+      }
+    }
+
+    .ct-close {
+      float: right;
+      line-height: 50px;
+      margin-right: 20px;
+    }
+  }
+
+  .ct-reports-grid {
+    display: inline-block;
+    margin-bottom: 40px;
+
+    &:first-child {
+      margin-top: 92px;
+    }
+
+    .ui-datatable-thead:after {
+      width: 100%;
+      left: 0;
+      bottom: 0;
+      height: 2px;
+    }
+  }
+
+  .ct-grid-header {
+    padding: 0 20px;
+    height: 42px;
+    line-height: 42px;
+    font-size: 15px;
+    color: $main-blue;
+    text-transform: uppercase;
+
+    > div {
+      display: inline-block;
+
+      &:not(.ct-report-header-right) {
+        float: left;
+      }
+
+      span {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: bottom;
+        text-overflow: ellipsis;
+        max-width: 400px;
+      }
+    }
+
+    .ct-report-header-right {
+      float: right;
+
+      > div {
+        display: inline-block;
+      }
+    }
+
+    .ct-total-hours-tracked, .ct-total-hours-planned {
+      position: relative;
+      margin-left: 63px;
+
+      &:before {
+        position: absolute;
+        content: '';
+        width: 30px;
+        height: 30px;
+        top: -8px;
+        left: -30px;
+      }
+    }
+
+    .ct-total-hours-tracked {
+      &:before {
+        background: url(/assets/icons/tasktile.time.actual.svg) no-repeat center center;
+        background-size: 23px 23px;
+      }
+    }
+
+    .ct-total-hours-planned {
+      &:before {
+        background: url(/assets/icons/tasktile.time.estimated.svg) no-repeat center center;
+        background-size: 23px 23px;
+      }
+    }
+  }
+
+  .ct-grid-container {
+    margin-top: 40px;
+    .ui-datatable-tablewrapper table {
+      min-width: 1220px;
+
+      thead {
+        border-top: 2px solid $border-сolor;
+        border-bottom: 2px solid $border-сolor;
+
+        th {
+          padding: 10px 8px;
+        }
+      }
+
+      td:last-child {
+        text-align: left;
+      }
+    }
+
+    .ct-cell-date {
+      width: 100px;
+    }
+
+    .ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {
+      width: 220px;
+    }
+
+    .ct-cell-actual, .ct-cell-estimated, .ct-cell-start, .ct-cell-finish {
+      width: 100px;
+    }
+
+    @media (max-width: 1600px) {
+      .ct-cell-actual, .ct-cell-estimated, .ct-cell-start, .ct-cell-finish {
+        width: 90px;
+      }
+
+      .ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {
+        width: 150px;
+      }
+    }
+  }
+
+  ct-range-datepicker {
+    position: absolute;
+    top: 100%;
+    right: 210px;
+    background: #fff;
+    box-shadow: none;
+    border: 1px solid $form-border;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity .3s;
+    padding: 0 10px;
+
+    &.ct-datepicker-opened {
+      opacity: 1;
+    }
+
+    #datepicker {
+      border: 1px solid transparent !important;
+    }
+  }
+
+  .ct-hot-links-container {
+    margin-top: 20px;
+    line-height: 12px;
+    text-align: center;
+
+    li {
+      cursor: pointer;
+      display: inline-block;
+      font-size: 12px;
+      height: 22px;
+      width: 25%;
+      text-align: center;
+
+      a {
+        border-bottom: 1px dotted;
+      }
+
+      &:hover {
+        color: $nav-link-border;
+      }
+    }
+  }
+
+  .ct-nodata {
+    margin-top: 15px;
+    font-family: inherit;
+  }
+}
+
+.ct-send-reports-dialog {
+  .ct-link-text {
+    margin: 10px 5px 0 0;
+  }
+
+  .ct-form {
+    margin: 20px 0;
+  }
+
+  .ct-table {
+    width: 100%;
+
+    td {
+      padding: 5px 0;
+
+      &:first-child {
+        padding-right: 15px;
+      }
+
+      &:last-child {
+        width: 15px;
+      }
+    }
+  }
+}

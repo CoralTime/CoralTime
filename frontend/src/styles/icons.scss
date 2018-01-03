@@ -1,0 +1,171 @@
+.ct-nav-icon {
+  $icon-size: 33px;
+  display: inline-block;
+  height: $icon-size;
+  width: $icon-size;
+  background-size: cover !important;
+  position: relative;
+  bottom: 5px;
+}
+
+.ct-timetracker-icon {
+  background: url(/assets/icons/ct.timetracker1.svg) no-repeat center center;
+}
+
+.ct-manage-icon {
+  background: url(/assets/icons/ct.manage1.svg) no-repeat center center;
+}
+
+.ct-reports-icon {
+  background: url(/assets/icons/ct.reports1.svg) no-repeat center center;
+}
+
+.ct-nav-menu li:hover, .mat-menu-item:hover, .active {
+  .ct-timetracker-icon {
+    background: url(/assets/icons/ct.timetracker2.svg) no-repeat center center;
+  }
+
+  .ct-manage-icon {
+    background: url(/assets/icons/ct.manage2.svg) no-repeat center center;
+  }
+
+  .ct-reports-icon {
+    background: url(/assets/icons/ct.reports2.svg) no-repeat center center;
+  }
+
+  .ct-projects-icon {
+    background: url(/assets/icons/ct.projects2.svg) no-repeat center center;
+  }
+
+  .ct-clients-icon {
+    background: url(/assets/icons/ct.clients2.svg) no-repeat center center;
+  }
+
+  .ct-tasks-icon {
+    background: url(/assets/icons/ct.tasks2.svg) no-repeat center center;
+  }
+
+  .ct-users-icon {
+    background: url(/assets/icons/ct.users2.svg) no-repeat center center;
+  }
+
+}
+
+.ct-projects-icon {
+  background: url(/assets/icons/ct.projects1.svg) no-repeat center center;
+}
+
+.ct-clients-icon {
+  background: url(/assets/icons/ct.clients1.svg) no-repeat center center;
+}
+
+.ct-tasks-icon {
+  background: url(/assets/icons/ct.tasks1.svg) no-repeat center center;
+}
+
+.ct-users-icon {
+  background: url(/assets/icons/ct.users1.svg) no-repeat center center;
+}
+
+.ct-controls-icon:before {
+  display: inline-block;
+  cursor: pointer;
+  content: '';
+  height: 18px;
+  width: 18px;
+  background: url(/assets/icons/controls.svg) no-repeat center center;
+}
+
+.ct-controls-icon:hover:before {
+  background: url(/assets/icons/controls-hover.svg) no-repeat center center;
+}
+
+.ct-export-button:hover:before {
+  background: url(/assets/icons/m.export.hover.svg) no-repeat center;
+}
+
+.ct-print-button:hover:before {
+  background: url(/assets/icons/m.print.hover.svg) no-repeat center;
+}
+
+.ct-send-button:hover:before {
+  background: url(/assets/icons/m.email.hover.svg) no-repeat center;
+}
+
+.ct-print-button {
+  margin: 0;
+
+  &:before {
+    background: url(/assets/icons/m.print.svg) no-repeat center;
+  }
+}
+
+.ct-send-button:before {
+  background: url(/assets/icons/m.email.svg) no-repeat center;
+}
+
+.ct-columns-button:before {
+  background: url(/assets/icons/m.settings.svg) no-repeat center;
+}
+
+.ct-columns-button:hover:before {
+  background: url(/assets/icons/m.settings-hover.svg) no-repeat center;
+}
+
+.ct-datepicker-button:hover:before {
+  background: url(/assets/icons/m.calendar.hover.svg) no-repeat center;
+}
+
+.ct-datepicker-button:before {
+  background: url(/assets/icons/m.calendar.svg) no-repeat center;
+}
+
+.ct-export-button:before {
+  background: url(/assets/icons/m.export.svg) no-repeat center;
+}
+
+.ct-prev, .ct-next {
+  &:before {
+    position: absolute;
+    font-size: 30px;
+  }
+  &:hover {
+    color: $nav-link-border;
+  }
+}
+
+.ct-prev:before {
+  content: '\2039';
+}
+
+.ct-next:before {
+  content: '\203A';
+}
+
+.ct-controls-icon:before {
+  display: inline-block;
+  cursor: pointer;
+  content: '';
+  height: 18px;
+  width: 18px;
+  background: url(/assets/icons/controls.svg) no-repeat center center;
+}
+
+.ct-controls-icon:hover:before {
+  background: url(/assets/icons/controls-hover.svg) no-repeat center center;
+}
+
+.ct-edit-timesheet-icon:before {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  content: '';
+  height: 18px;
+  width: 18px;
+  top: 2px;
+  background: url(/assets/icons/users.svg) no-repeat center center;
+}
+
+.ct-edit-timesheet-icon:hover:before {
+  background: url(/assets/icons/users.hover.svg) no-repeat center center;
+}

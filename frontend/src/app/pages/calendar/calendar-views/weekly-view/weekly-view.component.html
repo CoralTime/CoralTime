@@ -1,0 +1,11 @@
+<div class="ct-total-tracked-time">
+    <span class="ct-hours-tracked">{{getTotalTime('time')}}</span>
+    <span class="ct-hours-planned">{{getTotalTime('plannedTime')}}</span>
+</div>
+<div class="ct-calendar clearfix" (window:resize)="onResize($event)">
+    <ct-calendar-day *ngFor="let dayInfo of calendar"
+                     [dayInfo]="dayInfo"
+                     class="ct-calendar-day"
+                     [class.ct-calendar-day-active]="false">
+    </ct-calendar-day>
+</div>

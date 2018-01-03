@@ -1,0 +1,59 @@
+<div class="ct-grid-search-filter">
+    <md-input-container class="full-width">
+        <input #gb mdInput placeholder="Search client..." [(ngModel)]="filterStr">
+    </md-input-container>
+    <i class="fa fa-search"></i>
+</div>
+
+<div #pageContainer class="ct-page-container ct-clients-page">
+    <div class="ct-manage-grid-header">
+        <div class="ct-page-tabs">
+            <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Clients</a>
+            <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Clients</a>
+        </div>
+        <div (click)="openClientDialog()" class="ct-add-link">
+            <a class="ct-manage-add">Create New Client</a>
+        </div>
+    </div>
+
+    <div class="ct-data-table-wrapper" (window:resize)="onResize()">
+        <p-dataTable class="ct-grid-container ct-table"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'name'"
+                     [responsive]="true" [lazy]="true"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column field="name" header="Client" [sortable]="true">
+                <ng-template let-col let-client="rowData" pTemplate="body">
+                    <span (click)="openClientDialog(client)" class="ct-grid-link-text" title="{{ client.name}}">{{ client.name}}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'250px'}" field="email" header="Contact Email" [sortable]="true">
+                <ng-template let-col let-client="rowData" pTemplate="body">
+                    {{client.email}}
+                </ng-template>
+            </p-column>
+
+            <p-column field="description" header="Description">
+                <ng-template let-col let-client="rowData" pTemplate="body" let-index="rowIndex">
+                    <div class="ct-grid-description">
+                        <ct-read-more [text]="client.description"></ct-read-more>
+                    </div>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'130px'}" header="Projects">
+                <ng-template let-col let-client="rowData" pTemplate="body">
+                    <a (click)="openProjectAssignmentDialog(client)" class="ct-grid-link ct-grid-count">
+                        {{client.projectsCount}}
+                        <span class="ct-manage-text">Manage</span>
+                    </a>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
+</div>

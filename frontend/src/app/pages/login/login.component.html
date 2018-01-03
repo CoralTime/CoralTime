@@ -1,0 +1,34 @@
+<div class="ct-login-page">
+    <form *ngIf="!enableAzure" #loginForm="ngForm" (ngSubmit)="loginForm.form.valid && login()" class="ct-login-form">
+        <div class="ct-nav-title1">Coral Time <span class="ct-logo-sm"></span></div>
+        <div>
+            <label class="ct-input-label">Login</label>
+            <input class="ct-input" name="username" [(ngModel)]="username" required>
+        </div>
+
+        <div>
+            <label class="ct-input-label">Password</label>
+            <input type="password" class="ct-input" name="password" [(ngModel)]="password" required>
+        </div>
+
+        <button md-raised-button class="ct-button ct-primary-button">
+            Login
+        </button>
+
+        <div *ngIf="errorMessage" class="ct-login-failed ct-error-text">{{errorMessage}}</div>
+
+        <div class="ct-login-links">
+            <div class="ct-add-link"><a [routerLink]="['/forgot-password']">Forgot password?</a></div>
+        </div>
+    </form>
+
+    <form *ngIf="enableAzure" class="ct-login-form ct-login-form-sso">
+        <div class="ct-nav-title1">Coral Time <span class="ct-logo-sm"></span></div>
+        <div>
+            <label class="ct-input-label">You will be redirected to login via Microsoft account.</label>
+        </div>
+        <button md-raised-button class="ct-button ct-primary-button" (click)="loginSSO()">
+            Login
+        </button>
+    </form>
+</div>

@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'styles/variables';
+@import 'styles/fonts';
+@import 'styles/colors';
+@import 'styles/icons';
+@import 'styles/shared';
+@import 'styles/material-rewrite';
+
+@import 'styles/components/components';
+@import 'styles/pages/pages';
+@import 'styles/print';

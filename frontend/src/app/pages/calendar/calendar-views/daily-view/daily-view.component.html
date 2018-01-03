@@ -1,0 +1,10 @@
+<div class="ct-total-tracked-time">
+    <span class="ct-hours-tracked">{{getTotalTime(projectTimeEntries)}}</span>
+    <span class="ct-hours-planned">{{getTotalPlannedTime(projectTimeEntries)}}</span>
+</div>
+<div class="ct-calendar clearfix">
+    <ct-calendar-day [dayInfo]="dayInfo"
+                     class="ct-calendar-day"
+                     [class.ct-calendar-day-active]="false">
+    </ct-calendar-day>
+</div>

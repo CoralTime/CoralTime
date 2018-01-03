@@ -1,0 +1,24 @@
+<div class="ct-profile-photo-dialog">
+    <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+
+    <div class="ct-profile-photo-left">
+        <p *ngIf="!imageData.image">Select new file to update your profile picture</p>
+        <p *ngIf="imageData.image">Make thumbnail (optional)</p>
+        <img-cropper [image]="imageData" [settings]="cropperSettings" (onCrop)="cropped($event)" [class.ct-image-empty]="!imageData.image"></img-cropper>
+        <label class="ct-button ct-primary-button">
+            Browse
+            <input #cropper type="file" title="Browse file" (change)="fileChangeListener($event)">
+        </label>
+    </div>
+
+    <div *ngIf="imageData.image" class="ct-profile-photo-right">
+        <p>Current thumbnail</p>
+        <span class="ct-cropped-profile-photo">
+            <img [src]="imageData.image"
+                 [width]="cropperSettings.croppedWidth"
+                 [height]="cropperSettings.croppedHeight">
+        </span>
+        <button (click)="changeProfileImg(imageData.image)" class="ct-button ct-primary-button mat-raised-button">Change profile picture</button>
+    </div>
+
+</div>

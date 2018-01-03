@@ -1,0 +1,98 @@
+<div class="ct-grid-header clearfix">
+    <div *ngIf="groupBy == 1 && gridData.items.length">
+        Project: <span>{{gridData?.projectName}}</span>
+    </div>
+    <div *ngIf="groupBy == 2 && gridData.items.length">
+        User: <span>{{gridData?.memberName}}</span>
+    </div>
+    <div *ngIf="groupBy == 3 && gridData.items.length">
+        Date: <span>{{formatDate(gridData?.date)}}</span>
+    </div>
+    <div *ngIf="groupBy == 4 && gridData.items.length">
+        <label *ngIf="gridData.clientId !== 0">Client: </label><span>{{gridData?.clientName}}</span>
+    </div>
+</div>
+
+<p-dataTable class="ct-grid-container ct-table"
+             [value]="gridDataRows"
+             [responsive]="true"
+             [sortField]="'date'"
+             [sortOrder]="1"
+             [lazy]="true" (onLazyLoad)="loadLazy($event)">
+    <p-column *ngIf="groupBy != 3 && showColumns.indexOf(2) > -1" styleClass="ct-cell-date" field="date" header="Date" [sortable]="true">
+        <ng-template let-item="rowData" pTemplate="body">
+            <span>{{formatDate(item.date)}}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column *ngIf="groupBy != 4" styleClass="ct-cell-client" field="clientName" header="Client" [sortable]="true"></p-column>
+    <p-column *ngIf="groupBy != 1" styleClass="ct-cell-project" field="projectName" header="Project" [sortable]="true"></p-column>
+    <p-column *ngIf="groupBy != 2" styleClass="ct-cell-user" field="memberName" header="User" [sortable]="true"></p-column>
+    <p-column field="taskName" styleClass="ct-cell-task" [sortable]="true" header="Task"></p-column>
+
+    <p-column *ngIf="showColumns.indexOf(4) > -1" styleClass="ct-cell-start" field="timeFrom" header="Start">
+        <ng-template let-item="rowData" pTemplate="body">
+            <span>{{getTimeString(item.timeFrom)}}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column *ngIf="showColumns.indexOf(4) > -1" styleClass="ct-cell-finish" field="timeTo" header="Finish">
+        <ng-template let-item="rowData" pTemplate="body">
+            <span>{{getTimeString(item.timeTo)}}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column styleClass="ct-cell-actual" field="actualTime" header="Act. hours">
+        <ng-template let-item="rowData" pTemplate="body">
+            <span>{{getTimeString(item.actualTime)}}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column *ngIf="showColumns.indexOf(1) > -1" styleClass="ct-cell-estimated" field="estimatedTime" header="Est. hours">
+        <ng-template let-item="rowData" pTemplate="body">
+            <span>{{getTimeString(item.estimatedTime)}}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column *ngIf="showColumns.indexOf(3) > -1" field="description" header="Notes">
+        <ng-template let-col let-item="rowData" pTemplate="body" let-index="rowIndex">
+            <div class="ct-grid-description">
+                <ct-read-more [text]="item.description"></ct-read-more>
+            </div>
+        </ng-template>
+    </p-column>
+</p-dataTable>
+
+<div class="ct-grid-container ct-total-time-container" *ngIf="groupBy != 0 && gridData.items.length > 0">
+    <label>
+        Total for
+        <span>{{gridData?.projectName || gridData?.memberName || formatDate(gridData?.date) || gridData?.clientName}}</span>
+    </label>
+    <div class="ui-datatable-tablewrapper">
+        <table>
+            <tr>
+                <td *ngIf="groupBy != 3 && showColumns.indexOf(2) > -1" class="ct-cell-date"></td>
+                <td *ngIf="groupBy != 4" class="ct-cell-client"></td>
+                <td *ngIf="groupBy != 1" class="ct-cell-project"></td>
+                <td *ngIf="groupBy != 2" class="ct-cell-user"></td>
+                <td class="ct-cell-task"></td>
+                <td *ngIf="showColumns.indexOf(4) > -1" class="ct-cell-start"></td>
+                <td *ngIf="showColumns.indexOf(4) > -1" class="ct-cell-finish"></td>
+
+                <td class="ct-cell-actual">
+                    <div class="ct-total-hours-tracked">
+                        <span>{{getTimeString(gridData?.totalActualTime, true)}}</span>
+                    </div>
+                </td>
+
+                <td *ngIf="showColumns.indexOf(1) > -1" class="ct-cell-estimated">
+                    <div class="ct-total-hours-planned" *ngIf="showColumns.indexOf(1) > -1">
+                        <span>{{getTimeString(gridData?.totalEstimatedTime)}}</span>
+                    </div>
+                </td>
+
+                <td *ngIf="showColumns.indexOf(3) > -1"></td>
+            </tr>
+        </table>
+    </div>
+</div>

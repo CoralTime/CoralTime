@@ -1,0 +1,73 @@
+.ct-menu {
+  position: relative;
+  font-size: $baseFont;
+  background-color: inherit;
+
+  > .ct-menu-content {
+    position: absolute;
+    top: 0;
+    min-width: 140px;
+    max-width: 306px;
+    padding: 8px 0;
+    background-color: inherit;
+    box-shadow: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.5);
+    z-index: 5;
+    transition: opacity .3s;
+
+    &.ct-menu-before {
+      right: 0;
+      transform-origin: right top;
+    }
+    &.ct-menu-after {
+      left: 0;
+      transform-origin: left top;
+    }
+  }
+
+  &.ct-menu-opened {
+    > .ct-menu-content {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+      transition: transform .2s;
+    }
+  }
+
+  .ct-menu-item {
+    line-height: 36px;
+    height: 36px;
+
+    a {
+      position: relative;
+      display: block;
+      padding: 0 16px 0 23px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    &:hover a:not(.ct-disabled) {
+      background: rgba(0, 0, 0, .04);
+    }
+  }
+
+  ct-menu-item {
+    display: block;
+
+    &.ct-disabled {
+      color: rgba(0, 0, 0, .38);
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+}
+
+.ct-menu-container {
+  position: relative;
+
+  .ct-menu {
+    top: 0;
+  }
+}

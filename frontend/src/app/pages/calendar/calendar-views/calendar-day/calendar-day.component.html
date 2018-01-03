@@ -1,0 +1,35 @@
+<div pDroppable="calendarTask" (onDrop)="drop()" (onDragOver)="onDragOver()" (onDragLeave)="onDragLeave()"
+     class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter">
+    <div class="ct-calendar-day-title" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
+        <div class="ct-calendar-date">
+            {{dayInfo.date.getDate()}}
+            <span>{{getDateString(dayInfo.date)}}</span>
+        </div>
+
+        <div class="ct-calendar-day-hours">
+            <div class="ct-calendar-day-hours-tracked">{{calcTime('time')}}</div>
+            <div class="ct-calendar-day-hours-planned">{{calcTime('plannedTime')}}</div>
+        </div>
+    </div>
+
+    <div class="ct-calendar-day-tasks">
+        <div [style.height]="(isDragEnter ? fakeCalendarTaskHeight : 0) + 'px'"
+             [class.ct-calendar-task]="isDragEnter" class="ct-fake-task"></div>
+        <ct-calendar-task *ngFor="let timeEntry of dayInfo.timeEntries; let i = index"
+                          class="ct-calendar-task" #calendarTask
+                          pDraggable="calendarTask"
+                          [timeEntry]="timeEntry"
+                          [draggable]="!isTimeEntryFormOpened()"  [dragEffect]="dragEffect()"
+                          (onDragStart)="dragStart(timeEntry, $event.target)"
+                          (onDragEnd)="dragEnd($event.target)"
+                          (timeEntryDeleted)="deleteTimeEntry(i)">
+        </ct-calendar-task>
+        <div class="ct-calendar-add-task"
+             [class.ct-form-opened]="isEntryFormOpened">
+            <div (click)="addNewTimeEntry(dayInfo.date)"></div>
+            <ct-entry-time *ngIf="isEntryFormOpened" #entryForm
+                           [timeEntry]="newTimeEntry"
+                           (deleted)="deleteTimeEntry()"></ct-entry-time>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,137 @@
+.ct-assignment-form {
+  .ct-remove-task-button {
+    float: right;
+  }
+
+  .ct-close {
+    margin: auto;
+    display: block;
+  }
+
+  .ct-form-header {
+    height: 20px;
+    margin-top: 10px;
+    padding: 0;
+
+    .ct-blue-text {
+      font-family: inherit;
+    }
+  }
+
+  .ct-select {
+    min-width: 110px;
+  }
+}
+
+.ct-row-button {
+  button {
+    margin: 0 5px 5px 0;
+  }
+}
+
+.ct-grid {
+  position: relative;
+  margin-top: 20px;
+}
+
+.ct-grid-container {
+  .ct-link {
+    position: relative;
+    margin-right: 16px;
+    transition-duration: .3s;
+
+    &:hover {
+      color: #ff6666;
+    }
+
+    i {
+      position: absolute;
+      top: 50%;
+      right: -16px;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.ct-project-tasks-dialog {
+  width: 600px;
+
+  .ct-popup-table-wrapper .ct-grid-container:only-child .ui-datatable-scrollable-body {
+    max-height: calc(90vh - 175px);
+  }
+}
+
+.ct-projects-tasks-form.ct-form {
+  display: inline-block;
+  width: 100%;
+  margin: 15px 0 -10px;
+
+  li {
+    margin-bottom: 10px;
+
+    > div {
+      display: inline-block;
+    }
+  }
+
+  .ct-required-field-container {
+    width: calc(100% - 160px);
+  }
+
+  .ct-input {
+    height: 30px;
+    width: 100%;
+    background: #f7f5f5;
+    font-size: inherit;
+    color: #222;
+    border: none;
+  }
+
+  .ct-buttons-block {
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+    float: right;
+
+    > .ct-blue-button {
+      float: none;
+      width: 70px;
+      height: 30px;
+      min-width: 0;
+      line-height: 30px;
+    }
+
+    > .ct-cancel-button {
+      margin: 0 10px;
+    }
+  }
+
+  .ct-add-button {
+    margin-top: 13px;
+    color: $nav-link-border;
+    line-height: 28px;
+
+    .material-icons {
+      float: left;
+      margin-right: 10px;
+      background: $nav-link-border;
+    }
+
+    &:hover {
+      color: $primary-btn-hover;
+
+      .material-icons {
+        background: $primary-btn-hover;
+      }
+    }
+
+    &.ct-disabled {
+      color: $gray-text;
+      opacity: .5;
+
+      .material-icons {
+        background: $gray-text;
+      }
+    }
+  }
+}

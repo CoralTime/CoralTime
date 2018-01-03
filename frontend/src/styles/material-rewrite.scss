@@ -1,0 +1,144 @@
+.cdk-overlay-dark-backdrop {
+  position: fixed;
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  opacity: 0.35;
+}
+
+.mat-dialog-container {
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+  background-color: $calendarTaskColor;
+  padding: 20px !important;
+  max-height: calc(100vh - 40px);
+}
+
+.mat-select-underline {
+  display: none;
+}
+
+.mat-menu-item.ct-disabled {
+  color: rgba(0, 0, 0, .38);
+  pointer-events: none;
+  cursor: default;
+}
+
+.mat-checkbox-indeterminate.mat-accent, .mat-checkbox-checked.mat-accent {
+  .mat-checkbox-background {
+    background-color: $nav-link-border;
+  }
+}
+
+.mat-checkbox:not(.mat-checkbox-disabled).mat-accent {
+  .mat-checkbox-ripple .mat-ripple-element {
+    background-color: rgba($nav-link-border, .26);
+  }
+}
+
+.mat-radio-button {
+  &.mat-radio-checked .mat-radio-outer-circle {
+    border-color: $nav-link-border;
+  }
+
+  .mat-radio-inner-circle {
+    background-color: $nav-link-border;
+  }
+
+  .mat-radio-ripple .mat-ripple-element {
+    background-color: rgba($nav-link-border, 0.26);
+  }
+
+  .mat-radio-outer-circle {
+    border: 1px solid #ccc;
+    background: #fff;
+  }
+}
+
+.mat-input-underline .mat-input-ripple {
+  background-color: $nav-link-border;
+}
+
+.mat-select {
+  &:focus:not(.mat-select-disabled) {
+    .mat-select-arrow, .mat-select-trigger {
+      color: $nav-link-border;
+    }
+  }
+}
+
+.mat-option.mat-selected {
+  color: $nav-link-border;
+}
+
+.ui-widget-content a {
+  color: $nav-background;
+}
+
+.ui-widget-content a:hover {
+  color: $nav-link-border;
+}
+
+.ui-datatable, .ui-cell-data {
+  font-family: $baseFontFamily !important;
+}
+
+.mat-list .mat-list-item .mat-list-item-content, .mat-nav-list .mat-list-item .mat-list-item-content {
+  font-family: $baseFontFamily;
+  font-size: $baseFont;
+}
+
+.ui-shadow {
+  border: 1px solid $form-border !important;
+  box-shadow: none !important;
+}
+
+.ui-multiselect-panel {
+  [slimScroll] {
+    max-height: 320px !important;
+  }
+}
+
+.ct-select-option {
+  position: relative;
+  line-height: 22px;
+}
+
+.mat-list-item-content {
+  display: block !important;
+
+  label {
+    line-height: 16px;
+    display: inline-block;
+  }
+}
+
+.mat-dialog-actions {
+  display: block !important;
+}
+
+.mat-checkbox {
+  .mat-checkbox-frame {
+    border: 1px solid #ccc;
+    border-radius: 0;
+  }
+
+  &.mat-checkbox-checked {
+    .mat-checkbox-frame {
+      border-color: #099cce;
+    }
+  }
+}
+
+.mat-checkbox-inner-container {
+  background: #fff;
+}
+
+.mat-checkbox-label, .mat-radio-label-content {
+  font-family: $robotoRegular;
+}
+
+.cdk-overlay-container {
+  z-index: 1001;
+}

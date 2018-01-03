@@ -1,0 +1,15 @@
+<div class="ct-textarea-component"
+     [class.ct-can-resize]="canResize"
+     [class.ct-focused]="isFocusClassShown">
+    <div class="ct-textarea-container" slimScroll #slimScroll='slimScroll'>
+                <textarea [name]="name" mdInput #autoSizer="mdTextareaAutosize" md-autosize
+                          [maxlength]="maxlength"
+                          [placeholder]="placeholder"
+                          [disabled]="disabled"
+                          (blur)="isFocusClassShown = false"
+                          (focus)="isFocusClassShown = true"
+                          class="ct-textarea"
+                          [(ngModel)]="modelValue"
+                          (ngModelChange)="updateModel(modelValue)"></textarea>
+    </div>
+</div>

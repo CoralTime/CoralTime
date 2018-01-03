@@ -1,0 +1,95 @@
+ct-read-more {
+  @media print {
+    .ct-screen-mode, .ct-see-more {
+      display: none;
+    }
+  }
+}
+
+.ct-print-mode {
+  display: none;
+}
+
+@media print {
+  .ct-print-mode {
+    display: block;
+  }
+
+  ct-navigation, .ct-page-header {
+    display: none;
+  }
+
+  .ct-content {
+    padding: 0;
+  }
+
+  .ct-reports-page {
+    .ct-grid-header {
+      page-break-inside: avoid;
+      font-size: 10pt;
+
+      & + .ct-grid-container {
+        margin-top: 0;
+
+        thead {
+          .fa {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .ct-reports-grid {
+      page-break-inside: avoid;
+
+      &:first-child {
+        margin-top: 0;
+        padding-top: 30px;
+      }
+    }
+  }
+
+  .ct-table table tbody > tr:hover, .ct-table table tbody .ui-datatable-odd:hover {
+    background: none !important;
+  }
+
+  p-datatable, ct-reports-grid, ct-reports, ct-root {
+    display: block !important;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    display: flex !important;
+    page-break-inside: avoid;
+  }
+
+  td {
+    font-size: 9pt !important;
+    line-height: 1.3;
+  }
+
+  .ct-cell-date {
+    flex: 0 0 75pt;
+  }
+
+  .ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {
+    flex: 0 0 100pt;
+  }
+
+  .ct-cell-actual, .ct-cell-estimated, .ct-cell-start, .ct-cell-finish {
+    flex: 0 0 65pt;
+  }
+
+  .ct-period-for-print {
+    position: absolute;
+    top: 0;
+    font-size: 9pt;
+  }
+
+  .ct-total-time-container {
+    page-break-inside: avoid;
+  }
+}

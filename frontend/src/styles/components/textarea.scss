@@ -1,0 +1,36 @@
+.ct-textarea-component {
+  padding: 4px 9px;
+  border: 1px solid $form-border;
+  background: #fff;
+
+  &.ct-focused {
+    border: 1px solid $nav-link-border;
+  }
+
+  .ct-textarea {
+    box-sizing: border-box;
+    min-height: 115px;
+    outline: none;
+    background: $primary-btn-text;
+    font-family: Roboto Regular, sans-serif;
+    font-size: 14px;
+    line-height: 1.25;
+    overflow: hidden;
+  }
+
+  .ct-textarea-container {
+    min-height: 115px;
+    max-height: 115px;
+    padding: 1px 10px 1px 0;
+  }
+
+  &.ct-can-resize {
+    .ct-textarea-container {
+      min-height: 40px;
+    }
+
+    .ct-textarea {
+      min-height: 0;
+    }
+  }
+}

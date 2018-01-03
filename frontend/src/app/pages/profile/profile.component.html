@@ -1,0 +1,63 @@
+<div class="ct-profile ct-profile-page">
+    <div class="ct-page-container">
+        <div class="ct-page-header">
+            <h2>{{'Profile' | translate}}</h2>
+        </div>
+
+        <div class="ct-page-content">
+            <div class="ct-user-pic-container">
+                <ct-user-pic *ngIf="!impersonationId" [userId]='impersonationId ? impersonationId : userId' [fullSize]="true"></ct-user-pic>
+
+                <div *ngIf="impersonationName || userModel.fullName" class="ct-user-settings-info">
+                    <h3>Name</h3>
+                    <p>{{impersonationId ? impersonationName : userModel.fullName}}</p>
+                </div>
+                <div *ngIf="(impersonationId && impersonationUser.email) || userModel.email" class="ct-user-settings-info">
+                    <h3>Email address</h3>
+                    <p>{{impersonationId ? impersonationUser.email : userModel.email}}</p>
+                </div>
+                <div *ngIf="(impersonationId && impersonationUser.timeZone) || userModel.timeZone" class="ct-user-settings-info">
+                    <h3>Your timezone</h3>
+                    <p>{{impersonationId ? impersonationUser.timeZone : userModel.timeZone}}</p>
+                </div>
+
+                <button [routerLink]="['/profile/settings']" class="ct-button ct-blue-button">View Settings</button>
+            </div>
+
+            <div class="ct-user-settings">
+                <h3>My Projects
+                    <i *ngIf="!projects" class="fa fa-circle-o-notch fa-spin"></i>
+                </h3>
+
+                <p *ngIf="projects && !projects.length">You haven't assigned to any Project yet.</p>
+
+                <div *ngFor="let project of projects; let i = index" class="ct-profile-project">
+                    <span class="ct-color-{{project.color}}"></span>
+                    <p class="ct-profile-project-name">{{project.name}}
+                        <span>
+                            {{project.isPrimary ? ' (Default)' : ''}}
+                            {{project.isPrivate ? '' : ' (Public)'}}
+                        </span>
+                    </p>
+                    <p *ngIf="project.managersNames.length">{{setManagersString(project.managersNames)}}</p>
+                    <p *ngIf="project.isPrivate">{{setMemberCountString(project.memberCount)}}</p>
+
+                    <div *ngIf="project.isPrivate" class="ct-profile-users-block">
+                        <div class="ct-form-header" (click)="toggleMembersShown(i)">
+                            <span class="ct-link-text">{{project.isMemberListShown ? 'Hide' : 'View'}} Team Members</span>
+                            <i *ngIf="project.isMemberListShown && !project.memberList.length" class="fa fa-circle-o-notch fa-spin"></i>
+                        </div>
+                        <div class="ct-profile-users-list" [class.ct-profile-members-hidden]="!project.isMemberListShown || !project.memberList.length">
+                            <div *ngFor="let member of project.memberList" class="ct-profile-user">
+                                <ct-user-pic [userId]="member.userId"></ct-user-pic>
+                                <p>{{member.fullName}}
+                                    <span *ngIf="member.userId == (impersonationId || userModel.id)">(You)</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

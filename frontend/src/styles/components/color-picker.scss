@@ -1,0 +1,60 @@
+ct-color-picker {
+  display: block;
+  height: 20px;
+}
+
+.ct-color-picker {
+  margin-top: -18px;
+
+  md-icon {
+    width: 24px;
+    height: 24px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .ct-color-circle {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 100%;
+
+    &.ct-color-0 {
+      border: 2px solid #dfdfdf;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.ct-color-picker-popup {
+  &.mat-select-panel {
+    overflow: visible;
+    max-width: 170px;
+    max-height: none;
+    border: 1px solid $form-border;
+    box-sizing: border-box;
+  }
+
+  .ct-color-circle {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 100%;
+
+    &.ct-color-0 {
+      border: 2px solid #dfdfdf;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .mat-option {
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    padding: 11px;
+    margin-bottom: -2px;
+  }
+}

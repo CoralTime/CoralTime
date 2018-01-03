@@ -1,0 +1,516 @@
+$fieldHeight: 30px;
+$selectHeight: 35px;
+$baseFont: 14px;
+$smallFont: 12px;
+
+$button-font-size: 17px;
+
+$baseFontFamily: $robotoRegular;
+$navFontFamily: $roboto;
+
+body, html {
+  margin: 0;
+  min-width: 320px;
+  font-size: 14px;
+  font-family: $baseFontFamily;
+  color: $nav-background;
+}
+
+ul, li {
+  margin: 0;
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+
+  &:focus {
+    outline: none;
+  }
+
+}
+
+.ct-disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+textarea {
+  resize: none;
+  font-family: inherit;
+  color: $nav-background;
+}
+
+select, input, textarea, form {
+  font-family: inherit;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+h1 {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 38px;
+  color: $nav-background;
+}
+
+h2, h3, h4 {
+  font-family: inherit;
+  font-weight: 700;
+  color: $nav-background;
+}
+
+h5 {
+  font-family: inherit;
+  font-weight: 700;
+}
+
+//===========================
+
+.clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+.ct-full-width {
+  width: 100% !important;
+}
+
+.ct-bold {
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.ui-column-title, .ct-input-label {
+  font-family: inherit;
+  font-size: $baseFont;
+}
+
+.ct-input-label {
+  color: $gray-text;
+}
+
+.ct-blue-text {
+  color: $nav-link-border;
+}
+
+.ct-inactive-title {
+  display: none;
+}
+
+.ct-link-text {
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  color: $nav-background;
+  text-decoration: none;
+  border: none;
+  border-bottom: 1px dotted;
+  display: inline-block;
+  line-height: 15px;
+  text-transform: capitalize;
+  font-family: inherit;
+
+  &:focus, &:hover {
+    outline: none;
+    color: $nav-link-border;
+    border-bottom-color: $nav-link-border;
+  }
+}
+
+.ct-form-label {
+  color: $main-blue;
+  display: block;
+  margin: 0;
+  padding: 12px 0;
+  font-size: $smallFont;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+
+.ct-info-message {
+  font-family: inherit;
+  font-size: $smallFont;
+  text-align: justify;
+  font-style: italic;
+  margin-top: 5px;
+  color: $gray-text;
+  letter-spacing: 0.2px;
+  line-height: 15px;
+}
+
+.ct-nav-logo {
+  height: 40px;
+  width: 40px;
+  background: url(/assets/icons/ct.logo.svg) no-repeat center center;
+  display: inline-block;
+  background-size: 100%;
+}
+
+.ct-nav-logo:focus {
+  outline: none;
+}
+
+.ct-btn {
+  text-transform: uppercase;
+}
+
+.ct-submit {
+  height: 40px;
+  letter-spacing: .5px;
+  width: 115px;
+  font-size: $button-font-size !important;
+  float: right;
+  font-family: inherit;
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+.ct-submit[disabled] {
+  opacity: 0.7;
+}
+
+.ct-close {
+  color: $nav-link-border;
+  font-size: 16px;
+  font-family: inherit;
+  line-height: 16px;
+  cursor: pointer;
+  transition: .3s;
+  display: inline-block;
+  position: relative;
+
+  &:hover {
+    color: $nav-background !important;
+  }
+}
+
+.ct-primary-button {
+  background: $nav-link-border;
+  color: $primary-btn-text !important;
+}
+
+.ct-primary-button:hover, .ct-primary-button:active, .ct-primary-button.active {
+  background: $primary-btn-hover !important;
+  color: $primary-btn-text;
+}
+
+.ct-add-link {
+  cursor: pointer;
+  a {
+    color: $nav-link-border;
+    display: inline-block;
+    text-decoration: none;
+    font-family: inherit;
+    text-transform: capitalize;
+  }
+
+  i {
+    width: 23px;
+    height: 14px;
+    text-align: center;
+    padding: 2px 0 0 0;
+    margin-right: 5px;
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+    font-family: inherit;
+    color: $nav-link-border;
+  }
+}
+
+.ct-add-link:hover, .ct-add-link:hover a {
+  color: $nav-link-border !important;
+}
+
+.ct-link {
+  border-bottom: 1px dotted;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.mat-input-underline {
+  display: none;
+}
+
+.ct-lowercase {
+  text-transform: lowercase;
+}
+
+.ct-grid-search-filter {
+  position: relative;
+  top: -59px;
+  right: 250px;
+  z-index: 997;
+  display: inline-block;
+  float: right;
+
+  .mat-input-placeholder {
+    font-family: $roboto;
+    font-weight: 300;
+  }
+
+  .mat-input-placeholder.mat-empty {
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .mat-input-container {
+    width: 180px;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+  }
+
+  .mat-input-wrapper {
+    margin: 0;
+    height: 28px;
+    padding-bottom: 0;
+    background: rgba(255, 255, 255, 0.23);
+    padding-right: 33px;
+    line-height: 20px;
+  }
+
+  .mat-input-wrapper:focus {
+    background: rgba(255, 255, 255, 0.38);
+  }
+
+  .mat-input-infix {
+    position: relative;
+    height: 24px;
+  }
+
+  .mat-input-placeholder {
+    left: 30px;
+    top: 10px;
+  }
+
+  .mat-input-placeholder-wrapper {
+    height: 22px;
+    font-size: $baseFont;
+  }
+
+  .fa-search {
+    position: absolute;
+    left: 10px;
+    top: 6px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.86);
+  }
+
+  .mat-float {
+    top: 5px;
+  }
+
+  .mat-input-placeholder:not(.mat-empty), .mat-focused .mat-float {
+    display: none !important;
+  }
+
+  .mat-input-element {
+    position: relative;
+    top: 5px;
+    left: 30px;
+    color: $primary-btn-text;
+    font-family: $roboto;
+    font-weight: 300;
+  }
+}
+
+.ct-paginator-label {
+  position: absolute;
+  bottom: 7px;
+  text-transform: capitalize;
+  font-family: inherit;
+  font-size: 14px;
+  color: $nav-background;
+}
+
+.ct-paginator-container {
+  position: fixed;
+  bottom: 19px;
+  height: 25px;
+  right: 20px;
+  left: 20px;
+  width: calc(100% - 40px);
+  border-top: 1px solid $border-сolor;
+  padding-top: 17px;
+
+  .ct-paginator-label {
+    position: relative;
+    bottom: 0;
+  }
+
+  .ui-paginator {
+    display: inline-block;
+    border: 0;
+    background: none;
+  }
+
+  .ui-paginator-page.ui-state-active {
+    background: $primary-btn;
+    border-color: $primary-btn-hover;
+  }
+}
+
+.slimscroll-grid {
+  top: 0 !important;
+  border-radius: 0 !important;
+  margin: 0 2px !important;
+  right: -2px !important;
+  width: 4px !important;
+  background: $border-сolor !important;
+  z-index: 1 !important;
+}
+
+.slimscroll-bar {
+  background-color: $nav-background !important;
+  right: 1px !important;
+  width: 2px !important;
+  z-index: 2 !important;
+}
+
+.ct-button {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.ct-button, .mat-raised-button {
+  font-family: inherit !important;
+  font-size: 15px !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  .mat-button-wrapper {
+    font-family: inherit;
+  }
+}
+
+.ct-button:disabled {
+  background-color: $nav-link-border !important;
+}
+
+.ct-blue-button {
+  background-color: $nav-link-border;
+  border: none;
+  height: 40px;
+  letter-spacing: 0.5px;
+  color: $primary-btn-text;
+  cursor: pointer;
+  outline: none;
+  transition-duration: .3s;
+
+  span {
+    color: $primary-btn-text;
+    font-size: 16px;
+    font-family: inherit;
+  }
+}
+
+.ct-blue-button:hover {
+  background-color: $primary-btn-hover;
+}
+
+.ct-color-empty {
+  font-style: italic;
+  color: $gray-text;
+  display: inline-block;
+  font-family: inherit;
+  font-size: $baseFont;
+}
+
+.ct-gray-sm {
+  color: $gray-text;
+  font-family: inherit;
+  font-size: $smallFont;
+  display: block;
+  position: relative;
+  top: -3px;
+}
+
+.ct-error-text {
+  color: $error-text;
+  font-size: 13px;
+}
+
+.ct-hint-text {
+  font-family: inherit;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+}
+
+.ct-see-more {
+  display: inline-block;
+  cursor: pointer;
+  float: right;
+  border-bottom: 1px dotted;
+  line-height: 16px;
+  margin-top: 10px;
+}
+
+.ct-see-more:hover {
+  color: $nav-menu-hover !important;
+}
+
+.ct-top {
+  vertical-align: top;
+}
+
+.ct-subscription {
+  color: $gray-text;
+  font-style: italic;
+}
+
+.ui-datatable-scrollable-header-box {
+  margin-right: 0 !important;
+}
+
+.ct-cancel-button {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px dotted $gray-text;
+  font-size: 17px;
+  font-family: inherit;
+  color: $gray-text;
+  cursor: pointer;
+  transition: .3s;
+
+  &:hover {
+    color: $nav-background;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.ct-dialog-close {
+  background: url(/assets/icons/cancel.svg) no-repeat center center;
+  position: absolute;
+  display: block;
+  width: 14px;
+  height: 14px;
+  right: 0;
+  top: 3px;
+  border: none;
+  opacity: 0.5;
+  outline: none;
+  color: $gray-text;
+  cursor: pointer;
+  transition-duration: .3s;
+
+  &:hover {
+    opacity: 1;
+  }
+  .fa {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,66 @@
+<i class="material-icons ct-lock-icon" *ngIf="!isTimeEntryAvailable"
+   [title]="lockReason">lock</i>
+<ct-entry-time #form [timeEntry]="timeEntry"
+               (timerUpdated)="updateTimer()"
+               (deleted)="deleteTimeEntry()"
+               class="ct-border-{{timeEntry.color}}"></ct-entry-time>
+<div *ngIf="timeEntry.isFromToShow" class="ct-calendar-time-entry-period">
+    {{setTimeString(timeEntry.timeFrom)}} - {{setTimeString(timeEntry.timeTo)}}
+</div>
+
+<a *ngIf="isTimeEntryAvailable && !isTimerShown" class="ct-menu-open-link" (click)="menu.toggleMenu()">
+    <i class="material-icons">more_horiz</i>
+</a>
+
+<ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu "
+         (closed)="isCalendarShown = false">
+    <ct-menu-item [class.ct-disabled]="!currentTimeEntry.id || isTimerShown">
+        <a md-ripple (click)="duplicateAction()">Duplicate <span class="ct-menu-hint">(Alt+Drag)</span></a>
+    </ct-menu-item>
+    <ct-menu-item [autoClose]="false" [class.ct-disabled]="!currentTimeEntry.id || isTimerShown">
+        <div class="ct-menu-container">
+            <a md-ripple (click)="moveAction(submenu)">Move <span>(Drag)</span></a>
+            <ct-menu #submenu [xPosition]="'before'"
+                     class="ct-submenu ct-datepicker-menu"
+                     [class.ct-open-left]="isOpenLeft"
+                     [class.ct-open-right]="isOpenRight"
+                     [class.ct-open-mobile]="isOpenMobile">
+                <ct-datepicker class="ct-datepicker" *ngIf="isCalendarShown"
+                               [firstDayOfWeek]="firstDayOfWeek"
+                               [date]="selectedDate"
+                               [displayDate]="timeEntry.date"
+                               (closed)="submenu.closeMenu()"
+                               (dateChanged)="dateOnChange($event)"></ct-datepicker>
+            </ct-menu>
+        </div>
+    </ct-menu-item>
+    <ct-menu-item [class.ct-disabled]="!currentTimeEntry.id || isTimerShown">
+        <a md-ripple (click)="deleteAction()">Delete</a>
+    </ct-menu-item>
+</ct-menu>
+
+<div class="ct-calendar-time-entry-container" [class.ct-lock-overlay]="!isTimeEntryAvailable">
+    <div (click)="openEntryTimeForm()" [style.height]="calculateCalendarTaskHeight() + 'px'">
+        <div class="ct-calendar-time-entry-title">
+            {{timeEntry.projectName}}
+        </div>
+        <div class="ct-calendar-time-entry-type">
+            {{timeEntry.taskName}}
+        </div>
+        <pre class="ct-calendar-time-entry-description" *ngIf="timeEntry.description">{{ timeEntry.description }}</pre>
+    </div>
+    <div class="ct-calendar-time-entry-time" (click)="openEntryTimeForm()">
+        <div class="ct-calendar-time-entry-hours-tracked" *ngIf="!isTimerShown">
+            <span>{{setTimeString(timeEntry.time)}}</span>
+        </div>
+        <div class="ct-timer-block" *ngIf="isTimerShown" style=" z-index: 2; position:relative;">
+            <span class="ct-clock"><i></i></span>
+            <span>{{timerValue}}</span>
+        </div>
+        <div class="ct-calendar-time-entry-hours-planned" *ngIf="timeEntry.plannedTime > 0">
+            <span>{{setTimeString(timeEntry.plannedTime)}}</span>
+        </div>
+    </div>
+    <div *ngIf="isTimerShown" (click)="stopTimer()" class="ct-calendar-task-stop-timer"></div>
+</div>
+

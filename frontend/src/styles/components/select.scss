@@ -1,0 +1,170 @@
+.ct-select-component {
+  //Added to allow select be focused
+  margin-top: -16px;
+  height: $selectHeight;
+
+  .ct-select-options {
+    height: $selectHeight;
+    cursor: pointer;
+  }
+
+  .ct-select-options-list {
+    position: relative;
+    width: 100%;
+    top: 1px;
+    max-height: 168px;
+    background: #fff;
+    padding: 0;
+    visibility: hidden;
+    display: none;
+    opacity: 0;
+    z-index: 101;
+    transition-duration: .3s;
+    box-shadow: none;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid $form-border;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    .ct-label-item {
+      cursor: pointer;
+    }
+
+    .ct-select-options-wrapper {
+      max-height: 145px;
+      transition-duration: .3s;
+    }
+
+    .slimscroll-wrapper {
+      margin: 0 0 -2px 0 !important;
+    }
+
+    .ct-select-option {
+      position: relative;
+
+      &.ct-select-option-disabled {
+        background: #f0f0f0;
+
+        label {
+          opacity: .3;
+        }
+      }
+    }
+
+    .mat-list-item-content {
+      min-height: 35px;
+      padding: 10px !important;
+      height: auto !important;
+      color: $nav-background;
+      font-size: $baseFont;
+      font-family: $baseFontFamily;
+    }
+
+    .ct-select-option:hover, .ct-select-option-selected {
+      background-color: #f0f0f0;
+    }
+
+    .ct-label-item {
+      word-break: break-all;
+      font-family: $baseFontFamily;
+      font-size: $baseFont;
+    }
+
+    .ct-select-option-selected .ct-label-item {
+      color: #2f8bca !important;
+    }
+  }
+
+  .ct-select-selected-options-text {
+    font-size: $baseFont;
+    padding: 0 16px 0 9px;
+    height: 100%;
+    line-height: 32px;
+    color: $nav-background;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    box-shadow: none !important;
+  }
+
+  &.ct-select-opened {
+    .ct-select-options-list {
+      height: auto;
+      opacity: 1;
+      visibility: visible;
+      display: block;
+    }
+
+    .ct-select-options {
+      height: auto;
+    }
+
+    .ct-select-options-wrapper {
+      max-height: 168px;
+    }
+  }
+
+  &.ct-select-animate {
+    .ct-select-options-list {
+      opacity: 1;
+      height: auto;
+    }
+  }
+}
+
+.ct-archived .ct-select-selected-options-text {
+  opacity: 0.6;
+}
+
+.ct-select {
+  position: relative;
+  height: $selectHeight;
+  font-size: 15px;
+  background-color: $primary-btn-text;
+  border: 1px solid $form-border;
+  box-shadow: none;
+  cursor: pointer;
+  font-family: inherit;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border: 1px solid $nav-link-border;
+  }
+
+  &.ct-disabled {
+    background-color: #ececec;
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 14px;
+    color: $nav-link-border;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid;
+    margin: 0 7px;
+  }
+}
+
+.ct-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+
+  &:focus::-ms-value {
+    background-color: #fff;
+    color: #555;
+  }
+}
+
+.ct-select::-ms-expand {
+  display: none;
+}

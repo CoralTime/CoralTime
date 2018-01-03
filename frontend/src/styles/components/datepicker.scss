@@ -1,0 +1,128 @@
+#datepicker {
+  font-family: inherit;
+  button {
+    background: none;
+    border: none;
+    outline: none;
+  }
+
+  .dp-weekdays {
+    font-family: inherit;
+  }
+
+  .dp-day-calendar-container {
+    padding: 20px;
+  }
+
+  .dp-calendar-nav-container {
+    border: none;
+
+    button {
+      color: $nav-background;
+
+      &.dp-calendar-nav-right, &.dp-calendar-nav-left {
+        display: inline-block;
+        margin: 0 6px;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 0;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transition-duration: .3s;
+
+        &:before, &:after {
+          font-size: 12px;
+          display: inline-block;
+        }
+
+        &:hover {
+          color: $nav-link-border;
+        }
+      }
+
+      &.dp-calendar-nav-right {
+        padding-left: 30px;
+
+        &:before {
+          content: "\f054";
+        }
+      }
+
+      &.dp-calendar-nav-left {
+        padding-right: 30px;
+
+        &:before {
+          content: "\f053";
+        }
+      }
+
+      &.dp-nav-header {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .dp-calendar-wrapper {
+    border: none;
+  }
+
+  .dp-calendar-weekday {
+    border: none;
+    padding: 8px;
+    width: 34px;
+    font-size: 12.5px;
+    color: $nav-link-border;
+  }
+
+  .dp-calendar-day {
+    width: 34px;
+    height: 34px;
+    border-radius: 0;
+    font-size: 13px;
+    color: $nav-background;
+    border: 1px solid transparent;
+
+    &:hover:not([disabled]):not(.dp-selected) {
+      background: $primary-btn;
+      color: $primary-btn-text;
+    }
+
+    &.dp-current-day {
+      color: $nav-link-border !important;
+      border: 1px solid $nav-link-border;
+      font-weight: 700;
+      background: $primary-btn-text !important;
+    }
+
+    &.dp-selected {
+      color: $primary-btn-text;
+      font-weight: 700;
+      background: #50a2e0;
+    }
+
+    &[disabled] {
+      color: $form-border;
+      cursor: not-allowed;
+    }
+  }
+
+  dp-month-calendar {
+    padding: 10px;
+  }
+
+  .dp-calendar-month {
+    border-radius: 4px;
+    color: $nav-background;
+
+    &:hover {
+      background: $primary-btn-hover;
+      color: $primary-btn-text;
+    }
+
+    &.dp-current-month {
+      color: $primary-btn-text;
+      font-weight: 700;
+      background: $primary-btn-hover;
+    }
+  }
+}

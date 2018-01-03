@@ -1,0 +1,6 @@
+<div class="ct-menu" [class.ct-menu-opened]="isOpen" role="menu">
+    <div class="ct-menu-content ct-menu-{{xPosition}}" [isOpen]="isOpen"
+         (clickOutside)="closeMenu()">
+        <ng-content></ng-content>
+    </div>
+</div>

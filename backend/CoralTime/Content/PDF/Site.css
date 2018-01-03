@@ -1,0 +1,93 @@
+/*Common objects*/
+.divIncludeTable {
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+    width: 100%;
+}
+
+/*Default objects*/
+table {
+    width: 100%;
+    font-family: "Roboto Regular", sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    color: #374456;
+    /*border-style: hidden;*/
+}
+
+table td {
+    border: 1px solid black;
+    padding: 2px;
+    text-align: left;
+}
+
+table thead {
+    display: table-header-group;
+}
+
+table tr {
+    page-break-inside: avoid;
+}
+
+/*Common Entity Headers*/
+.tableEntityHeaders {
+    border-collapse: collapse;
+}
+
+.rowCommonEntityHeaders {
+    background: lightgray;
+}
+
+.columnCommonEntityHeaders {
+    border-bottom: none; 
+}
+
+.withoutRightBorder {
+    border-right: none;
+}
+
+.spanCommonEntityHeaders {
+    color: #27A0A7;
+}
+
+.containerFlex {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.childFlexRight {
+    text-align: right;
+    justify-content: flex-end;
+    width: 24%;
+}
+
+.childFlexRight2 {
+    text-align: right;
+    width: 24%;
+}
+
+.childFlexLeft {
+    justify-content: flex-start;
+}
+
+/*Nested Entity Headers*/
+.tableNestedHeaders {
+    border-collapse: collapse;
+    font-size: 8pt;
+}
+
+.rowNestedEntityHeaders {
+    background: #f1f1f1;
+    color: #979797;
+}
+
+/*Nested Entity Rows*/
+.columnNestedEntityRows {
+    width: 350px;
+    max-width: 350px;
+    min-width: 350px;
+    word-wrap: break-word;
+    white-space: initial;
+}

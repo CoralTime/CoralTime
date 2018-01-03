@@ -1,0 +1,82 @@
+<header class="ct-nav">
+    <div class="ct-nav-layout">
+        <div class="ct-nav-col">
+            <div class="ct-nav-logo" [routerLink]="['/home']"></div>
+            <div class="ct-nav-menu">
+                <ul>
+                    <li *ngFor="let item of items" [routerLink]="item.routerLink" routerLinkActive="active">
+                        <a [routerLink]="item.routerLink">
+                            <md-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></md-icon>
+                            <span>{{item.label}}</span>
+                        </a>
+                    </li>
+
+                    <li class="ct-nav-manage-item"
+                        [ngClass]="{'ct-nav-manage-item-show': showManageMenu, active: isManageMenuOpen || manageLinkActive.isActive}"
+                        (click)="toggleManageMenu(manageMenu)">
+                        <a>
+                            <md-icon><i class="ct-nav-icon ct-manage-icon" aria-hidden="true"></i></md-icon>
+                            <span>Manage</span>
+                        </a>
+                    </li>
+                </ul>
+                <ct-menu #manageMenu class="ct-nav-drop-menu ct-nav-manage-menu" xPosition="after" (closed)="isManageMenuOpen = false">
+                    <ul #manageLinkActive="routerLinkActive" routerLinkActive [routerLinkActiveOptions]="{exact:true}"
+                        (window:resize)="onResize()">
+                        <ng-template ngFor let-item [ngForOf]="items">
+                            <li *ngIf="isMobileView()" class="ct-menu-item ct-only-mobile" routerLinkActive="active">
+                                <a [routerLink]="item.routerLink">
+                                    <md-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></md-icon>
+                                    <span>{{item.label}}</span>
+                                </a>
+                            </li>
+                        </ng-template>
+                        <ng-template ngFor let-item [ngForOf]="manageItems">
+                            <li class="ct-menu-item" *ctIsGranted="item.permission" routerLinkActive="active"
+                                (click)="manageMenu.closeMenu()">
+                                <a [routerLink]="item.routerLink">
+                                    <md-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></md-icon>
+                                    <span>{{item.label}}</span>
+                                </a>
+                            </li>
+                        </ng-template>
+                    </ul>
+                </ct-menu>
+            </div>
+        </div>
+        <div class="ct-nav-col">
+            <div class="ct-profile-block">
+                <div class="ct-nav-droplink">
+                    <div class="ct-nav-username">
+                        <a title="View Profile" [routerLink]="['/profile']">{{impersonationName || userInfo?.fullName}}</a>
+                    </div>
+                    <a [routerLink]="['/profile']" title="View Profile" class="ct-userpic">
+                        <ct-user-pic [userId]='impersonationId || authUser.id'></ct-user-pic>
+                    </a>
+                    <i class="fa" [ngClass]="isProfileNavMenuOpen ? 'fa-caret-up' : 'fa-caret-down'" (click)="toggleProfileNavMenu(profileNavMenu)" title="View Settings"></i>
+                </div>
+
+                <ct-menu #profileNavMenu class="ct-nav-drop-menu" xPosition="before" (closed)="isProfileNavMenuOpen = false">
+                    <ct-menu-item class="ct-menu-item">
+                        <a [routerLink]="['/profile/settings']" title="Profile Settings">
+                            <md-icon>settings</md-icon>
+                            <span>Settings</span>
+                        </a>
+                    </ct-menu-item>
+                    <ct-menu-item class="ct-menu-item">
+                        <a>
+                            <md-icon>help</md-icon>
+                            <span>Help</span>
+                        </a>
+                    </ct-menu-item>
+                    <ct-menu-item class="ct-menu-item" (click)="signOut()">
+                        <a>
+                            <md-icon>power_settings_new</md-icon>
+                            <span>Logout</span>
+                        </a>
+                    </ct-menu-item>
+                </ct-menu>
+            </div>
+        </div>
+    </div>
+</header>

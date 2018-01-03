@@ -1,0 +1,720 @@
+.ct-manage-grid-header {
+  margin: -20px -20px 0 -20px;
+  height: 50px;
+  background: $grid-manage-bg;
+
+  .ct-page-tabs {
+    position: absolute;
+    left: 0;
+    margin-top: 12.5px;
+    height: 25px;
+    line-height: 25px;
+    color: $grid-text;
+    font-size: 0;
+
+    a {
+      font-size: 14px;
+      position: relative;
+      cursor: pointer;
+
+      &:first-child:after {
+        content: '';
+        position: absolute;
+        width: 1px;
+        height: 25px;
+        background: $grid-text;
+        right: -15px;
+        cursor: default;
+      }
+
+      &:last-child {
+        margin-left: 30px;
+      }
+    }
+
+    .ct-active-tab {
+      color: $black;
+    }
+  }
+
+  .ct-add-link {
+    position: absolute;
+    right: 0;
+    margin-top: 12.5px;
+    height: 25px;
+    line-height: 25px;
+  }
+}
+
+.ct-user-circle-icon {
+  display: inline-block;
+  position: absolute;
+  top: -3px;
+  width: 25px;
+  height: 19px;
+  overflow: hidden;
+
+  & + * {
+    margin-left: 25px;
+  }
+
+  &:before, &:after {
+    position: absolute;
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    border: 2px solid $main-blue;
+    left: 7px;
+    top: 3px;
+  }
+  &:after {
+    width: 12px;
+    height: 10px;
+    top: 13px;
+    left: 3px;
+  }
+}
+
+.ct-grid-settings {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 40px;
+  height: 25px;
+  border-radius: 12.5px;
+  background: url(/assets/icons/grid-settings.svg) no-repeat center;
+  background-size: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  &:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, .8);
+  }
+}
+
+.ct-manage-add {
+  position: relative;
+  &:before, &:after {
+    position: absolute;
+    content: '';
+    left: -17px;
+    top: 4px;
+    width: 1px;
+    height: 17px;
+    background: $main-blue;
+  }
+  &:after {
+    height: 1px;
+    width: 17px;
+    left: -25px;
+    top: 12px;
+  }
+}
+
+tr:hover .ct-grid-settings {
+  background: url(/assets/icons/grid-settings.svg) no-repeat center, white;
+  background-size: 16px;
+  &:after {
+    background: rgba(255, 255, 255, .4);
+  }
+}
+
+.ct-grid-container {
+  tr {
+    vertical-align: top;
+    td {
+      position: relative;
+      color: $grid-text;
+      word-break: break-all;
+      word-break: break-word;
+
+      &.ct-column-description {
+        vertical-align: top;
+      }
+    }
+  }
+
+  .ui-cell-data {
+    position: relative;
+  }
+
+  .ct-proj-client-name {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+
+    @media (min-width: 1820px) {
+      max-width: 470px;
+    }
+
+    @media (max-width: 1819px) {
+      max-width: 420px;
+    }
+
+    @media (max-width: 1700px) {
+      max-width: 380px;
+    }
+
+    @media (max-width: 1615px) {
+      max-width: 350px;
+    }
+
+    @media (max-width: 1455px) {
+      max-width: 300px;
+    }
+
+    @media (max-width: 1310px) {
+      max-width: 240px;
+    }
+
+    @media (max-width: 1135px) {
+      max-width: 190px;
+    }
+  }
+
+  .ct-edit-links {
+    position: relative;
+    top: -8px;
+  }
+
+  .ui-paginator-bottom {
+    display: none !important;
+  }
+
+  .ui-datatable-scrollable-header {
+    background: none !important;
+  }
+  .ui-datatable-scrollable-body {
+    padding-right: 0;
+    max-height: calc(100vh - 146px);
+  }
+  .ui-datatable-scrollable-wrapper {
+    .slimscroll-wrapper {
+      margin-top: 20px;
+      .slimscroll-grid {
+        right: 0 !important;
+      }
+      .slimscroll-bar {
+        right: 3px !important;
+      }
+    }
+  }
+
+  .ui-datatable-tablewrapper table {
+    margin-bottom: 10px !important;
+  }
+
+  .ui-datatable-tablewrapper table, .ui-datatable-scrollable-wrapper table {
+    border: none;
+    border-bottom: 1px;
+    font-family: inherit;
+    font-size: $baseFont;
+
+    @media (max-width: 1065px) {
+      table-layout: fixed;
+    }
+
+    tr {
+      > td {
+        color: $grid-text;
+        font-family: inherit;
+        font-size: $baseFont;
+      }
+
+      > td:nth-child(1) {
+        .ct-link-text {
+          text-transform: none !important;
+        }
+      }
+
+      .ct-grid-links-col {
+        min-width: 300px;
+      }
+
+      .ui-datatable-emptymessage {
+        text-align: left !important;
+        background: #fff !important;
+        padding-top: 30px;
+      }
+    }
+
+    tr, td, th, .ui-widget-content {
+      border: none !important;
+      font-family: inherit;
+    }
+    th:first-child,
+    td:first-child {
+      padding-left: 20px !important;
+    }
+
+    .ui-datatable-odd {
+      background: transparent !important;
+    }
+
+    thead {
+      &:after {
+        position: absolute;
+        content: '';
+        width: calc(100% - 40px);
+        height: 1px;
+        background: #f2f2f2;
+        bottom: 0;
+        left: 20px;
+      }
+
+      tr, td, th {
+        background: transparent !important;
+        color: $grid-text;
+        text-transform: capitalize;
+        font-size: $baseFont;
+        font-family: inherit;
+      }
+
+      th {
+        text-align: left;
+        padding: 15px 8px 8px 8px;
+        color: $black;
+
+        span.fa {
+          font-size: $baseFont;
+          top: 0;
+          position: relative;
+        }
+      }
+
+      .fa-unsorted, .fa-sort {
+        &:before {
+          content: "\f077"
+        }
+
+        &:after {
+          content: "\f078"
+        }
+      }
+
+      .fa-sort-up, .fa-sort-asc {
+        &:before {
+          content: "\f077";
+        }
+        &:after {
+          content: "";
+        }
+      }
+
+      .fa-sort-down, .fa-sort-desc {
+        &:before {
+          content: "\f078";
+        }
+        &:after {
+          content: "";
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          padding: 0.9em .5em;
+          font-size: $baseFont;
+          font-family: inherit;
+        }
+
+        > td:last-child {
+          padding-right: 20px !important;
+        }
+      }
+    }
+  }
+
+  .ct-grid-label {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    top: -2px;
+
+    & + .ct-grid-link-text {
+      display: inline-block;
+      vertical-align: top;
+      margin-left: 30px;
+    }
+  }
+
+  .ct-color- {
+    border: 1px solid $form-border;
+  }
+
+  $colors: $color1, $color2, $color3, $color4;
+  $i: -1;
+  @each $color in $colors {
+    $i: $i + 1;
+
+    .ct-color-#{$i} {
+      border: 1px solid transparent;
+    }
+  }
+
+  .ct-grid-proj-name, .ct-grid-client-name {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ct-grid-proj-name {
+    @media (min-width: 1801px) {
+      max-width: 430px;
+    }
+
+    @media (max-width: 1800px) {
+      max-width: 380px;
+    }
+
+    @media (max-width: 1705px) {
+      max-width: 360px;
+    }
+
+    @media (max-width: 1615px) {
+      max-width: 320px;
+    }
+
+    @media (max-width: 1465px) {
+      max-width: 260px;
+    }
+
+    @media (max-width: 1315px) {
+      max-width: 220px;
+    }
+
+    @media (max-width: 1180px) {
+      max-width: 200px;
+    }
+
+    @media (max-width: 1110px) {
+      max-width: 150px;
+    }
+  }
+
+  .ct-grid-client-name {
+    @media (min-width: 1801px) {
+      max-width: 670px;
+    }
+
+    @media (max-width: 1800px) {
+      max-width: 610px;
+    }
+
+    @media (max-width: 1705px) {
+      max-width: 545px;
+    }
+
+    @media (max-width: 1615px) {
+      max-width: 530px;
+    }
+
+    @media (max-width: 1615px) {
+      max-width: 500px;
+    }
+
+    @media (max-width: 1465px) {
+      max-width: 450px;
+    }
+
+    @media (max-width: 1355px) {
+      max-width: 400px;
+    }
+
+    @media (max-width: 1315px) {
+      max-width: 350px;
+    }
+
+    @media (max-width: 1180px) {
+      max-width: 300px;
+    }
+
+    @media (max-width: 1110px) {
+      max-width: 260px;
+    }
+  }
+
+  .ct-grid-proj-name.ct-user-name {
+    @media (min-width: 1790px) {
+      max-width: 430px !important;
+    }
+
+    @media (max-width: 1789px) {
+      max-width: 380px;
+    }
+
+    @media (max-width: 1650px) {
+      max-width: 340px;
+    }
+
+    @media (max-width: 1565px) {
+      max-width: 300px;
+    }
+
+    @media (max-width: 1420px) {
+      max-width: 250px;
+    }
+
+    @media (max-width: 1270px) {
+      max-width: 210px;
+    }
+
+    @media (max-width: 1180px) {
+      max-width: 170px;
+    }
+  }
+
+  .ct-grid-proj-name.ct-task-name {
+    @media (min-width: 1800px) {
+      max-width: 580px !important;
+    }
+
+    @media (max-width: 1799px) {
+      max-width: 540px;
+    }
+
+    @media (max-width: 1705px) {
+      max-width: 510px;
+    }
+
+    @media (max-width: 1615px) {
+      max-width: 480px;
+    }
+
+    @media (max-width: 1580px) {
+      max-width: 450px;
+    }
+
+    @media (max-width: 1435px) {
+      max-width: 400px;
+    }
+
+    @media (max-width: 1300px) {
+      max-width: 350px;
+    }
+
+    @media (max-width: 1180px) {
+      max-width: 300px;
+    }
+  }
+
+  .ct-grid-link {
+    cursor: pointer;
+
+    i.ct-controls-icon {
+      font-size: 20px;
+      top: -6px;
+      position: relative;
+    }
+
+    i.ct-edit-timesheet-icon {
+      display: inline-block;
+      font-size: 20px;
+      top: 1px;
+      position: relative;
+      background: white;
+      width: 40px;
+      height: 25px;
+      border-radius: 12.5px;
+      text-align: center;
+    }
+  }
+
+  .ct-grid-link:hover {
+    color: $main-blue !important;
+
+    .ct-link-text, .ct-status-gray {
+      color: $main-blue !important;
+    }
+  }
+
+  .ct-grid-link-text {
+    color: $black;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ct-grid-count, .ct-grid-ellipse {
+    position: relative;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    display: inline-block;
+    background: white;
+    border-radius: 12.5px;
+    padding: 0 9px;
+    span {
+      color: transparent;
+    }
+  }
+
+  .ct-grid-button {
+    display: inline-block;
+    position: relative;
+    margin: -5px 0;
+    color: white;
+    background: $primary-btn-hover;
+    height: 35px;
+    padding: 0 15px;
+    line-height: 35px;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    top: 0;
+    right: 1px;
+    font-size: 14px;
+  }
+
+  .ct-grid-button-search {
+    top: 6px;
+  }
+
+  .ct-grid-delete {
+    vertical-align: middle;
+  }
+
+  .ct-grid-count {
+    color: $black;
+  }
+
+  $selectHeight: 25px;
+
+  .ct-select-ellipse {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 15px;
+
+    .ct-select-component, .ct-select-options, .ct-select {
+      height: $selectHeight;
+    }
+
+    .ct-select {
+      background-color: inherit;
+      border: none;
+
+      &:after {
+        display: none;
+      }
+    }
+
+    .ct-select-selected-options-text {
+      padding: 0 45px 0 9px;
+      line-height: $selectHeight;
+      background: white;
+      border-radius: 12.5px;
+    }
+  }
+
+  tr:hover {
+    .ct-select-ellipse {
+      .ct-users-project-edit-role,
+      .ct-select-selected-options-text {
+        color: $main-blue
+      }
+    }
+  }
+
+  .ct-manage-text {
+    padding-left: 6px;
+  }
+
+  tr:hover .ct-grid-count,
+  tr:hover .ct-grid-ellipse {
+    color: $nav-background !important;
+    span {
+      color: $main-blue !important;
+    }
+  }
+
+  .ct-status-gray {
+    color: #a4a4a4;
+    top: 3px;
+    position: relative;
+    font-size: 18px;
+  }
+
+  .ui-paginator-bottom {
+    background: transparent;
+    border: none;
+    text-align: left;
+    margin-top: 20px;
+    border-top: 2px solid #f2f2f2;
+    width: 100%;
+    display: block;
+    padding-left: 125px;
+    padding-top: 25px;
+  }
+
+  .ui-paginator-rpp-options {
+    float: left;
+  }
+}
+
+.ct-table {
+  table tbody {
+    > tr:hover, .ui-datatable-odd:hover {
+      background-color: #f7f5f5 !important;
+    }
+  }
+}
+
+.ct-projects-page {
+  table {
+    tbody tr {
+      > td:last-child .ui-cell-data {
+        > .ct-grid-link:nth-child(2) {
+          .ct-grid-count {
+            left: 4px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.ct-tasks-page {
+  table {
+    tbody tr {
+      > td:last-child {
+        text-align: left !important;
+      }
+
+      > td:last-child .ui-cell-data {
+        top: 0 !important;
+      }
+    }
+  }
+}
+
+.ct-dialog {
+  .ct-select-selected-options-text {
+
+  }
+  .ct-grid {
+    margin: 0 -20px;
+  }
+}
+
+.ct-grid-loading {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 37px;
+  text-align: center;
+  margin-top: -37px;
+  background: white;
+}
+
+.ct-visible {
+  overflow: visible !important;
+
+  .ui-datatable-scrollable-body {
+    overflow: visible !important;
+  }
+}

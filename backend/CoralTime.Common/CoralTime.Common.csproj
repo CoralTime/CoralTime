@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1.2</TargetFramework>
+    <AssemblyName>CoralTime.Common</AssemblyName>
+    <PackageId>CoralTime.Common</PackageId>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="2.9.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.1.3" />
+    <PackageReference Include="NETCore.MailKit" Version="1.0.1" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.1" />
+  </ItemGroup>
+
+</Project>

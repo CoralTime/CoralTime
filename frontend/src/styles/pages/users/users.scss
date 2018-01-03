@@ -1,0 +1,37 @@
+.ct-users-project-edit-role {
+  .ct-select-options-list {
+    top: 10px;
+  }
+
+  .ct-select-options {
+    &.ct-show-to-top {
+      position: relative;
+
+      .ct-select-options-list {
+        position: absolute;
+        top: auto;
+        bottom: calc(100% + 4px);
+      }
+    }
+  }
+}
+
+.fa.ct-users-project-edit-role {
+  position: absolute;
+  top: 5px;
+  color: transparent;
+  font-size: 14px;
+  left: auto;
+  right: 12px;
+}
+
+.ct-grid-userpic {
+  position: absolute;
+  top: -7px;
+
+  & + .ct-grid-link-text {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 40px;
+  }
+}

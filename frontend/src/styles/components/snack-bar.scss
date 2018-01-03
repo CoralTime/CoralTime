@@ -1,0 +1,9 @@
+@import '../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+
+.snack-bar-success {
+  background-color: $brand-success !important;
+}
+
+.snack-bar-danger {
+  background-color: $brand-danger !important;
+}

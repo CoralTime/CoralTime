@@ -1,0 +1,33 @@
+.ct-error-page {
+  .ct-exception-panel {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    max-width: 500px;
+    margin: 60px auto 0 auto;
+
+    h1 {
+      font-size: 38px;
+      color: $nav-background;
+
+      .material-icons {
+        font-size: 40px;
+        position: relative;
+        top: 5px;
+        right: 10px;
+      }
+    }
+
+    .ct-exception-details {
+      margin: 40px auto 20px auto;
+    }
+
+    .ct-primary-button .material-icons {
+      position: relative;
+      right: 8px;
+      top: -2px;
+      font-size: 28px;
+    }
+  }
+}
+
