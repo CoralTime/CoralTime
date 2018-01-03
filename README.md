@@ -6,7 +6,7 @@ CoralTime is developed by Coral Team, BV and released as open source product und
 
 GitHub: https://github.com/CoralTime/CoralTime
 
-Demo: http://coraltime.azurewebsites.net/login (login as Admin/password or User/password or PM/password)
+Demo: http://coraltime.azurewebsites.net/login (login as admin/password or user/password or pm/password)
 
 The technology stack:
 .NET Core
