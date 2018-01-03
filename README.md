@@ -5,8 +5,8 @@ CoralTime is a simple, easy to use web-based Time Tracking system. Use it to tr
 CoralTime is developed by Coral Team, BV and released as open source product under MIT license. 
 
 GitHub: https://github.com/CoralTime/CoralTime
-Demo: http://coraltime.azurewebsites.net/login
-(login as Admin/Admin or User/User)
+
+Demo: http://coraltime.azurewebsites.net/login (login as Admin/password or User/password or PM/password)
 
 The technology stack:
 .NET Core
