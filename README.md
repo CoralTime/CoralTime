@@ -12,4 +12,4 @@ The technology stack:
 .NET Core
 Angular 4
 
-<h2>How To Run CoralTime:</h2> https://github.com/CoralTime/CoralTime/wiki/How-to-run-CoralTime
+<h1><a href='https://github.com/CoralTime/CoralTime/wiki/How-to-run-CoralTime'>How To Run CoralTime:</a></h1> 
