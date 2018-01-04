@@ -11,3 +11,5 @@ Demo: http://coraltime.azurewebsites.net/login (login as admin/password or user/
 The technology stack:
 .NET Core
 Angular 4
+
+How To Run CoralTime: https://github.com/CoralTime/CoralTime/wiki/How-to-run-CoralTime
