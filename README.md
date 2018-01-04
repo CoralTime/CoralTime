@@ -1,4 +1,4 @@
-# CoralTime
+<h1>CoralTime</h1>
 
 CoralTime is a simple, easy to use web-based Time Tracking system. Use it to track time for yourself, your team, your project or your company. CoralTime allows for tracking the time by Clients, Projects and Tasks.
 
