@@ -14,7 +14,7 @@ http://coraltime.azurewebsites.net/login <br />
 .NET Core
 Angular 4
 
-<h1>How To Run CoralTime:</h1> 
+<h1>How To Run CoralTime</h1> 
 https://github.com/CoralTime/CoralTime/wiki/How-to-run-CoralTime
 <br /><br /><br /><br />
 
