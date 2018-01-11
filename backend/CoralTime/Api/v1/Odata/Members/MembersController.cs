@@ -97,7 +97,7 @@ namespace CoralTime.Api.v1.Odata.Members
             {
                 var createNewUserResult = await _service.CreateNewUser(memberData);
 
-                if (memberData.SentInvitationEmail)
+                if (memberData.SendInvitationEmail)
                 {
                     var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
                     await _service.SentInvitationEmailAsync(memberData, baseUrl);
@@ -138,7 +138,7 @@ namespace CoralTime.Api.v1.Odata.Members
             {
                 var updatedMember = await _service.Update(this.GetUserName(), memberView);
 
-                if (memberView.SentInvitationEmail)
+                if (memberView.SendInvitationEmail)
                 {
                     var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
                     await _service.SentUpdateAccountEmailAsync(updatedMember, baseUrl);
