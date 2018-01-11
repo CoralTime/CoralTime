@@ -16,5 +16,5 @@ Angular 4
 https://github.com/CoralTime/CoralTime/wiki/How-to-run-CoralTime
 
 
-
+coraltime.help@gmail.com
 Copyright 2018, CoralTeam
