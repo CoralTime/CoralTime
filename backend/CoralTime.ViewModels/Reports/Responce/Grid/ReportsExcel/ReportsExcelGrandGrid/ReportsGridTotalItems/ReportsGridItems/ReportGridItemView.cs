@@ -9,8 +9,6 @@ namespace CoralTime.ViewModels.Reports
 
         public string ClientName { get; set; }
 
-        public DateTime Date { get; set; }
-
         public int ProjectId { get; set; }
 
         public string ProjectName { get; set; }
@@ -22,6 +20,8 @@ namespace CoralTime.ViewModels.Reports
         public int TaskId { get; set; }
 
         public string TaskName { get; set; }
+
+        public DateTime Date { get; set; }
 
         public string TimeFrom{ get; set; }
 

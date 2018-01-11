@@ -8,8 +8,6 @@ namespace CoralTime.ViewModels.Reports.Responce.ReportsGrid
 
         string ClientName { get; set; }
 
-        DateTime Date { get; set; }
-
         int ProjectId { get; set; }
 
         string ProjectName { get; set; }
@@ -21,6 +19,8 @@ namespace CoralTime.ViewModels.Reports.Responce.ReportsGrid
         int TaskId { get; set; }
 
         string TaskName { get; set; }
+
+        DateTime Date { get; set; }
 
         string TimeFrom { get; set; }
 

@@ -308,6 +308,7 @@ namespace CoralTime.BL.Services
             try
             {
                 Uow.MemberRepository.Update(memberByName);
+
                 Uow.Save();
 
                 _memberService.ChangeEmailByUserAsync(memberByName, memberPreferencesView.Email).GetAwaiter().GetResult();

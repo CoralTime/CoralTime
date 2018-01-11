@@ -50,17 +50,17 @@
         <pre class="ct-calendar-time-entry-description" *ngIf="timeEntry.description">{{ timeEntry.description }}</pre>
     </div>
     <div class="ct-calendar-time-entry-time" (click)="openEntryTimeForm()">
-        <div class="ct-calendar-time-entry-hours-tracked" *ngIf="!isTimerShown">
+        <div *ngIf="!isTimerShown" class="ct-calendar-time-entry-hours-tracked" title="Tracked time">
             <span>{{setTimeString(timeEntry.time)}}</span>
         </div>
-        <div class="ct-timer-block" *ngIf="isTimerShown" style=" z-index: 2; position:relative;">
+        <div *ngIf="isTimerShown" class="ct-timer-block" style=" z-index: 2; position:relative;">
             <span class="ct-clock"><i></i></span>
             <span>{{timerValue}}</span>
         </div>
-        <div class="ct-calendar-time-entry-hours-planned" *ngIf="timeEntry.plannedTime > 0">
+        <div *ngIf="timeEntry.plannedTime > 0" class="ct-calendar-time-entry-hours-planned" title="Planned time">
             <span>{{setTimeString(timeEntry.plannedTime)}}</span>
         </div>
     </div>
-    <div *ngIf="isTimerShown" (click)="stopTimer()" class="ct-calendar-task-stop-timer"></div>
+    <div *ngIf="isTimerShown" title="Stop timer" (click)="stopTimer()" class="ct-calendar-task-stop-timer"></div>
 </div>
 

@@ -98,7 +98,7 @@
     </div>
     <div class="ct-time-period clearfix">
         <div class="ct-actual-time" [class.ct-disabled-form]="isTimerShown">
-            <span class="ct-period-icon"></span>
+            <span class="ct-period-icon" title="Tracked time"></span>
             <input name="actualHours" numberOnly [time]="24" maxlength="2" autocomplete="off"
                    [(ngModel)]="actualTime.hours"
                    (ngModelChange)="actualTimeOnChange()"
@@ -110,7 +110,7 @@
                    [disabled]="isTimerShown">
         </div>
         <div class="ct-planned-time">
-            <span class="ct-period-icon"></span>
+            <span class="ct-period-icon" title="Planned time"></span>
             <input name="plannedHours" numberOnly [time]="'24'" maxlength="2" autocomplete="off"
                    [(ngModel)]="plannedTime.hours"
                    (ngModelChange)="plannedTimeOnChange()">

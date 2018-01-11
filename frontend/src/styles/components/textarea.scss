@@ -1,3 +1,5 @@
+$textAreaHeight: 116px;
+
 .ct-textarea-component {
   padding: 4px 9px;
   border: 1px solid $form-border;
@@ -9,7 +11,7 @@
 
   .ct-textarea {
     box-sizing: border-box;
-    min-height: 115px;
+    min-height: $textAreaHeight;
     outline: none;
     background: $primary-btn-text;
     font-family: Roboto Regular, sans-serif;
@@ -19,8 +21,8 @@
   }
 
   .ct-textarea-container {
-    min-height: 115px;
-    max-height: 115px;
+    min-height: $textAreaHeight;
+    max-height: $textAreaHeight;
     padding: 1px 10px 1px 0;
   }
 

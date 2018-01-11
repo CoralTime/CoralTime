@@ -13,12 +13,14 @@ namespace CoralTime.Common.Constants
         public const string JwtIsManagerClaimType = "isManager";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
-        public const string SecureHeaderValue = "QSY0n-vFCEqpp2gGFbGIBw";
+        public const int SecondsInThisDay = 86400;
+
+
+        public static string EnvName { get; set; }
 
         public const string SecureHeaderNotification = "SecureHeaderNotification";
-        public const string SecureHeaderService = "SecureHeaderService";
 
-        public const int SecondsInThisDay = 86400;
+        public const string SecureHeaderService = "SecureHeaderService";
 
         public enum LockTimePeriod
         {

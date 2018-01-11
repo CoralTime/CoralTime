@@ -50,9 +50,12 @@ export class CustomHttp extends Http {
 						return Observable.throw(error);
 					});
 			}
+
 			this.navigateToLogin();
 		}
 
+
+		this.navigateToLogin();
 		return Observable.throw(error);
 	}
 
@@ -95,9 +98,11 @@ export class CustomHttp extends Http {
 		return headers;
 	}
 
-	private navigateToLogin(): void {
-		this.notificationService.danger('Your session is expired.');
+	private navigateToLogin(): void {	
 		let authService = this.injector.get(AuthService);
-		authService.logout();
+		if (authService.isLoggedIn()) {
+            this.notificationService.danger('Your session is expired.');
+            authService.logout();			
+		}
 	}
 }

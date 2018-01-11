@@ -68,6 +68,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	private oldActualTime: Time;
 	private oldPlannedTime: Time;
 	private dayInfo: CalendarDay;
+	private defaultProject: Project;
 	private totalTrackedTimeForDay: number;
 	private totalPlannedTimeForDay: number;
 
@@ -143,11 +144,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	// TIMER
 
 	canActivateTimer(): boolean {
-		return !this.calendarService.isTimerActivated
-			|| this.isTimerShown
-			|| !this.isToday()
-			|| !this.currentTimeEntry.projectId
-			|| !this.currentTimeEntry.taskTypesId;
+		return this.isTimerShown
+			|| (!this.calendarService.isTimerActivated
+			&& this.isToday()
+			&& !!this.currentTimeEntry.projectId
+			&& !!this.currentTimeEntry.taskTypesId);
 	}
 
 	isToday(): boolean {
@@ -192,6 +193,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.startTimer();
 			}
 			this.calendarService.isTimerActivated = this.isTimerShown;
+			this.calendarService.setDefaultProject(this.projectModel);
 			this.closeEntryTimeForm.emit();
 		})
 	}
@@ -321,6 +323,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			() => {
 				this.isRequestLoading = false;
 				this.saveTimeEntry(this.currentTimeEntry);
+				this.calendarService.setDefaultProject(this.projectModel);
 				if (!this.currentTimeEntry.id) {
 					this.notificationService.success('New Time Entry has been successfully created.')
 				} else {
@@ -391,13 +394,23 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.projectsService.getProjects(true).subscribe((res) => {
 			this.projectList = this.removeNonActiveProjects(res);
 			this.projectList = this.filterProjects(this.projectList);
-			this.projectModel = ArrayUtils.findByProperty(this.projectList, 'id', this.currentTimeEntry.projectId || this.userInfo.defaultProjectId);
+
+			this.defaultProject = this.calendarService.defaultProject;
+			if(this.defaultProject) {
+			this.projectModel = ArrayUtils.findByProperty(this.projectList, 'id',
+				this.currentTimeEntry.projectId || this.defaultProject.id || this.userInfo.defaultProjectId);
+			} else {
+				this.projectModel = ArrayUtils.findByProperty(this.projectList, 'id',
+					this.currentTimeEntry.projectId || this.userInfo.defaultProjectId);
+			}
+
 			if (this.projectList.length == 1) {
 				this.currentTimeEntry.projectName = this.projectList[0].name;
 				this.currentTimeEntry.projectId = this.projectList[0].id;
 				this.currentTimeEntry.color = this.projectList[0].color;
 				this.loadTasks(this.timeEntry.projectId);
 			}
+
 			if (this.projectModel) {
 				this.timeEntry.projectId = this.projectModel.id;
 				this.timeEntry.projectName = this.projectModel.name;

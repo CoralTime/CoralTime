@@ -15,7 +15,7 @@ namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportExportService
     {
-        private byte[] CreateFileExcel<T>(IReportsGrandGridView<T> data)
+        private byte[] CreateFileExcel<T>(IReportsGrandGridView<T> groupingList)
         {
             if (!RunSetCommonValuesForExport)
             {
@@ -45,7 +45,7 @@ namespace CoralTime.BL.Services.Reports.Export
                     //Add Sheet Data.
                     // Get the SharedStringTablePart. (only for set string type of data, other type working is good).
                     var shareStringPart = spreadsheetDocument.WorkbookPart.AddNewPart<SharedStringTablePart>();
-                    var sheetData = CreateSheetData(data, shareStringPart);
+                    var sheetData = CreateSheetData(groupingList, shareStringPart);
 
                     #region Merge Cells
 
@@ -80,6 +80,7 @@ namespace CoralTime.BL.Services.Reports.Export
                 SheetId = 1,
                 Name = "Group By " + GetDescriptionGroupById(GroupById)
             };
+
             sheets.Append(sheet);
         }
 
@@ -87,27 +88,27 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             switch (groupById)
             {
-                case 0:
+                case (int) Constants.ReportsGroupBy.None:
                 {
                     return Constants.ReportsGroupBy.None.ToString();
                 }
 
-                case 1:
+                case (int) Constants.ReportsGroupBy.Project:
                 {
                     return Constants.ReportsGroupBy.Project.ToString();
                 }
 
-                case 2:
+                case (int) Constants.ReportsGroupBy.User:
                 {
                     return Constants.ReportsGroupBy.User.ToString();
                 }
 
-                case 3:
+                case (int) Constants.ReportsGroupBy.Date:
                 {
                     return Constants.ReportsGroupBy.Date.ToString();
                 }
 
-                case 4:
+                case (int) Constants.ReportsGroupBy.Client:
                 {
                     return Constants.ReportsGroupBy.Client.ToString();
                 }
@@ -132,52 +133,78 @@ namespace CoralTime.BL.Services.Reports.Export
             wbsp.Stylesheet.Save();
         }
 
+        private enum FormatsForCells
+        {
+            RowHeaderNameTotalTotalForGroupBy = 0,
+            RowHeaderValueTotalTotalFor = 1,
+            RowHeaderNamesEntity = 2,
+            RowHeaderValuesEntity = 3
+        }
+
+        private enum FontsFormatForCells
+        {
+            RowHeaderNameTotalTotalForGroupBy = 0,
+            RowHeaderValueTotalTotalFor = 1,
+            RowHeaderNamesEntity = 2,
+            RowHeaderValuesEntity = 3
+        }
         private Stylesheet CreateStyleSheet()
         {
             var stylesheet = new Stylesheet();
 
-            #region (Default) Font 0 settings (bold, 10ph, "Verdana", "Black").
+            var fontNameRobotoRegular = "Roboto Regular";
+
+            var fontSize10D = 10D;
+
+            var fontColorBlue = "FF099cce";
+            var fontColorBlack = "FF000000";
+            var fontColorLightGrey = "FF404040";
+
+            var fontBold = new Bold();
+
+            #region Font 0 settings (10px, "RobotoRegular", "LightGrey") (RowsHeadersValuesEntity) 
 
             var font0 = new Font();
 
-            font0.Append(new FontSize { Val = 10D });
-            font0.Append(new FontName { Val = "Verdana" });
-            font0.Append(new Color { Rgb = HexBinaryValue.FromString("FF000000") });
+            font0.Append(new FontSize { Val = fontSize10D });
+            font0.Append(new FontName { Val = fontNameRobotoRegular });
+            font0.Append(new Color { Rgb = HexBinaryValue.FromString(fontColorLightGrey) });
 
             #endregion
 
-            #region (Info) Font 1 settings (bold, 10ph, "Arial", "Green").
+            #region Font 1 settings (10px, "RobotoRegular", "Blue") (RowHeaderNameTotalFor  + RowHeaderNameTotal + RowHeaderNameGroupByDefault ) 
 
             var font1 = new Font();
 
-            font1.Append(new Bold());
-            font1.Append(new FontSize { Val = 10D });
-            font1.Append(new FontName { Val = "Arial" });
-            font1.Append(new Color { Rgb = HexBinaryValue.FromString("FF6AA84F") });
+            font1.Append(new FontSize { Val = fontSize10D });
+            font1.Append(new FontName { Val = fontNameRobotoRegular });
+            font1.Append(new Color { Rgb = HexBinaryValue.FromString(fontColorBlue) });
 
             #endregion
 
-            #region (Common headers) Font 2 settings (bold, 10ph, "Arial", "Blue" ).
+            #region Font 2 settings (10px, "RobotoRegular", "Black") (Row period date) 
 
             var font2 = new Font();
 
             font2.Append(new Bold());
-            font2.Append(new FontSize { Val = 10D });
-            font2.Append(new FontName { Val = "Arial" });
-            font2.Append(new Color { Rgb = HexBinaryValue.FromString("FF099cce") });
+            font2.Append(new FontSize { Val = fontSize10D });
+            font2.Append(new FontName { Val = fontNameRobotoRegular });
+            font2.Append(new Color { Rgb = HexBinaryValue.FromString(fontColorBlack) });
 
             #endregion
 
-            #region (Nested headers) Font 3 settings (bold, 10ph, "Arial", "Black" ).
+            #region Font 3 settings (10px, "RobotoRegular", "Black", bold) (Row entity headers names + Row total HeaderValue + Row totalFor HeaderValue) 
 
             var font3 = new Font();
 
-            font3.Append(new Bold());
-            font3.Append(new FontSize { Val = 10D });
-            font3.Append(new FontName { Val = "Arial" });
-            font3.Append(new Color { Rgb = HexBinaryValue.FromString("FF000000") });
+            //font3.Append(fontBold);
+            font3.Append(new FontSize { Val = fontSize10D });
+            font3.Append(new FontName { Val = fontNameRobotoRegular });
+            font3.Append(new Color { Rgb = HexBinaryValue.FromString(fontColorBlack) });
 
             #endregion
+
+            #region Add fonts, fills, borders.
 
             // Add Fonts.
             var fonts = new Fonts();
@@ -188,10 +215,10 @@ namespace CoralTime.BL.Services.Reports.Export
 
             // Add fills.
             var fill0 = new Fill();
-            var fill1 = new Fill(); // (Info)
-            var fill2 = new Fill(); // (Common headers)
-            var fill3 = new Fill(); // (Nested headers) 
-            var fill4 = new Fill(); // (Nested rows) 
+            var fill1 = new Fill(); // 
+            var fill2 = new Fill(); // 
+            var fill3 = new Fill(); //  
+            var fill4 = new Fill(); // 
 
             var fills = new Fills();
             fills.Append(fill0);
@@ -201,13 +228,14 @@ namespace CoralTime.BL.Services.Reports.Export
             fills.Append(fill4);
 
             #region (Nested headers) Fill 3 (grey)
-            //#f1f1f1
+
+            var backgroundColorLightGray = "FFf1f1f1"; //#f1f1f1
             var solidlightBlue = new PatternFill
             {
                 PatternType = PatternValues.Solid,
                 ForegroundColor = new ForegroundColor
                 {
-                    Rgb = HexBinaryValue.FromString("FFf1f1f1")
+                    Rgb = HexBinaryValue.FromString(backgroundColorLightGray)
                 }
             };
             //solidlightBlue.ForegroundColor = new ForegroundColor { Rgb = HexBinaryValue.FromString("FF099cce") };
@@ -252,17 +280,20 @@ namespace CoralTime.BL.Services.Reports.Export
             var borders = new Borders();
             borders.Append(border0);
 
-            // CellFormats.
+            #endregion
+
             var verticalAligmentTop = new EnumValue<VerticalAlignmentValues>(VerticalAlignmentValues.Top);
+            var verticalAligmentCenter = new EnumValue<VerticalAlignmentValues>(VerticalAlignmentValues.Center);
             var verticalAligmentBottom = new EnumValue<VerticalAlignmentValues>(VerticalAlignmentValues.Bottom);
-            //var cellformat0 = new CellFormat { FontId = 0, FillId = 3, BorderId = 0 };
-            var cellformat0 = new CellFormat { FontId = 0, FillId = 0, Alignment = new Alignment { Vertical = verticalAligmentTop, WrapText = true } };
-            var cellformat1 = new CellFormat { FontId = 1, Alignment = new Alignment { Vertical = verticalAligmentTop, WrapText = true } }; // Info
-            var cellformat2 = new CellFormat { FontId = 2, Alignment = new Alignment { Vertical = verticalAligmentBottom, WrapText = true } };  // (Common headers)
-            var cellformat3 = new CellFormat { FontId = 3, FillId = 3, Alignment = new Alignment { WrapText = true } };  // (Nested headers) 
-            var cellformat4 = new CellFormat { FontId = 0, Alignment = new Alignment { Vertical = verticalAligmentTop, WrapText = true } };  // (Nested rows) 
-            var cellformat5 = new CellFormat { FontId = 0, Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Right, Vertical = verticalAligmentTop, WrapText = true } };  // (Nested rows, columns: Estimated, Actual) 
-            var cellformat6 = new CellFormat { FontId = 0, Alignment = new Alignment { Horizontal = HorizontalAlignmentValues.Left, Vertical = verticalAligmentTop, WrapText = true } };  // (Nested rows, columns: Estimated, Actual) 
+
+            // CellFormats.
+            var cellformat0 = new CellFormat { FontId = 0, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter }, /*FillId = 0,*/ }; // RowHeaderNameGroupByDefault  + RowHeaderNameTotal + RowHeaderNameTotalFor
+            var cellformat1 = new CellFormat { FontId = 1, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter } }; // RowHeaderValueTotal + RowHeaderValueTotalFor 
+            var cellformat2 = new CellFormat { FontId = 2, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter }, FillId = 3, };  // RowHeaderNamesEntity
+            var cellformat3 = new CellFormat { FontId = 2, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter } }; // RowsHeadersValuesEntity
+            var cellformat4 = new CellFormat { FontId = 0, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter } };
+            var cellformat5 = new CellFormat { FontId = 0, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter, Horizontal = HorizontalAlignmentValues.Left, } }; // (Nested rows, columns: Estimated, Actual) 
+            var cellformat6 = new CellFormat { FontId = 3, Alignment = new Alignment { WrapText = true, Vertical = verticalAligmentCenter, Horizontal = HorizontalAlignmentValues.Left, } }; // RowTotal HeaderValue + TotalFor HeaderValue
 
             // Add CellFormats.
             var cellformats = new CellFormats();
@@ -289,12 +320,12 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private void SetColumnWidth(Worksheet ws)
         {
-            var sizeOne = 16;
-            var sizeTwo = 26;
-            var sizeThree = 44;
+            var sizeOne = 30;
+            var sizeTwo = 12;
+            var sizeThree = 44; 
 
             uint countFirstColumns = 0;
-            uint countSecondColumns = 0;
+            uint countSecondColumns = 1;
             uint countThirdColumns = 0;
 
             // Check count columns that can made be hide for each size.
@@ -308,16 +339,18 @@ namespace CoralTime.BL.Services.Reports.Export
                         var showColumnDescriptionsById = showColumnsInfo.FirstOrDefault(x => x.Id == showColumnInfo.Id)?.ShowColumnDescriptions;
                         foreach (var tmpItem in showColumnDescriptionsById)
                         {
-                            if (tmpItem.Name == InternalProperties.Date.ToString()
-                                || tmpItem.Name == InternalProperties.TimeFrom.ToString()
-                                || tmpItem.Name == InternalProperties.TimeTo.ToString())
-                            {
-                                countFirstColumns++;
-                                continue;
-                            }
+                            //if (tmpItem.Name == InternalProperties.Date.ToString())
+                            //{
+                            //    countFirstColumns++;
+                            //    continue;
+                            //}
 
-                            if (tmpItem.Name == InternalProperties.ActualTime.ToString()
-                                || tmpItem.Name == InternalProperties.EstimatedTime.ToString())
+                            if (tmpItem.Name == InternalProperties.ActualTime.ToString() 
+                                || tmpItem.Name == InternalProperties.EstimatedTime.ToString()
+                                || tmpItem.Name == InternalProperties.TimeFrom.ToString()
+                                || tmpItem.Name == InternalProperties.TimeTo.ToString()
+                                || tmpItem.Name == InternalProperties.Date.ToString()
+                                )
                             {
                                 countSecondColumns++;
                                 continue;
@@ -340,13 +373,13 @@ namespace CoralTime.BL.Services.Reports.Export
             {
                 ++firstSizeFinishColumn;
             }
-        
+
             // When choose grouping by date and check "Hide Column Date".
             if (GroupById == (int)Constants.ReportsGroupBy.Date)
             {
                 var dontShowDateColumn = false;
 
-                var hideDateColumnId = showColumnsInfo.FirstOrDefault(x => x.ShowColumnDescriptions.Contains(x.ShowColumnDescriptions.FirstOrDefault(i => i.Name == InternalProperties.Description.ToString())))?.Id;
+                var hideDateColumnId = showColumnsInfo.FirstOrDefault(x => x.ShowColumnDescriptions.Contains(x.ShowColumnDescriptions.FirstOrDefault(i => i.Name == InternalProperties.Date.ToString())))?.Id;
                 if (hideDateColumnId != null)
                 {
                     var hasNotDateColumnIdInTargetedIds = !ShowColumnIds?.Any(z => z == hideDateColumnId);
@@ -356,9 +389,11 @@ namespace CoralTime.BL.Services.Reports.Export
                     }
                 }
 
-                if (dontShowDateColumn)
+                ++firstSizeFinishColumn;
+
+                if (!dontShowDateColumn)
                 {
-                    ++firstSizeFinishColumn;
+                    --countSecondColumns;
                 }
             }
 
@@ -406,69 +441,71 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Add Sheet Data.
 
-        private SheetData CreateSheetData<T>(IReportsGrandGridView<T> groupedList, SharedStringTablePart shareStringPart)
+        private SheetData CreateSheetData<T>(IReportsGrandGridView<T> groupingList, SharedStringTablePart shareStringPart)
         {
             var sheetData = new SheetData();
 
-            AddPeriodDateAndGrandTimeRows(sheetData, groupedList, shareStringPart);
+            CreateRowPeriodDate(sheetData);
 
-            var entityHeadersRow = new Row();
-            var entityRows = new Row[0];
-
-            foreach (var reportsGridView in groupedList.ReportsGridView)
+            foreach (var reportsGridView in groupingList.ReportsGridView)
             {
-                var totalHeaderRow = new Row();
+                var rowGroupByWithValue = new Row();
 
-                foreach (var prop in PropsEntityHeaders)
+                foreach (var propGroupByAndTotalTime in PropsGroupByAndTotalTimes)
                 {
-                    var propType = prop.PropertyType;
+                    var propType = propGroupByAndTotalTime.PropertyType;
 
-                    if (!propType.GetTypeInfo().IsGenericType)
+                    if (!propType.GetTypeInfo().IsGenericType && IsPropByDefaultGrouping(propGroupByAndTotalTime.Name))
                     {
-                        // Total headers.
-                        totalHeaderRow = CreateTotalHeadersRow(GetValueFromProp(prop, reportsGridView), shareStringPart, prop, totalHeaderRow);
+                        // Row GroupBy "PROJECT: 3 MIDDLE PROJECT".
+                        var valueSingleFromProp = GetValueSingleFromProp(propGroupByAndTotalTime, reportsGridView);
+                        CreateRowGroupByWithValue(sheetData, valueSingleFromProp, shareStringPart, propGroupByAndTotalTime, rowGroupByWithValue);
                     }
                     else if(propType.GetTypeInfo().IsGenericType)
                     {
                         if (propType == typeof(IEnumerable<ReportsGridItemsView>))
                         {
-                            // Entity Headers.
-                            entityHeadersRow = CreateEntityHeadersRow(shareStringPart);
+                            // Row Entity Header Names.
+                            CreateRowEntityHeaderNames(shareStringPart, sheetData);
 
-                            // Entity Rows.
-                            entityRows = CreateEntityRows(GetListValueFromProp(prop, reportsGridView), shareStringPart);
+                            // Rows Entity Header Values.
+                            var valueListFromProp = GetValueListFromProp(propGroupByAndTotalTime, reportsGridView);
+                            CreateRowsEntityValuesAndTotalFor(sheetData, valueListFromProp, shareStringPart, propGroupByAndTotalTime, reportsGridView);
                         }
                     }
                 }
-
-                sheetData.Append(totalHeaderRow);
-                sheetData.Append(entityHeadersRow);
-                sheetData.Append(entityRows);
+                
                 sheetData.Append(new Row());
             }
+
+            // TOTAL
+            CreateRowTotal(groupingList, shareStringPart, sheetData);
 
             return sheetData;
         }
 
-        #region InfoRow
+        #region Create Row PeriodDate.
 
-        private void AddPeriodDateAndGrandTimeRows<T>(SheetData sheetData, IReportsGrandGridView<T> groupedList, SharedStringTablePart shareStringPart)
+        private void CreateRowPeriodDate(SheetData sheetData)
         {
-            var infoRow = new Row();
+            var rowPeriodDate = new Row();
 
-            infoRow = AddCellPeriodDate(infoRow);
-            infoRow = AddEmptyCellsAfterInfoRow(infoRow);
+            var cellPeriodDate = new Cell();
 
-            if (GroupById != (int)Constants.ReportsGroupBy.None)
-            {
-                infoRow = AddCellsGrandTimes(infoRow, groupedList, shareStringPart);
-            }
+            cellPeriodDate.InlineString = new InlineString(new Text(GetValueForCellPeriodDate()));
+            cellPeriodDate.DataType = CellValues.InlineString;
 
-            sheetData.Append(infoRow);
+            //CountPeriodCells++;
+
+            rowPeriodDate.Append(cellPeriodDate);
+
+            sheetData.Append(rowPeriodDate);
             sheetData.Append(new Row());
         }
 
-        private Row AddEmptyCellsAfterInfoRow(Row infoRow)
+        #endregion
+
+        private Row CreateEmptyCellsAfterTotalForCell(Row totalRow)
         {
             var startVal = _alwaysShowProperty.Count - CountPeriodCells;
             var showPropertiesByIds = showColumnsInfo.Where(x => ShowColumnIds.Contains(x.Id));
@@ -488,86 +525,108 @@ namespace CoralTime.BL.Services.Reports.Export
 
             for (var i = 0; i < startVal; i++)
             {
-                infoRow.Append(new Cell());
+                totalRow.Append(new Cell());
             }
 
-            return infoRow;
+            return totalRow;
         }
 
-        private Row AddCellPeriodDate(Row infoRow)
+        private Row CreateRowTotalHeaderName(Row totalRow)
         {
-            var periodDateCell = new Cell();
+            var totalCell = new Cell();
 
-            periodDateCell.InlineString = new InlineString(new Text(GetValueForPeriodCell()));
-            periodDateCell.DataType = CellValues.InlineString;
+            totalCell.InlineString = new InlineString(new Text(GetValueForTotaldCell()));
+            totalCell.DataType = CellValues.InlineString;
+            totalCell.StyleIndex = 1;
 
             CountPeriodCells++;
 
-            infoRow.Append(periodDateCell);
-            return infoRow;
+            totalRow.Append(totalCell);
+            return totalRow;
         }
 
-        private Row AddCellsGrandTimes<T>(Row infoRow, IReportsGrandGridView<T> item, SharedStringTablePart shareStringPart)
+        private Row CreateRowTotalFor(Row rowTotalFor, string valueSingleFromProp)
         {
-            foreach (var propGrand in PropsGrandHeaders)
+            var totalInfoCell = new Cell();
+            totalInfoCell.InlineString = new InlineString(new Text("TOTAL FOR: " + valueSingleFromProp));
+            totalInfoCell.DataType = CellValues.InlineString;
+            totalInfoCell.StyleIndex = 1;
+
+            rowTotalFor.Append(totalInfoCell);
+
+            return rowTotalFor;
+        }
+
+        private Row CreateRowTotalHeaderValue<T>(Row rowTotal, IReportsGrandGridView<T> item, SharedStringTablePart shareStringPart)
+        {
+            foreach (var propTotal in PropsEntitiesTotalHeaders)
             {
-                if (!propGrand.PropertyType.GetTypeInfo().IsGenericType)
+                if (!propTotal.PropertyType.GetTypeInfo().IsGenericType)
                 {
-                    var value = GetValueFromProp(propGrand, item);
-                    value = UpdateTimeFormatForValue(propGrand, value);
-                    var headerNameWithValue = ConcatHeaderNameWithValue(propGrand, value);
+                    var value = GetValueSingleFromProp(propTotal, item);
+                    value = UpdateTimeFormatForValue(propTotal, value);
 
                     var grandCell = new Cell
                     {
-                        CellValue = new CellValue(InsertSharedStringItem(headerNameWithValue, shareStringPart).ToString()),
+                        CellValue = new CellValue(InsertSharedStringItem(value, shareStringPart).ToString()),
                         DataType = new EnumValue<CellValues>(CellValues.SharedString),
-                        StyleIndex = 2
+                        StyleIndex = 3
                     };
 
-                    infoRow.Append(grandCell);
+                    rowTotal.Append(grandCell);
                 }
             }
 
-            return infoRow;
+            return rowTotal;
         }
 
-        #endregion
+        private void CreateRowTotal<T>(IReportsGrandGridView<T> groupingList, SharedStringTablePart shareStringPart, SheetData sheetData)
+        {
+            if (GroupById != (int)Constants.ReportsGroupBy.None)
+            {
+                var rowTotal = new Row();
+
+                rowTotal = CreateRowTotalHeaderName(rowTotal);
+                rowTotal = CreateEmptyCellsAfterTotalForCell(rowTotal);
+                rowTotal = CreateRowTotalHeaderValue(rowTotal, groupingList, shareStringPart);
+                sheetData.Append(rowTotal);
+            }
+        }
 
         #region  External properties of Entity.
 
-        private string GetValueFromProp<T>(PropertyInfo prop, T item)
+        private string GetValueSingleFromProp<T>(PropertyInfo prop, T item)
         {
             var valueFromProp = (prop.GetValue(item, null) ?? string.Empty).ToString();
             return valueFromProp;
         }
 
-        private Row CreateTotalHeadersRow(string value, SharedStringTablePart shareStringPart, PropertyInfo prop, Row commonEntityRow)
+        private void CreateRowGroupByWithValue(SheetData sheetData,  string valueSingleFromProp, SharedStringTablePart shareStringPart, PropertyInfo prop, Row rowGroupByWithValue)
         {
             var cell = new Cell();
 
-            if (prop.PropertyType == typeof(DateTime))
-            {
-                var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
-                value = DateTime.Parse(value).ToString(dateFormat, CultureInfo.InvariantCulture);
-            }
+            valueSingleFromProp = UpdateDateFormatForValue(valueSingleFromProp, prop);
 
-            value = UpdateTimeFormatForValue(prop, value);
-            value = UpdateProjectNameToUpperCase(prop, value);
-            value = ConcatHeaderNameWithValue(prop, value);
-            if (prop.Name == InternalProperties.TimeEntryName.ToString() && GroupById == (int)Constants.ReportsGroupBy.None)
-            {
-                value = string.Empty;
-            }
+            valueSingleFromProp = UpdateTimeFormatForValue(prop, valueSingleFromProp);
+            valueSingleFromProp = ConcatHeaderNameWithValue(prop, valueSingleFromProp).ToUpper();
 
-            cell = GetCellValue(shareStringPart, value, cell);
+            cell = GetCellValue(shareStringPart, valueSingleFromProp, cell);
 
             SetCellStyleForHeaders(prop, cell);
 
-            commonEntityRow.Append(cell);
+            rowGroupByWithValue.Append(cell);
 
-            AddEmptyCellsBeforCellTotalActualTime(prop, commonEntityRow);
+            sheetData.Append(rowGroupByWithValue);
+        }
 
-            return commonEntityRow;
+        private string UpdateDateFormatForValue(string valueSingleFromProp, PropertyInfo prop)
+        {
+            if (prop.PropertyType == typeof(DateTime))
+            {
+                var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
+                valueSingleFromProp = DateTime.Parse(valueSingleFromProp).ToString(dateFormat, CultureInfo.InvariantCulture);
+            }
+            return valueSingleFromProp;
         }
 
         private string UpdateTimeFormatForValue(PropertyInfo prop, string value)
@@ -582,13 +641,20 @@ namespace CoralTime.BL.Services.Reports.Export
                 || prop.Name == InternalProperties.TimeTo.ToString())
             {
                 var time = TimeSpan.FromSeconds(Int32.Parse(value));
-                if (time.TotalHours <= 99.99)
+                if (time.TotalHours == 0)
                 {
-                    value = $"{(int)time.TotalHours:D2}:{time.Minutes:D2}";
+                    value = string.Empty;
                 }
                 else
                 {
-                    value = $"{(int)time.TotalHours}:{time.Minutes:D2}";
+                    if (time.TotalHours <= 99.99)
+                    {
+                        value = $"{(int) time.TotalHours:D2}:{time.Minutes:D2}";
+                    }
+                    else
+                    {
+                        value = $"{(int) time.TotalHours}:{time.Minutes:D2}";
+                    }
                 }
             }
 
@@ -630,6 +696,14 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             var headerNameWithValue = GetNameDisplayForGrandAndTotalHeaders(prop.Name) + value;
             
+            headerNameWithValue = UpdateHeaderNameForWithoutClient(prop, value, headerNameWithValue);
+
+            return headerNameWithValue;
+        }
+
+        private string UpdateHeaderNameForWithoutClient(PropertyInfo prop, string value, string headerNameWithValue)
+        {
+            // Remove text "Client:" for client with name = WithoutClient.
             if (prop.Name == InternalProperties.ClientName.ToString() && value == Constants.WithoutClient.Name)
             {
                 headerNameWithValue = value;
@@ -647,11 +721,11 @@ namespace CoralTime.BL.Services.Reports.Export
                 || prop.Name == ExternalProperties.MemberName.ToString()
                 || prop.Name == ExternalProperties.Date.ToString())
             {
-                cell.StyleIndex = 2;
+                cell.StyleIndex = 1;
             }
         }
         
-        private void AddEmptyCellsBeforCellTotalActualTime(PropertyInfo prop, Row entityRow)
+        private void AddEmptyCellsBeforeTotalForCell(Row entityRow)
         {
             var startVal = _alwaysShowProperty.Count - CountGroupByCells;
 
@@ -660,28 +734,25 @@ namespace CoralTime.BL.Services.Reports.Export
                 ++startVal;
             }
 
-            if (IsPropByDefaultGrouping(prop.Name))
+            var showPropertiesByIds = showColumnsInfo.Where(x => ShowColumnIds.Contains(x.Id));
+
+            var showPropsBeforeActualEstimatedTime = showPropertiesByIds.Where(x => x.ShowColumnDescriptions
+                .Any(z => z.Name == InternalProperties.Date.ToString() || z.Name == InternalProperties.TimeFrom.ToString() || z.Name == InternalProperties.TimeTo.ToString()));
+
+            var dontShowDate = showPropertiesByIds.Count(x => x.ShowColumnDescriptions.Any(z => z.Name == InternalProperties.Date.ToString())) == 0;
+
+            if (GroupById == (int)Constants.ReportsGroupBy.Date && dontShowDate)
             {
-                var showPropertiesByIds = showColumnsInfo.Where(x => ShowColumnIds.Contains(x.Id));
+                ++startVal;
+            }
 
-                var showPropsBeforeActualEstimatedTime = showPropertiesByIds.Where(x => x.ShowColumnDescriptions
-                    .Any(z => z.Name == InternalProperties.Date.ToString() || z.Name == InternalProperties.TimeFrom.ToString() || z.Name == InternalProperties.TimeTo.ToString()));
-
-                var dontShowDate = showPropertiesByIds.Count(x => x.ShowColumnDescriptions.Any(z => z.Name == InternalProperties.Date.ToString())) == 0;
-
-                if (GroupById == (int)Constants.ReportsGroupBy.Date && dontShowDate)
-                {
-                    ++startVal;
-                }
-
-                var countColumns = showPropsBeforeActualEstimatedTime.SelectMany(x => x.ShowColumnDescriptions).Count();
+            var countColumns = showPropsBeforeActualEstimatedTime.SelectMany(x => x.ShowColumnDescriptions).Count();
                 
-                startVal += countColumns;
+            startVal += countColumns;
 
-                for (int i = 0; i < startVal; i++)
-                {
-                    entityRow.Append(new Cell());
-                }
+            for (int i = 0; i < startVal; i++)
+            {
+                entityRow.Append(new Cell());
             }
         }
 
@@ -689,16 +760,16 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Work with inner List<ReportGridItemView> of entities and its properties. And check if field is generic.
 
-        private IEnumerable<ReportsGridItemsView> GetListValueFromProp<T>(PropertyInfo prop, T item)
+        private IEnumerable<ReportsGridItemsView> GetValueListFromProp<T>(PropertyInfo prop, T item)
         {
             var getListValueFromProp = (IEnumerable<ReportsGridItemsView>)prop.GetValue(item, null);
             return getListValueFromProp;
         }
 
-        private Row CreateEntityHeadersRow(SharedStringTablePart shareStringPart)
+        private void CreateRowEntityHeaderNames(SharedStringTablePart shareStringPart, SheetData sheetData)
         {
-            var headersRow = new Row();
-            var nestedEntityHeaders = RenameNestedEntityHeaders(PropsEntityRows);
+            var rowEntityHeaderNames = new Row();
+            var nestedEntityHeaders = RenameNestedEntityHeaders(PropsEntityHeadersAndRows);
 
             foreach (var header in nestedEntityHeaders)
             {
@@ -706,33 +777,83 @@ namespace CoralTime.BL.Services.Reports.Export
                 var value = header;
 
                 headCell = GetCellValue(shareStringPart, value, headCell);
-                headCell.StyleIndex = 3;
-                headersRow.Append(headCell);
+                headCell.StyleIndex = 2;
+                rowEntityHeaderNames.Append(headCell);
             }
 
-            return headersRow;
+            sheetData.Append(rowEntityHeaderNames);
         }
 
-        private Row[] CreateEntityRows(IEnumerable<ReportsGridItemsView> nestedEntities, SharedStringTablePart shareStringPart)
+        private void CreateRowsEntityValuesAndTotalFor<T>(SheetData sheetData, IEnumerable<ReportsGridItemsView> valueListFromProp,SharedStringTablePart shareStringPart, PropertyInfo propTotalFor, T reportsGridView)
         {
-            var nestedEntityRows = new Row[nestedEntities.Count()]; 
-
-            #region Nested entity rows.
+            var rowsEntityValues = CreateRowsEntityValues(valueListFromProp, shareStringPart);
+            var rowsEntityValuesAndTotalFor = new Row[rowsEntityValues.Length * 2];
 
             var index = 0;
-            foreach (var item in nestedEntities)
+            foreach (var rowEntityValues in rowsEntityValues)
+            {
+                // Add EntityRows
+                rowsEntityValuesAndTotalFor[index] = rowEntityValues;
+
+                // Add TotalFor Row
+                rowsEntityValuesAndTotalFor[++index] = CreateTotalForRow(shareStringPart, reportsGridView);
+            }
+
+            sheetData.Append(rowsEntityValuesAndTotalFor);
+        }
+
+        private Row CreateTotalForRow<T>(SharedStringTablePart shareStringPart, T reportsGridView)
+        {
+            var totalForRow = new Row();
+
+            // Row TOTAL FOR Header Name.
+            var propByDefaultGrouping = PropsGroupByAndTotalTimes.FirstOrDefault(x => !x.PropertyType.GetTypeInfo().IsGenericType && IsPropByDefaultGrouping(x.Name));
+            var valueSingleFromProp = GetValueSingleFromProp(propByDefaultGrouping, reportsGridView);
+
+            valueSingleFromProp = UpdateDateFormatForValue(valueSingleFromProp, propByDefaultGrouping).ToUpper();
+
+            totalForRow = CreateRowTotalFor(totalForRow, valueSingleFromProp);
+            //totalForRow = CreateEmptyCellsAfterTotalTime(totalForRow);
+            AddEmptyCellsBeforeTotalForCell(totalForRow);
+
+            // Row TOTAL FOR Header Values:
+            var listOfPropsTotalActTime = PropsGroupByAndTotalTimes.Where(x => !x.PropertyType.GetTypeInfo().IsGenericType && IsPropTotalOrActualTime(x.Name));
+
+            foreach (var propTimeFor in listOfPropsTotalActTime)
+            {
+                var valueSingleFromTotalActTime = GetValueSingleFromProp(propTimeFor, reportsGridView);
+                valueSingleFromTotalActTime = UpdateTimeFormatForValue(propTimeFor, valueSingleFromTotalActTime);
+
+                var cellTotalFor = new Cell();
+
+                cellTotalFor = GetCellValue(shareStringPart, valueSingleFromTotalActTime, cellTotalFor);
+                //SetCellStyleForHeaders(propTimeFor, cellTotalFor);
+                cellTotalFor.StyleIndex = 3;
+
+                totalForRow.Append(cellTotalFor);
+            }
+
+            return totalForRow;
+        }
+
+        private Row[] CreateRowsEntityValues(IEnumerable<ReportsGridItemsView> valueListFromProp, SharedStringTablePart shareStringPart)
+        {
+            var rowsEntityValues = new Row[valueListFromProp.Count()]; 
+
+            var index = 0;
+            foreach (var item in valueListFromProp)
             {
                 var row = new Row();
 
-                foreach (var prop in PropsEntityRows)
+                foreach (var prop in PropsEntityHeadersAndRows)
                 {
                     if (!IsPropByDefaultGrouping(prop.Name))
                     {
                         var cell = new Cell();
                         var value = (prop.GetValue(item, null) ?? string.Empty).ToString();
 
-                        cell.StyleIndex = 0;
-
+                        cell.StyleIndex = 1;
+                        
                         if (prop.PropertyType == typeof(DateTime))
                         {
                             var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
@@ -745,20 +866,28 @@ namespace CoralTime.BL.Services.Reports.Export
                             || prop.Name == InternalProperties.TimeTo.ToString())
                         {
                             var time = TimeSpan.FromSeconds(Int32.Parse(value));
-                            value = time.ToString(@"hh\:mm");
+                            if (time.TotalHours == 0)
+                            {
+                                value = string.Empty;
+                            }
+                            else
+                            {
+                                value = time.ToString(@"hh\:mm");
+                            }
                         }
 
-                        if (prop.Name == InternalProperties.TotalActualTime.ToString() ||    
+                        if (prop.Name == InternalProperties.TotalActualTime.ToString() ||
                             prop.Name == InternalProperties.TotalEstimatedTime.ToString())
                         {
                             cell = GetCellValue(shareStringPart, value, cell);
-                            cell.StyleIndex = 5;
+                            cell.StyleIndex = 6;
                         }
-                        else if (prop.Name == InternalProperties.TaskName.ToString() ||
-                                 prop.Name == InternalProperties.Description.ToString())
+
+                        if (prop.Name == InternalProperties.TaskName.ToString() ||
+                            prop.Name == InternalProperties.Description.ToString())
                         {
                             cell = GetCellValue(shareStringPart, value, cell);
-                            cell.StyleIndex = 6;
+                            cell.StyleIndex = 5;
                         }
                         else
                         {
@@ -767,14 +896,14 @@ namespace CoralTime.BL.Services.Reports.Export
 
                         row.Append(cell);
                     }
+
+                    row.Append(new Row());
                 }
 
-                nestedEntityRows[index++] = row;
+                rowsEntityValues[index++] = row;
             }
 
-            #endregion
-
-            return nestedEntityRows;
+            return rowsEntityValues;
         }
 
         #endregion

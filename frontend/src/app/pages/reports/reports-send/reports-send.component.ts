@@ -1,11 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ClientsService } from '../../../services/clients.service';
 import { Client } from '../../../models/client';
 import { ReportsService } from '../../../services/reposts.service';
 import { NgForm } from '@angular/forms';
 import { User } from '../../../models/user';
-import * as moment from 'moment';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
+import * as moment from 'moment';
 
 export class SendReportsFormModel {
 	bccEmails: string[];
@@ -71,12 +71,13 @@ const EXPORT_FILE_LIST: ExportFile[] = [
 })
 
 export class ReportsSendComponent implements OnInit {
-	model: SendReportsFormModel;
+	@Input() model: SendReportsFormModel;
+	@Input() dateFormat: string;
+	@Input() projectName: string;
+	@Input() userInfo: User;
+
 	clients: Client[];
 	clientModel: Client;
-	dateFormat: string;
-	userInfo: User;
-
 	emailFromError: string;
 	emailPattern = EMAIL_PATTERN;
 	isCcFormValid: boolean = true;
@@ -101,7 +102,9 @@ export class ReportsSendComponent implements OnInit {
 			}
 		});
 		this.model.fromEmail = this.userInfo.email;
-		this.model.subject = 'CoralTime: ' + this.formatDate(this.model.dateFrom) + ' - ' + this.formatDate(this.model.dateTo);
+		let addProjectName = this.projectName ? this.projectName + ': ' : '';
+		this.model.subject = 'CoralTime: ' + addProjectName + this.formatDate(this.model.dateFrom)
+			+ ' - ' + this.formatDate(this.model.dateTo);
 	}
 
 	checkIsFromEmailEmpty(): void {

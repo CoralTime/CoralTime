@@ -135,12 +135,12 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private readonly ShowColumnModel[] showColumnsInfo =
         {
-            new ShowColumnModel{ Id = 0, ShowColumnDescriptions = new List<ShowColumnDescription>
-            {
-                new ShowColumnDescription { Name = InternalProperties.ActualTime.ToString(), Description = "Show Actual Hours" },
-                new ShowColumnDescription { Name = InternalProperties.TotalActualTime.ToString(), Description = "Show Total Actual Hours" },
-                new ShowColumnDescription { Name = ExternalProperties.GrandActualTime.ToString(), Description = "Show Grand Actual Hours" },
-            }},
+            //new ShowColumnModel{ Id = 0, ShowColumnDescriptions = new List<ShowColumnDescription>
+            //{
+            //    new ShowColumnDescription { Name = InternalProperties.ActualTime.ToString(), Description = "Show Actual Hours" },
+            //    new ShowColumnDescription { Name = InternalProperties.TotalActualTime.ToString(), Description = "Show Total Actual Hours" },
+            //    new ShowColumnDescription { Name = ExternalProperties.GrandActualTime.ToString(), Description = "Show Grand Actual Hours" },
+            //}},
             new ShowColumnModel{ Id = 1, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.EstimatedTime.ToString(), Description = "Show Estimated Hours" },
@@ -293,7 +293,9 @@ namespace CoralTime.BL.Services.Reports.Export
             #region Set Global Properties. 
 
             GroupById = reportsGridData.GroupById ?? 0;
+
             ShowColumnIds = reportsGridData.ShowColumnIds;
+
             DateFormatId = reportsGridData.DateFormatId;
 
             DateFrom = _reportService.DateFrom;
@@ -303,9 +305,9 @@ namespace CoralTime.BL.Services.Reports.Export
 
             #region Get excluded props by Grand, Entity, NestedEntity headers in arrays.
 
-            PropsGrandHeaders = ExcludeProps(typeof(IReportsGrandGridView<T>));
-            PropsEntityHeaders = ExcludePropsEntity(typeof(T));
-            PropsEntityRows = ExcludeProps(typeof(IReportsGridItemsView));
+            PropsGroupByAndTotalTimes = ExcludeProps(typeof(T));
+            PropsEntityHeadersAndRows = ExcludeProps(typeof(IReportsGridItemsView));
+            PropsEntitiesTotalHeaders = ExcludeProps(typeof(IReportsGrandGridView<T>));
 
             #endregion
         }
@@ -327,6 +329,13 @@ namespace CoralTime.BL.Services.Reports.Export
                          || propName == InternalProperties.ClientName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Client
                          || propName == InternalProperties.TimeEntryName.ToString() && GroupById == (int) Constants.ReportsGroupBy.None;
 
+            return result;
+        }
+
+        private bool IsPropTotalOrActualTime(string propName)
+        {
+            var result = propName == InternalProperties.TotalActualTime.ToString() 
+                         || propName == InternalProperties.TotalEstimatedTime.ToString();
             return result;
         }
 
@@ -353,12 +362,11 @@ namespace CoralTime.BL.Services.Reports.Export
             var hideColumns = AddHideColumns();
 
             var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
+            
             var availableProps = new List<PropertyInfo>();
-
             foreach (var prop in props)
             {
-                if (hideColumns.All(x => x != prop.Name))
+                if (hideColumns.All(x => x != prop.Name) && prop.Name != ExternalProperties.TotalActualTime.ToString() && prop.Name != ExternalProperties.TotalEstimatedTime.ToString())
                 {
                     availableProps.Add(prop);
                 }
@@ -437,13 +445,13 @@ namespace CoralTime.BL.Services.Reports.Export
 
                 if (prop.Name == InternalProperties.ActualTime.ToString())
                 {
-                    result.Add("Actual Hours");
+                    result.Add("Act. Hours");
                     continue;
                 }
 
                 if (prop.Name == InternalProperties.EstimatedTime.ToString())
                 {
-                    result.Add("Estimated Hours");
+                    result.Add("Est. Hours");
                     continue;
                 }
 
@@ -474,22 +482,22 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             if (propName == ExternalProperties.GrandActualTime.ToString())
             {
-                return "Grand Actual Time: ";
+                return string.Empty;
             }
 
             if (propName == ExternalProperties.GrandEstimatedTime.ToString())
             {
-                return "Grand Estimated Time: ";
+                return string.Empty;
             }
 
             if (propName == InternalProperties.TotalActualTime.ToString())
             {
-                return "Total Actual Time: ";
+                return "TOTAL FOR: ";
             }
 
             if (propName == InternalProperties.TotalEstimatedTime.ToString())
             {
-                return "Total Estimated Time: ";
+                return "TOTAL FOR: ";
             }
 
             if (propName == InternalProperties.TimeEntryName.ToString())
@@ -503,7 +511,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
                 if (GroupById == (int)Constants.ReportsGroupBy.Project)
                 {
-                    tmpName = tmpName + ": ";
+                    tmpName = tmpName.ToUpper() + ": ";
                 }
 
                 return tmpName;
@@ -511,16 +519,16 @@ namespace CoralTime.BL.Services.Reports.Export
 
             if (propName == ExternalProperties.Date.ToString())
             {
-                return "Date: ";
+                return "DATE: ";
             }
 
-            if (propName.Contains(InternalProperties.MemberName.ToString()))
+            if (propName == InternalProperties.MemberName.ToString())
             {
                 var tmpName = "User";
 
                 if (GroupById == (int)Constants.ReportsGroupBy.User)
                 {
-                    tmpName = tmpName + ": ";
+                    tmpName = tmpName.ToUpper() + ": ";
                 }
 
                 return tmpName;
@@ -532,7 +540,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
                 if (GroupById == (int)Constants.ReportsGroupBy.Client)
                 {
-                    tmpName = tmpName + ": ";
+                    tmpName = tmpName.ToUpper() + ": ";
                 }
 
                 return tmpName;
@@ -544,19 +552,18 @@ namespace CoralTime.BL.Services.Reports.Export
 
                 if (GroupById == (int)Constants.ReportsGroupBy.User)
                 {
-                    tmpName = tmpName + ": ";
+                    tmpName = InternalProperties.Date.ToString().ToUpper() + ": ";
                 }
 
                 return tmpName;
             }
 
             /*
-             * 
-             *                 if (GroupById == (int)Constants.ReportsGroupBy.User)
-                {
-                    PDFcell.NameDisplay = PDFcell.NameDisplay + ": ";
-                }
-             * */
+            if (GroupById == (int)Constants.ReportsGroupBy.User)
+            {
+                PDFcell.NameDisplay = PDFcell.NameDisplay + ": ";
+            }
+            */
 
             return propName;
         }
@@ -725,16 +732,21 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Common Arrays of available Properties
 
-        private List<PropertyInfo> PropsGrandHeaders = new List<PropertyInfo>();
-        private List<PropertyInfo> PropsEntityHeaders = new List<PropertyInfo>();
-        private List<PropertyInfo> PropsEntityRows = new List<PropertyInfo>();
+        private List<PropertyInfo> PropsGroupByAndTotalTimes = new List<PropertyInfo>();
+        private List<PropertyInfo> PropsEntityHeadersAndRows = new List<PropertyInfo>();
+        private List<PropertyInfo> PropsEntitiesTotalHeaders = new List<PropertyInfo>();
 
-        private string GetValueForPeriodCell()
+        private string GetValueForCellPeriodDate()
         {
             var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
             //value = DateTime.Parse(value).ToString(dateFormat, );
             var valueForPeriodCell = "Period: " + DateFrom.ToString(dateFormat, CultureInfo.InvariantCulture) + " - " + DateTo.ToString(dateFormat, CultureInfo.InvariantCulture);
             return valueForPeriodCell;
+        }
+
+        private string GetValueForTotaldCell()
+        {
+            return "TOTAL: ";
         }
 
         private PDFCell GetPeriodPDFCell()
@@ -776,7 +788,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private string GetFormattedValueForCell<T>(PropertyInfo prop, T entity)
         {
-            var value = GetValueFromProp(prop, entity);
+            var value = GetValueSingleFromProp(prop, entity);
 
             value = UpdateTimeFormatForValue(prop, value);
             value = UpdateProjectNameToUpperCase(prop, value);

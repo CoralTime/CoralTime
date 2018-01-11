@@ -6,6 +6,7 @@ using CoralTime.BL.ServicesInterfaces;
 using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
 using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
 using CoralTime.BL.ServicesInterfaces.Reports.Export;
+using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.DAL;
 using CoralTime.DAL.Helpers;
@@ -60,6 +61,8 @@ namespace CoralTime
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+
+            Constants.EnvName = environment.EnvironmentName;
 
             CombineFileWkhtmltopdf(environment);
         }
@@ -191,11 +194,11 @@ namespace CoralTime
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
-                options.Password.RequireDigit = false;
+                options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
 
                 options.User.RequireUniqueEmail = true;
             });
