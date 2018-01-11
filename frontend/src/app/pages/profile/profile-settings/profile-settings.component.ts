@@ -181,8 +181,8 @@ export class ProfileSettingsComponent implements OnInit {
 		};
 
 		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
-			.subscribe((userModel: User) => {
-					this.userModel.email = userModel.email;
+			.subscribe((userModel: any) => {
+					this.userModel.email = userModel.Email;
 					this.userInfoService.setUserInfo(this.userModel);
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},

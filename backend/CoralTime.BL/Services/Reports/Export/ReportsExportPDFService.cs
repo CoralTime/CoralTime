@@ -77,7 +77,7 @@ namespace CoralTime.BL.Services.Reports.Export
             var pdfGrandModel = new ReportsPDFGrandGridView();
 
             // Grand headers.
-            foreach (var propGrand in PropsGrandHeaders)
+            foreach (var propGrand in PropsEntitiesTotalHeaders)
             {
                 if (!propGrand.PropertyType.GetTypeInfo().IsGenericType)
                 {
@@ -90,7 +90,7 @@ namespace CoralTime.BL.Services.Reports.Export
             {
                 var entityLocal = new ReportsPDFEntityView();
 
-                foreach (var entityHeader in PropsEntityHeaders)
+                foreach (var entityHeader in PropsGroupByAndTotalTimes)
                 {
                     if (!entityHeader.PropertyType.GetTypeInfo().IsGenericType)
                     {
@@ -132,7 +132,7 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             var entitiesHeaders = new List<ReportsPDFEntityHeadersView>();
             
-            foreach (var availableProp in ExludePropByDefaultGrouping(PropsEntityRows))
+            foreach (var availableProp in ExludePropByDefaultGrouping(PropsEntityHeadersAndRows))
             {
                 var entityHeaderCell = CreateCell<object, ReportsPDFEntityHeadersView>(availableProp, null);
                 entitiesHeaders.Add(entityHeaderCell);
@@ -145,11 +145,11 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             var entitiesRowsList = new List<List<ReportsPDFEntityRowsView>>();
 
-            foreach (var entityRow in GetListValueFromProp(entityHeader, entity))
+            foreach (var entityRow in GetValueListFromProp(entityHeader, entity))
             {
                 var entityRowsLocal = new List<ReportsPDFEntityRowsView>();
 
-                foreach (var prop in PropsEntityRows)
+                foreach (var prop in PropsEntityHeadersAndRows)
                 {
                     if (!IsPropByDefaultGrouping(prop.Name))
                     {

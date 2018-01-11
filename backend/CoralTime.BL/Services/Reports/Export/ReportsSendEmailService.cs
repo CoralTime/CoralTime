@@ -10,7 +10,7 @@ namespace CoralTime.BL.Services.Reports.Export
     {
         public async Task SentGroupByNone(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByNone = _reportService.GroupByProjects(userName, emailData);
+            var groupByNone = _reportService.GroupByNone(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByNone);
         }
 
@@ -22,19 +22,19 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public async Task SentGroupByUsers(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByUsers = _reportService.GroupByProjects(userName, emailData);
+            var groupByUsers = _reportService.GroupByUsers(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByUsers);
         }
 
         public async Task SentGroupByDates(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByDates = _reportService.GroupByProjects(userName, emailData);
+            var groupByDates = _reportService.GroupByDates(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByDates);
         }
 
         public async Task SentGroupByClients(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByClients = _reportService.GroupByProjects(userName, emailData);
+            var groupByClients = _reportService.GroupByClients(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByClients);
         }
 

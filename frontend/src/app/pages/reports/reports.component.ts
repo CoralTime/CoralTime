@@ -138,7 +138,7 @@ export class ReportsComponent implements OnInit {
 		this.reportsService.setReportSettings({
 			clientIds: this.clientIds,
 			datePeriod: this.datePeriod,
-			groupById: this.groupModel ? this.groupModel.groupById : 0,
+			groupById: this.groupModel ? this.groupModel.groupById : 3,
 			projectIds: this.projectIds,
 			showColumnIds: this.showColumnIds,
 			userIds: this.userIds,
@@ -211,13 +211,18 @@ export class ReportsComponent implements OnInit {
 			dateFormatId: this.dateFormatId,
 			dateFrom: this.convertMomentToString(this.datePeriod.dateFrom),
 			dateTo: this.convertMomentToString(this.datePeriod.dateTo) || this.convertMomentToString(this.datePeriod.dateFrom),
-			groupById: this.groupModel ? this.groupModel.groupById : 0,
+			groupById: this.groupModel ? this.groupModel.groupById : 3,
 			memberIds: this.userIds,
 			projectIds: this.projectIds,
 			showColumnIds: this.showColumnIds
 		});
 		this.reportsSendRef.componentInstance.dateFormat = this.dateFormat;
 		this.reportsSendRef.componentInstance.userInfo = this.userInfo;
+
+		if(this.projectIds.length === 1) {
+			this.reportsSendRef.componentInstance.projectName
+				= ArrayUtils.findByProperty(this.projectItems, 'value', this.projectIds[0]).label;
+		}
 
 		this.reportsSendRef.componentInstance.onSubmit.subscribe((event) => {
 			this.onSubmitSendForm(event);
@@ -238,7 +243,7 @@ export class ReportsComponent implements OnInit {
 		this.projectIds = [];
 		this.userIds = [];
 		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById == 0);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById == 3);
 		this.toggleClient(this.clientIds);
 	}
 
@@ -268,7 +273,7 @@ export class ReportsComponent implements OnInit {
 			dateFrom: this.convertMomentToString(this.datePeriod.dateFrom),
 			dateTo: this.convertMomentToString(this.datePeriod.dateTo) || this.convertMomentToString(this.datePeriod.dateFrom),
 			fileTypeId: fileTypeId,
-			groupById: this.groupModel ? this.groupModel.groupById : 0,
+			groupById: this.groupModel ? this.groupModel.groupById : 3,
 			memberIds: this.userIds,
 			projectIds: this.projectIds,
 			showColumnIds: this.showColumnIds

@@ -9,6 +9,7 @@ import 'rxjs/add/operator/map';
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { UserInfoService } from './user-info.service';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 const AUTH_USER_STORAGE_KEY = 'APPLICATION_USER';
 
@@ -20,10 +21,12 @@ export class AuthService {
 	private readonly scope: string = 'WebAPI offline_access openid profile roles';
 	private authUser: AuthUser;
 	private _isUserAdminOrManager: boolean = false;
-	private refreshTokenObservable: Observable<Response>;
 
 	public adminOrManagerParameterOnChange: EventEmitter<void> = new EventEmitter<void>();
 	public onChange: EventEmitter<AuthUser> = new EventEmitter<AuthUser>();
+
+	private isRefreshingToken: boolean = false;
+	private tokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
 	get isUserAdminOrManager(): boolean {
 		return this._isUserAdminOrManager;
@@ -85,16 +88,19 @@ export class AuthService {
 	}
 
 	refreshToken(): Observable<Response> {
-		if (this.refreshTokenObservable) {
-			return this.refreshTokenObservable;
+		if (!localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
+			this.logout();
+			return null;
 		}
 
-		let headers = new Headers();
-		headers.append('Content-Type', 'application/x-www-form-urlencoded');
+		if (!this.isRefreshingToken) {
+			let headers = new Headers();
+			headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
-		let params = new URLSearchParams();
+			let params = new URLSearchParams();
+			this.isRefreshingToken = true;
+			this.tokenSubject.next(null);
 
-		if (localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
 			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
 			let headerClientId = this.authUser.isSso ? this.clientIdSSO : this.clientId;
 			params.append('client_id', headerClientId);
@@ -104,25 +110,31 @@ export class AuthService {
 			params.append('scope', this.scope);
 
 			let body = params.toString();
-
-			this.refreshTokenObservable = this.http.post('/connect/token', body, {
-				headers: headers
-			})
+			return this.http.post('/connect/token', body, {headers: headers})
 				.flatMap((response: Response) => {
-					this.setAuthUser(new AuthUser(response.json(), this.authUser.isSso));
-					this.refreshTokenObservable = null;
-					return Observable.of(response);
-				}).catch(error => {
-					this.refreshTokenObservable = null;
+					if (response) {
+						this.setAuthUser(new AuthUser(response.json(), this.authUser.isSso));
+						this.tokenSubject.next(response);
+						return Observable.of(response);
+					}
+
+					this.logout();
+					return null;
+				})
+				.catch(error => {
 					this.logout();
 					return Observable.throw(error);
 				})
-				.share();
-
-			return this.refreshTokenObservable;
+				.finally(() => {
+					this.isRefreshingToken = false;
+				});
 		} else {
-			this.logout();
-			return this.refreshTokenObservable;
+			return this.tokenSubject
+				.filter(token => token != null)
+				.take(1)
+				.switchMap(response => {
+					return Observable.of(response);
+				});
 		}
 	}
 

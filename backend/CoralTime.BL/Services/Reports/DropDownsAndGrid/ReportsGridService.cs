@@ -35,7 +35,10 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
                 return reportsGridTimeEntry;
             }
 
-            var timeEntriesGroupByNone = timeEntriesForGrouping.GroupBy(x => x.Id).ToDictionary(key => key.Key, key => key.Select(value => value));
+            var timeEntriesGroupByNone = timeEntriesForGrouping
+                .GroupBy(x => x.Id)
+                .ToDictionary(key => key.Key, key => key.Select(value => value));
+
             var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
 
             return result;
@@ -60,7 +63,11 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
                 return reportsGridProjects;
             }
 
-            var timeEntriesGroupByProjects = timeEntriesForGrouping.GroupBy(i => i.Project).ToDictionary(key => key.Key, key => key.Select(value => value));
+            var timeEntriesGroupByProjects = timeEntriesForGrouping
+                .GroupBy(i => i.Project)
+                .OrderBy(x => x.Key.Name)
+                .ToDictionary(key => key.Key, key => key.Select(value => value));
+
             var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
 
             return result;
@@ -85,7 +92,11 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
                 return reportsGridUsers;
             }
 
-            var timeEntriesGroupByUsers = timeEntriesForGrouping.GroupBy(i => i.Member).ToDictionary(key => key.Key, key => key.Select(value => value));
+            var timeEntriesGroupByUsers = timeEntriesForGrouping
+                .GroupBy(i => i.Member)
+                .OrderBy(x => x.Key.FullName)
+                .ToDictionary(key => key.Key, key => key.Select(value => value));
+
             var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
 
             return result;
@@ -110,7 +121,10 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
                 return reportsGridDates;
             }
 
-            var timeEntriesGroupByDate = timeEntriesForGrouping.GroupBy(i => i.Date).ToDictionary(key => key.Key, key => key.Select(value => value));
+            var timeEntriesGroupByDate = timeEntriesForGrouping
+                .GroupBy(i => i.Date)
+                .ToDictionary(key => key.Key, key => key.Select(value => value));
+
             var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
 
             return result;
@@ -135,7 +149,11 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
                 return reportsGridClients;
             }
 
-            var timeEntriesGroupByClients = timeEntriesForGrouping.GroupBy(i => i.Project.Client).ToDictionary(key => key.Key ?? CreateWithOutClientInstance(), key => key.Select(value => value));
+            var timeEntriesGroupByClients = timeEntriesForGrouping
+                .GroupBy(i => i.Project.Client)
+                .OrderBy(x => x.Key.Name)
+                .ToDictionary(key => key.Key ?? CreateWithOutClientInstance(), key => key.Select(value => value));
+
             var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
 
             return result;

@@ -303,6 +303,20 @@ $calendarPhoneWidth: 809px;
 
           > div {
             transition: height .3s;
+
+            &:first-child {
+              position: relative;
+
+              &:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 5px;
+                width: calc(100% - 5px);
+                height: 18px;
+                background: linear-gradient(to top, rgba(250, 250, 250, 1), rgba(250, 250, 250, 0));
+              }
+            }
           }
         }
 
@@ -350,24 +364,6 @@ $calendarPhoneWidth: 809px;
           font-size: 13px;
           font-family: $baseFontFamily;
           cursor: pointer;
-
-          &:before {
-            position: absolute;
-            content: '...';
-            right: 4px;
-            bottom: -4px;
-            width: 17px;
-            height: 20px;
-          }
-
-          &:after {
-            position: absolute;
-            content: '';
-            right: 4px;
-            width: 17px;
-            height: 20px;
-            background: $trackedTime;
-          }
 
           p {
             position: relative;
@@ -623,7 +619,7 @@ $calendarPhoneWidth: 809px;
       }
 
       .ct-calendar-day-container {
-        height: 100%;
+        height: calc(100% - 65px);
 
         .ct-calendar-day-tasks {
           position: relative;
@@ -664,7 +660,7 @@ $calendarPhoneWidth: 809px;
   .ct-calendar-daily-view .ct-calendar {
     .ct-calendar-day {
       width: 100%;
-      min-height: calc(100vh - 90px);
+      min-height: calc(100vh - 115px);
 
       .ct-calendar-day-title {
         position: fixed;
@@ -749,7 +745,7 @@ $calendarPhoneWidth: 809px;
       @media (max-width: $calendarPhoneWidth) {
         top: -7px;
         left: -28px;
-        background-size: 35px!important;
+        background-size: 35px !important;
       }
     }
   }

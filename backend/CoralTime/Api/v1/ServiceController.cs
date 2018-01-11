@@ -1,11 +1,11 @@
 using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
+using CoralTime.Common.Constants;
+using CoralTime.Common.Helpers;
 using CoralTime.Common.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
-using CoralTime.Common.Constants;
-using CoralTime.Common.Helpers;
 
 namespace CoralTime.Api.v1
 {
@@ -15,9 +15,7 @@ namespace CoralTime.Api.v1
     {
         private readonly IMemberProjectRolesService _roleService;
 
-        public ServiceController(IMemberService service,
-            IMemberProjectRolesService roleService,
-            ILogger<ServiceController> logger) : base(logger, service)
+        public ServiceController(IMemberService service, IMemberProjectRolesService roleService, ILogger<ServiceController> logger) : base(logger, service)
         {
             _roleService = roleService;
         }
