@@ -210,10 +210,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	private saveTimerStatus(): Promise<any> {
 		if (!this.isTimerShown) {
 			this.currentTimeEntry.isFromToShow = false;
-			this.currentTimeEntry.timeFrom = null;
+			this.currentTimeEntry.timeFrom = Date.now();
 			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
 			this.currentTimeEntry.timeTo = null;
 		} else {
+			this.currentTimeEntry.timeTo = this.currentTimeEntry.timeFrom + this.ticks;
 			this.currentTimeEntry.time = this.ticks;
 			this.currentTimeEntry.timeTimerStart = -1;
 			this.actualTime = this.splitTime(this.currentTimeEntry.time);
