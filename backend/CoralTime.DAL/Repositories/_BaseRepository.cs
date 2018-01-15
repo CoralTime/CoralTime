@@ -94,7 +94,7 @@ namespace CoralTime.DAL.Repositories
             }
             catch (Exception seq)
             {
-                throw new CoralTimeDangerException(seq.Message);
+                throw new CoralTimeDangerException(seq.Message, seq);
             }
         }
 

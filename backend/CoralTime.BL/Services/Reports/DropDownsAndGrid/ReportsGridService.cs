@@ -37,7 +37,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
 
             var timeEntriesGroupByNone = timeEntriesForGrouping
                 .GroupBy(x => x.Id)
-                .ToDictionary(key => key.Key, key => key.Select(value => value));
+                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
 
@@ -66,7 +66,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             var timeEntriesGroupByProjects = timeEntriesForGrouping
                 .GroupBy(i => i.Project)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.Select(value => value));
+                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
 
@@ -95,7 +95,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             var timeEntriesGroupByUsers = timeEntriesForGrouping
                 .GroupBy(i => i.Member)
                 .OrderBy(x => x.Key.FullName)
-                .ToDictionary(key => key.Key, key => key.Select(value => value));
+                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
 
@@ -152,7 +152,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             var timeEntriesGroupByClients = timeEntriesForGrouping
                 .GroupBy(i => i.Project.Client)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key ?? CreateWithOutClientInstance(), key => key.Select(value => value));
+                .ToDictionary(key => key.Key ?? CreateWithOutClientInstance(), key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
 

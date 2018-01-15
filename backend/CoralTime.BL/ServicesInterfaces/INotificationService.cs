@@ -4,7 +4,7 @@ namespace CoralTime.BL.ServicesInterfaces
 {
     public interface INotificationService
     {
-        Task ByMemberSettings();
+        //Task ByMemberSettings();
 
         Task ByProjectSettings();
         

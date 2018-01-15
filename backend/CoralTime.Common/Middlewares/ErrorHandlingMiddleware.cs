@@ -36,7 +36,7 @@ namespace CoralTime.Common.Middlewares
 
             var exseptionMessage = exception.Message;
             var exseptionInnerMessage = exception.InnerException;
-
+            context.Response.ContentType = "application/json";
             var message = "Oops. Something went wrong";
 
             if (exception is CoralTimeSafeEntityException)
@@ -57,7 +57,7 @@ namespace CoralTime.Common.Middlewares
                 code = HttpStatusCode.BadRequest;
                 message = exception.Message;
             }
-            
+
             else if (exception is CoralTimeUnauthorizedException)
             {
                 code = HttpStatusCode.Unauthorized;
@@ -67,16 +67,20 @@ namespace CoralTime.Common.Middlewares
             else if (exception is CoralTimeDangerException)
             {
                 code = HttpStatusCode.BadRequest;
-                message = exception.Message;
                 _logger.LogError($"CoralTimeDangerException, {exception.Message} , {exception.StackTrace}");
+            }
+            else if (exception is CoralTimeForbiddenException)
+            {
+                code = HttpStatusCode.Forbidden;
+                message = exception.Message;
+                _logger.LogError($"CoralTimeForbiddenException, {exception.Message} , {exception.StackTrace}");
             }
             else
             {
                 _logger.LogError($"\nException: {exception.Message}. \nInnerException: {exception.InnerException.Message}. \nStack Trace: \n{exception.StackTrace}", exception);
             }
 
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int) code;
+            context.Response.StatusCode = (int)code;
 
 #if DEBUG
             message = "Debug message: " + exseptionMessage;
@@ -85,7 +89,7 @@ namespace CoralTime.Common.Middlewares
                 message = message + ". InnerMessage: " + exseptionInnerMessage.Message;
             }
 #endif
-            //_logger.Log(LogLevel.Error, new EventId(), exseptionInnerMessage.Message, exception, (i, exception1) => i.ToString());
+            _logger.Log(LogLevel.Error, new EventId(), exseptionInnerMessage.Message, exception, (i, exception1) => i.ToString());
 
             return context.Response.WriteAsync(message);
         }

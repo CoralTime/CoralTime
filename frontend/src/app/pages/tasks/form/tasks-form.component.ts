@@ -95,10 +95,17 @@ export class TaskFormComponent implements OnInit {
 			}
 
 			this.isRequestLoading = true;
-			submitObservable.toPromise().then(() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit(this.isNewTask);
-			});
+			submitObservable.toPromise().then(
+				() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit({
+						isNewTask: this.isNewTask
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewTask: this.isNewTask,
+					error: error
+				}));
 		}
 	}
 }

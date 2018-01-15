@@ -328,3 +328,4 @@ backend/CoralTime/Logs/*.*
 
 
 *.orig
+backend/CoralTime/appsettings.Production.json

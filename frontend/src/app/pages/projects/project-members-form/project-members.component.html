@@ -41,7 +41,7 @@
 
                 <p-column header="Access Level" styleClass="ct-access-level" [style]="{'width':'180px'}">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
-                        <ct-select *ngIf="userProject.id"
+                        <ct-select *ngIf="authUser.role == 1 && userProject.id"
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [name]="'role'"
                                    [displayName]="'name'" [trackBy]="'id'"
@@ -51,7 +51,7 @@
                                    (change)="changeRole(userProject)"
                                    [options]="projectRoles">
                         </ct-select>
-                        <ct-select *ngIf="!userProject.id" [name]="'role'"
+                        <ct-select *ngIf="authUser.role == 1 && !userProject.id" [name]="'role'"
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [displayName]="'name'" [trackBy]="'id'"
                                    [icon]="'chevron-down'"
@@ -59,16 +59,18 @@
                                    (change)="assignToPublic(userProject)"
                                    [options]="projectRoles">
                         </ct-select>
+                        <span *ngIf="authUser.role > 1"
+                              class="ct-span-ellipse">{{userProject.role.name}}</span>
                     </ng-template>
                 </p-column>
 
                 <p-column header="Actions" styleClass="ct-user-actions-col">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
-                        <a *ngIf="userProject.id && authUser.role == 1 ||
-                        userProject.id &&
-                        authUser.role == 4 &&
-                        userProject.memberName != authUser.nickname &&
-                        userProject.roleName != 'manager'"
+                        <a *ngIf="userProject.memberName != authUser.nickname
+                                && userProject.id
+                                && (authUser.role == 1
+                                || authUser.role == 4
+                                && userProject.roleName != 'manager')"
                            (click)="removeFromProject(userProject)" class="ct-grid-link ct-grid-ellipse ct-grid-delete"
                            [class.ct-disabled]="isRequestLoading">
                             <i class="material-icons" aria-hidden="true">clear</i>

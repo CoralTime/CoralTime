@@ -36,6 +36,13 @@ namespace CoralTime.BL.Services
             public string EmailText { get; set; }
         }
 
+        private class MembersWithEditionPeriodDays
+        {
+            public Member Member { get; set; }
+
+            public List<DateTime> EditionPeriodDays { get; set; }
+        }
+
         public async Task EmailSenderSimple(IConfiguration configuration, EmailSenderSimpleModel emailSenderSimpleModel)
         {
             var body = new TextPart("html")
@@ -50,41 +57,41 @@ namespace CoralTime.BL.Services
             await emailSender.SendMessageAsync();
         }
 
-        #region ByMemberSettings
+        //#region ByMemberSettings
 
-        public async Task ByMemberSettings()
-        {
-            var todayDate = DateTime.Now;
-            var currentHour = todayDate.TimeOfDay.Hours;
-            var currentDayOfWeek = todayDate.DayOfWeek;
+        //public async Task ByMemberSettings()
+        //{
+        //    var todayDate = DateTime.Now;
+        //    var currentHour = todayDate.TimeOfDay.Hours;
+        //    var currentDayOfWeek = todayDate.DayOfWeek;
 
-            CommonHelpers.SetRangeOfWorkWeekByDate(out var workWeekFirstDay, out var workWeekLastDay, todayDate);
+        //    CommonHelpers.SetRangeOfWorkWeekByDate(out var workWeekFirstDay, out var workWeekLastDay, todayDate);
 
-            var projectsWithNotificationEnable = GetPrivateProjectsWithNotificationEnable();
-            if (projectsWithNotificationEnable.Any())
-            {
-                foreach (var project in projectsWithNotificationEnable)
-                {
-                    var membersWithoutTimeEntry = GetMembersWithoutTimeEntryForPrivateProjects(project, todayDate);
+        //    var projectsWithNotificationEnable = GetPrivateProjectsWithNotificationEnable();
+        //    if (projectsWithNotificationEnable.Any())
+        //    {
+        //        foreach (var project in projectsWithNotificationEnable)
+        //        {
+        //            var membersWithoutTimeEntry = GetMembersWithoutTimeEntryForPrivateProjects(project, todayDate);
 
-                    // Get members who choose in options current DayOfWeek and Hour.
-                    var membersByDayOfWeekAndHour = GetMembersByDayOfWeekAndHour(membersWithoutTimeEntry, currentDayOfWeek, currentHour);
+        //            // Get members who choose in options current DayOfWeek and Hour.
+        //            var membersByDayOfWeekAndHour = GetMembersByDayOfWeekAndHour(membersWithoutTimeEntry.Members, currentDayOfWeek, currentHour);
 
-                    await SendNotificationsForMembers(membersByDayOfWeekAndHour, project, "Member");
-                }
-            }
-        }
+        //            await SendNotificationsForMembers(membersByDayOfWeekAndHour, project, "Member");
+        //        }
+        //    }
+        //}
 
-        private List<Member> GetMembersByDayOfWeekAndHour(List<Member> membersWithoutTimeEntry, DayOfWeek currentDayOfWeek, int currentHour)
-        {
-            return membersWithoutTimeEntry
-                .Where(member => member.SendEmailDays != null)
-                .Where(member => ConverterBitMask.DaysOfWeekIntToListDayOfWeekAdaptive(member.SendEmailDays).Any(memberSendDayOfWeek => memberSendDayOfWeek.DayOfWeek == currentDayOfWeek))
-                .Where(member => member.SendEmailTime == currentHour)
-                .ToList();
-        }
+        //private List<Member> GetMembersByDayOfWeekAndHour(List<Member> membersWithoutTimeEntry, DayOfWeek currentDayOfWeek, int currentHour)
+        //{
+        //    return membersWithoutTimeEntry
+        //        .Where(member => member.SendEmailDays != null)
+        //        .Where(member => ConverterBitMask.DaysOfWeekIntToListDayOfWeekAdaptive(member.SendEmailDays).Any(memberSendDayOfWeek => memberSendDayOfWeek.DayOfWeek == currentDayOfWeek))
+        //        .Where(member => member.SendEmailTime == currentHour)
+        //        .ToList();
+        //}
 
-        #endregion
+        //#endregion
 
         #region ByProjects Settings.
 
@@ -139,6 +146,7 @@ namespace CoralTime.BL.Services
             var notificationPeriodDays = new List<DateTime>();
 
             var notificationPeriodDay = todayDate.Date.AddDays(-1);
+
             do
             {
                 if (IsWorkDay(notificationPeriodDay))
@@ -175,7 +183,7 @@ namespace CoralTime.BL.Services
         private List<Project> GetPrivateProjectsWithNotificationEnable()
         {
             return Uow.ProjectRepository.LinkedCacheGetList()
-                .Where(proj => proj.IsNotificationEnabled && proj.IsActive && proj.IsPrivate)
+                .Where(proj => proj.IsNotificationEnabled && proj.IsActive && proj.IsPrivate && proj.NotificationDay > 0)
                 .ToList();
         }
 
@@ -186,32 +194,57 @@ namespace CoralTime.BL.Services
                 .ToList();
         }
 
-        private List<Member> GetMembersWithoutTimeEntryForPrivateProjects(Project project, DateTime todayDate)
+        private List<MembersWithEditionPeriodDays> GetMembersWithoutTimeEntryForPrivateProjects(Project project, DateTime todayDate)
         {
             var currentHour = todayDate.TimeOfDay.Hours;
 
-            var editionPeriodDays = GetNotificationPeriodDays(todayDate, project.NotificationDay).OrderByDescending(x => x.Date);
+            var editionPeriodDays = GetNotificationPeriodDays(todayDate, project.NotificationDay).OrderBy(x => x.Date).ToArray();
 
-            var membersIdsWithTimeEntriesInNotificationPeriod = Uow.TimeEntryRepository.GetQueryWithIncludes()
-                .Where(tEntry => editionPeriodDays.All(editionPeriodDay => tEntry.Member.TimeEntries.Where(proj => proj.ProjectId == project.Id).Select(tEntryDate => tEntryDate.Date.Date).Contains(editionPeriodDay)))
-                .Select(memberId => memberId.MemberId)
+            var timeEntrtyByNotificationRange = Uow.TimeEntryRepository.GetQueryWithIncludes()
+                .Where(tEntry => tEntry.ProjectId == project.Id)
+                .Where(tEntry => tEntry.Date.Date >= NotificationPeriodFirstDay && tEntry.Date.Date <= NotificationPeriodLastDay).ToList();
+
+            // Only All
+            var membersIdsWithAllTimeEntriesInNotificationPeriod = timeEntrtyByNotificationRange
+                .Where(tEntry => editionPeriodDays.All(editionPeriodDay => tEntry.Member.TimeEntries.Select(tEntryDate => tEntryDate.Date.Date).Contains(editionPeriodDay)))
+                .Select(member => member.Member)
                 .Distinct()
-                .ToArray();
-
-            var membersWithoutTimeEntriesInNotificationPeriod = project.MemberProjectRoles
-                .Where(mpr => !membersIdsWithTimeEntriesInNotificationPeriod.Contains(mpr.MemberId))
-                .Select(mpr => mpr.Member)
-                .Where(member => member.SendEmailTime == currentHour)
                 .ToList();
 
-            return membersWithoutTimeEntriesInNotificationPeriod;
+            // Not All or Any
+            var membersIdsWithoutAllTimeEntriesInNotificationPeriod = project.MemberProjectRoles
+                .Where(mpr => membersIdsWithAllTimeEntriesInNotificationPeriod.Any(m2 => m2.Id != mpr.Member.Id))
+                .Select(x => x.Member)
+                .Where(member => member.SendEmailTime == currentHour);
+
+            var membersWithEditionPeriodDays = new List<MembersWithEditionPeriodDays>();
+
+            foreach (var member in membersIdsWithoutAllTimeEntriesInNotificationPeriod)
+            {
+                var dateTimeEntryByNotificationRange = timeEntrtyByNotificationRange
+                    .Where(tE => tE.ProjectId == project.Id && tE.MemberId == member.Id)
+                    .Select(te => te.Date.Date)
+                    .Where(tE => editionPeriodDays.Contains(tE));
+
+                var localMembRange = new MembersWithEditionPeriodDays
+                {
+                    Member = member,
+                    EditionPeriodDays = editionPeriodDays
+                        .Except(dateTimeEntryByNotificationRange.Select(z => z.Date))
+                        .Select(g => g.Date.Date).ToList()
+                };
+
+                membersWithEditionPeriodDays.Add(localMembRange);
+            }
+
+            return membersWithEditionPeriodDays;
         }
 
         private List<Member> GetMembersWithoutTimeEntryForGlobalProjects(Project project, DateTime todayDate)
         {
             var currentHour = todayDate.TimeOfDay.Hours;
 
-            var editionPeriodDays = GetNotificationPeriodDays(todayDate, project.NotificationDay).OrderByDescending(x => x.Date);
+            var editionPeriodDays = GetNotificationPeriodDays(todayDate, project.NotificationDay).OrderByDescending(x => x.Date).ToArray();
 
             var membersIdsWithTimeEntriesInNotificationPeriod = Uow.TimeEntryRepository.GetQueryWithIncludes()
                 .Where(tEntry => editionPeriodDays.All(editionPeriodDay => tEntry.Member.TimeEntries.Where(proj => proj.ProjectId == project.Id).Select(tEntryDate => tEntryDate.Date.Date).Contains(editionPeriodDay)))
@@ -223,32 +256,35 @@ namespace CoralTime.BL.Services
                 .Where(member => !membersIdsWithTimeEntriesInNotificationPeriod.Contains(member.Id))
                 .Where(member => member.SendEmailTime == currentHour)
                 .ToList();
-            
+
             return membersWithoutTimeEntriesInNotificationPeriod;
+
         }
 
-        private async Task SendNotificationsForMembers(List<Member> membersByDayOfWeekAndHours, Project project, string subjectName)
+        private async Task SendNotificationsForMembers(List<MembersWithEditionPeriodDays> membersWithNotificationRange, Project project, string subjectName)
         {
-            if (membersByDayOfWeekAndHours.Any())
+            if (membersWithNotificationRange.Any())
             {
-                foreach (var member in membersByDayOfWeekAndHours)
+                foreach (var memberNotifRange in membersWithNotificationRange)
                 {
                     var dayOrDays = project.NotificationDay == 1 ? "day" : "days";
 
                     var linkToCreateTEntry = $"https://time.coral.team:1593/calendar/week;date={NotificationPeriodFirstDay.Month}-{NotificationPeriodFirstDay.Day}-{NotificationPeriodFirstDay.Year}";
                     var linkCallBackMain = "https://time.coral.team:1593/";
 
-                    var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(member.DateFormatId);
-                    var dateRangeShort = $"{NotificationPeriodFirstDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)} - {NotificationPeriodLastDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)}";
+                    var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(memberNotifRange.Member.DateFormatId);
+                    //var dateRangeShort = $"{NotificationPeriodFirstDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)} - {NotificationPeriodLastDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)}";
 
+                    var editionDaysFormat = "<b>" + string.Join(", </b><b>", memberNotifRange.EditionPeriodDays.Select(x => x.ToString(dateFormatShort, CultureInfo.InvariantCulture))) + "</b>";
                     var emailSenderSimpleModel = new EmailSenderSimpleModel
                     {
-                        Subject = $"Reminder to fill time entry {member.User.Email} by {subjectName} Settigs",
-                        ToEmail = member.User.Email,
-                        EmailText = $@"<p>Hello, {member.FullName}!<br>
-                        <p>This is a friendly reminder that you haven’t filled your time entries for the last work <b>{project.NotificationDay}</b> {dayOrDays}:<br>
-                        <p>({dateRangeShort}) on <b>{project.Name}</b> project.<br>
-                        <p>Would you like to enter your time now? <a href=""{linkToCreateTEntry}"">Just click here to open CoralTime</a><br><br>
+                        Subject = $"Reminder to fill time entry {memberNotifRange.Member.User.Email} by {subjectName} Settigs",
+                        ToEmail = memberNotifRange.Member.User.Email,
+                        EmailText = $@"<p>Hello, {memberNotifRange.Member.FullName}!<br>
+                        <p>This is a friendly reminder.
+                        <p>That you haven’t filled your Time Entries on <b>{project.Name}</b> project.<br> 
+                        <p>for the next last work <b>{project.NotificationDay}</b> {dayOrDays}: {editionDaysFormat}. 
+                        <p><a href=""{linkToCreateTEntry}"">Would you like to enter your time now?</a><br><br>
                         <p>Best wishes, <a href=""mailto:coraltime2017@yandex.ru"">CoralTime Team!</a>"
                     };
 

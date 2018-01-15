@@ -111,9 +111,17 @@ export class ClientFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(() => {
-			this.isRequestLoading = false;
-			this.onSubmit.emit(this.isNewClient)
-		});
+		submitObservable.toPromise().then(
+			() => {
+				this.isRequestLoading = false;
+				this.onSubmit.emit({
+					isNewClient: this.isNewClient
+				});
+			},
+			error => this.onSubmit.emit({
+				isNewClient: this.isNewClient,
+				error: error
+			})
+		);
 	}
 }

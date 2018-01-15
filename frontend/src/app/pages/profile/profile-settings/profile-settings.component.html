@@ -33,10 +33,11 @@
                             <div class="ct-required-field-container">
                                 <input class="ct-input ct-full-width" #contactEmail="ngModel" type="email"
                                        name="email" [(ngModel)]="userModel.email"
-                                       (focus)="showWrongEmailMessage=false"
+                                       (focus)="showWrongEmailMessage = false"
+                                       (ngModelChange)="isEmailChanged = true"
                                        [pattern]="emailPattern" required>
                             </div>
-                            <div class="ct-error-text" *ngIf="showWrongEmailMessage">User with this email already exists</div>
+                            <div class="ct-error-text" *ngIf="isEmailChanged && showWrongEmailMessage">User with this email already exists</div>
                             <div class="ct-error-text" *ngIf="!contactEmail.pristine && !userModel.email">Email can't be empty</div>
                         </div>
                         <div>

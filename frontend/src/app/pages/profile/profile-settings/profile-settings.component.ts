@@ -48,6 +48,7 @@ export class ProfileSettingsComponent implements OnInit {
 	dateFormats: DateFormat[];
 	dateFormatModel: DateFormat;
 	emailPattern = EMAIL_PATTERN;
+	isEmailChanged: boolean;
 	projects: Project[];
 	projectModel: Project;
 	sendEmailDaysArray: WeekDay[];
@@ -165,7 +166,7 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitNotifications(notificationsObject, this.userModel.id)
 			.subscribe(() => {
-					this.userInfoService.setUserInfo(this.userModel);
+					this.userInfoService.setUserInfo(notificationsObject);
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {
@@ -182,12 +183,16 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
 			.subscribe((userModel: any) => {
+					this.isEmailChanged = false;
 					this.userModel.email = userModel.Email;
-					this.userInfoService.setUserInfo(this.userModel);
+					this.userInfoService.setUserInfo(personalInfoObject);
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {
-					this.showWrongEmailMessage = true;
+					if (!error) {
+						this.showWrongEmailMessage = true;
+					}
+
 					this.notificationService.danger('Error changing profile settings.');
 				});
 	}
@@ -204,7 +209,7 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitPreferences(preferencesObject, this.userModel.id)
 			.subscribe(() => {
-					this.userInfoService.setUserInfo(this.userModel);
+					this.userInfoService.setUserInfo(preferencesObject);
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {

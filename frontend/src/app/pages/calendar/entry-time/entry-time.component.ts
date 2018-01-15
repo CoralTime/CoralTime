@@ -103,11 +103,11 @@ export class EntryTimeComponent implements OnDestroy {
 	}
 
 	private isBottomClear(el: HTMLElement): boolean {
-		return window.innerHeight > el.getBoundingClientRect().top + 480
+		return window.innerHeight > el.getBoundingClientRect().top + 560
 	}
 
 	private isTopClear(el: HTMLElement): boolean {
-		return el.getBoundingClientRect().bottom > 480
+		return el.getBoundingClientRect().bottom > 560
 	}
 
 	private changeCloseParameter(): void {

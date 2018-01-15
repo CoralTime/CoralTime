@@ -28,12 +28,14 @@ namespace CoralTime.BL.Services
     {
         private readonly IConfiguration _config;
         private readonly IMemberService _memberService;
+        private readonly bool _isDemo;
 
         public ProfileService(UnitOfWork uow, IConfiguration config, IMapper mapper, IMemberService memberService) 
             : base(uow, mapper)
         {
             _config = config;
             _memberService = memberService;
+            _isDemo = bool.Parse(_config["DemoSiteMode"]);
         }
 
         public DateConvert[] GetDateFormats()
@@ -300,7 +302,12 @@ namespace CoralTime.BL.Services
             {
                 throw new CoralTimeDangerException("Invalid email");
             }
-            
+
+            if (_isDemo)
+            {
+                throw new CoralTimeForbiddenException("Full name can't be changed on demo site");
+            }
+
             CheckRelatedEntities(userName, out var memberByName);
             memberByName = Uow.MemberRepository.GetQueryByUserName(userName);
             memberByName.FullName = memberPreferencesView.FullName;

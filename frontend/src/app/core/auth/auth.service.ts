@@ -84,7 +84,7 @@ export class AuthService {
 		}).map(response => {
 			this.setAuthUser(new AuthUser(response.json(), true));
 			return true;
-		});
+		}).catch(() => this.router.navigate(['/error']));
 	}
 
 	refreshToken(): Observable<Response> {

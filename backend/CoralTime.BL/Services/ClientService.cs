@@ -53,7 +53,7 @@ namespace CoralTime.BL.Services
         public IEnumerable<ClientView> GetAllClients()
         {
             var result = Uow.ClientRepository.LinkedCacheGetList()
-                .Select(p => p.GetViewActiveInactiveProjectsForClientCount(p.Projects, Mapper));
+                .Select(client => client.GetViewActiveInactiveProjectsForClientCount(Mapper));
 
             return result;
         }

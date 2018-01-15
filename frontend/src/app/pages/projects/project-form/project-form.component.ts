@@ -133,10 +133,17 @@ export class ProjectFormComponent implements OnInit {
 			}
 
 			this.isRequestLoading = true;
-			submitObservable.toPromise().then(() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit(this.isNewProject)
-			});
+			submitObservable.toPromise().then(
+				() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit({
+						isNewTask: this.isNewProject
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewTask: this.isNewProject,
+					error: error
+				}));
 		}
 	}
 }

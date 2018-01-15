@@ -116,8 +116,9 @@ export class ProjectsComponent implements OnInit {
 		this.dialogRef = this.dialog.open(ProjectFormComponent);
 		this.dialogRef.componentInstance.project = project;
 
-		this.dialogRef.componentInstance.onSubmit.subscribe((event) => {
-			this.onSubmit(event);
+		this.dialogRef.componentInstance.onSubmit.subscribe((response) => {
+			this.dialogRef.close();
+			this.onSubmit(response);
 		});
 	}
 
@@ -142,13 +143,18 @@ export class ProjectsComponent implements OnInit {
 		this.dialogUserRef.componentInstance.project = project;
 	}
 
-	onSubmit(isNewProject: boolean): void {
-		this.dialogRef.close();
-		if (isNewProject) {
-			this.notificationService.success('New projects has been successfully created.')
+	onSubmit(response: any): void {
+		if (response.error) {
+			this.notificationService.danger('Error saving project.');
+			return;
+		}
+
+		if (response.isNewProject) {
+			this.notificationService.success('New project has been successfully created.')
 		} else {
 			this.notificationService.success('Project has been successfully changed.');
 		}
+
 		this.loadLazy(null, true);
 	}
 

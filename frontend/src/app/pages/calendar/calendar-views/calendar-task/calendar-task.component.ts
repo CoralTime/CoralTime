@@ -116,7 +116,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		observable.subscribe(
 			() => {
-				this.notificationService.success('New Time Entry has been deleted.');
+				this.notificationService.success('Time Entry has been deleted.');
 				this.calendarService.timeEntriesUpdated.emit();
 				this.closeForm();
 			},

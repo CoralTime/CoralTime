@@ -41,12 +41,14 @@ namespace CoralTime.Api.v1.Odata
                         var dt = Convert.ToDateTime(match.ToString());
                         dates.Add(dt);
                     }
+
+                    var dateStart = dates.Min(x => x);
+                    var dateEnd = dates.Max(x => x);
+
+                    return Ok(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateStart, dateEnd));
                 }
 
-                var dateStart = dates.Min(x => x);
-                var dateEnd = dates.Max(x => x);
-
-                return Ok(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateStart, dateEnd));
+                return BadRequest("No dates in query");
             }
             catch (Exception e)
             {

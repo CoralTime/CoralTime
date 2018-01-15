@@ -25,12 +25,14 @@ namespace CoralTime.BL.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly bool _isDemo;
 
         public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper)
             : base(uow, mapper)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _isDemo = bool.Parse(_configuration["DemoSiteMode"]);
         }
 
         public IEnumerable<MemberView> GetAllMembers(string userName)
@@ -120,16 +122,28 @@ namespace CoralTime.BL.Services
             {
                 throw new CoralTimeSafeEntityException("Invalid email");
             }
-            
+
+            var member = Uow.MemberRepository.GetQueryByMemberId(memberId);
+
+            if (_isDemo)
+            {
+                if (member.User.Email != memberView.Email)
+                    throw new CoralTimeForbiddenException("Email can't be changed on demo site");
+                if (member.User.UserName != memberView.UserName)
+                    throw new CoralTimeForbiddenException("Username can't be changed on demo site");
+                if (member.User.IsActive != memberView.IsActive)
+                    throw new CoralTimeForbiddenException("Status can't be changed on demo site");
+                if (member.FullName != memberView.FullName)
+                    throw new CoralTimeForbiddenException("Full name can't be changed on demo site");
+            }
+
             if (memberByName.User.IsAdmin)
             {
                 var newEmail = memberView.Email;
                 var newUserName = memberView.UserName;
                 var newIsActive = memberView.IsActive;
                 var newIsAdmin = memberView.IsAdmin;
-
-                var member = Uow.MemberRepository.GetQueryByMemberId(memberId);
-
+                
                 if (member.User.Email != newEmail || member.User.UserName != newUserName || member.User.IsActive != newIsActive || member.User.IsAdmin != newIsAdmin)
                 {
                     member.User.Email = newEmail;
@@ -178,7 +192,7 @@ namespace CoralTime.BL.Services
                 }
             }
 
-            var memberById = Uow.MemberRepository.GetQueryWithIncludes().FirstOrDefault(y => y.Id == memberId);
+            var memberById = Uow.MemberRepository.GetQueryByMemberId(memberId);
 
             await ChangeEmailByUserAsync(memberById, memberView.Email);
 
@@ -232,6 +246,11 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"user with id {Uow.MemberRepository.GetById(member.Id).UserId} is not active.");
             }
 
+            if (_isDemo)
+            {
+                throw new CoralTimeForbiddenException($"Password can't be changed on demo site");
+            }
+
             var userUpdationResult = await _userManager.ChangePasswordAsync(user, member.OldPassword, member.NewPassword);
 
             if (!userUpdationResult.Succeeded)
@@ -274,6 +293,11 @@ namespace CoralTime.BL.Services
 
         public async Task<ChangePasswordResultView> ChangePasswordByTokenAsync(MemberChangePasswordByTokenView model)
         {
+            if (_isDemo)
+            {
+                throw new CoralTimeForbiddenException($"Password can't be changed on demo site");
+            }
+            
             var userForgotPassRequest = Uow.UserForgotPassRequestRepository.GetRequest(model.Token);
 
             if (userForgotPassRequest == null)
@@ -317,6 +341,9 @@ namespace CoralTime.BL.Services
 
         public async Task SentInvitationEmailAsync(MemberView member, string baseUrl)
         {
+            if (_isDemo)
+                return;
+            
             var profileUrl = baseUrl + "/profile/settings";
 
             bool.TryParse(_configuration["Authentication:EnableAzure"], out bool enableAzure);
@@ -354,6 +381,9 @@ namespace CoralTime.BL.Services
 
         public async Task SentUpdateAccountEmailAsync(MemberView member, string baseUrl)
         {
+            if (_isDemo)
+                return;
+            
             var profileUrl = baseUrl + "/profile/settings";
 
             var body = new TextPart("html")
@@ -376,6 +406,9 @@ namespace CoralTime.BL.Services
 
         public async Task<PasswordForgotEmailResultView> SentForgotEmailAsync(string email, string url)
         {
+            if (_isDemo)
+                return new PasswordForgotEmailResultView { IsSentEmail = false, Message = (int)Constants.Errors.ErrorSendEmail };
+            
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -450,6 +483,11 @@ namespace CoralTime.BL.Services
 
         public async Task ChangeEmailByUserAsync(Member member, string newEmail)
         {
+            if (_isDemo)
+            {
+                throw new CoralTimeForbiddenException($"Email can't be changed on demo site");
+            }
+            
             if (!string.IsNullOrWhiteSpace(newEmail) && member.User.Email != newEmail)
             {
                 member.User.Email = newEmail;

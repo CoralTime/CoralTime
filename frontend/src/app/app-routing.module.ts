@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { ForbiddenComponent } from './pages/errors/components/forbidden/forbidden.component';
+import { ServerErrorComponent } from './pages/errors/components/server-error/server-error.component';
 
 export const appRoutes: Routes = [
 	{
@@ -42,6 +43,10 @@ export const appRoutes: Routes = [
 		loadChildren: 'app/pages/login/login.module#LoginModule'
 	},
 	{
+		path: 'login-demo',
+		loadChildren: 'app/pages/login-demo/login-demo.module#LoginDemoModule'
+	},
+	{
 		path: 'forgot-password',
 		loadChildren: 'app/pages/forgot-password/forgot-password.module#ForgotPasswordModule'
 	},
@@ -59,6 +64,10 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: 'error',
+		component: ServerErrorComponent
+	},
+	{
+		path: 'page-not-found',
 		component: ForbiddenComponent
 	},
 	{

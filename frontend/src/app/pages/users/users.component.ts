@@ -109,9 +109,9 @@ export class UsersComponent implements OnInit {
 	openUserDialog(user: User = null): void {
 		this.dialogRef = this.dialog.open(UsersFormComponent);
 		this.dialogRef.componentInstance.user = user;
-		this.dialogRef.componentInstance.onSaved.subscribe(() => {
+		this.dialogRef.componentInstance.onSaved.subscribe((response) => {
 			this.dialogRef.close();
-			this.onSaved();
+			this.onSaved(response);
 		});
 	}
 
@@ -120,8 +120,18 @@ export class UsersComponent implements OnInit {
 		this.dialogProjectAssignmentRef.componentInstance.user = user;
 	}
 
-	onSaved(): void {
-		this.notificationService.success('User has been successfully saved.');
+	onSaved(response: any): void {
+		if (response.error) {
+			this.notificationService.danger('Error saving user.');
+			return;
+		}
+
+		if (response.isNewUser) {
+			this.notificationService.success('New user has been successfully created.')
+		} else {
+			this.notificationService.success('User has been successfully changed.');
+		}
+
 		this.loadLazy(null, true);
 	}
 

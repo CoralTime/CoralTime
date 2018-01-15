@@ -109,19 +109,25 @@ export class ClientsComponent implements OnInit {
 		this.dialogRef = this.dialog.open(ClientFormComponent);
 		this.dialogRef.componentInstance.client = client;
 
-		this.dialogRef.componentInstance.onSubmit.subscribe((event) => {
-			this.onSubmit(event);
+		this.dialogRef.componentInstance.onSubmit.subscribe((response) => {
+			this.dialogRef.close();
+			this.onSubmit(response);
 		});
 	}
 
-	onSubmit(isNewClient: boolean): void {
-		if (isNewClient) {
-			this.notificationService.success('New client has been successfully created.');
+	onSubmit(response: any): void {
+		if (response.error) {
+			this.notificationService.danger('Error saving client.');
+			return;
+		}
+
+		if (response.isNewClient) {
+			this.notificationService.success('New client has been successfully created.')
 		} else {
 			this.notificationService.success('Client has been successfully changed.');
 		}
+
 		this.loadLazy(null, true);
-		this.dialogRef.close();
 	}
 
 	toggleTab(isActiveTab: boolean): void {

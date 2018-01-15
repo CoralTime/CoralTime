@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user';
+import { ObjectUtils } from '../object-utils';
 
 const USER_INFO = 'USER_INFO';
 
@@ -23,10 +24,10 @@ export class UserInfoService {
 		return this.loadUserInfo(userId);
 	}
 
-	setUserInfo(user: User): void {
-		this.userInfo = user;
-		localStorage.setItem(USER_INFO, JSON.stringify(user));
-		this.onChange.emit(user);
+	setUserInfo(obj: any): void {
+		this.userInfo = (obj && this.userInfo) ? Object.assign(this.userInfo, obj) : obj;
+		localStorage.setItem(USER_INFO, JSON.stringify(this.userInfo));
+		this.onChange.emit(this.userInfo);
 	}
 
 	private loadUserInfo(userId: number): Promise<User> {

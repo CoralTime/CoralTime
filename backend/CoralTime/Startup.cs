@@ -179,7 +179,7 @@ namespace CoralTime
             });
 
             // Uncomment to Create DB
-            AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
+            //AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
         }
 
         private  void SetupIdentity(IServiceCollection services)

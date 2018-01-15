@@ -1,75 +1,75 @@
 {
-    "AddAdmins": true,
-    "AddMembers": true,
-    "AddClients": true,
-    "AddTasks": true,
-    "AddProjects": true,
+  "AddAdmins": true,
+  "AddMembers": true,
+  "AddClients": true,
+  "AddTasks": true,
+  "AddProjects": true,
 
-    "Users": {
-        "Admins": [
-            {
-                "UserName": "Admin",
-                "FullName": "Admin",
-                "Password": "password",
-                "Email": "coraltime.admin@coralteam.com"
-            }
-        ],
-        "Members": [
-            {
-                "UserName": "User",
-                "FullName": "User",
-                "Password": "password",
-                "Email": "coraltime.user@coralteam.com"
-            },
-            {
-                "UserName": "Pm",
-                "FullName": "Pm",
-                "Password": "password",
-                "Email": "coraltime.pm@coralteam.com"
-            }
-        ]
-    },
-
-    "Clients": [
-        {
-            "Name": "CoralTeq",
-            "Description": "Test Client",
-            "IsActive": true,
-            "Email": "coraltime@coralteam.com"
-        }
+  "Users": {
+    "Admins": [
+      {
+        "UserName": "Admin",
+        "FullName": "Admin",
+        "Password": "password",
+        "Email": "admin@mail.com"
+      }
     ],
-
-    "Tasks": [
-        {
-            "Name": "Coding",
-            "IsActive": true
-        },
-        {
-            "Name": "Project management",
-            "IsActive": true
-        },
-        {
-            "Name": "Design",
-            "IsActive": true
-        }
-    ],
-
-    "Projects": [
-        {
-            "Name": "CoralTime",
-            "CreationDate": "2017-12-26 19:13:04.3300000",
-            "LastUpdateDate": "2017-12-26 19:13:04.3300000",
-            "DaysBeforeStopEditTimeEntries": 0,
-            "IsActive": true,
-            "IsPrivate": true,
-            "ClientId": 1
-        }
-    ],
-
-    "Settings": [
-        {
-            "Name": "DefaulProjectRoleId",
-            "Value": ""
-        }
+    "Members": [
+      {
+        "UserName": "User",
+        "FullName": "User",
+        "Password": "password",
+        "Email": "user@mail.com"
+      },
+      {
+        "UserName": "Pm",
+        "FullName": "Pm",
+        "Password": "password",
+        "Email": "pm@mail.com"
+      }
     ]
+  },
+
+  "Clients": [
+    {
+      "Name": "CoralTeq",
+      "Description": "Test Client",
+      "IsActive": true,
+      "Email": "client@mail.com"
+    }
+  ],
+
+  "Tasks": [
+    {
+      "Name": "Coding",
+      "IsActive": true
+    },
+    {
+      "Name": "Project management",
+      "IsActive": true
+    },
+    {
+      "Name": "Design",
+      "IsActive": true
+    }
+  ],
+
+  "Projects": [
+    {
+      "Name": "CoralTime",
+      "CreationDate": "2017-12-26 19:13:04.3300000",
+      "LastUpdateDate": "2017-12-26 19:13:04.3300000",
+      "DaysBeforeStopEditTimeEntries": 0,
+      "IsActive": true,
+      "IsPrivate": true,
+      "ClientId": 1
+    }
+  ],
+
+  "Settings": [
+    {
+      "Name": "DefaulProjectRoleId",
+      "Value": ""
+    }
+  ]
 }

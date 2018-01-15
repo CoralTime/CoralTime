@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using AutoMapper;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Clients;
@@ -17,17 +16,17 @@ namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
             return clientView;
         }
 
-        public static ClientView GetViewActiveInactiveProjectsForClientCount(this Client client, List<Project> clientProj, IMapper _mapper)
+        public static ClientView GetViewActiveInactiveProjectsForClientCount(this Client client, IMapper _mapper)
         {
-            var clientView = _mapper.Map<Client, ClientView>(client);
+            var clientView = GetView(client, _mapper);
 
             if (client.IsActive)
             {
-                clientView.ProjectsCount = clientProj.Count(x => x.IsActive);
+                clientView.ProjectsCount = client.Projects.Count(x => x.IsActive);
             }
             else
             {
-                clientView.ProjectsCount = clientProj.Count;
+                clientView.ProjectsCount = client.Projects.Count;
             }
 
             return clientView;

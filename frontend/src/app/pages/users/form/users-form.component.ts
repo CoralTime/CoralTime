@@ -101,6 +101,7 @@ export class UsersFormComponent implements OnInit {
 
 	stateModel: any;
 	isActive: boolean;
+	isNewUser: boolean;
 	stateText: string;
 
 	states = [
@@ -116,6 +117,7 @@ export class UsersFormComponent implements OnInit {
 		this.authUser = this.authService.getAuthUser();
 
 		let user = this.user;
+		this.isNewUser = !user;
 		this.user = user ? user : new User();
 		this.submitButtonText = this.user.id ? 'Save' : 'Create';
 
@@ -184,9 +186,16 @@ export class UsersFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(() => {
-			this.isRequestLoading = false;
-			this.onSaved.emit();
-		});
+		submitObservable.toPromise().then(
+			() => {
+				this.isRequestLoading = false;
+				this.onSaved.emit({
+					isNewUser: this.isNewUser
+				});
+			},
+			error => this.onSaved.emit({
+				isNewUser: this.isNewUser,
+				error: error
+			}));
 	}
 }

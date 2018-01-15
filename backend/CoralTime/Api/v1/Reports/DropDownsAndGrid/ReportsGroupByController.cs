@@ -1,16 +1,16 @@
+using System;
 using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
 using CoralTime.Common.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 
-namespace CoralTime.Api.v1.Reports.DDAndGrid
+namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
 {
     [Authorize]
     [Route("api/v1/[controller]")]
     public class ReportsGroupByController : _BaseController<ReportsGroupByController, IReportService>
-    {  
+    {
         public ReportsGroupByController(IReportService service, ILogger<ReportsGroupByController> logger)
             : base(logger, service) { }
 
