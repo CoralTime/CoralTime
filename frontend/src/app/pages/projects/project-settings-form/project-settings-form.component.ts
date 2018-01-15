@@ -71,6 +71,12 @@ export class ProjectSettingsFormComponent implements OnInit {
 		this.model.lockPeriod = this.lockPeriodModel.value;
 	}
 
+	validateDaysNumber(daysNumber: number): number {
+		daysNumber = Math.max(1, +daysNumber);
+		daysNumber = Math.min(99, +daysNumber);
+		return daysNumber;
+	}
+
 	save(): void {
 		let updatedProject = this.model.toProject();
 		let observable = this.projectsService.odata.Put(updatedProject, updatedProject.id.toString());

@@ -41,10 +41,9 @@ export class CalendarService {
 		let filters = [];
 		let query = this.odata.Query();
 
-		let newDateFrom = new Date(new Date(dateFrom).setDate(dateFrom.getDate() - 1));
 		let newDateTo = new Date(new Date(dateTo).setDate(dateTo.getDate() - 1));
-		filters.push('Date gt ' + moment(newDateFrom).format('YYYY-MM-DD') + 'T17:59:59Z');
-		filters.push('Date lt ' + moment(newDateTo).format('YYYY-MM-DD') + 'T18:00:00Z');
+		filters.push('Date gt ' + moment(dateFrom).format('YYYY-MM-DD') + 'T00:00:00Z');
+		filters.push('Date lt ' + moment(newDateTo).format('YYYY-MM-DD') + 'T23:59:59Z');
 
 		query.Filter(filters.join(' and '));
 

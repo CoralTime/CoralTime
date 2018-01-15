@@ -25,8 +25,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 	projects: CustomSelectItem[] = [];
 	showOnlyActive: boolean = true;
 
-	private eventSubscription: Subscription;
-
 	constructor(private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,
 	            private route: ActivatedRoute,
@@ -40,10 +38,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		});
 		this.setAvailablePeriod(window.innerWidth);
 		this.setActivePeriod();
-		this.eventSubscription = this.router.events.subscribe(event => {
+		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
 				let route = this.route.snapshot.children[0];
-				this.date = route.params['date'] ? moment.utc(route.params['date'], 'MM-DD-YYYY').toDate() : new Date();
+				this.date = route.params['date'] ? moment(route.params['date'], 'MM-DD-YYYY').utc().toDate() : moment().startOf('day').toDate();
 				this.projectIds = route.params['projectIds'] ? route.params['projectIds'].split(',') : [];
 				this.projectIds.forEach((id, index) => {this.projectIds[index] = +id});
 				this.projectsService.filteredProjects = this.projectIds;
@@ -178,7 +176,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.eventSubscription.unsubscribe();
 		this.projectsService.clearProject();
 		this.calendarService.isAltPressed = false;
 		this.calendarService.dragEffect = 'move';

@@ -42,8 +42,8 @@ namespace CoralTime.Api.v1.Odata
                         dates.Add(dt);
                     }
 
-                    var dateStart = dates.Min(x => x);
-                    var dateEnd = dates.Max(x => x);
+                    var dateStart = dates.Min(x => x).Date;
+                    var dateEnd = dates.Max(x => x).Date.AddDays(1).AddMilliseconds(-1);
 
                     return Ok(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateStart, dateEnd));
                 }

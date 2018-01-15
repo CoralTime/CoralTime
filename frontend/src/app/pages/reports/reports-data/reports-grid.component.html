@@ -16,8 +16,6 @@
 <p-dataTable class="ct-grid-container ct-table"
              [value]="gridDataRows"
              [responsive]="true"
-             [sortField]="'date'"
-             [sortOrder]="1"
              [lazy]="true" (onLazyLoad)="loadLazy($event)">
     <p-column *ngIf="groupBy != 3 && showColumns.indexOf(2) > -1" styleClass="ct-cell-date" field="date" header="Date" [sortable]="true">
         <ng-template let-item="rowData" pTemplate="body">

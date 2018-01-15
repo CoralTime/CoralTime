@@ -512,7 +512,7 @@
 
   .mat-input-underline {
     border: none;
-    border-top: 1px dotted $nav-link-border;
+    border-top: 1px solid $nav-link-border;
 
     .mat-input-ripple {
       height: 1px;
@@ -524,6 +524,7 @@
   }
 
   .mat-input-invalid .mat-input-underline {
+    display: block;
     border-color: #f44336;
   }
 

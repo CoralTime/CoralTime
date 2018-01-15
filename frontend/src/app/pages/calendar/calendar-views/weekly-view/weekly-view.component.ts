@@ -23,8 +23,8 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	projects: Project[] = [];
 	projectIds: number[];
 	projectTimeEntries: TimeEntry[] = [];
-	startDay: Date = moment.utc().startOf('day').toDate();
-	endDay: Date = moment.utc().endOf('day').toDate();
+	startDay: Date;
+	endDay: Date;
 	timeEntries: TimeEntry[];
 
 	private timeEntriesSubscription: Subscription;
@@ -42,7 +42,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		});
 		this.route.params.subscribe((params: Params) => {
 			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
-			this.date = params['date'] ? moment.utc(params['date'], 'MM-DD-YYYY').toDate() : moment.utc().startOf('day').toDate();
+			this.date = params['date'] ? moment(params['date'], 'MM-DD-YYYY').toDate() : moment().startOf('day').toDate();
 			this.setAvailablePeriod(window.innerWidth);
 			this.setEmptyWeek();
 			this.getTimeEntries(this.startDay, this.projectIds);
