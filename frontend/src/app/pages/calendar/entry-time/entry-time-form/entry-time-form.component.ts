@@ -16,6 +16,7 @@ import { MAX_TIMER_VALUE } from '../../calendar-views/calendar-task/calendar-tas
 import { ImpersonationService } from '../../../../services/impersonation.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../../models/user';
+import * as moment from 'moment';
 
 export class Time {
 	hours: string;
@@ -219,7 +220,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.actualTime = this.splitTime(this.currentTimeEntry.time);
 		}
 
-		return this.calendarService.odata.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
+		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
+		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
 			.toPromise().then(
 				() => {
 					this.saveTimeEntry(this.currentTimeEntry);
@@ -307,14 +309,15 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		let submitObservable: Observable<any>;
 		let isNewTimeEntry: boolean;
 
+		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
 		this.currentTimeEntry.isFromToShow = this.isFromToFormShown && this.isFromToFormValueValid();
 		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.getAuthUser().id;
 
 		if (this.currentTimeEntry.id) {
-			submitObservable = this.calendarService.odata.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
+			submitObservable = this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
 			isNewTimeEntry = false;
 		} else {
-			submitObservable = this.calendarService.odata.Post(this.currentTimeEntry);
+			submitObservable = this.calendarService.Post(this.currentTimeEntry);
 			isNewTimeEntry = true;
 		}
 

@@ -26,7 +26,7 @@ namespace CoralTime.BL.Services
             var relatedMemberByName = GetRelatedMemberByUserName(userName);
 
             var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQueryWithIncludes()
-                .Where(tEntry => tEntry.MemberId == relatedMemberByName.Id && tEntry.Date >= dateStart && tEntry.Date <= dateEnd)
+                .Where(tEntry => tEntry.MemberId == relatedMemberByName.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
                 .ToList();
 
             return timeEntriesByMemberIdAndDates.Select(x => x.GetViewTimeEntry(userName, Mapper));
@@ -416,7 +416,7 @@ namespace CoralTime.BL.Services
 
             #region #2. Update other values.
 
-            timeEntry.Date = timeEntryView.Date;
+            timeEntry.Date = timeEntryView.Date.Date;
 
             timeEntry.Time = timeEntryView.Time;
             timeEntry.PlannedTime = timeEntryView.PlannedTime ?? 0;

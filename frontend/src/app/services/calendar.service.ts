@@ -1,17 +1,15 @@
+import { Http, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 import { TimeEntry, CalendarDay } from '../models/calendar';
-import { ODataServiceFactory } from './odata/odataservicefactory';
-import { ODataService } from './odata/odata';
 import { ArrayUtils } from '../core/object-utils';
 import { AuthService } from '../core/auth/auth.service';
 import { Project } from '../models/project';
+import { ConstantService } from '../core/constant.service';
 import * as moment from 'moment';
 
 @Injectable()
 export class CalendarService {
-	readonly odata: ODataService<TimeEntry>;
-
 	defaultProject: Project;
 	dragEffect: string = 'move';
 	draggedTimeEntry: TimeEntry;
@@ -25,8 +23,8 @@ export class CalendarService {
 	calendar: CalendarDay[] = [];
 
 	constructor(private authService: AuthService,
-	            private odataFactory: ODataServiceFactory) {
-		this.odata = this.odataFactory.CreateService<TimeEntry>('TimeEntries');
+	            private constantService: ConstantService,
+	            private http: Http) {
 		if (localStorage.hasOwnProperty('DEFAULT_PROJECT')) {
 			this.defaultProject = JSON.parse(localStorage.getItem('DEFAULT_PROJECT'));
 		}
@@ -38,19 +36,37 @@ export class CalendarService {
 
 	getTimeEntries(dateFrom: Date, dif?: number): Observable<TimeEntry[]> {
 		let dateTo = this.moveDate(dateFrom, dif || 1);
-		let filters = [];
-		let query = this.odata.Query();
-
 		let newDateTo = new Date(new Date(dateTo).setDate(dateTo.getDate() - 1));
-		filters.push('Date gt ' + moment(dateFrom).format('YYYY-MM-DD') + 'T00:00:00Z');
-		filters.push('Date lt ' + moment(newDateTo).format('YYYY-MM-DD') + 'T23:59:59Z');
 
-		query.Filter(filters.join(' and '));
+		let params = new URLSearchParams();
+		params.set('dateBegin', moment(dateFrom).format('YYYY-MM-DD') + 'T00:00:00Z');
+		params.set('dateEnd', moment(newDateTo).format('YYYY-MM-DD') + 'T23:59:59Z');
 
-		return query.Exec().map(res => {
-			let timeEntries = this.sortTimeEntries(res);
-			return timeEntries.map((x: any) => new TimeEntry(x));
-		});
+		return this.http.get(this.constantService.timeEntriesApi + '/', {search: params})
+			.map((res: Response) => {
+				let timeEntries = this.sortTimeEntries(res.json());
+				return timeEntries.map((x: any) => new TimeEntry(x))
+			})
+	}
+
+	Delete(id: string): Observable<TimeEntry[]> {
+		return this.http.delete(this.constantService.timeEntriesApi + '(' + id + ')')
+			.map((res: Response) => res.json());
+	}
+
+	Patch(obj: TimeEntry, id: string): Observable<any> {
+		return this.http.patch(this.constantService.timeEntriesApi + '(' + id + ')', obj)
+			.map((res: Response) => res.json());
+	}
+
+	Post(obj: TimeEntry): Observable<any> {
+		return this.http.post(this.constantService.timeEntriesApi + '/', obj)
+			.map((res: Response) => res.json());
+	}
+
+	Put(obj: TimeEntry, id: string): Observable<TimeEntry[]> {
+		return this.http.put(this.constantService.timeEntriesApi + '(' + id + ')', obj)
+			.map((res: Response) => res.json());
 	}
 
 	moveDate(date: Date, dif: number): Date {

@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { CalendarDay, TimeEntry } from '../../../../models/calendar';
+import { CalendarDay, DateUtils, TimeEntry } from '../../../../models/calendar';
 import { CalendarService } from '../../../../services/calendar.service';
 import { EntryTimeComponent } from '../../entry-time/entry-time.component';
 import { NotificationService } from '../../../../core/notification.service';
@@ -108,14 +108,14 @@ export class CalendarDayComponent implements OnInit {
 				this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 				return;
 			}
-
-			this.draggedTimeEntry.date = this.dayInfo.date;
+			
+			this.draggedTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.dayInfo.date));
 			this.draggedTimeEntry.timeTimerStart = -1;
 
 			if (this.isAltPressed()) {
-				submitObservable = this.calendarService.odata.Post(this.draggedTimeEntry);
+				submitObservable = this.calendarService.Post(this.draggedTimeEntry);
 			} else {
-				submitObservable = this.calendarService.odata.Put(this.draggedTimeEntry, this.draggedTimeEntry.id.toString());
+				submitObservable = this.calendarService.Put(this.draggedTimeEntry, this.draggedTimeEntry.id.toString());
 			}
 
 			submitObservable.subscribe(
