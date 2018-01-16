@@ -50,22 +50,22 @@ export class CalendarService {
 	}
 
 	Delete(id: string): Observable<TimeEntry[]> {
-		return this.http.delete(this.constantService.timeEntriesApi + '(' + id + ')')
+		return this.http.delete(this.constantService.timeEntriesApi + id)
 			.map((res: Response) => res.json());
 	}
 
 	Patch(obj: TimeEntry, id: string): Observable<any> {
-		return this.http.patch(this.constantService.timeEntriesApi + '(' + id + ')', obj)
+		return this.http.patch(this.constantService.timeEntriesApi + id, obj)
 			.map((res: Response) => res.json());
 	}
 
 	Post(obj: TimeEntry): Observable<any> {
-		return this.http.post(this.constantService.timeEntriesApi + '/', obj)
+		return this.http.post(this.constantService.timeEntriesApi, obj)
 			.map((res: Response) => res.json());
 	}
 
 	Put(obj: TimeEntry, id: string): Observable<TimeEntry[]> {
-		return this.http.put(this.constantService.timeEntriesApi + '(' + id + ')', obj)
+		return this.http.put(this.constantService.timeEntriesApi + id, obj)
 			.map((res: Response) => res.json());
 	}
 

@@ -9,7 +9,7 @@ export class ConstantService {
 	profileApi: string = '/api/v1/Profile';
 	reportsApi: string = '/api/v1/Reports';
 	sendReportsApi: string = '/api/v1/SendReports';
-	timeEntriesApi: string = '/api/v1/TimeEntries';
+	timeEntriesApi: string = '/api/v1/TimeEntries/';
 	userAvatarApi: string = '/api/v1/Profile/Avatar/';
 	userIconApi: string = '/api/v1/Profile/Icon/';
 }
