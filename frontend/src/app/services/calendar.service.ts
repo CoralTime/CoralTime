@@ -42,7 +42,7 @@ export class CalendarService {
 		params.set('dateBegin', moment(dateFrom).format('YYYY-MM-DD') + 'T00:00:00Z');
 		params.set('dateEnd', moment(newDateTo).format('YYYY-MM-DD') + 'T23:59:59Z');
 
-		return this.http.get(this.constantService.timeEntriesApi + '/', {search: params})
+		return this.http.get(this.constantService.timeEntriesApi, {search: params})
 			.map((res: Response) => {
 				let timeEntries = this.sortTimeEntries(res.json());
 				return timeEntries.map((x: any) => new TimeEntry(x));
