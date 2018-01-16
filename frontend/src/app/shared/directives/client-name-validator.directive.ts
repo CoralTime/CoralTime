@@ -40,7 +40,7 @@ export class ClientNameValidator implements Validator {
 
 		this.observable.subscribe((res) => {
 			this.resolvePromise(res);
-		})
+		});
 	}
 
 	resolvePromise(result): void {

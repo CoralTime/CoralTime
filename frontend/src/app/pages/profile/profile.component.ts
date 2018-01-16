@@ -57,33 +57,33 @@ export class ProfileComponent implements OnInit {
 	private getProjects(): void {
 		this.profileService.getProjects().subscribe((projects: ProfileProjects[]) => {
 			this.projects = this.sortList(projects, 'name');
-		})
+		});
 	}
 
 	private sortList(list: any[], sortingField: string): any[] {
-		return list.sort((a, b) => a[sortingField].toLowerCase() < b[sortingField].toLowerCase() ? -1 : 1)
+		return list.sort((a, b) => a[sortingField].toLowerCase() < b[sortingField].toLowerCase() ? -1 : 1);
 	}
 
 	private getProjectMembers(projectId: number, index: number): void {
 		this.profileService.getProjectMembers(projectId).subscribe((members: ProfileProjectMember[]) => {
 			this.projects[index].memberList = this.sortList(members, 'fullName');
-		})
+		});
 	}
 
 	setManagersString(managersList: string[]): string {
 		if (managersList.length) {
-			let plural = managersList.length - 1 ? "s are " : " is ";
-			return "Your manager" + plural + managersList.join(", ")
+			let plural = managersList.length - 1 ? 's are ' : ' is ';
+			return 'Your manager' + plural + managersList.join(', ');
 		} else {
-			return ''
+			return '';
 		}
 	}
 
 	setMemberCountString(memberCount: number): string {
-		if (memberCount == 1) {
-			return "You are the only one member on the project"
+		if (memberCount === 1) {
+			return 'You are the only one member on the project';
 		} else {
-			return memberCount + " members on the project"
+			return memberCount + ' members on the project';
 		}
 	}
 

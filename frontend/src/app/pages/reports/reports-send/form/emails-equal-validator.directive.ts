@@ -22,7 +22,7 @@ export class EmailsEqualValidatorDirective implements Validator {
 
 		for (let i = 0; i < emails.length; i++) {
 			let equalInputValues = emails.filter((compareTask: string) => {
-				return compareTask && emails[i] && emails[i].toLowerCase() === compareTask.toLowerCase()
+				return compareTask && emails[i] && emails[i].toLowerCase() === compareTask.toLowerCase();
 			});
 			if (equalInputValues.length > 1) {
 				return {ctEmailsEqual: true};

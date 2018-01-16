@@ -46,7 +46,7 @@ export class ReportsGridComponent implements OnChanges {
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
 
-		if (!showDefaultValue && h == 0 && m == 0) {
+		if (!showDefaultValue && h === 0 && m === 0) {
 			return '';
 		}
 

@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { UserPicService } from '../../services/user-pic.service';
 
@@ -9,7 +9,7 @@ const IMG_BASE64 = 'data:image/jpg;base64,';
 	templateUrl: 'user-pic.component.html'
 })
 
-export class UserPicComponent implements OnChanges {
+export class UserPicComponent implements OnChanges, OnInit {
 	@Input() userId: number;
 	@Input() fullSize: boolean = false;
 	@HostBinding('class.ct-user-pic-avatar') addClass: boolean = false;
@@ -41,6 +41,6 @@ export class UserPicComponent implements OnChanges {
 			} else {
 				this.hasUserPic = false;
 			}
-		})
+		});
 	};
 }

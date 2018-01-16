@@ -12,7 +12,7 @@
             </div>
 
             <div class="ct-calendar-projects">
-                <ct-multiSelect
+                <ct-multiselect
                         [styleClass]="'ct-calendar-multiselect'"
                         [(ngModel)]="projectIds"
                         (onChange)="toggleProject(projectIds)"
@@ -23,7 +23,7 @@
                         (onExtraAction)="toggleArchivedProjects()"
                         [maxSelectedLabels]="1"
                         [selectedItemsLabel]="'Projects ({0})'">
-                </ct-multiSelect>
+                </ct-multiselect>
             </div>
         </div>
     </div>

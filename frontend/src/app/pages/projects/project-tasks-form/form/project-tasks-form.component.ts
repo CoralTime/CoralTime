@@ -48,7 +48,7 @@ export class ProjectTasksFormComponent {
 		arrayControl.push(newControl);
 		this.onFormHeightChanged();
 
-		setTimeout(()=> (<any>this.tasks.get(this.tasks.length - 1 + '')).nativeElement.focus(), 0)
+		setTimeout(() => (<any>this.tasks.get(this.tasks.length - 1 + '')).nativeElement.focus(), 0);
 	}
 
 	delTask(index: number): void {
@@ -91,7 +91,7 @@ export class ProjectTasksFormComponent {
 
 	private isTaskAlreadyExist(inputValue: string): boolean {
 		let assignedTask = this.projectTasks.filter((compareTask: Task) => {
-			return compareTask && inputValue && inputValue.toLowerCase() == compareTask.name.toLowerCase()
+			return compareTask && inputValue && inputValue.toLowerCase() === compareTask.name.toLowerCase();
 		});
 
 		if (assignedTask.length > 0) {

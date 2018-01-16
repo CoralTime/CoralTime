@@ -29,7 +29,7 @@ export class TimeFormat {
 	}
 
 	toString(): string {
-		return this.timeFormat == 12 ? this.timeFormat + ' hours (Ex: 3:00 PM)' : this.timeFormat + ' hours (Ex: 15:00)';
+		return this.timeFormat === 12 ? this.timeFormat + ' hours (Ex: 3:00 PM)' : this.timeFormat + ' hours (Ex: 15:00)';
 	}
 }
 
@@ -106,13 +106,13 @@ export class ProfileService {
 
 	getDateFormats(): Observable<DateFormat[]> {
 		return this.http.get(this.constantService.profileApi + '/DateFormats')
-			.map((res: Response) => res.json().map(x => new DateFormat(x)))
+			.map((res: Response) => res.json().map(x => new DateFormat(x)));
 	}
 
 	getTimeZones(): TimeZone[] {
 		let timeZones = [];
 		for (let key in TIME_ZONES) {
-			timeZones.push(new TimeZone(key, TIME_ZONES[key]))
+			timeZones.push(new TimeZone(key, TIME_ZONES[key]));
 		}
 
 		return timeZones;
@@ -120,22 +120,21 @@ export class ProfileService {
 
 	upload(fileToUpload: File): Observable<any> {
 		let input = new FormData();
-		input.append("file", fileToUpload, fileToUpload.name);
+		input.append('file', fileToUpload, fileToUpload.name);
 
-		return this.http
-			.put("/api/v1/Profile", input);
+		return this.http.put('/api/v1/Profile', input);
 	}
 
 	getProjects(): Observable<ProfileProjects[]> {
 		return this.http.get(this.constantService.profileApi + '/Projects')
 			.map((res: Response) => {
-				return res.json().map(x => new ProfileProjects(x))
-			})
+				return res.json().map(x => new ProfileProjects(x));
+			});
 	}
 
 	getProjectMembers(projectId: number): Observable<ProfileProjectMember[]> {
 		return this.http.get(this.constantService.profileApi + '/ProjectMembers/' + projectId)
-			.map((res: Response) => res.json().value.map(x => new ProfileProjectMember(x)))
+			.map((res: Response) => res.json().value.map(x => new ProfileProjectMember(x)));
 	}
 
 	submitNotifications(obj: any, userId: number): Observable<any> {

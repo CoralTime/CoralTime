@@ -64,7 +64,7 @@ export class ProjectSettingsFormComponent implements OnInit {
 
 	ngOnInit() {
 		this.model = ProjectSettingsModel.fromProject(this.project);
-		this.lockPeriodModel = this.lockPediods.filter((period) => period.value == this.model.lockPeriod)[0];
+		this.lockPeriodModel = this.lockPediods.filter((period) => period.value === this.model.lockPeriod)[0];
 	}
 
 	lockPeriodOnChange(): void {

@@ -66,7 +66,7 @@ export class TimeEntry {
 
 export class DateUtils {
 	static isToday(date: Date): boolean {
-		return (new Date()).toDateString() == date.toDateString()
+		return (new Date()).toDateString() === date.toDateString();
 	}
 
 	static getSecondsFromStartDay(): number {

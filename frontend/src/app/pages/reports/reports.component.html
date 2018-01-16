@@ -38,7 +38,7 @@
                         <span class="ct-send-button" (click)="openSendReportsDialog()"></span>
                     </div>
                     <div class="ct-columns-settings ct-btn-block">
-                        <ct-multiSelect
+                        <ct-multiselect
                                 class="ct-columns-multiselect ct-columns-button"
                                 [styleClass]="'ct-reports-settings-multiselect'"
                                 [(ngModel)]="showColumnIds"
@@ -48,7 +48,7 @@
                                 [showFilterSearch]="false"
                                 [appendTo]="'body'"
                                 [options]="showColumnItems">
-                        </ct-multiSelect>
+                        </ct-multiselect>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@
             <div class="ct-report-filters">
                 <div class="ct-report-filters-block">
                     <label class="ct-filter-label">Filter by</label>
-                    <ct-multiSelect
+                    <ct-multiselect
                             [styleClass]="'ct-reports-multiselect'"
                             [(ngModel)]="clientIds"
                             (onSubmitAction)="toggleClient(clientIds)"
@@ -68,8 +68,8 @@
                             (onExtraAction)="toggleArchivedClients()"
                             [maxSelectedLabels]="'1'"
                             [selectedItemsLabel]="'Clients ({0})'">
-                    </ct-multiSelect>
-                    <ct-multiSelect
+                    </ct-multiselect>
+                    <ct-multiselect
                             [styleClass]="'ct-reports-multiselect'"
                             [(ngModel)]="projectIds"
                             (onSubmitAction)="toggleProject(projectIds)"
@@ -81,8 +81,8 @@
                             (onExtraAction)="toggleArchivedProjects()"
                             [maxSelectedLabels]="'1'"
                             [selectedItemsLabel]="'Projects ({0})'">
-                    </ct-multiSelect>
-                    <ct-multiSelect
+                    </ct-multiselect>
+                    <ct-multiselect
                             *ngIf="isUsersFilterShown"
                             [styleClass]="'ct-reports-multiselect'"
                             [(ngModel)]="userIds"
@@ -95,7 +95,7 @@
                             (onExtraAction)="toggleArchivedUsers()"
                             [maxSelectedLabels]="'1'"
                             [selectedItemsLabel]="'Users ({0})'">
-                    </ct-multiSelect>
+                    </ct-multiselect>
                 </div>
                 <div class="ct-report-filters-block">
                     <label class="ct-filter-label">Group by</label>

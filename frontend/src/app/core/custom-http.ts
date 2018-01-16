@@ -17,11 +17,11 @@ export class CustomHttp extends Http {
 	            private notificationService: NotificationService) {
 		super(backend, defaultOptions);
 
-		//Prevent Ajax Request Caching for Internet Explorer
-		defaultOptions.headers.append("Cache-control", "no-cache");
-		defaultOptions.headers.append("Cache-control", "no-store");
-		defaultOptions.headers.append("Pragma", "no-cache");
-		defaultOptions.headers.append("Expires", "0");
+		// Prevent Ajax Request Caching for Internet Explorer
+		defaultOptions.headers.append('Cache-control', 'no-cache');
+		defaultOptions.headers.append('Cache-control', 'no-store');
+		defaultOptions.headers.append('Pragma', 'no-cache');
+		defaultOptions.headers.append('Expires', '0');
 	}
 
 	request(url: string | Request, options: RequestOptionsArgs = {}): Observable<Response> {
@@ -35,7 +35,7 @@ export class CustomHttp extends Http {
 	}
 
 	private handleError(error: Response | any, url: string | Request, options: RequestOptionsArgs = {}) {
-		//@TODO: send an errorLog entry to the server
+		// @TODO: send an errorLog entry to the server
 		if (error.status === 401) {
 			if (this.isTokenExpired(error)) {
 				let authService = this.injector.get(AuthService);
@@ -55,7 +55,7 @@ export class CustomHttp extends Http {
 		}
 
 		if (error.status === 403) {
-			this.notificationService.danger("You don't have permission for this action");
+			this.notificationService.danger('You don\'t have permission for this action');
 		}
 
 		return Observable.throw(error);

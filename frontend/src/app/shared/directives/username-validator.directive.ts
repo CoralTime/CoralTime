@@ -36,7 +36,7 @@ export class UsernameValidator implements Validator {
 
 		this.observable.subscribe((res) => {
 			this.resolvePromise(res);
-		})
+		});
 	}
 
 	resolvePromise(result): void {

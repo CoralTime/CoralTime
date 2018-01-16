@@ -45,8 +45,8 @@ export class CalendarService {
 		return this.http.get(this.constantService.timeEntriesApi + '/', {search: params})
 			.map((res: Response) => {
 				let timeEntries = this.sortTimeEntries(res.json());
-				return timeEntries.map((x: any) => new TimeEntry(x))
-			})
+				return timeEntries.map((x: any) => new TimeEntry(x));
+			});
 	}
 
 	Delete(id: string): Observable<TimeEntry[]> {
@@ -76,8 +76,8 @@ export class CalendarService {
 
 	getDayInfoByDate(timeEntryDate: Date): CalendarDay {
 		return this.calendar.find((day: CalendarDay) => {
-			return day.date.getDate() == (new Date(timeEntryDate)).getDate()
-		})
+			return day.date.getDate() === (new Date(timeEntryDate)).getDate();
+		});
 	}
 
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {
@@ -100,8 +100,8 @@ export class CalendarService {
 	}
 
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {
-		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.isFromToShow == true);
-		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.isFromToShow == false);
+		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.isFromToShow === true);
+		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.isFromToShow === false);
 
 		ArrayUtils.sortByField(arrayWithFromToPeriod, 'timeFrom');
 		ArrayUtils.sortByField(otherTimeEntries, 'id');

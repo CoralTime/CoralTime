@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ForgotPasswordComponent } from "./forgot-password.component";
-import { SharedModule } from "../../shared/shared.module";
+import { ForgotPasswordComponent } from './forgot-password.component';
+import { SharedModule } from '../../shared/shared.module';
 import { ForgotPasswordService } from './enter-new-password/forgot-password.service';
 import { EnterNewPasswordComponent } from './enter-new-password/enter-new-password.component';
 import { EnterEmailComponent } from './enter-email/enter-email.component';

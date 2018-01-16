@@ -2,7 +2,7 @@ import { UserProject } from '../../../models/user-project';
 import { NotificationService } from '../../../core/notification.service';
 import { UsersService } from '../../../services/users.service';
 import { User } from '../../../models/user';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { PagedResult } from '../../../services/odata/query';
 import { Subject } from 'rxjs/Subject';
 import { ProjectRole } from '../../../models/project-role';
@@ -17,7 +17,7 @@ import { ROWS_ON_PAGE } from '../../../core/constant.service';
 	templateUrl: 'project-assignment.component.html'
 })
 
-export class UserProjectAssignmentComponent {
+export class UserProjectAssignmentComponent implements OnInit {
 	@Input() user: User;
 	@ViewChild('grid') gridContainer: ElementRef;
 
@@ -71,7 +71,7 @@ export class UserProjectAssignmentComponent {
 
 	loadAssignedProjects(): void {
 		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
-			return this.usersService.getUserProjectsWithCount(this.assignedProjectsLastEvent, this.filterStr, this.user.id)
+			return this.usersService.getUserProjectsWithCount(this.assignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
 			.subscribe(
 				(res: PagedResult<UserProject>) => {
@@ -134,7 +134,7 @@ export class UserProjectAssignmentComponent {
 
 	loadNotAssignedProjects(): void {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
-			return this.usersService.getUnassignedProjectsWithCount(this.notAssignedProjectsLastEvent, this.filterStr, this.user.id)
+			return this.usersService.getUnassignedProjectsWithCount(this.notAssignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
 			.subscribe(
 				(res: PagedResult<Project>) => {
@@ -259,10 +259,10 @@ export class UserProjectAssignmentComponent {
 		wrappers[1].setAttribute('style', 'max-height: calc((90vh - 180px)/2)');
 
 		if (wrappers[0].scrollHeight < (window.innerHeight * 0.9 - 180) / 2) {
-			wrappers[1].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[0].scrollHeight + 'px)')
+			wrappers[1].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[0].scrollHeight + 'px)');
 		}
 		if (wrappers[1].scrollHeight < (window.innerHeight * 0.9 - 180) / 2) {
-			wrappers[0].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[1].scrollHeight + 'px)')
+			wrappers[0].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[1].scrollHeight + 'px)');
 		}
 	}
 }

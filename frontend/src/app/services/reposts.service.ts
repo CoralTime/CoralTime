@@ -2,7 +2,7 @@ import { Http, RequestOptions, Response, ResponseContentType } from '@angular/ht
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
-import { saveAs as importedSaveAs } from "file-saver";
+import { saveAs as importedSaveAs } from 'file-saver';
 import { AuthService } from '../core/auth/auth.service';
 import { SendReportsFormModel } from '../pages/reports/reports-send/reports-send.component';
 import { DatePeriod } from '../pages/reports/range-datepicker/range-datepicker.service';
@@ -13,7 +13,7 @@ export interface ReportDropdowns {
 	currentUserId: number;
 	isAdminCurrentUser: boolean;
 	isManagerCurrentUser: boolean;
-	clientsDetails: ClientDetail[]
+	clientsDetails: ClientDetail[];
 }
 
 export interface ClientDetail {
@@ -125,15 +125,15 @@ export class ReportsService {
 	}
 
 	getReportDropdowns(): Observable<ReportDropdowns> {
-		return this.http.get(this.constantService.reportsApi).map((res: Response) => res.json())
+		return this.http.get(this.constantService.reportsApi).map((res: Response) => res.json());
 	}
 
 	getReportsGroupBy(): Observable<GroupByItem[]> {
-		return this.http.get(this.constantService.reportsApi + 'GroupBy').map((res: Response) => res.json())
+		return this.http.get(this.constantService.reportsApi + 'GroupBy').map((res: Response) => res.json());
 	}
 
 	getReportGrid(filters: any): Observable<ReportGrid> {
-		return this.http.post(this.constantService.reportsApi, filters).map((res: Response) => res.json())
+		return this.http.post(this.constantService.reportsApi, filters).map((res: Response) => res.json());
 	}
 
 	getReportSettings(): ReportsSettings {
@@ -154,7 +154,7 @@ export class ReportsService {
 			groupById: 3,
 			showColumnIds: [1, 2, 3, 4]
 		};
-		this.setReportSettings(reportsSettings)
+		this.setReportSettings(reportsSettings);
 	}
 
 	exportAs(filters: any): Observable<void> {
@@ -167,10 +167,10 @@ export class ReportsService {
 				filename = cdHeader.replace(/(.*filename=")(.*)(";.*)/, '$2');
 			}
 			importedSaveAs(data.blob(), filename);
-		})
+		});
 	}
 
 	sendReports(filters: SendReportsFormModel): Observable<any> {
-		return this.http.post(this.constantService.sendReportsApi, filters)
+		return this.http.post(this.constantService.sendReportsApi, filters);
 	}
 }

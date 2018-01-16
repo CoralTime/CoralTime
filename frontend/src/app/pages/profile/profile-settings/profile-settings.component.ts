@@ -89,7 +89,7 @@ export class ProfileSettingsComponent implements OnInit {
 			this.userModel = user;
 
 			this.timeFormatModel = user.timeFormat ? new TimeFormat(user.timeFormat) : this.timeFormats[1];
-			this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name == user.timeZone);
+			this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name === user.timeZone);
 			this.weekStartDayModel = this.weekStartDays[user.weekStart];
 
 			this.getDateFormats();
@@ -127,7 +127,7 @@ export class ProfileSettingsComponent implements OnInit {
 				this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;
 				setTimeout(() => this.resetPasswordMessage = '', 5000);
 			}
-		})
+		});
 	}
 
 	sendEmailDayOnChange(): void {
@@ -237,18 +237,18 @@ export class ProfileSettingsComponent implements OnInit {
 				name: 'No project'
 			}));
 
-			this.projectModel = this.projects.find((project: Project) => project.id == this.userModel.defaultProjectId) || this.projects[0];
+			this.projectModel = this.projects.find((project: Project) => project.id === this.userModel.defaultProjectId) || this.projects[0];
 			if (!this.projectModel) {
 				this.loadTasks();
 			}
-		})
+		});
 	}
 
 	private getDateFormats(): void {
 		this.profileService.getDateFormats().subscribe((formats: DateFormat[]) => {
 			this.dateFormats = formats;
 			this.dateFormatModel = ArrayUtils.findByProperty(this.dateFormats, 'dateFormatId', this.userModel.dateFormatId) || null;
-		})
+		});
 	}
 
 	private loadTasks(projectId?: number): void {
@@ -259,7 +259,7 @@ export class ProfileSettingsComponent implements OnInit {
 				name: 'No task'
 			}));
 			this.taskModel = ArrayUtils.findByProperty(this.tasks, 'id', this.userModel.defaultTaskId) || this.tasks[0];
-		})
+		});
 	}
 
 	private filterTasks(tasks: Task[]): Task[] {
@@ -268,15 +268,15 @@ export class ProfileSettingsComponent implements OnInit {
 		tasks.forEach((task1, index1) => {
 			isAdded = false;
 			if (task1.projectId) {
-				filteredTasks.push(task1)
+				filteredTasks.push(task1);
 			} else {
 				tasks.forEach((task2, index2) => {
-					if (task2.projectId && task1.name.toLowerCase() == task2.name.toLowerCase() && index1 != index2) {
+					if (task2.projectId && task1.name.toLowerCase() === task2.name.toLowerCase() && index1 !== index2) {
 						isAdded = true;
 					}
 				});
 				if (!isAdded) {
-					filteredTasks.push(task1)
+					filteredTasks.push(task1);
 				}
 			}
 		});

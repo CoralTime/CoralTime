@@ -1,10 +1,10 @@
 export class ObjectUtils {
 	static deepCopy(oldObj): any {
 		let newObj = oldObj;
-		if (oldObj && typeof oldObj === "object") {
-			newObj = Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+		if (oldObj && typeof oldObj === 'object') {
+			newObj = Object.prototype.toString.call(oldObj) === '[object Array]' ? [] : {};
 			for (let i in oldObj) {
-				if (Object.prototype.toString.call(oldObj[i]) === "[object Date]") {
+				if (Object.prototype.toString.call(oldObj[i]) === '[object Date]') {
 					newObj[i] = new Date(oldObj[i]);
 				} else {
 					newObj[i] = this.deepCopy(oldObj[i]);
@@ -16,10 +16,10 @@ export class ObjectUtils {
 
 	static fillObject(outerObj, innerObj): any {
 		let newObj = outerObj;
-		if (outerObj && typeof outerObj === "object" && innerObj && typeof innerObj === "object") {
-			newObj = Object.prototype.toString.call(outerObj) === "[object Array]" ? [] : {};
+		if (outerObj && typeof outerObj === 'object' && innerObj && typeof innerObj === 'object') {
+			newObj = Object.prototype.toString.call(outerObj) === '[object Array]' ? [] : {};
 			for (let i in innerObj) {
-				if (Object.prototype.toString.call(innerObj[i]) === "[object Date]") {
+				if (Object.prototype.toString.call(innerObj[i]) === '[object Date]') {
 					newObj[i] = new Date(innerObj[i]);
 				} else {
 					newObj[i] = this.fillObject(outerObj[i], innerObj[i]);

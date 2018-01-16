@@ -37,11 +37,11 @@ export class ReadMoreComponent implements OnChanges {
 			this.showButton = false;
 			return;
 		}
-		if (this.isCollapsed == true) {
+		if (this.isCollapsed === true) {
 			this.showButton = true;
 			this.linkText = 'More';
-			this.currentText = this.text.substring(0, this.maxLength) + "...";
-		} else if (this.isCollapsed == false) {
+			this.currentText = this.text.substring(0, this.maxLength) + '...';
+		} else if (this.isCollapsed === false) {
 			this.currentText = this.text;
 			this.linkText = 'Less';
 		}

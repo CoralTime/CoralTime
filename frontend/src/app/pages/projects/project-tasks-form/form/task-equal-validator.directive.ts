@@ -25,7 +25,7 @@ export class TaskEqualValidatorDirective implements Validator {
 
 		if (this.projectTasks) {
 			let assignedTask = this.projectTasks.filter((compareTask: Task) => {
-				return compareTask && inputValue && inputValue.toLowerCase() == compareTask.name.toLowerCase()
+				return compareTask && inputValue && inputValue.toLowerCase() === compareTask.name.toLowerCase();
 			});
 			if (assignedTask.length > 0) {
 				return {taskAlreadyExist: true};

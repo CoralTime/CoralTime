@@ -15,7 +15,7 @@ export class MenuComponent implements AfterContentInit {
 
 	set xPosition(value: string) {
 		if (value !== 'before' && value !== 'after') {
-			return
+			return;
 		}
 		this._xPosition = value;
 	}
@@ -50,9 +50,9 @@ export class MenuComponent implements AfterContentInit {
 
 	toggleMenu(): void {
 		if (this.isOpen) {
-			this.closeMenu()
+			this.closeMenu();
 		} else {
-			this.openMenu()
+			this.openMenu();
 		}
 	}
 

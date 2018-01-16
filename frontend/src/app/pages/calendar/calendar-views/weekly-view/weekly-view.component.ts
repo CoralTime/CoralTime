@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
-import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
+import { TimeEntry, CalendarDay } from '../../../../models/calendar';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CalendarService } from '../../../../services/calendar.service';
 import { Project } from '../../../../models/project';
@@ -68,16 +68,16 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 	setAvailablePeriod(width: number): void {
 		let oldNumberOfDays = this.daysInCalendar;
-		if (width < 810 && oldNumberOfDays != 1) {
+		if (width < 810 && oldNumberOfDays !== 1) {
 			this.daysInCalendar = 1;
 		}
-		if (width >= 810 && width < 1300 && oldNumberOfDays != 4) {
+		if (width >= 810 && width < 1300 && oldNumberOfDays !== 4) {
 			this.daysInCalendar = 4;
 		}
-		if (width >= 1300 && oldNumberOfDays != 7) {
+		if (width >= 1300 && oldNumberOfDays !== 7) {
 			this.daysInCalendar = 7;
 		}
-		if (this.daysInCalendar != 7) {
+		if (this.daysInCalendar !== 7) {
 			this.startDay = this.date;
 		} else {
 			this.startDay = this.getWeekBeginning(this.date);
@@ -116,10 +116,10 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 		this.projectTimeEntries.forEach((timeEntry: TimeEntry) => {
 			newCalendar.forEach((day: CalendarDay) => {
-				if (day.date.getDate() == moment(timeEntry.date, 'YYYY-MM-DD').toDate().getDate()) {
-					day.timeEntries.push(timeEntry)
+				if (day.date.getDate() === moment(timeEntry.date, 'YYYY-MM-DD').toDate().getDate()) {
+					day.timeEntries.push(timeEntry);
 				}
-			})
+			});
 		});
 		this.calendar = newCalendar;
 		this.calendarService.calendar = newCalendar;
@@ -141,7 +141,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 			this.projectTimeEntries = [];
 			this.timeEntries.forEach((timeEntry: TimeEntry) => {
 				if (projectIds.map(x => +x).indexOf(timeEntry.projectId) !== -1) {
-					this.projectTimeEntries.push(timeEntry)
+					this.projectTimeEntries.push(timeEntry);
 				}
 			});
 		} else {
@@ -153,7 +153,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
-		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2))
+		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
 	}
 
 	getTotalTime(timeField: string): string {

@@ -11,6 +11,6 @@ export class FocusDirective implements AfterViewInit {
 	ngAfterViewInit() {
 		setTimeout(() => {
 			this.element.nativeElement.select();
-		}, 500)
+		}, 500);
 	}
 }

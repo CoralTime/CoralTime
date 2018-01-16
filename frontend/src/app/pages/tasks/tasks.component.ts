@@ -119,7 +119,7 @@ export class TasksComponent implements OnInit {
 		}
 
 		if (response.isNewTask) {
-			this.notificationService.success('New task has been successfully created.')
+			this.notificationService.success('New task has been successfully created.');
 		} else {
 			this.notificationService.success('Task has been successfully changed.');
 		}

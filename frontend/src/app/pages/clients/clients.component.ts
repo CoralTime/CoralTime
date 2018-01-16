@@ -122,7 +122,7 @@ export class ClientsComponent implements OnInit {
 		}
 
 		if (response.isNewClient) {
-			this.notificationService.success('New client has been successfully created.')
+			this.notificationService.success('New client has been successfully created.');
 		} else {
 			this.notificationService.success('Client has been successfully changed.');
 		}

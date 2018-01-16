@@ -4,12 +4,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notification.service';
 
 const ERRORS_PASSWORD_CHANGING = [
-	"success",
-	"An account doesn't exist with this email address, please check that it's entered correctly!",
-	"Error sending email.",
-	"Your token was expired. Please, try again.",
-	"Your password is incorrect. Try again or write to admin.",
-	"Something went wrong. Please, try again."
+	'success',
+	'An account doesn\'t exist with this email address, please check that it\'s entered correctly!',
+	'Error sending email.',
+	'Your token was expired. Please, try again.',
+	'Your password is incorrect. Try again or write to admin.',
+	'Something went wrong. Please, try again.'
 ];
 
 @Component({
@@ -49,7 +49,7 @@ export class EnterNewPasswordFormComponent implements OnInit {
 				this.notificationService.success('You have successfully updated your password.');
 				this.router.navigate(['/login']);
 			} else {
-				this.errorMessage = ERRORS_PASSWORD_CHANGING[passwordChangeStatus.message]
+				this.errorMessage = ERRORS_PASSWORD_CHANGING[passwordChangeStatus.message];
 			}
 		});
 	}

@@ -77,7 +77,6 @@ export class ClientFormComponent implements OnInit {
 		this.dialogHeader = this.client.id ? 'Edit' : this.translatePipe.transform('Create New Client');
 		this.model = FormClient.formClient(this.client);
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);
-
 		this.stateText = this.client.isActive ? '' : 'All projects assigned to the archived client are not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
 	}
 
@@ -86,7 +85,7 @@ export class ClientFormComponent implements OnInit {
 
 		if (!this.model.name) {
 			this.errorMessage = 'Client name is required.';
-			return
+			return;
 		}
 	}
 

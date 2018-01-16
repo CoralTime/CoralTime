@@ -80,8 +80,8 @@ export class RangeDatepickerService {
 
 	isDatePeriodEqual(a: DatePeriod, b: DatePeriod): boolean {
 		if (
-			a.dateFrom.toDate().toDateString() == b.dateFrom.toDate().toDateString()
-			&& a.dateTo.toDate().toDateString() == b.dateTo.toDate().toDateString()
+			a.dateFrom.toDate().toDateString() === b.dateFrom.toDate().toDateString()
+			&& a.dateTo.toDate().toDateString() === b.dateTo.toDate().toDateString()
 		) {
 			return true;
 		}
@@ -91,11 +91,11 @@ export class RangeDatepickerService {
 
 	isIntegerNumberOfMonths(period: DatePeriod): boolean {
 		let nextDay = (d => new Date(d.setDate(d.getDate() + 1)))(period.dateTo.toDate());
-		return period.dateFrom.date() == 1 && nextDay.getDate() == 1;
+		return period.dateFrom.date() === 1 && nextDay.getDate() === 1;
 	}
 
 	private getToday(): DatePeriod {
-		return new DatePeriod(moment().startOf('day'))
+		return new DatePeriod(moment().startOf('day'));
 	}
 
 	private getCurrentWeek(firstDayOfWeek: number): DatePeriod {
@@ -147,12 +147,12 @@ export class RangeDatepickerService {
 	}
 
 	private isSingleDay(period: DatePeriod): boolean {
-		return period.dateFrom.toDate().toDateString() == period.dateTo.toDate().toDateString();
+		return period.dateFrom.toDate().toDateString() === period.dateTo.toDate().toDateString();
 	}
 
 	private isFromPeriod(period: DatePeriod, periodName: string): boolean {
 		return period.dateFrom.toDate().getTime() >= this.DATE_PERIOD[periodName].dateFrom.toDate().getTime() &&
-			period.dateTo.toDate().getTime() <= this.DATE_PERIOD[periodName].dateTo.toDate().getTime()
+			period.dateTo.toDate().getTime() <= this.DATE_PERIOD[periodName].dateTo.toDate().getTime();
 	}
 
 	private isFromOneMonth(period: DatePeriod): boolean {
@@ -161,7 +161,7 @@ export class RangeDatepickerService {
 		let monthEndDay: Date = new Date(d.getFullYear(), d.getMonth() + 1, 0);
 
 		return period.dateFrom.toDate().getTime() >= monthBeginDay.getTime() &&
-			period.dateTo.toDate().getTime() <= monthEndDay.getTime()
+			period.dateTo.toDate().getTime() <= monthEndDay.getTime();
 	}
 
 	private isFromOneYear(period: DatePeriod): boolean {
@@ -170,7 +170,7 @@ export class RangeDatepickerService {
 		let yearEndDay: Date = new Date(d.getFullYear() + 1, 0, 0);
 
 		return period.dateFrom.toDate().getTime() >= yearBeginDay.getTime() &&
-			period.dateTo.toDate().getTime() <= yearEndDay.getTime()
+			period.dateTo.toDate().getTime() <= yearEndDay.getTime();
 	}
 
 	private uniteDays(period: DatePeriod): string {

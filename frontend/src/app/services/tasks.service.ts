@@ -14,7 +14,7 @@ export class TasksService {
 
 	getTasks(): Observable<Task[]> {
 		return this.odata.Query().Exec().map(res => res.map((x: any) => {
-			return new Task(x)
+			return new Task(x);
 		}));
 	}
 

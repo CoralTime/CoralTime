@@ -1,7 +1,7 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MultiSelect } from './multiselect/multiselect.component';
+import { MultiSelectComponent } from './multiselect/multiselect.component';
 import { SelectComponent } from './select/select.component';
 import { MaterialModule } from '@angular/material';
 import { DirectivesModule } from '../directives/directives.module';
@@ -21,7 +21,7 @@ import { InputListComponent } from './input-list/input-list.component';
 	],
 	declarations: [
 		ColorPickerComponent,
-		MultiSelect,
+		MultiSelectComponent,
 		SelectComponent,
 		TextareaComponent,
 		InputListComponent
@@ -31,7 +31,7 @@ import { InputListComponent } from './input-list/input-list.component';
 		ReactiveFormsModule,
 		MaterialModule,
 		ColorPickerComponent,
-		MultiSelect,
+		MultiSelectComponent,
 		SelectComponent,
 		TextareaComponent,
 		InputListComponent

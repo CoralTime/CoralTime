@@ -36,7 +36,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		this.timeEntriesSubscription = this.calendarService.timeEntriesUpdated
 			.subscribe(() => {
 				this.getTimeEntries(this.date, this.projectIds);
-			})
+			});
 	}
 
 	getTimeEntries(startDate: Date, projectIds?: number[]) {
@@ -57,7 +57,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 			this.projectTimeEntries = [];
 			this.timeEntries.forEach((timeEntry: TimeEntry) => {
 				if (projectIds.map(x => +x).indexOf(timeEntry.projectId) !== -1) {
-					this.projectTimeEntries.push(timeEntry)
+					this.projectTimeEntries.push(timeEntry);
 				}
 			});
 		} else {
@@ -69,7 +69,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
-		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2))
+		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
 	setDayInfo(): void {
@@ -77,7 +77,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	}
 
 	setDate(): void {
-		this.dayInfo = new CalendarDay({date: this.date})
+		this.dayInfo = new CalendarDay({date: this.date});
 	}
 
 	getTotalTime(timeEntries?: TimeEntry[]): string {
