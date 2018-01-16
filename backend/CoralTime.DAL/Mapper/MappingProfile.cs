@@ -45,7 +45,7 @@ namespace CoralTime.DAL.Mapper
             CreateMap<ClientView, Client>();
 
             CreateMap<TimeEntry, TimeEntryView>()
-                .ForMember(x => x.Date, x => x.MapFrom(m => m.Date.ToUniversalTime()))
+                .ForMember(x => x.Date, x => x.MapFrom(m => m.Date))
                 .ForMember(x => x.Color, x => x.MapFrom(m => m.Project.Color))
                 .ForMember(x => x.MemberName, x => x.MapFrom(m => m.Member.FullName))
                 .ForMember(x => x.TaskName, x => x.MapFrom(m => m.TaskType.Name))

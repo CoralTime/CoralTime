@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 
 namespace CoralTime.Api.v1.Odata
 {
@@ -19,14 +20,15 @@ namespace CoralTime.Api.v1.Odata
 
         // GET: api/v1/odata/TimeEntries
         [HttpGet]
-        public IActionResult Get(DateTime dateBegin, DateTime dateEnd)
+        public IActionResult Get(string dateBegin, string dateEnd)
         {
             try
             {
-                dateBegin = dateBegin.Date;
-                dateEnd = dateEnd.Date.AddDays(1).AddMilliseconds(-1);
+                //DateTime dt = DateTime.ParseExact(dateEnd, "yyyy-MM-ddTHH:mm:ssZ", null);
+                var dateBeginOffset = DateTimeOffset.Parse(dateBegin, null).Date;
+                var dateEndOffset = DateTimeOffset.Parse(dateEnd, null).Date.AddDays(1).AddMilliseconds(-1);
 
-                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBegin, dateEnd));
+                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBeginOffset, dateEndOffset));
             }
             catch (Exception e)
             {
@@ -111,7 +113,7 @@ namespace CoralTime.Api.v1.Odata
             try
             {
                 var result = _service.Delete(id, this.GetUserNameWithImpersonation());
-                return Ok();
+                return new JsonResult(string.Empty);
             }
             catch (Exception e)
             {
