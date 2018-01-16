@@ -112,7 +112,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	deleteAction(): void {
 		let observable: Observable<any>;
-		observable = this.calendarService.odata.Delete(this.currentTimeEntry.id.toString());
+		observable = this.calendarService.Delete(this.currentTimeEntry.id.toString());
 
 		observable.subscribe(
 			() => {
@@ -146,7 +146,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		let observable = this.calendarService.odata.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
+		let observable = this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
 
 		observable.subscribe(
 			() => {
@@ -175,7 +175,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		dateList.forEach((date: Date) => {
 			this.currentTimeEntry.date = date;
-			observable = this.calendarService.odata.Post(this.currentTimeEntry);
+			observable = this.calendarService.Post(this.currentTimeEntry);
 
 			observable.subscribe(
 				() => {
@@ -279,28 +279,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		})
 	}
 
-	submit(): void {
-		let submitObservable: Observable<any>;
-
-		if (this.currentTimeEntry.id) {
-			submitObservable = this.calendarService.odata.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
-		} else {
-			submitObservable = this.calendarService.odata.Post(this.currentTimeEntry);
-		}
-
-		submitObservable.toPromise().then(
-			() => {
-				this.saveTimeEntry(this.currentTimeEntry);
-				this.notificationService.success('Timer has stopped.');
-				this.calendarService.isTimerActivated = this.isTimerShown;
-				this.calendarService.timeEntriesUpdated.emit();
-				this.closeEntryTimeForm.emit()
-			},
-			error => {
-				this.notificationService.danger('Error stopping Time Entry');
-			});
-	}
-
 	ngOnDestroy() {
 		if (this.timerSubscription) {
 			this.autoStopTimer();
@@ -308,7 +286,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	private validateTimer(obj: any): Promise<any> {
-		return this.calendarService.odata.Patch(obj, this.timeEntry.id.toString())
+		return this.calendarService.Patch(obj, this.timeEntry.id.toString())
 			.toPromise().then(
 				() => {
 					this.calendarService.isTimerActivated = false;
@@ -372,7 +350,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			this.actualTime = this.splitTime(this.currentTimeEntry.time);
 		}
 
-		return this.calendarService.odata.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
+		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
 			.toPromise().then(
 				() => {
 					this.saveTimeEntry(this.currentTimeEntry);

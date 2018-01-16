@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
-import { TimeEntry, CalendarDay } from '../../../../models/calendar';
+import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CalendarService } from '../../../../services/calendar.service';
 import { Project } from '../../../../models/project';
@@ -116,7 +116,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 		this.projectTimeEntries.forEach((timeEntry: TimeEntry) => {
 			newCalendar.forEach((day: CalendarDay) => {
-				if (day.date.getDate() == (new Date(timeEntry.date)).getDate()) {
+				if (day.date.getDate() == moment(timeEntry.date, 'YYYY-MM-DD').toDate().getDate()) {
 					day.timeEntries.push(timeEntry)
 				}
 			})
