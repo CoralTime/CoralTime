@@ -128,7 +128,8 @@ export class ProfileService {
 	getProjects(): Observable<ProfileProjects[]> {
 		return this.http.get(this.constantService.profileApi + '/Projects')
 			.map((res: Response) => {
-				return res.json().map(x => new ProfileProjects(x));
+				let projects = res.json();
+				return projects ? projects.map(x => new ProfileProjects(x)) : [];
 			});
 	}
 
