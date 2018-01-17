@@ -37,7 +37,7 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 		this.forgotPassValidate();
 
 		if (!this.email) {
-			this.errorMessage = 'A valid email address is required.'
+			this.errorMessage = 'A valid email address is required.';
 		} else if (this.isEmailValid) {
 			this.enterEmailService.sendEmail(this.email).then((emailResponse) => {
 				this.errorMessage = null;
@@ -46,18 +46,18 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 				} else {
 					this.errorCode = emailResponse.message;
 					this.errorMessage = ERRORS_EMAIL_SENDING[this.errorCode];
-					if (this.errorCode == 1) {
-						this.errorMessage = "This email isn't in our system. Make sure you typed your address correctly, or contact support.";
+					if (this.errorCode === 1) {
+						this.errorMessage = 'This email isn\'t in our system. Make sure you typed your address correctly, or contact support.';
 					}
 
-					if (this.errorCode == 5) {
-						this.errorMessage = "You can't log in to this account. Please contact support.";
+					if (this.errorCode === 5) {
+						this.errorMessage = 'You can\'t log in to this account. Please contact support.';
 					}
 				}
 
 				this.activationCodeIsValid = true;
 				this.forgotPasswordService.restoreCodeIsExpired = false;
-			})
+			});
 		}
 	}
 

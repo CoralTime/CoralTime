@@ -56,7 +56,7 @@ export class ProjectUsersComponent implements OnInit {
 		this.loadAssignedUsers();
 		this.loadNotAssignedUsers();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(()=>{
+		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
 			this.changeScrollableContainer();
 			this.resizeObservable.next();
 		});
@@ -76,7 +76,7 @@ export class ProjectUsersComponent implements OnInit {
 
 	loadAssignedUsers(): void {
 		this.assignedUsersSubject.debounceTime(500).switchMap(() => {
-			return this.usersService.getProjectUsersWithCount(this.assignedUsersLastEvent, this.filterStr, this.project.id)
+			return this.usersService.getProjectUsersWithCount(this.assignedUsersLastEvent, this.filterStr, this.project.id);
 		})
 			.subscribe(
 				(res: PagedResult<UserProject>) => {
@@ -139,7 +139,7 @@ export class ProjectUsersComponent implements OnInit {
 
 	loadNotAssignedUsers(): void {
 		this.notAssignedUsersSubject.debounceTime(500).switchMap(() => {
-			return this.usersService.getUnassignedUsersWithCount(this.notAssignedUsersLastEvent, this.filterStr, this.project.id)
+			return this.usersService.getUnassignedUsersWithCount(this.notAssignedUsersLastEvent, this.filterStr, this.project.id);
 		})
 			.subscribe(
 				(res: PagedResult<User>) => {
@@ -262,7 +262,7 @@ export class ProjectUsersComponent implements OnInit {
 		let grid = this.gridContainer.nativeElement;
 		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
 
-		if(wrappers.length == 1){
+		if (wrappers.length === 1) {
 			return;
 		}
 
@@ -270,10 +270,10 @@ export class ProjectUsersComponent implements OnInit {
 		wrappers[1].setAttribute('style', 'max-height: calc((90vh - 180px)/2)');
 
 		if (wrappers[0].scrollHeight < (window.innerHeight * 0.9 - 180) / 2) {
-			wrappers[1].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[0].scrollHeight + 'px)')
+			wrappers[1].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[0].scrollHeight + 'px)');
 		}
 		if (wrappers[1].scrollHeight < (window.innerHeight * 0.9 - 180) / 2) {
-			wrappers[0].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[1].scrollHeight + 'px)')
+			wrappers[0].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[1].scrollHeight + 'px)');
 		}
 	}
 }

@@ -46,6 +46,6 @@ export class User {
 	}
 
 	getRole(): string {
-		return this.isAdmin ? 'Admin' : 'User'
+		return this.isAdmin ? 'Admin' : 'User';
 	}
 }

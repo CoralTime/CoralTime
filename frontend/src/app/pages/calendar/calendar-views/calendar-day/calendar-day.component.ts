@@ -40,7 +40,7 @@ export class CalendarDayComponent implements OnInit {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
-		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2))
+		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
 	getDateString(date: Date): string {
@@ -48,7 +48,7 @@ export class CalendarDayComponent implements OnInit {
 	}
 
 	isToday(date: Date): boolean {
-		return (new Date()).toDateString() == date.toDateString()
+		return (new Date()).toDateString() === date.toDateString();
 	}
 
 	calcTime(type: string): string {
@@ -56,7 +56,7 @@ export class CalendarDayComponent implements OnInit {
 		let time: number = 0;
 		if (timeEnries) {
 			for (let i = 0; i < timeEnries.length; i++) {
-				time += timeEnries[i][type]
+				time += timeEnries[i][type];
 			}
 		}
 
@@ -101,14 +101,13 @@ export class CalendarDayComponent implements OnInit {
 	drop(): void {
 		let submitObservable: Observable<any>;
 		if (this.draggedTimeEntry) {
-			if (new Date(this.draggedTimeEntry.date).toDateString() == this.dayInfo.date.toDateString()) {
+			if (new Date(this.draggedTimeEntry.date).toDateString() === this.dayInfo.date.toDateString()) {
 				return;
 			}
 			if (!this.isNewTrackedTimeValid(this.dayInfo.date, this.draggedTimeEntry.time)) {
 				this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 				return;
 			}
-			
 			this.draggedTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.dayInfo.date));
 			this.draggedTimeEntry.timeTimerStart = -1;
 
@@ -121,7 +120,7 @@ export class CalendarDayComponent implements OnInit {
 			submitObservable.subscribe(
 				() => {
 					if (this.isAltPressed()) {
-						this.notificationService.success('New Time Entry has been successfully created.')
+						this.notificationService.success('New Time Entry has been successfully created.');
 					} else {
 						this.notificationService.success('New Time Entry has been successfully moved.');
 					}

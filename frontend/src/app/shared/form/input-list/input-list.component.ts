@@ -52,10 +52,12 @@ export class InputListComponent implements ControlValueAccessor {
 	modelValue: any = '';
 	options: any[];
 	optionsWithoutFilter: any[];
+	private scrollTopNumber: number = 0;
 	private selectedObject: any;
 
 	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
 
+	private _disabled: boolean = false;
 	@Input()
 	get disabled(): boolean {
 		return this._disabled;
@@ -65,12 +67,8 @@ export class InputListComponent implements ControlValueAccessor {
 		this._disabled = coerceBooleanProperty(value);
 	}
 
-	private _controlValueAccessorChangeFn: (value: any) => void = (value) => {
-	};
-	private onTouched: () => any = () => {
-	};
-	private _disabled: boolean = false;
-	private scrollTopNumber: number = 0;
+	private _controlValueAccessorChangeFn: (value: any) => void = (value) => {};
+	private onTouched: () => any = () => {};
 
 	constructor(private ref: ChangeDetectorRef,
 	            private renderer: Renderer) {
@@ -128,7 +126,7 @@ export class InputListComponent implements ControlValueAccessor {
 	private filterOptions(): void {
 		this.options = this.optionsWithoutFilter.filter((option) => this.getDisplayedName(option).indexOf(this.modelValue) > -1);
 
-		if (this.options.length == 0) {
+		if (this.options.length === 0) {
 			this.closeList();
 		} else {
 			this.openList();
@@ -198,7 +196,7 @@ export class InputListComponent implements ControlValueAccessor {
 
 		let optionIndex = this.getOptionIndex(this.selectedObject);
 
-		if (event.key == 'ArrowDown') {
+		if (event.key === 'ArrowDown') {
 			optionIndex = optionIndex + 1 < this.options.length ? optionIndex + 1 : optionIndex;
 			this.selectedObject = this.options[optionIndex];
 			this.modelValue = this.getDisplayedName(this.selectedObject);
@@ -208,7 +206,7 @@ export class InputListComponent implements ControlValueAccessor {
 			return;
 		}
 
-		if (event.key == 'ArrowUp') {
+		if (event.key === 'ArrowUp') {
 			optionIndex = optionIndex > 0 ? optionIndex - 1 : 0;
 			this.selectedObject = this.options[optionIndex];
 			this.modelValue = this.getDisplayedName(this.selectedObject);

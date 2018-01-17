@@ -14,8 +14,8 @@ import { User } from '../../../../models/user';
 import { ActivatedRoute } from '@angular/router';
 import { ImpersonationService } from '../../../../services/impersonation.service';
 import { EntryTimeComponent } from '../../entry-time/entry-time.component';
-import Moment = moment.Moment;
 import * as moment from 'moment';
+import Moment = moment.Moment;
 
 export const MAX_TIMER_VALUE = 86399;
 
@@ -152,7 +152,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			() => {
 				this.notificationService.success('New Time Entry has been successfully moved.');
 				this.calendarService.timeEntriesUpdated.emit();
-				this.closeEntryTimeForm.emit()
+				this.closeEntryTimeForm.emit();
 			},
 			error => {
 				this.notificationService.danger('Error moving Time Entry');
@@ -204,7 +204,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
-		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2))
+		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
 	openEntryTimeForm() {
@@ -276,7 +276,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			this.timerSubscription.unsubscribe();
 			this.isTimerShown = false;
 			this.calendarService.isTimerActivated = this.isTimerShown;
-		})
+		});
 	}
 
 	ngOnDestroy() {
@@ -297,7 +297,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 					this.timeEntry.timeTimerStart = obj.timeTimerStart;
 
 					this.form.closeTimeEntryForm();
-					this.notificationService.danger("Total actual time can't be more than 24 hours. Timer has stopped");
+					this.notificationService.danger('Total actual time can\'t be more than 24 hours. Timer has stopped');
 					return null;
 				},
 				error => {
@@ -365,17 +365,17 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	private saveTimeEntry(timeEntry: TimeEntry): void {
 		for (let prop in this.timeEntry) {
-			this.timeEntry[prop] = timeEntry[prop]
+			this.timeEntry[prop] = timeEntry[prop];
 		}
 	}
 
 	// MENU DISPLAYING
 
 	private isRightSideClear(el: HTMLElement): boolean {
-		return window.innerWidth > el.getBoundingClientRect().right + 300
+		return window.innerWidth > el.getBoundingClientRect().right + 300;
 	}
 
 	private isLeftSideClear(el: HTMLElement): boolean {
-		return el.getBoundingClientRect().left > 300
+		return el.getBoundingClientRect().left > 300;
 	}
 }

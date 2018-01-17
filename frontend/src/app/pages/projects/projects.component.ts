@@ -67,7 +67,7 @@ export class ProjectsComponent implements OnInit {
 
 	getProjects(): void {
 		this.subject.debounceTime(500).switchMap(() => {
-			return this.projectsService.getManagerProjectsWithCount(this.lastEvent, this.filterStr, this.isActiveTab)
+			return this.projectsService.getManagerProjectsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 		})
 			.subscribe(
 				(res: PagedResult<Project>) => {
@@ -150,7 +150,7 @@ export class ProjectsComponent implements OnInit {
 		}
 
 		if (response.isNewProject) {
-			this.notificationService.success('New project has been successfully created.')
+			this.notificationService.success('New project has been successfully created.');
 		} else {
 			this.notificationService.success('Project has been successfully changed.');
 		}

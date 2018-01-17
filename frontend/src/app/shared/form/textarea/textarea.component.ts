@@ -36,6 +36,7 @@ export class TextareaComponent implements ControlValueAccessor {
 	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
 	@ViewChild('autoSizer') autoSizer: MdTextareaAutosize;
 
+	private _disabled: boolean = false;
 	@Input()
 	get disabled(): boolean {
 		return this._disabled;
@@ -45,11 +46,8 @@ export class TextareaComponent implements ControlValueAccessor {
 		this._disabled = coerceBooleanProperty(value);
 	}
 
-	private _controlValueAccessorChangeFn: (value: any) => void = () => {
-	};
-	private onTouched: () => any = () => {
-	};
-	private _disabled: boolean = false;
+	private _controlValueAccessorChangeFn: (value: any) => void = () => {};
+	private onTouched: () => any = () => {};
 
 	constructor(private ref: ChangeDetectorRef) {
 		setTimeout(() => {

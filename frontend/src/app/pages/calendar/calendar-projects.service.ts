@@ -21,7 +21,7 @@ export class CalendarProjectsService {
 	}
 
 	getProjects(showOnlyActive): Observable<Project[]> {
-		if(this.projects.length) {
+		if (this.projects.length) {
 			return Observable.of(this.projects);
 		}
 		return this.loadProjects(showOnlyActive);

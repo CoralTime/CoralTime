@@ -62,7 +62,7 @@ export class ColorPickerComponent implements OnInit, AfterContentInit, ControlVa
 	@ContentChildren(MdOption, {descendants: true}) options: QueryList<MdOption>;
 
 	constructor(private _changeDetectorRef: ChangeDetectorRef,
-	            @Self() @Optional() public _control: NgControl,) {
+	            @Self() @Optional() public _control: NgControl) {
 		if (this._control) {
 			this._control.valueAccessor = this;
 		}
@@ -84,7 +84,7 @@ export class ColorPickerComponent implements OnInit, AfterContentInit, ControlVa
 		});
 	}
 
-	onKeyDown(event){
+	onKeyDown(event) {
 		if (!this._panelOpen) {
 			return;
 		}
@@ -95,25 +95,25 @@ export class ColorPickerComponent implements OnInit, AfterContentInit, ControlVa
 		let maxValue = this.options.length - 1;
 		let halfOfMaxValue = Math.ceil(maxValue / 2);
 
-		if (event.key == 'ArrowDown') {
+		if (event.key === 'ArrowDown') {
 			let selectedValue = +this.triggerValue < halfOfMaxValue ?  +this.triggerValue + halfOfMaxValue : this.triggerValue;
 			this._setSelectionByValue(selectedValue);
 			return;
 		}
 
-		if (event.key == 'ArrowUp') {
+		if (event.key === 'ArrowUp') {
 			let selectedValue = +this.triggerValue >= halfOfMaxValue ?  +this.triggerValue - halfOfMaxValue : this.triggerValue;
 			this._setSelectionByValue(selectedValue);
 			return;
 		}
 
-		if (event.key == 'ArrowLeft') {
+		if (event.key === 'ArrowLeft') {
 			let selectedValue = Math.max(+this.triggerValue - 1, 0);
 			this._setSelectionByValue(selectedValue);
 			return;
 		}
 
-		if (event.key == 'ArrowRight') {
+		if (event.key === 'ArrowRight') {
 			let selectedValue = Math.min(+this.triggerValue + 1, maxValue);
 			this._setSelectionByValue(selectedValue);
 			return;

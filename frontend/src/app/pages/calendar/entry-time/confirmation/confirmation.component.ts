@@ -9,6 +9,6 @@ export class ConfirmationComponent {
 	@Output() onSubmit = new EventEmitter();
 
 	submit(confirm: boolean) {
-		this.onSubmit.emit(confirm)
+		this.onSubmit.emit(confirm);
 	}
 }

@@ -33,9 +33,9 @@ export class EntryTimeComponent implements OnDestroy {
 		this.changeCloseParameter();
 
 		if (!this.isOpen && !this.calendarService.isTimeEntryFormOpened) {
-			this.openTimeEntryForm()
+			this.openTimeEntryForm();
 		} else {
-			this.closeTimeEntryForm()
+			this.closeTimeEntryForm();
 		}
 	}
 
@@ -95,19 +95,19 @@ export class EntryTimeComponent implements OnDestroy {
 	}
 
 	private isRightSideClear(el: HTMLElement): boolean {
-		return window.innerWidth > el.getBoundingClientRect().right + 300
+		return window.innerWidth > el.getBoundingClientRect().right + 300;
 	}
 
 	private isLeftSideClear(el: HTMLElement): boolean {
-		return el.getBoundingClientRect().left > 300
+		return el.getBoundingClientRect().left > 300;
 	}
 
 	private isBottomClear(el: HTMLElement): boolean {
-		return window.innerHeight > el.getBoundingClientRect().top + 560
+		return window.innerHeight > el.getBoundingClientRect().top + 560;
 	}
 
 	private isTopClear(el: HTMLElement): boolean {
-		return el.getBoundingClientRect().bottom > 560
+		return el.getBoundingClientRect().bottom > 560;
 	}
 
 	private changeCloseParameter(): void {
@@ -117,7 +117,7 @@ export class EntryTimeComponent implements OnDestroy {
 
 	private isTimeEntryFormChanged(obj: any, obj2: any): boolean {
 		for (let prop in obj) {
-			if (obj[prop] != obj2[prop]) {
+			if (obj[prop] !== obj2[prop]) {
 				return true;
 			}
 		}

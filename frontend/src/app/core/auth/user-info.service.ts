@@ -1,7 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user';
-import { ObjectUtils } from '../object-utils';
 
 const USER_INFO = 'USER_INFO';
 
@@ -35,7 +34,7 @@ export class UserInfoService {
 			.toPromise()
 			.then((user: User) => {
 				this.setUserInfo(user);
-				return this.userInfo
+				return this.userInfo;
 			});
 	}
 }

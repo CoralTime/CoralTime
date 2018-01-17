@@ -21,12 +21,12 @@ export class NotEmptyInputListValidator implements Validator {
 
 		formValue.forEach((value: string) => {
 			if (value) {
-				filledInputsNumber++
+				filledInputsNumber++;
 			}
 		});
 
-		if (filledInputsNumber == 0) {
-			return {notEmptyInputList: false}
+		if (filledInputsNumber === 0) {
+			return {notEmptyInputList: false};
 		}
 
 		return null;

@@ -47,7 +47,7 @@ export class UserPicService {
 			.map((res: Response) => {
 				this.actualUserPicCacheGuide = res.json()['picturesCacheGuid'];
 				return this.actualUserPicCacheGuide;
-			})
+			});
 	}
 
 	getUserPicture(userId: number, isAvatar: boolean): Observable<string> {
@@ -81,9 +81,9 @@ export class UserPicService {
 		}
 
 		if (isAvatar) {
-			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.MemberId == id && icon.IsAvatar == isAvatar)[0];
+			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.MemberId === id && icon.IsAvatar === isAvatar)[0];
 		} else {
-			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.MemberId == id)[0]
+			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.MemberId === id)[0];
 		}
 	}
 
@@ -93,6 +93,6 @@ export class UserPicService {
 				let userPic: Avatar = res.json();
 				this.cacheUserPicture(userPic, isAvatar);
 				return userPic.AvatarFile;
-			})
+			});
 	}
 }

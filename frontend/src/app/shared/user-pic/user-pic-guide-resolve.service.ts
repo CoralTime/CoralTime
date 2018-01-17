@@ -10,6 +10,6 @@ export class UserPicGuideResolveService implements Resolve<string> {
 	resolve(route: ActivatedRouteSnapshot): Promise<string> {
 		return this.userPicService.getPicturesCacheGuid()
 			.toPromise()
-			.then((guide: string) => guide)
+			.then((guide: string) => guide);
 	}
 }

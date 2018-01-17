@@ -22,8 +22,7 @@ export class LoginService {
 		let url = '/api/v1/AuthenticationSettings';
 		return this.http.get(url)
 			.map(res => {
-				return res.json()
+				return res.json();
 			});
 	}
-
 }

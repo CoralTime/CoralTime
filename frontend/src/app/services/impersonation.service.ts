@@ -51,18 +51,18 @@ export class ImpersonationService {
 	}
 
 	isNotAdmin(): boolean {
-		return !!this.impersonationUser && this.impersonationUser.isAdmin
+		return !!this.impersonationUser && this.impersonationUser.isAdmin;
 	}
 
 	isNotManager(): boolean {
-		return !!this.impersonationUser && this.impersonationUser.isManager
+		return !!this.impersonationUser && this.impersonationUser.isManager;
 	}
 
 	checkImpersonationRole(page: string): void {
 		let adminPages = ['clients', 'users', 'tasks'];
 		let managerPages = ['projects'];
 		if ((managerPages.indexOf(page) && this.isNotManager()) || (adminPages.indexOf(page) && this.isNotAdmin())) {
-			this.router.navigate(['/'])
+			this.router.navigate(['/']);
 		}
 	}
 }

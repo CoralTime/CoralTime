@@ -122,7 +122,7 @@ export class UsersFormComponent implements OnInit {
 		this.submitButtonText = this.user.id ? 'Save' : 'Create';
 
 		this.model = FormUser.fromUser(this.user);
-		this.roleModel = this.user.id ? this.roles.filter((role) => role.value == this.model.role)[0] : this.roles[1];
+		this.roleModel = this.user.id ? this.roles.filter((role) => role.value === this.model.role)[0] : this.roles[1];
 		this.dialogHeader = this.user.id ? 'Edit' : this.translatePipe.transform('Create New User');
 		this.userNotification = this.user.id ? 'Send update account email' : 'Send invitation email';
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);

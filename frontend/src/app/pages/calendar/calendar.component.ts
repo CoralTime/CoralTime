@@ -1,4 +1,3 @@
-import { Subscription } from 'rxjs/Subscription';
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { CalendarProjectsService } from './calendar-projects.service';
@@ -43,10 +42,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
 				let route = this.route.snapshot.children[0];
 				this.date = route.params['date'] ? moment(route.params['date'], 'MM-DD-YYYY').utc().toDate() : moment().startOf('day').toDate();
 				this.projectIds = route.params['projectIds'] ? route.params['projectIds'].split(',') : [];
-				this.projectIds.forEach((id, index) => {this.projectIds[index] = +id});
+				this.projectIds.forEach((id, index) => { this.projectIds[index] = +id; });
 				this.projectsService.filteredProjects = this.projectIds;
 				if (route.url.length) {
-					this.isWeekViewActive = route.url[0].path != 'day';
+					this.isWeekViewActive = route.url[0].path !== 'day';
 				} else {
 					this.isWeekViewActive = true;
 				}
@@ -69,32 +68,32 @@ export class CalendarComponent implements OnInit, OnDestroy {
 	}
 
 	setActivePeriod(): void {
-		if (this.route.snapshot.children[0].url[0] && this.route.snapshot.children[0].url[0].path == 'day') {
+		if (this.route.snapshot.children[0].url[0] && this.route.snapshot.children[0].url[0].path === 'day') {
 			this.activePeriod = 1;
 		} else {
-			this.activePeriod = this.availablePeriod
+			this.activePeriod = this.availablePeriod;
 		}
 	}
 
 	setAvailablePeriod(width: number): void {
-		if (width < 810 && this.availablePeriod != 1) {
+		if (width < 810 && this.availablePeriod !== 1) {
 			this.availablePeriod = 1;
 		}
-		if (width >= 810 && width < 1300 && this.availablePeriod != 4) {
+		if (width >= 810 && width < 1300 && this.availablePeriod !== 4) {
 			this.availablePeriod = 4;
 		}
-		if (width >= 1300 && this.availablePeriod != 7) {
+		if (width >= 1300 && this.availablePeriod !== 7) {
 			this.availablePeriod = 7;
 		}
 	}
 
 	getDatesPeriod(periodMove: number): string {
-		if (this.activePeriod == 1) {
+		if (this.activePeriod === 1) {
 			let thisDate = this.moveDate(this.date, periodMove);
 			return this.formatDate(thisDate);
 		} else {
 			let firstDate;
-			if (this.activePeriod == 4) {
+			if (this.activePeriod === 4) {
 				firstDate = this.moveDate(this.date, this.activePeriod * periodMove);
 			} else {
 				firstDate = this.moveDate(this.getWeekBeginning(this.date), this.activePeriod * periodMove);
@@ -123,20 +122,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
 			params['projectIds'] = this.projectIds.join(',');
 		}
 		this.activePeriod = toggleToWeek ? this.availablePeriod : 1;
-		this.router.navigate(['calendar', (this.activePeriod == 1) ? 'day' : 'week', params]);
+		this.router.navigate(['calendar', (this.activePeriod === 1) ? 'day' : 'week', params]);
 	}
 
 	toggleTimePeriod(period: number): void {
 		let params = {};
-		if (this.activePeriod == 7) {
-			this.date = this.getWeekBeginning(this.date)
+		if (this.activePeriod === 7) {
+			this.date = this.getWeekBeginning(this.date);
 		}
 		this.date = this.moveDate(this.date, period * this.activePeriod);
 		params['date'] = this.dateToString(this.date);
 		if (this.projectIds && this.projectIds.length) {
 			params['projectIds'] = this.projectIds.join(',');
 		}
-		this.router.navigate(['calendar', (this.activePeriod == 1) ? 'day' : 'week', params]);
+		this.router.navigate(['calendar', (this.activePeriod === 1) ? 'day' : 'week', params]);
 	}
 
 	toggleProject(newProjectIds: number[]): void {
@@ -150,7 +149,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		}
 
 		this.projectsService.filteredProjects = newProjectIds;
-		this.router.navigate(['calendar', (this.activePeriod == 1) ? 'day' : 'week', params]);
+		this.router.navigate(['calendar', (this.activePeriod === 1) ? 'day' : 'week', params]);
 	}
 
 	loadProjects(showOnlyActive: boolean = true): void {
@@ -165,7 +164,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 					isActive: project.isActive,
 					value: project.id,
 					label: project.name
-				}
+				};
 			});
 		});
 	}
@@ -187,7 +186,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 	@HostListener('document:keydown', ['$event'])
 	onKeyDown(event: KeyboardEvent) {
-		if (event.key == 'Alt') {
+		if (event.key === 'Alt') {
 			this.calendarService.isAltPressed = true;
 			this.calendarService.dragEffect = 'copy';
 		}
@@ -195,7 +194,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 	@HostListener('document:keyup', ['$event'])
 	onKeyUp(event: KeyboardEvent) {
-		if (event.key == 'Alt') {
+		if (event.key === 'Alt') {
 			this.calendarService.isAltPressed = false;
 			this.calendarService.dragEffect = 'move';
 		}

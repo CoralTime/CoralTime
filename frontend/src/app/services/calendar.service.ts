@@ -42,30 +42,30 @@ export class CalendarService {
 		params.set('dateBegin', moment(dateFrom).format('YYYY-MM-DD') + 'T00:00:00Z');
 		params.set('dateEnd', moment(newDateTo).format('YYYY-MM-DD') + 'T23:59:59Z');
 
-		return this.http.get(this.constantService.timeEntriesApi + '/', {search: params})
+		return this.http.get(this.constantService.timeEntriesApi, {search: params})
 			.map((res: Response) => {
 				let timeEntries = this.sortTimeEntries(res.json());
-				return timeEntries.map((x: any) => new TimeEntry(x))
-			})
+				return timeEntries.map((x: any) => new TimeEntry(x));
+			});
 	}
 
 	Delete(id: string): Observable<TimeEntry[]> {
-		return this.http.delete(this.constantService.timeEntriesApi + '(' + id + ')')
+		return this.http.delete(this.constantService.timeEntriesApi + id)
 			.map((res: Response) => res.json());
 	}
 
 	Patch(obj: TimeEntry, id: string): Observable<any> {
-		return this.http.patch(this.constantService.timeEntriesApi + '(' + id + ')', obj)
+		return this.http.patch(this.constantService.timeEntriesApi + id, obj)
 			.map((res: Response) => res.json());
 	}
 
 	Post(obj: TimeEntry): Observable<any> {
-		return this.http.post(this.constantService.timeEntriesApi + '/', obj)
+		return this.http.post(this.constantService.timeEntriesApi, obj)
 			.map((res: Response) => res.json());
 	}
 
 	Put(obj: TimeEntry, id: string): Observable<TimeEntry[]> {
-		return this.http.put(this.constantService.timeEntriesApi + '(' + id + ')', obj)
+		return this.http.put(this.constantService.timeEntriesApi + id, obj)
 			.map((res: Response) => res.json());
 	}
 
@@ -76,8 +76,8 @@ export class CalendarService {
 
 	getDayInfoByDate(timeEntryDate: Date): CalendarDay {
 		return this.calendar.find((day: CalendarDay) => {
-			return day.date.getDate() == (new Date(timeEntryDate)).getDate()
-		})
+			return day.date.getDate() === (new Date(timeEntryDate)).getDate();
+		});
 	}
 
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {
@@ -100,8 +100,8 @@ export class CalendarService {
 	}
 
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {
-		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.isFromToShow == true);
-		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.isFromToShow == false);
+		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.isFromToShow === true);
+		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.isFromToShow === false);
 
 		ArrayUtils.sortByField(arrayWithFromToPeriod, 'timeFrom');
 		ArrayUtils.sortByField(otherTimeEntries, 'id');

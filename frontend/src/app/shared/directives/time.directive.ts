@@ -34,7 +34,7 @@ export class TimeDirective {
 		}
 
 		current = this.limitTime(current);
-		if (event.key == 'ArrowDown' || event.key == 'ArrowUp') {
+		if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
 			current = this.formatTime(current);
 		}
 

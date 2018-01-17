@@ -55,7 +55,7 @@ export class ODataQuery<T> extends ODataOperation<T> {
 			.map(res => this.extractArrayData(res, config))
 			.catch((err: Response, caught: Observable<Array<T>>) => {
 				if (this.config.handleError) {
-					if (err.status == 500) {
+					if (err.status === 500) {
 						this.notificationService.danger('Server error. Try again later.');
 					}
 					this.config.handleError(err, caught);
@@ -73,7 +73,7 @@ export class ODataQuery<T> extends ODataOperation<T> {
 			.map(res => this.extractArrayDataWithCount(res, config))
 			.catch((err: any, caught: Observable<PagedResult<T>>) => {
 				if (this.config.handleError) {
-					if (err.status == 500) {
+					if (err.status === 500) {
 						this.notificationService.danger('Server error. Try again later.');
 					}
 					this.config.handleError(err, caught);

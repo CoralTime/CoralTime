@@ -1,5 +1,5 @@
 import {
-	Component, Input, OnInit, HostBinding, EventEmitter, Output, OnDestroy, ViewChildren, QueryList, ElementRef
+	Component, Input, OnInit, HostBinding, EventEmitter, Output, OnDestroy, ElementRef
 } from '@angular/core';
 import { Project } from '../../../../models/project';
 import { Task } from '../../../../models/task';
@@ -97,7 +97,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.loadProjects();
 
 		if (this.currentTimeEntry.timeTimerStart > 0) {
-			this.startTimer(DateUtils.getSecondsFromStartDay() - this.currentTimeEntry.timeTimerStart)
+			this.startTimer(DateUtils.getSecondsFromStartDay() - this.currentTimeEntry.timeTimerStart);
 		}
 		setTimeout(() => {
 			if (this.currentTimeEntry.isFromToShow) {
@@ -196,13 +196,13 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.calendarService.isTimerActivated = this.isTimerShown;
 			this.calendarService.setDefaultProject(this.projectModel);
 			this.closeEntryTimeForm.emit();
-		})
+		});
 	}
 
 	private isTimerValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid(true)) {
-			this.notificationService.danger("Total actual time can't be more than 24 hours");
-			return false
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			return false;
 		}
 
 		return true;
@@ -273,7 +273,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	// TRACKING TIME
 
 	actualTimeOnChange(): void {
-		if (this.oldActualTime && this.oldActualTime.hours == this.actualTime.hours && this.oldActualTime.minutes == this.actualTime.minutes) {
+		if (this.oldActualTime && this.oldActualTime.hours === this.actualTime.hours && this.oldActualTime.minutes === this.actualTime.minutes) {
 			return;
 		}
 
@@ -328,7 +328,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.saveTimeEntry(this.currentTimeEntry);
 				this.calendarService.setDefaultProject(this.projectModel);
 				if (!this.currentTimeEntry.id) {
-					this.notificationService.success('New Time Entry has been successfully created.')
+					this.notificationService.success('New Time Entry has been successfully created.');
 				} else {
 					this.notificationService.success('Time Entry has been successfully changed.');
 				}
@@ -336,7 +336,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				if (isNewTimeEntry) {
 					this.calendarService.timeEntriesUpdated.emit();
 				}
-				this.closeEntryTimeForm.emit()
+				this.closeEntryTimeForm.emit();
 			},
 			error => {
 				this.isRequestLoading = false;
@@ -350,16 +350,16 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	isSubmitDataValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid()) {
-			this.notificationService.danger("Total actual time can't be more than 24 hours");
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 			return false;
 		}
 		if (!this.isPlannedTimeValid()) {
-			this.notificationService.danger("Total planned time can't be more than 24 hours");
+			this.notificationService.danger('Total planned time can\'t be more than 24 hours');
 			return false;
 		}
 		if (this.currentTimeEntry.isFromToShow && !this.isFromToTimeValid()) {
-			this.notificationService.danger("Selected time period already exists");
-			return false
+			this.notificationService.danger('Selected time period already exists');
+			return false;
 		}
 
 		return true;
@@ -399,7 +399,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.projectList = this.filterProjects(this.projectList);
 
 			this.defaultProject = this.calendarService.defaultProject;
-			if(this.defaultProject) {
+			if (this.defaultProject) {
 			this.projectModel = ArrayUtils.findByProperty(this.projectList, 'id',
 				this.currentTimeEntry.projectId || this.defaultProject.id || this.userInfo.defaultProjectId);
 			} else {
@@ -407,7 +407,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 					this.currentTimeEntry.projectId || this.userInfo.defaultProjectId);
 			}
 
-			if (this.projectList.length == 1) {
+			if (this.projectList.length === 1) {
 				this.currentTimeEntry.projectName = this.projectList[0].name;
 				this.currentTimeEntry.projectId = this.projectList[0].id;
 				this.currentTimeEntry.color = this.projectList[0].color;
@@ -435,7 +435,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			}
 
 			this.isTasksLoaded = true;
-		})
+		});
 	}
 
 	private filterTasks(tasks: Task[]): Task[] {
@@ -444,15 +444,15 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		tasks.forEach((task1, index1) => {
 			isAdded = false;
 			if (task1.projectId) {
-				filteredTasks.push(task1)
+				filteredTasks.push(task1);
 			} else {
 				tasks.forEach((task2, index2) => {
-					if (task2.projectId && task1.name.toLowerCase() == task2.name.toLowerCase() && index1 != index2) {
+					if (task2.projectId && task1.name.toLowerCase() === task2.name.toLowerCase() && index1 !== index2) {
 						isAdded = true;
 					}
 				});
 				if (!isAdded) {
-					filteredTasks.push(task1)
+					filteredTasks.push(task1);
 				}
 			}
 		});
@@ -461,7 +461,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private saveTimeEntry(timeEntry: TimeEntry): void {
 		for (let prop in this.timeEntry) {
-			this.timeEntry[prop] = timeEntry[prop]
+			this.timeEntry[prop] = timeEntry[prop];
 		}
 	}
 
@@ -496,11 +496,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private removeNonActiveProjects(projectList: Project[]): Project[] {
-		let isUserAdmin = this.authService.getAuthUser().role == Roles.admin;
+		let isUserAdmin = this.authService.getAuthUser().role === Roles.admin;
 		if (isUserAdmin) {
-			return projectList.filter(project => project.isActive == true);
+			return projectList.filter(project => project.isActive === true);
 		} else {
-			return projectList.filter(project => project.isActive == true);
+			return projectList.filter(project => project.isActive === true);
 		}
 	}
 
@@ -508,7 +508,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		let filteredProjects = this.projectsService.filteredProjects;
 		if (filteredProjects.length) {
 			projectList = projectList.filter((project) => {
-				return filteredProjects.indexOf(project.id) > -1
+				return filteredProjects.indexOf(project.id) > -1;
 			});
 		}
 		return projectList;
@@ -524,7 +524,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		return this.dayInfo.timeEntries
 			.filter((timeEntry: TimeEntry) => timeEntry.isFromToShow && timeEntry.id !== this.currentTimeEntry.id)
 			.every((timeEntry: TimeEntry) => {
-				return timeEntry.timeFrom >= this.currentTimeEntry.timeTo || this.currentTimeEntry.timeFrom >= timeEntry.timeTo
+				return timeEntry.timeFrom >= this.currentTimeEntry.timeTo || this.currentTimeEntry.timeFrom >= timeEntry.timeTo;
 			});
 	}
 }

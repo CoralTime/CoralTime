@@ -1,5 +1,5 @@
 import { NotificationService } from '../../../core/notification.service';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { PagedResult } from '../../../services/odata/query';
 import { Subject } from 'rxjs/Subject';
 import { Project } from '../../../models/project';
@@ -13,7 +13,7 @@ import { ROWS_ON_PAGE } from '../../../core/constant.service';
 	templateUrl: 'project-assignment.component.html'
 })
 
-export class ClientProjectAssignmentComponent {
+export class ClientProjectAssignmentComponent implements OnInit {
 	@Input() client: Client;
 	@ViewChild('grid') gridContainer: ElementRef;
 
@@ -41,7 +41,7 @@ export class ClientProjectAssignmentComponent {
 		this.loadAssignedProjects();
 		this.loadNotAssignedProjects();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(()=>{
+		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
 			this.changeScrollableContainer();
 			this.resizeObservable.next();
 		});
@@ -51,7 +51,7 @@ export class ClientProjectAssignmentComponent {
 
 	loadAssignedProjects(): void {
 		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
-			return this.projectsService.getClientProjects(this.assignedProjectsLastEvent, this.filterStr, this.client.isActive, this.client.id)
+			return this.projectsService.getClientProjects(this.assignedProjectsLastEvent, this.filterStr, this.client.isActive, this.client.id);
 		})
 			.subscribe(
 				(res: PagedResult<Project>) => {
@@ -94,7 +94,7 @@ export class ClientProjectAssignmentComponent {
 			this.isAllAssignedProjects = false;
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
-		if(!updatePage && this.isAllAssignedProjects){
+		if (!updatePage && this.isAllAssignedProjects) {
 			return;
 		}
 
@@ -114,7 +114,7 @@ export class ClientProjectAssignmentComponent {
 
 	loadNotAssignedProjects(): void {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
-			return this.projectsService.getClientProjects(this.notAssignedProjectsLastEvent, this.filterStr, true, null)
+			return this.projectsService.getClientProjects(this.notAssignedProjectsLastEvent, this.filterStr, true, null);
 		})
 			.subscribe(
 				(res: PagedResult<Project>) => {
@@ -152,7 +152,7 @@ export class ClientProjectAssignmentComponent {
 			this.isAllNotAssignedProjects = false;
 		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
-		if(!updatePage && this.isAllNotAssignedProjects){
+		if (!updatePage && this.isAllNotAssignedProjects) {
 			return;
 		}
 
@@ -202,7 +202,7 @@ export class ClientProjectAssignmentComponent {
 		let grid = this.gridContainer.nativeElement;
 		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
 
-		if(wrappers.length == 1){
+		if (wrappers.length === 1) {
 			return;
 		}
 
@@ -210,10 +210,10 @@ export class ClientProjectAssignmentComponent {
 		wrappers[1].setAttribute('style', 'max-height: calc((90vh - 180px)/2)');
 
 		if (wrappers[0].scrollHeight < (window.innerHeight * 0.9 - 180) / 2) {
-			wrappers[1].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[0].scrollHeight + 'px)')
+			wrappers[1].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[0].scrollHeight + 'px)');
 		}
 		if (wrappers[1].scrollHeight < (window.innerHeight * 0.9 - 180) / 2) {
-			wrappers[0].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[1].scrollHeight + 'px)')
+			wrappers[0].setAttribute('style', 'max-height: calc(90vh - 180px - ' + wrappers[1].scrollHeight + 'px)');
 		}
 	}
 }

@@ -50,13 +50,13 @@ export class LoginComponent implements OnInit {
 
 	private handleError(error: Response | any): void {
 		if (this.username.length < 1 && this.password.length < 1) {
-			this.errorMessage = "Login and password are required!";
+			this.errorMessage = 'Login and password are required!';
 		} else if (this.username.length < 1 && this.password.length > 1) {
-			this.errorMessage = "Login is required!";
+			this.errorMessage = 'Login is required!';
 		} else if (this.password.length < 1 && this.username.length > 1) {
-			this.errorMessage = "Password is required!";
+			this.errorMessage = 'Password is required!';
 		} else {
-			this.errorMessage = error.status === 400 ? 'Invalid username or password' : 'Server error'
+			this.errorMessage = error.status === 400 ? 'Invalid username or password' : 'Server error';
 		}
 	}
 

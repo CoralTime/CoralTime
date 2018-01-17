@@ -2,7 +2,7 @@ import { Directive, TemplateRef, ViewContainerRef, OnInit, OnDestroy, ChangeDete
 import { Subscription } from 'rxjs';
 import { LoadingIndicatorService } from '../../core/loading-indicator.service';
 
-@Directive({selector: '[appLoadingIndicator]'})
+@Directive({selector: '[ctLoadingIndicator]'})
 export class LoadingIndicatorDirective implements OnInit, OnDestroy {
 	private status = 0;
 	private subscription: Subscription;

@@ -89,7 +89,7 @@ export class RangeDatepickerComponent implements AfterContentInit {
 	}
 
 	onKeyDown(event: KeyboardEvent): void {
-		if (event.key == 'Escape') {
+		if (event.key === 'Escape') {
 			this.onPeriodChanged.emit(this.oldDatePeriod);
 			this.closed.emit();
 		}

@@ -20,7 +20,7 @@ export class NotificationService {
 			this.notify(message, 'danger');
 			this.canShowNotification = false;
 		}
-		setTimeout(() => {this.canShowNotification = true}, 1000);
+		setTimeout(() => { this.canShowNotification = true; }, 1000);
 	}
 
 	private notify(message: string, type: string): void {

@@ -61,7 +61,7 @@ export class UsersComponent implements OnInit {
 
 	getUsers(): void {
 		this.subject.debounceTime(500).switchMap(() => {
-			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab)
+			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 		})
 			.subscribe(
 				(res: PagedResult<User>) => {
@@ -127,7 +127,7 @@ export class UsersComponent implements OnInit {
 		}
 
 		if (response.isNewUser) {
-			this.notificationService.success('New user has been successfully created.')
+			this.notificationService.success('New user has been successfully created.');
 		} else {
 			this.notificationService.success('User has been successfully changed.');
 		}

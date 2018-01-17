@@ -127,7 +127,7 @@ export class ReportsComponent implements OnInit {
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
 
-		if (!showDefaultValue && h == 0 && m == 0) {
+		if (!showDefaultValue && h === 0 && m === 0) {
 			return '';
 		}
 
@@ -172,7 +172,7 @@ export class ReportsComponent implements OnInit {
 		this.oldDateString = this.dateString;
 		this.oldDatePeriod = this.datePeriod;
 		this.isDatepickerShown = true;
-		setTimeout(() => this.isDatepickerAnimating = true, 300)
+		setTimeout(() => this.isDatepickerAnimating = true, 300);
 	}
 
 	datePeriodOnChange(datePeriod: DatePeriod): void {
@@ -219,7 +219,7 @@ export class ReportsComponent implements OnInit {
 		this.reportsSendRef.componentInstance.dateFormat = this.dateFormat;
 		this.reportsSendRef.componentInstance.userInfo = this.userInfo;
 
-		if(this.projectIds.length === 1) {
+		if (this.projectIds.length === 1) {
 			this.reportsSendRef.componentInstance.projectName
 				= ArrayUtils.findByProperty(this.projectItems, 'value', this.projectIds[0]).label;
 		}
@@ -243,7 +243,7 @@ export class ReportsComponent implements OnInit {
 		this.projectIds = [];
 		this.userIds = [];
 		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById == 3);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById === 3);
 		this.toggleClient(this.clientIds);
 	}
 
@@ -253,7 +253,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private convertMomentToString(moment: Moment): string {
-		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null
+		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
 	}
 
 	private setDateString(period: DatePeriod): void {
@@ -295,13 +295,13 @@ export class ReportsComponent implements OnInit {
 		this.selectedClients = [];
 
 		clientIds.forEach((clientId: number) => {
-			this.selectedClients.push(this.clients.find((client: ClientDetail) => client.clientId == clientId));
+			this.selectedClients.push(this.clients.find((client: ClientDetail) => client.clientId === clientId));
 		});
 
 		this.getProjectItems(this.selectedClients.length ? this.selectedClients : this.clients);
 
 		this.projectIds = this.projectIds.filter((projectId: number) => {
-			return this.projects.find((project: ProjectDetail) => project.projectId == projectId);
+			return this.projects.find((project: ProjectDetail) => project.projectId === projectId);
 		});
 
 		this.toggleProject(this.projectIds);
@@ -316,13 +316,13 @@ export class ReportsComponent implements OnInit {
 		this.selectedProjects = [];
 
 		projectIds.forEach((projectId: number) => {
-			this.selectedProjects.push(this.projects.find((project: ProjectDetail) => project.projectId == projectId));
+			this.selectedProjects.push(this.projects.find((project: ProjectDetail) => project.projectId === projectId));
 		});
 
 		this.getUserItems(this.selectedProjects.length ? this.selectedProjects : this.projects);
 
 		this.userIds = this.userIds.filter((userId: number) => {
-			return this.users.find((user: UserDetail) => user.userId == userId);
+			return this.users.find((user: UserDetail) => user.userId === userId);
 		});
 
 		this.toggleUser();
@@ -348,7 +348,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private getClientItems(clients: ClientDetail[]): void {
-		this.clients = this.showOnlyActiveClients ? clients.filter((client: ClientDetail) => client.isClientActive == true) : clients;
+		this.clients = this.showOnlyActiveClients ? clients.filter((client: ClientDetail) => client.isClientActive === true) : clients;
 		this.clientItems = this.clients.map((client: ClientDetail) => new CustomSelectItem(client.clientName, client.clientId, client.isClientActive));
 		this.clientItems = ArrayUtils.sortByField(this.clientItems, 'label');
 	}
@@ -368,7 +368,7 @@ export class ReportsComponent implements OnInit {
 
 	private getProjectItems(clients: ClientDetail[]): void {
 		let projects: ProjectDetail[] = this.getProjectsFromClients(clients);
-		this.projects = this.showOnlyActiveProjects ? projects.filter((project: ProjectDetail) => project.isProjectActive == true) : projects;
+		this.projects = this.showOnlyActiveProjects ? projects.filter((project: ProjectDetail) => project.isProjectActive === true) : projects;
 		this.projectItems = this.projects.map((project: ProjectDetail) => new CustomSelectItem(project.projectName, project.projectId, project.isProjectActive));
 		this.projectItems = ArrayUtils.sortByField(this.projectItems, 'label');
 	}
@@ -377,7 +377,7 @@ export class ReportsComponent implements OnInit {
 		let users = [];
 
 		if (!this.reportDropdowns.isAdminCurrentUser && this.reportDropdowns.isManagerCurrentUser) {
-			projects = projects.filter((project: ProjectDetail) => project.isUserManagerOnProject == true);
+			projects = projects.filter((project: ProjectDetail) => project.isUserManagerOnProject === true);
 		}
 
 		projects.forEach((project: ProjectDetail) => {
@@ -392,7 +392,7 @@ export class ReportsComponent implements OnInit {
 
 	private getUserItems(projects: ProjectDetail[]): void {
 		let users: UserDetail[] = this.getUsersFromProjects(projects);
-		this.users = this.showOnlyActiveUsers ? users.filter((user: UserDetail) => user.isUserActive == true) : users;
+		this.users = this.showOnlyActiveUsers ? users.filter((user: UserDetail) => user.isUserActive === true) : users;
 		this.userItems = this.users.map((user: UserDetail) => new CustomSelectItem(user.userFullName, user.userId, user.isUserActive));
 		this.userItems = ArrayUtils.sortByField(this.userItems, 'label');
 	}
@@ -421,12 +421,12 @@ export class ReportsComponent implements OnInit {
 			this.datePeriodOnChange(reportsSettings.datePeriod);
 		} else {
 			this.datePeriod = this.rangeDatepickerService.getDatePeriodList()['This Week'];
-			this.datePeriodOnChange(this.datePeriod)
+			this.datePeriodOnChange(this.datePeriod);
 		}
 
 		this.reportsService.getReportsGroupBy().subscribe((res: GroupByItem[]) => {
 			this.groupByItems = res;
-			this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById == reportsSettings.groupById);
+			this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById === reportsSettings.groupById);
 		});
 	}
 

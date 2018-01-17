@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { AuthService } from './core/auth/auth.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,7 +8,7 @@ import { ImpersonationService } from './services/impersonation.service';
 	selector: 'ct-root',
 	templateUrl: 'app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	constructor(private authService: AuthService,
 	            public impersonationService: ImpersonationService,
 	            translate: TranslateService) {

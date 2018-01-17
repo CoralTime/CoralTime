@@ -5,7 +5,6 @@ import { MenuModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
 import { SharedModule } from '../../shared/shared.module';
 import { NavigationComponent } from './navigation/navigation.component';
-import { CustomfooterComponent } from './customfooter/customfooter.component';
 
 @NgModule({
 	imports: [
@@ -16,12 +15,10 @@ import { CustomfooterComponent } from './customfooter/customfooter.component';
 		SharedModule
 	],
 	exports: [
-		NavigationComponent,
-		CustomfooterComponent
+		NavigationComponent
 	],
 	declarations: [
-		NavigationComponent,
-		CustomfooterComponent
+		NavigationComponent
 	]
 })
 

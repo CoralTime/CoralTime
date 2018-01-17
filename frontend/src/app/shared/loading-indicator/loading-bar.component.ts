@@ -1,12 +1,12 @@
 import { Subscription } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { LoadingIndicatorService } from '../../core/loading-indicator.service';
 
 @Component({
 	selector: 'ct-loading-bar',
 	templateUrl: 'loading-bar.component.html'
 })
-export class LoadingBarComponent implements OnInit {
+export class LoadingBarComponent implements OnInit, OnDestroy {
 	status = 0;
 	private subscription: Subscription;
 
@@ -15,7 +15,7 @@ export class LoadingBarComponent implements OnInit {
 
 	ngOnInit() {
 		this.subscription = this.indicatorService.getStatus().subscribe(status => {
-			setTimeout(()=> {
+			setTimeout(() => {
 				this.status = status;
 			}, 0);
 		});

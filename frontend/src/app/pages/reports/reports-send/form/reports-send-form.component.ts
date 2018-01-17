@@ -27,7 +27,7 @@ export class ReportsSendFormComponent implements OnDestroy {
 		});
 		this.subscription = this.form.valueChanges.subscribe(() => {
 			this.formChanged.emit(this.form.valid);
-		})
+		});
 	}
 
 	addNewEmail(): void {

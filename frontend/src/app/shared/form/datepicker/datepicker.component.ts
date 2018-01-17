@@ -42,6 +42,7 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 	@Output() dateChanged: EventEmitter<string[] | Moment[]> = new EventEmitter();
 	@Output() dateClicked: EventEmitter<Moment> = new EventEmitter();
 
+	private _disabled: boolean = false;
 	@Input()
 	get disabled(): boolean {
 		return this._disabled;
@@ -51,11 +52,8 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 		this._disabled = coerceBooleanProperty(value);
 	}
 
-	private _controlValueAccessorChangeFn: (value: any) => void = () => {
-	};
-	private onTouched: () => any = () => {
-	};
-	private _disabled: boolean = false;
+	private _controlValueAccessorChangeFn: (value: any) => void = () => {};
+	private onTouched: () => any = () => {};
 
 	constructor() {
 	}
@@ -65,7 +63,7 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 		this.config = {
 			allowMultiSelect: this.multiselect,
 			firstDayOfWeek: WEEK_DAYS[this.firstDayOfWeek],
-			format: "YYYY-MM-DD",
+			format: 'YYYY-MM-DD',
 			weekdayNames: {mo: 'Mo', tu: 'Tu', we: 'We', th: 'Th', fr: 'Fr', sa: 'Sa', su: 'Su'}
 		};
 		this.dateAPI.emit(this.datePicker);
@@ -108,7 +106,7 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 
 		let result: boolean = false;
 		disabledList.forEach((date: string) => {
-			if (moment(day.date).format("YYYY-MM-DD") == moment(date).format("YYYY-MM-DD")) {
+			if (moment(day.date).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD')) {
 				result = true;
 			}
 		});
@@ -159,7 +157,7 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 	}
 
 	onKeyDown(event: KeyboardEvent) {
-		if (event.key == 'Escape') {
+		if (event.key === 'Escape') {
 			this.closed.emit();
 		}
 	}
@@ -178,7 +176,7 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 
 	private convertValueToArrayOfString(date: any): string[] {
 		if (!this.multiselect) {
-			date = date ? [date] : []
+			date = date ? [date] : [];
 		} else {
 			date = date ? [...date] : [];
 		}

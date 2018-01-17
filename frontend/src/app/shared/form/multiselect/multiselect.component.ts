@@ -22,17 +22,17 @@ export class CustomSelectItem implements SelectItem {
 
 export const MULTISELECT_VALUE_ACCESSOR: any = {
 	provide: NG_VALUE_ACCESSOR,
-	useExisting: forwardRef(() => MultiSelect),
+	useExisting: forwardRef(() => MultiSelectComponent),
 	multi: true
 };
 
 @Component({
-	selector: 'ct-multiSelect',
+	selector: 'ct-multiselect',
 	templateUrl: 'multiselect.component.html',
 	providers: [DomHandler, ObjectUtils, MULTISELECT_VALUE_ACCESSOR]
 })
 
-export class MultiSelect extends PrimeMultiSelect implements OnChanges {
+export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges {
 	@Input() ngModel: number[];
 	@Input() extraActionTitle: string;
 	@Input() showSubmitButton: boolean = false;
@@ -64,7 +64,7 @@ export class MultiSelect extends PrimeMultiSelect implements OnChanges {
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
-		if (changes && changes['ngModel'] && changes['ngModel'].currentValue.length == 0) {
+		if (changes && changes['ngModel'] && changes['ngModel'].currentValue.length === 0) {
 			setTimeout(() => {
 				this.valuesAsString = this.defaultLabel;
 			}, 0);
@@ -111,7 +111,7 @@ export class MultiSelect extends PrimeMultiSelect implements OnChanges {
 	}
 
 	toString(value: string): string {
-		return value != null + '' ? value : this.defaultLabel.slice(4) + ' (1)'
+		return value !== null + '' ? value : this.defaultLabel.slice(4) + ' (1)';
 	}
 
 	private cashValue(): void {

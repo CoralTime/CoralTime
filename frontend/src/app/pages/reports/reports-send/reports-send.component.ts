@@ -96,7 +96,7 @@ export class ReportsSendComponent implements OnInit {
 	ngOnInit() {
 		this.clientsService.getClients().subscribe((clients) => {
 			this.clients = clients.filter((client: Client) => !!client.email === true);
-			if(this.model.clientIds && this.model.clientIds.length == 1) {
+			if (this.model.clientIds && this.model.clientIds.length === 1) {
 				let selectedClient = clients.filter((client: Client) => client.id === this.model.clientIds[0])[0];
 				this.model.toEmail = selectedClient.email;
 			}
@@ -112,7 +112,7 @@ export class ReportsSendComponent implements OnInit {
 
 		if (!this.model.fromEmail) {
 			this.emailFromError = 'Client sender email is required.';
-			return
+			return;
 		}
 	}
 
@@ -132,7 +132,7 @@ export class ReportsSendComponent implements OnInit {
 		this.reportsService.sendReports(this.model).subscribe((res) => {
 			this.isRequestLoading = false;
 			this.onSubmit.emit(res);
-		})
+		});
 	}
 
 	private formatDate(utcDate: string): string {

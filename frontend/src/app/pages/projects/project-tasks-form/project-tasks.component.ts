@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Project } from '../../../models/project';
 import { NotificationService } from '../../../core/notification.service';
 import { Observable } from 'rxjs';
@@ -13,7 +13,7 @@ import { ROWS_ON_PAGE } from '../../../core/constant.service';
 	templateUrl: 'project-tasks.component.html'
 })
 
-export class ProjectTasksComponent {
+export class ProjectTasksComponent implements OnInit {
 	@Input() project: Project;
 
 	@ViewChild('grid') gridContainer: ElementRef;
@@ -38,7 +38,7 @@ export class ProjectTasksComponent {
 
 	loadTasks(): void {
 		this.tasksSubject.debounceTime(500).switchMap(() => {
-			return this.tasksService.getProjectTasks(this.tasksLastEvent, this.filterStr, this.project.id)
+			return this.tasksService.getProjectTasks(this.tasksLastEvent, this.filterStr, this.project.id);
 		})
 			.subscribe(
 				(res: PagedResult<Task>) => {

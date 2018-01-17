@@ -27,7 +27,7 @@ export class SignInOidcComponent implements OnInit {
 	loginSSO(id_token: string): void {
 		this.authService.loginSSO(this.id_token)
 			.subscribe(() => {
-					this.router.navigate(['/' + this.auth.url])
+					this.router.navigate(['/' + this.auth.url]);
 				}
 			);
 	}

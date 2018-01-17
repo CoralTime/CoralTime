@@ -88,7 +88,7 @@ export class ProjectFormComponent implements OnInit {
 	ngOnInit() {
 		this.clientsService.getClients().subscribe((clients) => {
 			this.clients = clients;
-			this.clientModel = this.clients.filter((client) => client.id == this.project.clientId)[0];
+			this.clientModel = this.clients.filter((client) => client.id === this.project.clientId)[0];
 
 			if (this.model.clientName && !this.clientModel) {
 				this.defaultClientName = this.model.clientName + ' (archived)';

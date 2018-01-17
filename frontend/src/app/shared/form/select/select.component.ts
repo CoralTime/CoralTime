@@ -26,7 +26,7 @@ export class SelectChange {
 	host: {
 		'(document:keydown)': 'onKeyDown($event)'
 	},
-	changeDetection: ChangeDetectionStrategy.OnPush  //Fixed in newest version https://github.com/angular/material2/pull/2894
+	changeDetection: ChangeDetectionStrategy.OnPush  // Fixed in newest version https://github.com/angular/material2/pull/2894
 })
 
 export class SelectComponent implements ControlValueAccessor {
@@ -48,6 +48,7 @@ export class SelectComponent implements ControlValueAccessor {
 	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
 	@ViewChild('mdList', {read: ElementRef}) mdList: ElementRef;
 
+	private _disabled: boolean = false;
 	@Input()
 	get disabled(): boolean {
 		return this._disabled;
@@ -57,14 +58,12 @@ export class SelectComponent implements ControlValueAccessor {
 		this._disabled = coerceBooleanProperty(value);
 	}
 
-	private selectedObject: any;
 	private oldSelectedObject: any;
-
-	private _controlValueAccessorChangeFn: (value: any) => void = () => { };
-	private onTouched: () => any = () => {
-	};
-	private _disabled: boolean = false;
 	private scrollTopNumber: number = 0;
+	private selectedObject: any;
+
+	private _controlValueAccessorChangeFn: (value: any) => void = () => {};
+	private onTouched: () => any = () => {};
 
 	constructor(private el: ElementRef,
 	            private ref: ChangeDetectorRef,
@@ -186,7 +185,7 @@ export class SelectComponent implements ControlValueAccessor {
 
 		let optionIndex = this.getOptionIndex(this.selectedObject);
 
-		if (event.key == 'ArrowDown') {
+		if (event.key === 'ArrowDown') {
 			optionIndex = optionIndex + 1 < this.options.length ? optionIndex + 1 : optionIndex;
 			this.selectedObject = this.options[optionIndex];
 
@@ -195,7 +194,7 @@ export class SelectComponent implements ControlValueAccessor {
 			return;
 		}
 
-		if (event.key == 'ArrowUp') {
+		if (event.key === 'ArrowUp') {
 			optionIndex = optionIndex > 0 ? optionIndex - 1 : 0;
 			this.selectedObject = this.options[optionIndex];
 
