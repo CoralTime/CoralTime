@@ -11,7 +11,7 @@
         <md-list class="ct-select-options-list" [style.maxHeight.px]="maxHeight" #mdList>
             <div class="ct-select-options-wrapper" #slimScroll="slimScroll" slimScroll [style.maxHeight.px]="maxHeight">
                 <md-list-item class="ct-select-option" role="option" *ngFor="let option of options; let i = index"
-                              (click)="selectOption(option)" md-ripple
+                              (click)="selectOption(option)"
                               [ngClass]="{ 'ct-select-option-selected': isOptionSelected(option), 'ct-select-option-disabled': option?.disabled }">
                     <label class="ct-label-item">{{getDisplayedName(option)}}</label>
                 </md-list-item>
