@@ -331,3 +331,4 @@ backend/CoralTime/Logs/*.*
 backend/CoralTime/appsettings.Production.json
 backend/CoralTime/Configs/*.*
 backend/CoralTime/Configs/
+backend/CoralTime/tempkey.rsa
