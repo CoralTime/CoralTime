@@ -1,12 +1,12 @@
-using System;
 using CoralTime.BL.Interfaces.Reports.DDAndGrid;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
 {
@@ -18,11 +18,11 @@ namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetReportsDropdowns()
+        public IActionResult ReportsDropdowns()
         {
             try
             {
-                return new JsonResult(_service.GetReportsDropDowns(this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.ReportsDropDowns(this.GetUserNameWithImpersonation()));
             }
             catch (Exception e)
             {
@@ -33,7 +33,7 @@ namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
         }
 
         [HttpPost]
-        public IActionResult PostReportsGrid([FromBody]RequestReportsGrid reportsGridData)
+        public IActionResult ReportsGrid([FromBody]RequestReportsGrid reportsGridData)
         {
             try
             {
@@ -42,20 +42,30 @@ namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridData.GroupById)
                 {
-                    case (int)Constants.ReportsGroupBy.Project:
-                        return new JsonResult(_service.GroupByProjects(userName, reportsGridData));
+                    case (int) Constants.ReportsGroupBy.Project:
+                    {
+                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridData));
+                    }
 
-                    case (int)Constants.ReportsGroupBy.User:
-                        return new JsonResult(_service.GroupByUsers(userName, reportsGridData));
+                    case (int) Constants.ReportsGroupBy.User:
+                    {
+                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridData));
+                    }
 
-                    case (int)Constants.ReportsGroupBy.Date:
-                        return new JsonResult(_service.GroupByDates(userName, reportsGridData));
+                    case (int) Constants.ReportsGroupBy.Date:
+                    {
+                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridData));
+                    }
 
-                    case (int)Constants.ReportsGroupBy.Client:
-                        return new JsonResult(_service.GroupByClients(userName, reportsGridData));
+                    case (int) Constants.ReportsGroupBy.Client:
+                    {
+                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridData));
+                    }
 
                     default:
-                        return new JsonResult(_service.GroupByNone(userName, reportsGridData));
+                    {
+                        return new JsonResult(_service.ReportsGridGroupByNone(userName, reportsGridData));
+                    }
                 }
             }
             catch (Exception e)

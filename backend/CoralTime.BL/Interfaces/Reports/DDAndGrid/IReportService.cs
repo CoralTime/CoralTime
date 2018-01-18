@@ -1,7 +1,7 @@
 ﻿using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.ReportsDropwDowns;
 using CoralTime.ViewModels.Reports.Request;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using System;
 using System.Collections.Generic;
 
@@ -15,18 +15,18 @@ namespace CoralTime.BL.Interfaces.Reports.DDAndGrid
 
         DateTime DateTo { get; set; }
 
-        ReportDropDownView GetReportsDropDowns(string userName);
+        ReportDropDownView ReportsDropDowns(string userName);
 
-        List<ReportsDropDownGroupBy> GetReportsDropDownGroupBy();
+        List<ReportsDropDownGroupBy> ReportsDropDownGroupBy();
 
-        ReportsGrandGridTimeEntryView GroupByNone(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridProjectsView GroupByProjects(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridMembersView GroupByUsers(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridDatesView GroupByDates(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridClients GroupByClients(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridClients ReportsGridGroupByClients(string userName, RequestReportsGrid reportsGridData);
     }
 }

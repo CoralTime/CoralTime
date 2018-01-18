@@ -1,13 +1,10 @@
-﻿using System;
+﻿using CoralTime.DAL.Interfaces;
+using System;
 
-namespace CoralTime.ViewModels.Reports.Request.Grid
+namespace CoralTime.DAL.Models
 {
-    public class RequestReportsGrid
+    public class ReportsSettingsSaveToDb : IReportsSettingsSaveToDb
     {
-        public int DateFormatId { get; set; }
-
-        public int? FileTypeId { get; set; }
-
         public DateTime? DateFrom { get; set; }
 
         public DateTime? DateTo { get; set; }

@@ -1,7 +1,7 @@
 using CoralTime.BL.Interfaces.Reports.Export;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

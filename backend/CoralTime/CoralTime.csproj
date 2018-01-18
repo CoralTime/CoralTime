@@ -14,9 +14,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAzure|AnyCPU'" />
   <ItemGroup>
     <Compile Remove="Configs\**" />
+    <Compile Remove="wwwroot\**" />
     <Content Remove="Configs\**" />
+    <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="Configs\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="Configs\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="node_modules" />

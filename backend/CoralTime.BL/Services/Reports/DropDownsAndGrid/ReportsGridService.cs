@@ -3,7 +3,7 @@ using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
     {
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
 
-        public ReportsGrandGridTimeEntryView GroupByNone(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridTimeEntry = new ReportsGrandGridTimeEntryView
             {
@@ -44,7 +44,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return result;
         }
 
-        public ReportsGrandGridProjectsView GroupByProjects(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridProjects = new ReportsGrandGridProjectsView
             {
@@ -73,7 +73,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return result;
         }
 
-        public ReportsGrandGridMembersView GroupByUsers(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridUsers = new ReportsGrandGridMembersView
             {
@@ -102,7 +102,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return result;
         }
 
-        public ReportsGrandGridDatesView GroupByDates(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridDates = new ReportsGrandGridDatesView
             {
@@ -130,7 +130,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return result;
         }
 
-        public ReportsGrandGridClients GroupByClients(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridClients ReportsGridGroupByClients(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridClients = new ReportsGrandGridClients
             {

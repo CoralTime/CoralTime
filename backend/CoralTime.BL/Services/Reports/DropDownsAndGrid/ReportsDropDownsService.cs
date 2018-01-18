@@ -10,7 +10,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {
-        public ReportDropDownView GetReportsDropDowns(string userName)
+        public ReportDropDownView ReportsDropDowns(string userName)
         {
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
@@ -135,7 +135,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return reportsDetail;
         }
 
-        public List<ReportsDropDownGroupBy> GetReportsDropDownGroupBy()
+        public List<ReportsDropDownGroupBy> ReportsDropDownGroupBy()
         {
             var dropDownGroupBy = new List<ReportsDropDownGroupBy>
             {

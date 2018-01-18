@@ -15,15 +15,15 @@ namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetReportsDropDownsGroupBy()
+        public IActionResult ReportsDropDownsGroupBy()
         {
             try
             {
-                return new JsonResult(_service.GetReportsDropDownGroupBy());
+                return new JsonResult(_service.ReportsDropDownGroupBy());
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetReportsDropDowns method {e}");
+                _logger.LogWarning($"ReportsDropDowns method {e}");
                 var errors = ExceptionsChecker.CheckProjectsException(e);
                 return BadRequest(errors);
             }

@@ -2,10 +2,13 @@
 using CoralTime.BL.Interfaces.Reports.DDAndGrid;
 using CoralTime.BL.Interfaces.Reports.Export;
 using CoralTime.Common.Constants;
+using CoralTime.Common.Helpers;
 using CoralTime.Common.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.PDF;
+using CoralTime.ViewModels.Reports.Request.Grid;
+using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +20,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Reports.PDF;
-using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
@@ -168,7 +168,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public FileResult ExportGroupByNone(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByNone = _reportService.GroupByNone(userName, reportsGridData);
+            var groupByNone = _reportService.ReportsGridGroupByNone(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByNone);
 
             return result;
@@ -176,7 +176,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public FileResult ExportGroupByProjects(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByProjects = _reportService.GroupByProjects(userName, reportsGridData);
+            var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByProjects);
 
             return result;
@@ -184,7 +184,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public FileResult ExportGroupByUsers(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByUsers = _reportService.GroupByUsers(userName, reportsGridData);
+            var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByUsers);
 
             return result;
@@ -192,7 +192,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public FileResult ExportGroupByDates(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByDates = _reportService.GroupByDates(userName, reportsGridData);
+            var groupByDates = _reportService.ReportsGridGroupByDates(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByDates);
 
             return result;
@@ -200,7 +200,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public FileResult ExportGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByClient = _reportService.GroupByClients(userName, reportsGridData);
+            var groupByClient = _reportService.ReportsGridGroupByClients(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByClient);
 
             return result;

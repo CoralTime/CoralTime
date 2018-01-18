@@ -1,6 +1,6 @@
-﻿using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+﻿using CoralTime.ViewModels.Reports.Request.Grid;
 
-namespace CoralTime.ViewModels.Reports.Request.ReportsEmails
+namespace CoralTime.ViewModels.Reports.Request.Emails
 {
     public class ReportsSendAsEmailView : RequestReportsGrid
     {

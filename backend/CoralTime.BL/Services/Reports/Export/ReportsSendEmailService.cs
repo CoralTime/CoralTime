@@ -1,6 +1,6 @@
 ﻿using CoralTime.Common.Helpers;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.ReportsEmails;
+using CoralTime.ViewModels.Reports.Request.Emails;
 using MimeKit;
 using System.Threading.Tasks;
 
@@ -10,31 +10,31 @@ namespace CoralTime.BL.Services.Reports.Export
     {
         public async Task SentGroupByNone(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByNone = _reportService.GroupByNone(userName, emailData);
+            var groupByNone = _reportService.ReportsGridGroupByNone(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByNone);
         }
 
         public async Task SentGroupByProjects(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByProjects = _reportService.GroupByProjects(userName, emailData);
+            var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByProjects);
         }
 
         public async Task SentGroupByUsers(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByUsers = _reportService.GroupByUsers(userName, emailData);
+            var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByUsers);
         }
 
         public async Task SentGroupByDates(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByDates = _reportService.GroupByDates(userName, emailData);
+            var groupByDates = _reportService.ReportsGridGroupByDates(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByDates);
         }
 
         public async Task SentGroupByClients(string userName, ReportsSendAsEmailView emailData)
         {
-            var groupByClients = _reportService.GroupByClients(userName, emailData);
+            var groupByClients = _reportService.ReportsGridGroupByClients(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByClients);
         }
 
