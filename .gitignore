@@ -330,3 +330,4 @@ backend/CoralTime/Logs/*.*
 *.orig
 backend/CoralTime/appsettings.Production.json
 backend/CoralTime/Configs/*.*
+backend/CoralTime/Configs/
