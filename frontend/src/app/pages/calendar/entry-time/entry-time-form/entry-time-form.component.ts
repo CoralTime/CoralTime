@@ -49,6 +49,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	isFocusClassShown: boolean;
 	isFormChanged: boolean = false;
 	isFromToFormChanged: boolean = false;
+	isFromToFormFocus: boolean = false;
 	isFromToFormShown: boolean = false;
 	isRequestLoading: boolean = false;
 	isTimerShown: boolean = false;
@@ -257,6 +258,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	validateFromToForm(): void {
 		this.isFormChanged = true;
 		this.isFromToFormChanged = true;
+		this.isFromToFormFocus = false;
 		this.toTime = this.getMax(this.fromTime, this.toTime);
 		this.setActualTime();
 		this.actualTime = this.splitTime(this.currentTimeEntry.time);

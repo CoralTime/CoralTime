@@ -313,20 +313,20 @@ ct-entry-time {
     padding: 14px 0 12px;
     font-size: 0;
 
-    > button {
+    > button, > div {
       display: inline-block;
       box-sizing: border-box;
       border: 0;
       width: 120px;
       height: 120px;
       margin-bottom: 5px;
-      padding-top: 15px;
+      padding: 15px 16px 0;
+      line-height: 36px;
       font-size: 15px;
-      text-align: center;
       cursor: pointer;
       color: $nav-background !important;
 
-      &:focus {
+      &:focus, &.ct-focus {
         outline: 1px solid rgba(9, 156, 206, .3);
       }
 
@@ -344,13 +344,7 @@ ct-entry-time {
 
       &.ct-no-clickable, &[disabled] {
         position: relative;
-        cursor: default;
-        pointer-events: none;
-
-        .mat-button-focus-overlay {
-          background-color: rgba(255, 255, 255, 0.3);
-          opacity: 1;
-        }
+        cursor: not-allowed;
       }
 
       &.ct-timer {
@@ -374,13 +368,8 @@ ct-entry-time {
       height: 53px;
     }
 
-    .ct-hidden {
-      display: none;
-    }
-
     .ct-from-to-form {
       position: relative;
-      margin-top: -15px;
 
       label {
         margin-right: 3px;
@@ -394,16 +383,12 @@ ct-entry-time {
         text-align: center;
       }
 
-      .mat-button-wrapper {
-        display: block;
-        height: 100%;
-      }
-
       .ct-from-time, .ct-to-time {
         margin-left: -10px;
         line-height: 1.3;
         font-size: 0;
         text-align: right;
+
         > * {
           font-size: 16px;
         }

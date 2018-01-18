@@ -42,7 +42,7 @@
                      (ngModelChange)="descriptionOnChange()"></ct-textarea>
     </div>
     <div class="ct-time-actions clearfix">
-        <button class="ct-timer"
+        <button class="ct-timer" md-button
                 [disabled]="!canActivateTimer()"
                 (click)="toggleTimer()"
                 [class.ct-timer-started]="isTimerShown">
@@ -62,39 +62,47 @@
                 Stop Timer
             </div>
         </button>
-        <button class="ct-time-path mat-button"
+        <button *ngIf="!isFromToFormShown"
+                class="ct-time-path"
                 [disabled]="isTimerShown"
                 (click)="openFromToForm()">
-            <div [class.ct-hidden]="isFromToFormShown">
+            <div>
                 <span class="ct-actions-icon"></span>
                 From... To...
             </div>
-            <div class="ct-from-to-form" [class.ct-hidden]="!isFromToFormShown">
+        </button>
+        <div *ngIf="isFromToFormShown" class="ct-time-path"
+             [class.ct-focus]="isFromToFormFocus">
+            <div class="ct-from-to-form">
                 <div class="ct-from-time">
                     <label for="fromHours" class="ct-label">From:</label>
                     <input name="fromHours" numberOnly [time]="24" maxlength="2"
                            id="fromHours" autocomplete="off"
                            [(ngModel)]="fromTime.hours"
+                           (focus)="isFromToFormFocus = true"
                            (blur)="validateFromToForm()">
                     <span class="ct-divider">:</span>
                     <input name="fromMinutes" numberOnly [time]="60" maxlength="2" autocomplete="off"
                            [(ngModel)]="fromTime.minutes"
+                           (focus)="isFromToFormFocus = true"
                            (blur)="validateFromToForm()">
                 </div>
                 <span class="ct-actions-icon"></span>
                 <div class="ct-to-time">
                     <label for="toHours" class="ct-label">To:</label>
                     <input name="toHours" numberOnly [time]="24" maxlength="2"
-                           id="toHours" type="text" autocomplete="off"
+                           id="toHours" autocomplete="off"
                            [(ngModel)]="toTime.hours"
+                           (focus)="isFromToFormFocus = true"
                            (blur)="validateFromToForm()">
                     <span class="ct-divider">:</span>
                     <input name="toMinutes" numberOnly [time]="60" maxlength="2" autocomplete="off"
                            [(ngModel)]="toTime.minutes"
+                           (focus)="isFromToFormFocus = true"
                            (blur)="validateFromToForm()">
                 </div>
             </div>
-        </button>
+        </div>
     </div>
     <div class="ct-time-period clearfix">
         <div class="ct-actual-time" [class.ct-disabled-form]="isTimerShown">
