@@ -132,12 +132,15 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	resetPassword(): void {
-		this.enterEmailService.sendEmail(this.userModel.email).then((emailResponse) => {
-			if (emailResponse.isSentEmail) {
-				this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;
-				setTimeout(() => this.resetPasswordMessage = '', 5000);
-			}
-		});
+		this.enterEmailService.sendEmail(this.userModel.email).then(
+			(emailResponse) => {
+				if (emailResponse.isSentEmail) {
+					this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;
+					setTimeout(() => this.resetPasswordMessage = '', 5000);
+				} else {
+					this.notificationService.danger('Error when resetting the password.');
+				}
+			}, error => this.notificationService.danger('Error when resetting the password.'));
 	}
 
 	sendEmailDayOnChange(): void {
