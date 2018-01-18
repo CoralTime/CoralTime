@@ -6,7 +6,7 @@ using CoralTime.ViewModels.Reports.Request;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoralTime.BL.Services.Reports.DDAndGrid
+namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {

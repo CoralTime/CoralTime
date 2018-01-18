@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CoralTime.DAL.Models;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface IRefService
     {

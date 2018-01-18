@@ -4,7 +4,7 @@ using CoralTime.ViewModels.Projects;
 using System.Collections.Generic;
 using CoralTime.ViewModels.Member;
 
-namespace CoralTime.BL.ServicesInterfaces.MemberProjecRole
+namespace CoralTime.BL.Interfaces
 {
     public interface IMemberProjectRolesService
     {

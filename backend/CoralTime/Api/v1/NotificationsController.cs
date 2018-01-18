@@ -1,4 +1,4 @@
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Helpers;
 using CoralTime.ViewModels.Errors;
 using Microsoft.AspNetCore.Mvc;

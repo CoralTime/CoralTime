@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.Models;

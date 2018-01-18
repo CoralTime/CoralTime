@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.DDAndGrid;
 using CoralTime.DAL.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
 
-namespace CoralTime.BL.Services.Reports.DDAndGrid
+namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService : _BaseService, IReportService
     {

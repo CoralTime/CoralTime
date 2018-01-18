@@ -1,6 +1,6 @@
 ﻿using CoralTime.ViewModels.PicturesCacheGuid;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface IPicturesCacheGuid
     {

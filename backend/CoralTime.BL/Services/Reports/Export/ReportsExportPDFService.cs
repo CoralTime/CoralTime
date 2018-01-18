@@ -1,6 +1,4 @@
-﻿using CoralTime.Common.Constants;
-using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Reports;
+﻿using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.PDF;
 using RazorLight;
 using System;

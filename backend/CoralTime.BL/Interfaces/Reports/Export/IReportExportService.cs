@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace CoralTime.BL.ServicesInterfaces.Reports.Export
+namespace CoralTime.BL.Interfaces.Reports.Export
 {
     public interface IReportExportService
     {

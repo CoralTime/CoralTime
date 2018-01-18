@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static CoralTime.Common.Constants.Constants;
 
-namespace CoralTime.BL.Services.Reports.DDAndGrid
+namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {

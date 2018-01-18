@@ -1,5 +1,5 @@
 using System;
-using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.DDAndGrid;
 using CoralTime.Common.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

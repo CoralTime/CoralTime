@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CoralTime.DAL.Models;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface IProfileService
     {

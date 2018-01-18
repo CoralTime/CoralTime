@@ -1,5 +1,5 @@
 using System;
-using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.DDAndGrid;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;

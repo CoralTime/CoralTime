@@ -3,7 +3,7 @@ using CoralTime.ViewModels.TimeEntries;
 using System;
 using System.Collections.Generic;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface ITimeEntryService
     {

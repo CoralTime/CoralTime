@@ -4,7 +4,7 @@ using CoralTime.ViewModels.Projects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface IMemberService
     {

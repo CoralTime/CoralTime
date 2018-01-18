@@ -1,4 +1,4 @@
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
 using CoralTime.ViewModels.Member.MemberNotificationView;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;

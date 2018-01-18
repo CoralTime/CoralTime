@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
-using CoralTime.BL.ServicesInterfaces.Reports.Export;
+using CoralTime.BL.Interfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.Export;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Models;
 using CoralTime.DAL.Repositories;

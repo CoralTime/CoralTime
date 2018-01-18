@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace CoralTime.DAL.RepositoriesInterfaces
+namespace CoralTime.DAL.Interfaces
 {
     public interface IBaseRepository<TEntity> where TEntity : class
     {

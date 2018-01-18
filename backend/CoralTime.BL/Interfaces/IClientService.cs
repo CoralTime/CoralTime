@@ -1,7 +1,7 @@
 ﻿using CoralTime.ViewModels.Clients;
 using System.Collections.Generic;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface IClientService
     {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoralTime.DAL.RepositoriesInterfaces;
+using CoralTime.DAL.Interfaces;
 
 namespace CoralTime.DAL.Repositories
 {

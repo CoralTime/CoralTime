@@ -2,7 +2,7 @@
 using CoralTime.ViewModels.Projects;
 using System.Collections.Generic;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface IProjectService
     {

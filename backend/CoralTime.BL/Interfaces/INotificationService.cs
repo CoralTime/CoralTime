@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace CoralTime.BL.ServicesInterfaces
+namespace CoralTime.BL.Interfaces
 {
     public interface INotificationService
     {

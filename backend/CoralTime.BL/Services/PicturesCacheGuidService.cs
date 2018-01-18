@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.PicturesCacheGuid;
 

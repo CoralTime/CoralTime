@@ -1,11 +1,10 @@
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Logging;
 using System;
-using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
 
 namespace CoralTime.Api.v1.Odata.Projects
 {

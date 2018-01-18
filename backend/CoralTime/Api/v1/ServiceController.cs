@@ -1,5 +1,4 @@
-using CoralTime.BL.ServicesInterfaces;
-using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
 using CoralTime.Common.Middlewares;

@@ -1,4 +1,4 @@
-using CoralTime.BL.ServicesInterfaces.Reports.Export;
+using CoralTime.BL.Interfaces.Reports.Export;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.ReportsGrid;
