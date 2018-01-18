@@ -279,7 +279,7 @@ namespace CoralTime.BL.Services
 
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            var userResetPassword = await _userManager.ResetPasswordAsync(user, resetPasswordToken, _configuration["DefaultPassword"]);
+            var userResetPassword = await _userManager.ResetPasswordAsync(user, resetPasswordToken, Guid.NewGuid().ToString());
 
             if (!userResetPassword.Succeeded)
             {

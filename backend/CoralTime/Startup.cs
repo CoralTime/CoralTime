@@ -182,10 +182,8 @@ namespace CoralTime
             //AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
         }
 
-        private  void SetupIdentity(IServiceCollection services)
+        private void SetupIdentity(IServiceCollection services)
         {
-            //var cert = new X509Certificate2("coraltime.pfx", "", X509KeyStorageFlags.MachineKeySet);
-
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
@@ -210,17 +208,36 @@ namespace CoralTime
 
             var accessTokenLifetime = int.Parse(Configuration["AccessTokenLifetime"]);
             var refreshTokenLifetime = int.Parse(Configuration["RefreshTokenLifetime"]);
-            // Adds IdentityServer
-            services.AddIdentityServer()
-              //.AddTemporarySigningCredential()
-              .AddDeveloperSigningCredential()
-              .AddInMemoryIdentityResources(Config.GetIdentityResources())
-              .AddInMemoryApiResources(Config.GetApiResources())
-              .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
-              .AddAspNetIdentity<ApplicationUser>()
-              .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
-              //.AddSigningCredential(cert)
-              .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+            var isDemo = bool.Parse(Configuration["DemoSiteMode"]);
+            
+            if (isDemo)
+            {
+                services
+                    .AddIdentityServer()
+                    .AddTemporarySigningCredential()
+                    .AddDeveloperSigningCredential()
+                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                    .AddInMemoryApiResources(Config.GetApiResources())
+                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
+                    .AddAspNetIdentity<ApplicationUser>()
+                    .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
+                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+            }
+            else
+            {
+                var cert = new X509Certificate2("coraltime.pfx", "", X509KeyStorageFlags.MachineKeySet);
+
+                services
+                    .AddIdentityServer()
+                    .AddDeveloperSigningCredential()
+                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                    .AddInMemoryApiResources(Config.GetApiResources())
+                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
+                    .AddAspNetIdentity<ApplicationUser>()
+                    .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
+                    .AddSigningCredential(cert)
+                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+            }
         }
 
         private void AddApplicationServices(IServiceCollection services)
