@@ -37,6 +37,8 @@ namespace CoralTime.DAL
 
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
+        public DbSet<ReportsSettings> ReportsSettings { get; set; }
+
         public Task<int> SaveChangesAsync()
         {
             return base.SaveChangesAsync();
@@ -46,15 +48,11 @@ namespace CoralTime.DAL
         {
             builder.Entity<TimeEntry>()
                 .HasOne(p => p.Project)
-                .WithMany(p => p.TimeEntries)
-                .HasForeignKey(k => k.ProjectId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(p => p.TimeEntries).HasForeignKey(k => k.ProjectId).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TimeEntry>()
                 .HasOne(p => p.Member)
-                .WithMany(w => w.TimeEntries)
-                .HasForeignKey(k => k.MemberId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(w => w.TimeEntries).HasForeignKey(k => k.MemberId).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<TimeEntry>()
                 .HasOne(p => p.TaskType);
@@ -68,26 +66,23 @@ namespace CoralTime.DAL
 
             builder.Entity<Models.Client>()
                 .HasMany(p => p.Projects)
-                .WithOne(p => p.Client)
-                .IsRequired(false);
+                .WithOne(p => p.Client).IsRequired(false);
 
             builder.Entity<TaskType>()
                 .HasOne(p => p.Project);
 
             builder.Entity<MemberAvatar>()
                 .HasOne(p => p.Member);
-
+            
             builder.Entity<Project>()
                 .HasMany(p => p.TaskTypes)
-                .WithOne(p => p.Project)
-                .IsRequired(false);
+                .WithOne(p => p.Project).IsRequired(false);
 
             builder.Entity<Project>()
                 .HasOne(p => p.Client);
 
             builder.Entity<Project>()
-                .HasIndex(p => p.Name)
-                .IsUnique();
+                .HasIndex(p => p.Name).IsUnique();
 
             builder.Entity<Project>()
                 .HasMany(p => p.TimeEntries)
@@ -102,18 +97,17 @@ namespace CoralTime.DAL
 
             builder.Entity<MemberProjectRole>()
                 .HasOne(wp => wp.Member)
-                .WithMany(w => w.MemberProjectRoles)
-                .HasForeignKey(k => k.MemberId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(w => w.MemberProjectRoles).HasForeignKey(k => k.MemberId).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<MemberProjectRole>()
                 .HasOne(wp => wp.Project)
-                .WithMany(p => p.MemberProjectRoles)
-                .HasForeignKey(k => k.ProjectId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithMany(p => p.MemberProjectRoles).HasForeignKey(k => k.ProjectId).OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<PersistedGrant>()
                 .HasKey(p => p.Key);
+
+            builder.Entity<ReportsSettings>()
+                .HasIndex(x => x.MemberId).IsUnique();
 
             base.OnModelCreating(builder);
         }

@@ -33,7 +33,7 @@ namespace CoralTime.DAL.Interfaces
 
         IQueryable<TEntity> GetQueryWithoutIncludes();
 
-        IQueryable<TEntity> GetQueryWithIncludesAsNoTraking();
+        IQueryable<TEntity> GetQueryAsNoTrakingWithIncludes();
 
         IQueryable<TEntity> GetIncludes(IQueryable<TEntity> query);
 

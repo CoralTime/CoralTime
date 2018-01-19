@@ -8,7 +8,7 @@
 
         public ProjectRepository ProjectRepository => _projectRepository ?? (_projectRepository = new ProjectRepository(_context, _memoryCache, _userId));
 
-        #endregion ProjectRepository
+        #endregion
 
         #region ProjectRoleRepository
 
@@ -16,7 +16,7 @@
 
         public ProjectRoleRepository ProjectRoleRepository => _projectRoleRepository ?? (_projectRoleRepository = new ProjectRoleRepository(_context, _memoryCache, _userId));
 
-        #endregion ProjectRoleRepository
+        #endregion
 
         #region TimeEntryRepository
 
@@ -24,7 +24,7 @@
 
         public TimeEntryRepository TimeEntryRepository => _timeEntryRepository ?? (_timeEntryRepository = new TimeEntryRepository(_context, _memoryCache, _userId));
 
-        #endregion TimeEntryRepository
+        #endregion
 
         #region ClientRepository
 
@@ -32,7 +32,7 @@
 
         public ClientRepository ClientRepository => _clientRepository ?? (_clientRepository = new ClientRepository(_context, _memoryCache, _userId));
 
-        #endregion ClientRepository
+        #endregion
 
         #region TaskTypeRepository
 
@@ -40,23 +40,23 @@
 
         public TaskTypeRepository TaskTypeRepository => _taskTypeRepository ?? (_taskTypeRepository = new TaskTypeRepository(_context, _memoryCache, _userId));
 
-        #endregion TaskTypeRepository
+        #endregion
 
         #region MemberRepository
 
         private MemberRepository _memberRepository;
 
-        public MemberRepository MemberRepository => _memberRepository ?? (_memberRepository = new MemberRepository(_context, _userManager, _memoryCache, _userId));
+        public MemberRepository MemberRepository => _memberRepository ?? (_memberRepository = new MemberRepository(_context, _memoryCache, _userId));
 
-        #endregion MemberRepository
+        #endregion 
 
         #region UserRepository
 
         private UserRepository _userRepository;
 
-        public UserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(_context, _userManager, _memoryCache, _userId));
+        public UserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(_context, _memoryCache, _userId));
 
-        #endregion UserRepository
+        #endregion
 
         #region MemberProjectRoleRepository
 
@@ -64,7 +64,7 @@
 
         public MemberProjectRoleRepository MemberProjectRoleRepository => _memberProjectRoleRepository ?? (_memberProjectRoleRepository = new MemberProjectRoleRepository(_context, _memoryCache, _userId));
 
-        #endregion MemberProjectRoleRepository
+        #endregion
 
         //#region SettingsRepository
 
@@ -80,7 +80,7 @@
 
         public UserForgotPassRequestRepository UserForgotPassRequestRepository => _userForgotPassRequestRepository ?? (_userForgotPassRequestRepository = new UserForgotPassRequestRepository(_context, _memoryCache, _userId));
 
-        #endregion UserForgotPassRequestRepository
+        #endregion
 
         #region MemberPicRepository
 
@@ -88,7 +88,14 @@
 
         public MemberAvatarRepository MemberAvatarRepository => _memberAvatarRepository ?? (_memberAvatarRepository = new MemberAvatarRepository(_context, _memoryCache, _userId));
 
-        #endregion MemberPicRepository
+        #endregion
 
+        #region ReportsSettingsRepository
+
+        private ReportsSettingsRepository _reportsSettingsRepository;
+
+        public ReportsSettingsRepository ReportsSettingsRepository => _reportsSettingsRepository ?? (_reportsSettingsRepository = new ReportsSettingsRepository(_context, _memoryCache, _userId));
+
+        #endregion
     }
 }

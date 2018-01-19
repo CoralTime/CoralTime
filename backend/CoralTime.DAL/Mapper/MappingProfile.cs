@@ -74,6 +74,8 @@ namespace CoralTime.DAL.Mapper
 
             CreateMap<TaskView, TaskType>();
             CreateMap<TaskType, TaskView>();
+
+            CreateMap<ReportsSettings, ReportsSettings>();
         }
 
         public class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>

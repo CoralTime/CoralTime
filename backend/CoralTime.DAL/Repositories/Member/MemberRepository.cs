@@ -8,7 +8,7 @@ namespace CoralTime.DAL.Repositories
 {
     public class MemberRepository : _BaseRepository<Member>
     {
-        public MemberRepository(AppDbContext context, UserManager<ApplicationUser> userManager, IMemoryCache memoryCache, string userId) 
+        public MemberRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
         #region Get Query.

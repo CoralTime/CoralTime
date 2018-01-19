@@ -190,21 +190,21 @@ namespace CoralTime.BL.Services
 
         #region Added Methods for Get Related Entities.
 
-        private ApplicationUser GetRelatedUserByName(string userName)
-        {
-            var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
-            if (relatedUserByName == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
-            }
+        //private ApplicationUser GetRelatedUserByName(string userName)
+        //{
+        //    var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
+        //    if (relatedUserByName == null)
+        //    {
+        //        throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
+        //    }
 
-            if (!relatedUserByName.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
-            }
+        //    if (!relatedUserByName.IsActive)
+        //    {
+        //        throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
+        //    }
 
-            return relatedUserByName;
-        }
+        //    return relatedUserByName;
+        //}
 
         private Member GetRelatedMemberByUserName(string userName)
         {
@@ -285,7 +285,7 @@ namespace CoralTime.BL.Services
 
         private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, string userName, out Member relatedMemberByName, out Project relatedProjectById)
         {
-            var relatedUserByName = GetRelatedUserByName(userName);
+            var relatedUserByName = Uow.UserRepository.GetRelatedUserByName(userName); 
             relatedMemberByName = GetRelatedMemberByUserName(userName);
 
             IsOnlyMemberAtProject = !IsAdminOrManagerOfProject(relatedUserByName.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);

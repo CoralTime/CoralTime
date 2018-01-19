@@ -34,9 +34,6 @@ namespace CoralTime.DAL.Models
 
         public List<MemberProjectRole> MemberProjectRoles { get; set; }
 
-        /// <summary>
-        /// 12 or 24 format
-        /// </summary>
         public int TimeFormat { get; set; }
 
         public int SendEmailTime { get; set; }

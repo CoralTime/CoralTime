@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Linq;
+using CoralTime.Common.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -27,7 +29,22 @@ namespace CoralTime.DAL.Repositories
 
         public int Save()
         {
-            return _context.SaveChanges();
+            try
+            {
+                return _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                throw new CoralTimeUpdateException("You try to save not changes data.", e);
+            }
+            catch (DbUpdateException e)
+            {
+                throw new CoralTimeInsertDublicateException("Insert dublicate data for unique field", e);
+            }
+            catch (Exception e)
+            {
+                throw new CoralTimeDangerException("Other error related with Save data.", e);
+            }
         }
 
         //public int Save<T>()

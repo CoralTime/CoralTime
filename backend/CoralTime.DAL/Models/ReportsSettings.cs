@@ -1,11 +1,11 @@
-﻿using CoralTime.DAL.Interfaces;
+﻿using CoralTime.Common.Models.Reports;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models
 {
-    public class ReportsSettings : LogChanges, IReportsSettingsSaveToDb
+    public class ReportsSettings : LogChanges, IReportsSettings
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,14 +20,14 @@ namespace CoralTime.DAL.Models
 
         public DateTime? DateTo { get; set; }
 
-        public int[] ProjectIds { get; set; }
-
-        public int[] MemberIds { get; set; }
-
-        public int?[] ClientIds { get; set; }
-
         public int? GroupById { get; set; }
 
-        public int[] ShowColumnIds { get; set; }
+        public string ClientIds { get; set; }
+
+        public string ProjectIds { get; set; }
+
+        public string MemberIds { get; set; }
+
+        public string ShowColumnIds { get; set; }
     }
 }

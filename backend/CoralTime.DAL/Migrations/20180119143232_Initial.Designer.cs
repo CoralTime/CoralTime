@@ -9,7 +9,7 @@ using CoralTime.Common.Constants;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180103132856_Initial")]
+    [Migration("20180119143232_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -355,20 +355,13 @@ namespace CoralTime.DAL.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(500);
 
-                    b.Property<bool>("IsEditable");
-
                     b.Property<bool>("IsFromToShow");
-
-                    b.Property<bool>("IsLocked");
 
                     b.Property<string>("LastEditorUserId");
 
                     b.Property<DateTime>("LastUpdateDate");
 
                     b.Property<int>("MemberId");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(200);
 
                     b.Property<int>("PlannedTime");
 

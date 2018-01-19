@@ -39,6 +39,8 @@ namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
             {
                 var userName = this.GetUserNameWithImpersonation();
 
+                _service.SaveReportsSettings(reportsGridData, userName);
+
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridData.GroupById)
                 {

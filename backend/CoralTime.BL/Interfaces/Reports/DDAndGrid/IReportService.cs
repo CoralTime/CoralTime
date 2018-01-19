@@ -19,6 +19,8 @@ namespace CoralTime.BL.Interfaces.Reports.DDAndGrid
 
         List<ReportsDropDownGroupBy> ReportsDropDownGroupBy();
 
+        void SaveReportsSettings(IRequestReportsSettings reportsSettings, string userName);
+
         ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData);
 
         ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, RequestReportsGrid reportsGridData);
