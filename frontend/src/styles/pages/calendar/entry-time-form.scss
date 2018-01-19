@@ -378,7 +378,7 @@ ct-entry-time {
       input {
         background: none;
         border: none;
-        width: 20px;
+        width: 45px;
         font-family: inherit;
         text-align: center;
       }
@@ -451,11 +451,8 @@ ct-entry-time {
         .ct-period-icon {
           background-image: url(/assets/icons/tasktile.time.actual.svg);
         }
-
-        .ct-divider {
-          color: $gray-text;
-        }
       }
+
       &.ct-planned-time {
         float: right;
         padding-right: 25px;
@@ -464,27 +461,16 @@ ct-entry-time {
         .ct-period-icon {
           background-image: url(/assets/icons/tasktile.time.estimated.svg);
         }
-
-        .ct-divider {
-          color: $gray-text;
-        }
       }
     }
 
     input {
-      width: 28px;
+      width: 55px;
       border: none;
       outline: none;
       background: $calendarTaskColor;
       font-size: 20px;
       text-align: center;
-    }
-
-    .ct-divider {
-      display: inline-block;
-      font-size: 17px;
-      position: relative;
-      bottom: 2px;
     }
 
     .ct-period-icon {

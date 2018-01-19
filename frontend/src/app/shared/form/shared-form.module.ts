@@ -9,6 +9,7 @@ import { SlimScrollModule } from 'ng2-slimscroll';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
 import { TextareaComponent } from './textarea/textarea.component';
 import { InputListComponent } from './input-list/input-list.component';
+import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
 	imports: [
@@ -17,7 +18,8 @@ import { InputListComponent } from './input-list/input-list.component';
 		ReactiveFormsModule,
 		MaterialModule,
 		DirectivesModule,
-		SlimScrollModule
+		SlimScrollModule,
+		TextMaskModule
 	],
 	declarations: [
 		ColorPickerComponent,
@@ -34,7 +36,8 @@ import { InputListComponent } from './input-list/input-list.component';
 		MultiSelectComponent,
 		SelectComponent,
 		TextareaComponent,
-		InputListComponent
+		InputListComponent,
+		TextMaskModule
 	]
 })
 
