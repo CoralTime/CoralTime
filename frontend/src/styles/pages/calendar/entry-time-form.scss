@@ -381,6 +381,7 @@ ct-entry-time {
         width: 45px;
         font-family: inherit;
         text-align: center;
+        color: inherit;
       }
 
       .ct-from-time, .ct-to-time {
@@ -438,7 +439,6 @@ ct-entry-time {
       box-sizing: border-box;
       font-size: 0;
       position: relative;
-      bottom: 4px;
       text-align: center;
       display: inline-block;
 
@@ -465,23 +465,24 @@ ct-entry-time {
     }
 
     input {
+      margin-top: 2px;
       width: 55px;
       border: none;
       outline: none;
       background: $calendarTaskColor;
       font-size: 20px;
       text-align: center;
+      vertical-align: middle;
     }
 
     .ct-period-icon {
       display: inline-block;
-      position: relative;
-      top: 7px;
       margin-right: 3px;
       background-repeat: no-repeat;
       background-size: 100%;
       width: 27px;
       height: 27px;
+      vertical-align: middle;
     }
 
     .ct-disabled-form {
