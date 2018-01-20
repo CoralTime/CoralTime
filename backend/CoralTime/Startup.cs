@@ -1,6 +1,6 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.BL.Interfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.DropDownsAndGrid;
 using CoralTime.BL.Interfaces.Reports.Export;
 using CoralTime.BL.Services;
 using CoralTime.BL.Services.Reports.DropDownsAndGrid;
@@ -244,7 +244,7 @@ namespace CoralTime
             // Add application services.
             services.AddSingleton<IConfiguration>(sp => Configuration);
 
-            services.AddScoped<_BaseService>();
+            services.AddScoped<BaseService>();
             services.AddScoped<UnitOfWork>();
             services.AddScoped<IPersistedGrantDbContext, AppDbContext>();
 

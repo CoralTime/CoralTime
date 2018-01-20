@@ -3,9 +3,9 @@ using CoralTime.DAL.Repositories;
 
 namespace CoralTime.BL.Services
 {
-    public class _BaseService
+    public class BaseService
     {
-        public _BaseService(UnitOfWork uow, IMapper mapper)
+        public BaseService(UnitOfWork uow, IMapper mapper)
         {
             Uow = uow;
             Mapper = mapper;

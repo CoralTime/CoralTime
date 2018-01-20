@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace CoralTime.BL.Services
 {
-    public class NotificationsService: _BaseService, INotificationService
+    public class NotificationsService: BaseService, INotificationService
     {
         private readonly IConfiguration _configuration;
         

@@ -10,7 +10,7 @@ using CoralTime.DAL.Interfaces;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class _BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         protected int CurrentClientId;
         private DbContext _db;
@@ -20,7 +20,7 @@ namespace CoralTime.DAL.Repositories
         private static readonly object LockObject = new object();
         private readonly string _userId;
 
-        protected _BaseRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
+        protected BaseRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
         {
             _db = context;
             _dbSet = _db.Set<T>();

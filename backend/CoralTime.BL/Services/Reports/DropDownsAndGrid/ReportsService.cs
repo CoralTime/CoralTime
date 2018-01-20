@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoralTime.BL.Interfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.DropDownsAndGrid;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public partial class ReportService : _BaseService, IReportService
+    public partial class ReportService : BaseService, IReportService
     {
         private IHostingEnvironment _environment { get; }
 

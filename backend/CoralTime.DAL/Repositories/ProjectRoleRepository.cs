@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class ProjectRoleRepository : _BaseRepository<ProjectRole>
+    public class ProjectRoleRepository : BaseRepository<ProjectRole>
     {
         public ProjectRoleRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }

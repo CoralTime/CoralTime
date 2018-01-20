@@ -5,7 +5,7 @@ using CoralTime.ViewModels.Reports.Request.Grid;
 using System;
 using System.Collections.Generic;
 
-namespace CoralTime.BL.Interfaces.Reports.DDAndGrid
+namespace CoralTime.BL.Interfaces.Reports.DropDownsAndGrid
 {
     // Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients. 
 

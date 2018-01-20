@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoralTime.BL.Interfaces.Reports.DDAndGrid;
+using CoralTime.BL.Interfaces.Reports.DropDownsAndGrid;
 using CoralTime.BL.Interfaces.Reports.Export;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
@@ -23,7 +23,7 @@ using System.Reflection;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService : _BaseService, IReportExportService
+    public partial class ReportExportService : BaseService, IReportExportService
     {
         private IHostingEnvironment _environment { get; }
         private readonly IConfiguration _configuration;

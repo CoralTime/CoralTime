@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class TimeEntryService : _BaseService, ITimeEntryService
+    public class TimeEntryService : BaseService, ITimeEntryService
     {
         private bool IsOnlyMemberAtProject { get; set; }
 

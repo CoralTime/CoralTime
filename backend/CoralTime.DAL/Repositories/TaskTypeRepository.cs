@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class TaskTypeRepository : _BaseRepository<TaskType>
+    public class TaskTypeRepository : BaseRepository<TaskType>
     {
         public TaskTypeRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }

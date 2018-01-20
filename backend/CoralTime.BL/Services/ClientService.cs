@@ -14,7 +14,7 @@ using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 
 namespace CoralTime.BL.Services
 {
-    public class ClientService : _BaseService, IClientService
+    public class ClientService : BaseService, IClientService
     {
         public ClientService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }

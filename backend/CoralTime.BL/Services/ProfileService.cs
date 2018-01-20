@@ -24,7 +24,7 @@ using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
 {
-    public class ProfileService : _BaseService, IProfileService
+    public class ProfileService : BaseService, IProfileService
     {
         private readonly IConfiguration _config;
         private readonly IMemberService _memberService;

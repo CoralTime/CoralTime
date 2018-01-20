@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class MemberProjectRolesService : _BaseService, IMemberProjectRolesService
+    public class MemberProjectRolesService : BaseService, IMemberProjectRolesService
     {
         private readonly IProjectService _projectService;
 

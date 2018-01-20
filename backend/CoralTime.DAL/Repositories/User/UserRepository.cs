@@ -5,7 +5,7 @@ using CoralTime.Common.Exceptions;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class UserRepository : _BaseRepository<ApplicationUser>
+    public class UserRepository : BaseRepository<ApplicationUser>
     {
 
         public UserRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 

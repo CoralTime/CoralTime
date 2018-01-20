@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class TasksService : _BaseService, ITasksService
+    public class TasksService : BaseService, ITasksService
     {
         public TasksService(UnitOfWork uow, IMapper mapper) 
             : base(uow, mapper) { }

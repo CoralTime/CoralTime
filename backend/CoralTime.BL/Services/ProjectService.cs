@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class ProjectService : _BaseService, IProjectService
+    public class ProjectService : BaseService, IProjectService
     {
         public ProjectService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
