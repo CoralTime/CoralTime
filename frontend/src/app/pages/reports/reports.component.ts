@@ -106,12 +106,13 @@ export class ReportsComponent implements OnInit {
 
 	getReportGrid(): void {
 		let filters = {
+			clientIds: this.clientIds,
 			dateFrom: this.convertMomentToString(this.datePeriod.dateFrom),
 			dateTo: this.convertMomentToString(this.datePeriod.dateTo) || this.convertMomentToString(this.datePeriod.dateFrom),
-			projectIds: this.projectIds,
+			groupById: this.groupModel ? this.groupModel.groupById : 3,
 			memberIds: this.userIds,
-			clientIds: this.clientIds,
-			groupById: this.groupModel ? this.groupModel.groupById : 3
+			projectIds: this.projectIds,
+			showColumnIds: this.showColumnIds
 		};
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
