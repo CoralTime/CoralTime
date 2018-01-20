@@ -71,7 +71,7 @@
                 From... To...
             </div>
         </button>
-        <div *ngIf="currentTimeEntry.isFromToShow && userInfo.timeFormat === 24" class="ct-time-path"
+        <div *ngIf="currentTimeEntry.isFromToShow" class="ct-time-path"
              [class.ct-focus]="isFromToFormFocus">
             <div class="ct-from-to-form">
                 <div class="ct-from-time">
@@ -118,6 +118,6 @@
                 (click)="submit()"
                 [disabled]="entryTimeForm.invalid || entryTimeForm.pristine || isRequestLoading">Done
         </button>
-        <button class="ct-close" (click)="closeForm()">Cancel</button>
+        <button type="button" class="ct-close" (click)="closeForm()">Cancel</button>
     </div>
 </form>

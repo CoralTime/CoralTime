@@ -18,10 +18,10 @@ export class TimeDirective {
 
 		switch (event.key) {
 			case 'ArrowDown' :
-				time = this.convertTimeToString(this.convertTimeToMinutes(time) - 5);
+				time = this.convertTimeToString(this.convertTimeToMinutes(time) - 30);
 				break;
 			case 'ArrowUp' :
-				time = this.convertTimeToString(this.convertTimeToMinutes(time) + 5);
+				time = this.convertTimeToString(this.convertTimeToMinutes(time) + 30);
 				break;
 		}
 
@@ -60,13 +60,7 @@ export class TimeDirective {
 	}
 
 	private limitTime(time: number): number {
-		if (time < 0) {
-			time = 0;
-		}
-		if (time >= 60 * 24) {
-			time = 60 * 24 - 1;
-		}
-
-		return time;
+		let limitedTime = time % (60 * 24);
+		return limitedTime >= 0 ? limitedTime : limitedTime + (60 * 24);
 	}
 }
