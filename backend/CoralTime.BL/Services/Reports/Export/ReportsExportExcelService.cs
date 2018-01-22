@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService
+    public partial class ReportsExportService
     {
         private byte[] CreateFileExcel<T>(IReportsGrandGridView<T> groupingList)
         {

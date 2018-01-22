@@ -1,8 +1,8 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
+using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.Services;
-using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -39,10 +39,10 @@ namespace CoralTime.Api.v1.Reports
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveReportsSettings(reportsGridData, userName);
+                _service.SaveReportsSettings(reportsGridData.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGridData.GroupById)
+                switch (reportsGridData.ValuesSaved.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {

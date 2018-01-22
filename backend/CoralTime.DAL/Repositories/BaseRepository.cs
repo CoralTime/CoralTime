@@ -57,6 +57,11 @@ namespace CoralTime.DAL.Repositories
             return GetIncludes(GetQueryAsNoTraking());
         }
 
+        public virtual T GetQueryByIdWithIncludes(int id)
+        {
+            return null;
+        }
+
         #endregion
 
         #region LinkedCache. 

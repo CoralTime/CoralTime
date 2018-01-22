@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService
+    public partial class ReportsExportService
     {
         public async Task ExportEmailGroupByNone(string userName, ReportsExportSendView emailData)
         {

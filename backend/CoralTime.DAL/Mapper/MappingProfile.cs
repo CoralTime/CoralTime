@@ -2,16 +2,16 @@
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Clients;
+using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.MemberProjectRoles;
 using CoralTime.ViewModels.Profiles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.ReportsDropwDowns;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 using CoralTime.ViewModels.Settings;
 using CoralTime.ViewModels.Tasks;
 using CoralTime.ViewModels.TimeEntries;
-using CoralTime.ViewModels.Member;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.DAL.Mapper

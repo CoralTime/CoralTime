@@ -1,7 +1,6 @@
-﻿using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.ReportsDropwDowns;
-using CoralTime.ViewModels.Reports.Request;
-using CoralTime.ViewModels.Reports.Request.Grid;
+﻿using CoralTime.Common.Models.Reports.Request.Grid;
+using CoralTime.Common.Models.Reports.Responce.DropDowns.Filters;
+using CoralTime.ViewModels.Reports;
 using System;
 
 namespace CoralTime.BL.Interfaces.Reports
@@ -14,7 +13,7 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns(string userName);
 
-        void SaveReportsSettings(IRequestReportsSettings reportsSettings, string userName);
+        void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName);
 
         ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData);
 

@@ -1,9 +1,9 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
+using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -179,28 +179,28 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             CommonHelpers.SetRangeOfWeekByDate(out var weekStart, out var weekEnd, DateTime.Now);
 
-            DateFrom = reportsGridData?.DateFrom ?? weekStart;
-            DateTo = reportsGridData?.DateTo ?? weekEnd;
+            DateFrom = reportsGridData.ValuesSaved?.DateFrom ?? weekStart;
+            DateTo = reportsGridData.ValuesSaved?.DateTo ?? weekEnd;
 
             // By Dates (default grouping, i.e. "Group by None"; direct order).
             var timeEntriesByDateOfUser = GetTimeEntryByDate(currentMember, DateFrom, DateTo);
 
             // By Projects.
-            if (reportsGridData?.ProjectIds != null && reportsGridData.ProjectIds.Length > 0)
+            if (reportsGridData.ValuesSaved?.ProjectIds != null && reportsGridData.ValuesSaved.ProjectIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ProjectIds.Contains(x.ProjectId));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ValuesSaved.ProjectIds.Contains(x.ProjectId));
             }
 
             // By Members.
-            if (reportsGridData?.MemberIds != null && reportsGridData.MemberIds.Length > 0)
+            if (reportsGridData.ValuesSaved?.MemberIds != null && reportsGridData.ValuesSaved.MemberIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.MemberIds.Contains(x.MemberId));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ValuesSaved.MemberIds.Contains(x.MemberId));
             }
 
             // By Clients that has Projects.
-            if (reportsGridData?.ClientIds != null && reportsGridData.ClientIds.Length > 0)
+            if (reportsGridData.ValuesSaved?.ClientIds != null && reportsGridData.ValuesSaved.ClientIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridData.ClientIds.Contains(WithoutClient.Id));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ValuesSaved.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridData.ValuesSaved.ClientIds.Contains(WithoutClient.Id));
             }
 
             return timeEntriesByDateOfUser;

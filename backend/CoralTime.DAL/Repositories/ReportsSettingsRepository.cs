@@ -9,9 +9,9 @@ namespace CoralTime.DAL.Repositories
         public ReportsSettingsRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        public override ReportsSettings LinkedCacheGetById(int id)
+        public ReportsSettings GetQueryByMemberIdWithIncludes(int meberId)
         {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.Id == id);
+            return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == meberId);
         }
     }
 }

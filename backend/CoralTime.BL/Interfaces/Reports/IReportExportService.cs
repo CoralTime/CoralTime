@@ -1,5 +1,5 @@
-﻿using CoralTime.ViewModels.Reports.Request.Emails;
-using CoralTime.ViewModels.Reports.Request.Grid;
+﻿using CoralTime.Common.Models.Reports.Request.Grid;
+using CoralTime.ViewModels.Reports.Request.Emails;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;

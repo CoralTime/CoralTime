@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace CoralTime.Common.Models.Reports
+namespace CoralTime.Common.Models.Reports.Responce
 {
     public interface IReportsSettings
     {
-        DateTime? DateFrom { get; set; }
+        DateTime DateFrom { get; set; }
 
-        DateTime? DateTo { get; set; }
+        DateTime DateTo { get; set; }
 
-        int? GroupById { get; set; }
+        int GroupById { get; set; }
 
         string ClientIds { get; set; }
 

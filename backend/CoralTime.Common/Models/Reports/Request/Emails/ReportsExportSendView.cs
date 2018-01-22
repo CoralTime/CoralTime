@@ -1,4 +1,4 @@
-﻿using CoralTime.ViewModels.Reports.Request.Grid;
+﻿using CoralTime.Common.Models.Reports.Request.Grid;
 
 namespace CoralTime.ViewModels.Reports.Request.Emails
 {

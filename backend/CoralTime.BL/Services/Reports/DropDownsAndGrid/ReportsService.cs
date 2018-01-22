@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
-using CoralTime.DAL.Models;
+using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels.Reports.Request;
 using Microsoft.AspNetCore.Hosting;
 using System;
-using System.Linq;
+using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -24,7 +23,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public DateTime DateTo { get; set; }
 
-        public void SaveReportsSettings(IRequestReportsSettings reportsSettings, string userName)
+        public void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName)
         {
             var user = Uow.UserRepository.GetRelatedUserByName(userName);
             var member = Uow.MemberRepository.GetQueryByUserName(userName);
@@ -32,21 +31,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var newReportsSettings = new ReportsSettings();
 
             newReportsSettings.MemberId = member.Id;
-
-            if (reportsSettings.DateFrom != null)
-            {
-                newReportsSettings.DateFrom = reportsSettings.DateFrom;
-            }
-
-            if (reportsSettings.DateTo != null)
-            {
-                newReportsSettings.DateTo = reportsSettings.DateTo;
-            }
-
-            if (reportsSettings.GroupById != null)
-            {
-                newReportsSettings.GroupById = reportsSettings.GroupById;
-            }
+            newReportsSettings.DateFrom = reportsSettings.DateFrom;
+            newReportsSettings.DateTo = reportsSettings.DateTo;
+            newReportsSettings.GroupById = reportsSettings.GroupById;
 
             if (reportsSettings.ProjectIds != null)
             {
@@ -70,7 +57,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             try
             {
-                var repotsSettings = Uow.ReportsSettingsRepository.GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == member.Id);
+                var repotsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdWithIncludes(member.Id);
 
                 if (repotsSettings == null)
                 {

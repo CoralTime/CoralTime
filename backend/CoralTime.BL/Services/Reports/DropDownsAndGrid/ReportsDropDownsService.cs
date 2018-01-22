@@ -1,8 +1,12 @@
-﻿using CoralTime.Common.Constants;
+﻿using System;
+using CoralTime.BL.Services.Reports.Export;
+using CoralTime.Common.Constants;
+using CoralTime.Common.Models.Reports.Request.Grid;
+using CoralTime.Common.Models.Reports.Responce.DropDowns.Filters;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports.ReportsDropwDowns;
 using CoralTime.ViewModels.Reports.Request;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +14,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {
-        List<ReportsDropDownGroupBy> dropDownGroupBy = new List<ReportsDropDownGroupBy>
+        readonly List<ReportsDropDownGroupBy> DropDownGroupBy = new List<ReportsDropDownGroupBy>
         {
             //new ReportsDropDownGroupBy
             //{
@@ -45,11 +49,22 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public ReportsDropDownsView ReportsDropDowns(string userName)
         {
+            var user = Uow.UserRepository.GetRelatedUserByName(userName);
+            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(userName);
+
+            var reportDropDowns = new ReportsDropDownsView
+            {
+                Values = CreateDropDownValues(memberByUserName),
+                ValuesSaved = CreateDropDownValuesSaved(memberByUserName)
+            };
+
+            return reportDropDowns;
+        }
+
+        private ReportsDropDownValues CreateDropDownValues(Member memberByUserName)
+        {
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
-            var currentUserByName = Uow.MemberRepository.LinkedCacheGetByName(userName);
-
-            var reportClientViewByUserId = new List<ReportClientView>();
 
             var projectsOfClients = new List<Project>();
             var clientsFromProjectOfClients = new List<Client>();
@@ -57,7 +72,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             #region GetProjects allProjectsForAdmin or projectsWithAssignUsersAndPublicProjects.
 
-            if (currentUserByName.User.IsAdmin)
+            if (memberByUserName.User.IsAdmin)
             {
                 var allProjectsForAdmin = Uow.ProjectRepository.LinkedCacheGetList().ToList();
                 projectsOfClients = allProjectsForAdmin;
@@ -65,7 +80,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             else
             {
                 var projectsWithAssignUsersAndPublicProjects = Uow.ProjectRepository.LinkedCacheGetList()
-                    .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(currentUserByName.Id) || !x.IsPrivate).ToList();
+                    .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(memberByUserName.Id) || !x.IsPrivate).ToList();
 
                 projectsOfClients.AddRange(projectsWithAssignUsersAndPublicProjects);
             }
@@ -76,7 +91,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             // 1. Get all clients from targeted projects where project is assign to client.
             var clientsWithProjects = projectsOfClients.Where(x => x.Client != null).Select(x => x.Client).Distinct().ToList();
-    
+
             foreach (var client in clientsWithProjects)
             {
                 client.Projects = client.Projects.Where(proj => projectsOfClients.Select(pc => pc.Id).Contains(proj.Id)).ToList();
@@ -113,15 +128,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     {
                         ProjectId = project.Id,
                         ProjectName = project.Name,
-                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == currentUserByName.Id)?.RoleId ?? 0,
+                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == memberByUserName.Id)?.RoleId ?? 0,
                         IsProjectActive = project.IsActive,
                     };
 
                     #region Set all users at Project constrain only for: Admin, Manager at this project.
 
-                    var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == currentUserByName.Id && r.RoleId == managerRoleId);
+                    var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == memberByUserName.Id && r.RoleId == managerRoleId);
 
-                    if (currentUserByName.User.IsAdmin || isManagerOnProject)
+                    if (memberByUserName.User.IsAdmin || isManagerOnProject)
                     {
                         var usersDetailsView = project.MemberProjectRoles.Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
 
@@ -153,19 +168,62 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 reportClientView.Add(reportClientViewlocal);
             }
 
-            reportClientViewByUserId = reportClientView;
-
-            // Create responce with all projecs and all users of thise projects and info about current user.
-            var reportsDetail = new ReportsDropDownsView
+            var userDetails = new ReportsUserDetails
             {
-                CurrentUserFullName = currentUserByName.FullName,
-                CurrentUserId = currentUserByName.Id,
-                IsAdminCurrentUser = currentUserByName.User.IsAdmin,
-                IsManagerCurrentUser = currentUserByName.User.IsManager,
-                ClientsDetails = reportClientViewByUserId
+                CurrentUserFullName = memberByUserName.FullName,
+                CurrentUserId = memberByUserName.Id,
+                IsAdminCurrentUser = memberByUserName.User.IsAdmin,
+                IsManagerCurrentUser = memberByUserName.User.IsManager,
             };
 
-            return reportsDetail;
+            var dropDownValues = new ReportsDropDownValues
+            {
+                Filters = reportClientView,
+                GroupBy = DropDownGroupBy,
+                ShowColumns = ReportsExportService.showColumnsInfo,
+                UserDetails = userDetails,
+            };
+
+            return dropDownValues;
+        }
+
+        private RequestReportsSettings CreateDropDownValuesSaved(Member memberByUserName)
+        {
+            var dropDownsValuesSaved = new RequestReportsSettings();
+
+            var reportsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdWithIncludes(memberByUserName.Id);
+
+            if (reportsSettings != null)
+            {
+                dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
+                dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
+                dropDownsValuesSaved.GroupById = reportsSettings.GroupById;
+
+                if (!string.IsNullOrEmpty(reportsSettings.ClientIds))
+                {
+                    dropDownsValuesSaved.ClientIds = reportsSettings.ClientIds?.Split(',')
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Select(x => (int?)Convert.ToInt32(x))
+                        .ToArray();
+                }
+
+                if (!string.IsNullOrEmpty(reportsSettings.ProjectIds))
+                {
+                    dropDownsValuesSaved.ProjectIds = reportsSettings.ProjectIds?.Split(',').Select(int.Parse).ToArray();
+                }
+
+                if (!string.IsNullOrEmpty(reportsSettings.MemberIds))
+                {
+                    dropDownsValuesSaved.MemberIds = reportsSettings.MemberIds?.Split(',').Select(int.Parse).ToArray();
+                }
+
+                if (!string.IsNullOrEmpty(reportsSettings.ShowColumnIds))
+                {
+                    dropDownsValuesSaved.ShowColumnIds = reportsSettings.ShowColumnIds?.Split(',').Select(int.Parse).ToArray();
+                }
+            }
+            
+            return dropDownsValuesSaved;
         }
     }
 }

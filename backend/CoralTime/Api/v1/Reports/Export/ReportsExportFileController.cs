@@ -1,7 +1,7 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Middlewares;
+using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.Services;
-using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,7 +24,7 @@ namespace CoralTime.Api.v1.Reports.Export
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                switch (reportsGridData.GroupById)
+                switch (reportsGridData.ValuesSaved.GroupById)
                 {
                     case (int) ReportsGroupBy.Project:
                     {

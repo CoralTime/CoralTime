@@ -3,10 +3,10 @@ using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
 using CoralTime.Common.Models;
+using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.PDF;
-using CoralTime.ViewModels.Reports.Request.Grid;
 using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,13 +22,13 @@ using System.Reflection;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService : BaseService, IReportExportService
+    public partial class ReportsExportService : BaseService, IReportExportService
     {
         private IHostingEnvironment _environment { get; }
         private readonly IConfiguration _configuration;
         private readonly IReportService _reportService;
 
-        public ReportExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportService reportService)
+        public ReportsExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportService reportService)
             : base(uow, mapper)
         {
             _configuration = configuration;
@@ -132,7 +132,16 @@ namespace CoralTime.BL.Services.Reports.Export
             ExcludePropertyByDefault.TaskId.ToString(),
         };
 
-        private readonly ShowColumnModel[] showColumnsInfo =
+
+        private enum ShowColumnModelIds
+        {
+            ShowEstimatedTime = 1 ,
+            ShowDate = 2,
+            ShowNotes = 3,
+            ShowStartFinish = 4
+        }
+
+        public static readonly ShowColumnModel[] showColumnsInfo =
         {
             //new ShowColumnModel{ Id = 0, ShowColumnDescriptions = new List<ShowColumnDescription>
             //{
@@ -140,21 +149,21 @@ namespace CoralTime.BL.Services.Reports.Export
             //    new ShowColumnDescription { Name = InternalProperties.TotalActualTime.ToString(), Description = "Show Total Actual Hours" },
             //    new ShowColumnDescription { Name = ExternalProperties.GrandActualTime.ToString(), Description = "Show Grand Actual Hours" },
             //}},
-            new ShowColumnModel{ Id = 1, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowEstimatedTime, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.EstimatedTime.ToString(), Description = "Show Estimated Hours" },
                 new ShowColumnDescription { Name = InternalProperties.TotalEstimatedTime.ToString(), Description = "Show Total Estimated Hours" },
                 new ShowColumnDescription { Name = ExternalProperties.GrandEstimatedTime.ToString(), Description = "Show Grand Estimated Hours" },
             }},
-            new ShowColumnModel{ Id = 2, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowDate, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.Date.ToString(), Description = "Show Date"}
             }},
-            new ShowColumnModel{ Id = 3, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowNotes, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.Description.ToString(), Description = "Show Notes"}
             }},
-            new ShowColumnModel{ Id = 4, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowStartFinish, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.TimeFrom.ToString(), Description = "Show Start Time"},
                 new ShowColumnDescription { Name = InternalProperties.TimeTo.ToString(), Description = "Show Finish Time"}
@@ -291,9 +300,9 @@ namespace CoralTime.BL.Services.Reports.Export
 
             #region Set Global Properties. 
 
-            GroupById = reportsGridData.GroupById ?? 0;
+            GroupById = reportsGridData.ValuesSaved.GroupById;
 
-            ShowColumnIds = reportsGridData.ShowColumnIds;
+            ShowColumnIds = reportsGridData.ValuesSaved.ShowColumnIds;
 
             DateFormatId = reportsGridData.DateFormatId;
 
