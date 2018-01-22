@@ -3,21 +3,16 @@ using CoralTime.ViewModels.Reports.ReportsDropwDowns;
 using CoralTime.ViewModels.Reports.Request;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using System;
-using System.Collections.Generic;
 
-namespace CoralTime.BL.Interfaces.Reports.DropDownsAndGrid
+namespace CoralTime.BL.Interfaces.Reports
 {
-    // Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients. 
-
     public interface IReportService
     {
         DateTime DateFrom { get; set; }
 
         DateTime DateTo { get; set; }
 
-        ReportDropDownView ReportsDropDowns(string userName);
-
-        List<ReportsDropDownGroupBy> ReportsDropDownGroupBy();
+        ReportsDropDownsView ReportsDropDowns(string userName);
 
         void SaveReportsSettings(IRequestReportsSettings reportsSettings, string userName);
 

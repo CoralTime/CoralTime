@@ -13,7 +13,7 @@ namespace CoralTime.Api.v1.Odata
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class TimeEntriesController : _BaseController<TimeEntriesController, ITimeEntryService>
+    public class TimeEntriesController : BaseController<TimeEntriesController, ITimeEntryService>
     {
         public TimeEntriesController(ITimeEntryService service, ILogger<TimeEntriesController> logger)
             : base(logger, service) { }

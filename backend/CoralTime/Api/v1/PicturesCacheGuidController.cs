@@ -9,7 +9,7 @@ namespace CoralTime.Api.v1
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class PicturesCacheGuidController : _BaseController<PicturesCacheGuidController, IPicturesCacheGuid>
+    public class PicturesCacheGuidController : BaseController<PicturesCacheGuidController, IPicturesCacheGuid>
     {
         public PicturesCacheGuidController(IPicturesCacheGuid service, ILogger<PicturesCacheGuidController> logger)
             : base (logger, service) { }

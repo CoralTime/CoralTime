@@ -10,7 +10,40 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {
-        public ReportDropDownView ReportsDropDowns(string userName)
+        List<ReportsDropDownGroupBy> dropDownGroupBy = new List<ReportsDropDownGroupBy>
+        {
+            //new ReportsDropDownGroupBy
+            //{
+            //    GroupById = (int) Constants.ReportsGroupBy.None,
+            //    GroupByDescription = Constants.ReportsGroupBy.None.ToString()
+            //},
+
+            new ReportsDropDownGroupBy
+            {
+                Id = (int) Constants.ReportsGroupBy.Project,
+                Description = Constants.ReportsGroupBy.Project.ToString()
+            },
+
+            new ReportsDropDownGroupBy
+            {
+                Id = (int) Constants.ReportsGroupBy.User,
+                Description = Constants.ReportsGroupBy.User.ToString()
+            },
+
+            new ReportsDropDownGroupBy
+            {
+                Id = (int) Constants.ReportsGroupBy.Date,
+                Description = Constants.ReportsGroupBy.Date.ToString()
+            },
+
+            new ReportsDropDownGroupBy
+            {
+                Id = (int) Constants.ReportsGroupBy.Client,
+                Description = Constants.ReportsGroupBy.Client.ToString()
+            }
+        };
+
+        public ReportsDropDownsView ReportsDropDowns(string userName)
         {
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
@@ -123,7 +156,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             reportClientViewByUserId = reportClientView;
 
             // Create responce with all projecs and all users of thise projects and info about current user.
-            var reportsDetail = new ReportDropDownView
+            var reportsDetail = new ReportsDropDownsView
             {
                 CurrentUserFullName = currentUserByName.FullName,
                 CurrentUserId = currentUserByName.Id,
@@ -133,44 +166,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             };
 
             return reportsDetail;
-        }
-
-        public List<ReportsDropDownGroupBy> ReportsDropDownGroupBy()
-        {
-            var dropDownGroupBy = new List<ReportsDropDownGroupBy>
-            {
-                //new ReportsDropDownGroupBy
-                //{
-                //    GroupById = (int) Constants.ReportsGroupBy.None,
-                //    GroupByDescription = Constants.ReportsGroupBy.None.ToString()
-                //},
-
-                new ReportsDropDownGroupBy
-                {
-                    GroupById = (int) Constants.ReportsGroupBy.Project,
-                    GroupByDescription = Constants.ReportsGroupBy.Project.ToString()
-                },
-
-                new ReportsDropDownGroupBy
-                {
-                    GroupById = (int) Constants.ReportsGroupBy.User,
-                    GroupByDescription = Constants.ReportsGroupBy.User.ToString()
-                },
-
-                new ReportsDropDownGroupBy
-                {
-                    GroupById = (int) Constants.ReportsGroupBy.Date,
-                    GroupByDescription = Constants.ReportsGroupBy.Date.ToString()
-                },
-
-                new ReportsDropDownGroupBy
-                {
-                    GroupById = (int) Constants.ReportsGroupBy.Client,
-                    GroupByDescription = Constants.ReportsGroupBy.Client.ToString()
-                }
-            };
-
-            return dropDownGroupBy;
         }
     }
 }

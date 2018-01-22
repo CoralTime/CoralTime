@@ -1,4 +1,4 @@
-using CoralTime.BL.Interfaces.Reports.DropDownsAndGrid;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace CoralTime.Api.v1.Reports.DropDownsAndGrid
+namespace CoralTime.Api.v1.Reports
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class ReportsController : _BaseController<ReportsController, IReportService>
+    public class ReportsController : BaseController<ReportsController, IReportService>
     {
         public ReportsController(IReportService service, ILogger<ReportsController> logger)
             : base(logger, service) { }

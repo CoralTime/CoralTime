@@ -2,9 +2,9 @@
 
 namespace CoralTime.ViewModels.Reports.ReportsDropwDowns
 {
-    public class ReportDropDownView 
+    public class ReportsDropDownsView 
     {
-        public ReportDropDownView()
+        public ReportsDropDownsView()
         {
             ClientsDetails = new List<ReportClientView>();
         }

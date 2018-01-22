@@ -19,7 +19,7 @@ namespace CoralTime.Api.v1.Odata.Members
     [Authorize]
     [EnableQuery]
     [Route("api/v1/odata/[controller]")]
-    public class MembersController : _BaseController<MembersController, IMemberService>
+    public class MembersController : BaseController<MembersController, IMemberService>
     {
         public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper)
             : base(logger, mapper, service) { }

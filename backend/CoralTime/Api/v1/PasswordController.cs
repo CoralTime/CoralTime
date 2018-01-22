@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
-    public class PasswordController : _BaseController<PasswordController, IMemberService>
+    public class PasswordController : BaseController<PasswordController, IMemberService>
     {
         public PasswordController(IMemberService service, ILogger<PasswordController> logger) : base(logger, service)
         {

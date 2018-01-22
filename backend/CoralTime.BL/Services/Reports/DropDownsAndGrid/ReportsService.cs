@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoralTime.BL.Interfaces.Reports.DropDownsAndGrid;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;

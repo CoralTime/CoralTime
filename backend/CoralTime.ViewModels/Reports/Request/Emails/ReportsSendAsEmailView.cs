@@ -2,7 +2,7 @@
 
 namespace CoralTime.ViewModels.Reports.Request.Emails
 {
-    public class ReportsSendAsEmailView : RequestReportsGrid
+    public class ReportsExportSendView : RequestReportsGrid
     {
         public string ToEmail { get; set; }
 

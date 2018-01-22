@@ -1,4 +1,4 @@
-using CoralTime.BL.Interfaces.Reports.Export;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.Emails;
@@ -13,13 +13,13 @@ namespace CoralTime.Api.v1.Reports.Export
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class SendReportsController : _BaseController<SendReportsController, IReportExportService>
+    public class ReportsExportEmailController : BaseController<ReportsExportEmailController, IReportExportService>
     {
-        public SendReportsController(IReportExportService service, ILogger<SendReportsController> logger)
+        public ReportsExportEmailController(IReportExportService service, ILogger<ReportsExportEmailController> logger)
             : base(logger, service) { }
 
         [HttpPost]
-        public async Task<IActionResult> SentReport([FromBody]ReportsSendAsEmailView reportsGridData)
+        public async Task<IActionResult> ReportsExportEmail([FromBody]ReportsExportSendView reportsGridData)
         {
             try
             {
@@ -29,31 +29,31 @@ namespace CoralTime.Api.v1.Reports.Export
                 {
                     case (int) ReportsGroupBy.Project:
                     {
-                        await _service.SentGroupByProjects(userName, reportsGridData);
+                        await _service.ExportEmailGroupByProjects(userName, reportsGridData);
                         break;
                     }
 
                     case (int) ReportsGroupBy.User:
                     {
-                        await _service.SentGroupByUsers(userName, reportsGridData);
+                        await _service.ExportEmailGroupByUsers(userName, reportsGridData);
                         break;
                     }
 
                     case (int) ReportsGroupBy.Date:
                     {
-                        await _service.SentGroupByDates(userName, reportsGridData);
+                        await _service.ExportEmailGroupByDates(userName, reportsGridData);
                         break;
                     }
 
                     case (int) ReportsGroupBy.Client:
                     {
-                        await _service.SentGroupByClients(userName, reportsGridData);
+                        await _service.ExportEmailGroupByClients(userName, reportsGridData);
                         break;
                     }
 
                     default:
                     {
-                        await _service.SentGroupByNone(userName, reportsGridData);
+                        await _service.ExportEmailGroupByNone(userName, reportsGridData);
                         break;
                     }
                 }
@@ -63,7 +63,7 @@ namespace CoralTime.Api.v1.Reports.Export
 
             catch (Exception e)
             {
-                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridData});\n {e}");
+                _logger.LogWarning($"ReportsExportEmail method with parameters ({reportsGridData});\n {e}");
                 var errors = ExceptionsChecker.CheckProjectsException(e);
                 return BadRequest(errors);
             }

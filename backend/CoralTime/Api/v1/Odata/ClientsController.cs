@@ -13,7 +13,7 @@ namespace CoralTime.Api.v1.Odata
     [Route("api/v1/odata/[controller]")]
     [EnableQuery]
     [Authorize]
-    public class ClientsController : _BaseController<ClientsController, IClientService>
+    public class ClientsController : BaseController<ClientsController, IClientService>
     {
         public ClientsController(IClientService service, ILogger<ClientsController> logger)
             : base(logger, service) { }

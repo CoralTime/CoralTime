@@ -16,7 +16,7 @@ namespace CoralTime.Api.v1.Odata.Projects
     [EnableQuery]
     [Route("api/v1/odata/[controller]")]
     [Authorize]
-    public class ProjectsController : _BaseController<ProjectsController, IProjectService>
+    public class ProjectsController : BaseController<ProjectsController, IProjectService>
     {
         public ProjectsController(IProjectService service, ILogger<ProjectsController> logger)
             : base(logger, service) { }

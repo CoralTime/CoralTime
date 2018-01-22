@@ -1,7 +1,6 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.BL.Interfaces.Reports.DropDownsAndGrid;
-using CoralTime.BL.Interfaces.Reports.Export;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.BL.Services;
 using CoralTime.BL.Services.Reports.DropDownsAndGrid;
 using CoralTime.BL.Services.Reports.Export;
