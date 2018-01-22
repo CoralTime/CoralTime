@@ -10,6 +10,8 @@ import { AuthUser } from '../../../core/auth/auth-user';
 import { ArrayUtils } from '../../../core/object-utils';
 import { NgForm } from '@angular/forms';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
+import { ImpersonationService } from '../../../services/impersonation.service';
+import { UserInfoService } from '../../../core/auth/user-info.service';
 
 class FormUser {
 	confirmPassword: string;
@@ -93,6 +95,7 @@ export class UsersFormComponent implements OnInit {
 	isEmailValid: boolean = true;
 
 	authUser: AuthUser;
+	impersonateUser: User;
 
 	roles = [
 		{value: Roles.admin, title: 'admin'},
@@ -109,12 +112,15 @@ export class UsersFormComponent implements OnInit {
 		{value: false, title: 'deactivated'}
 	];
 
-	constructor(private userService: UsersService,
+	constructor(private authService: AuthService,
+	            private impersonationService: ImpersonationService,
 	            private translatePipe: TranslatePipe,
-	            private authService: AuthService) { }
+	            private userInfoService: UserInfoService,
+	            private userService: UsersService) { }
 
 	ngOnInit() {
 		this.authUser = this.authService.getAuthUser();
+		this.impersonateUser = this.impersonationService.impersonationUser;
 
 		let user = this.user;
 		this.isNewUser = !user;
@@ -189,6 +195,17 @@ export class UsersFormComponent implements OnInit {
 		submitObservable.toPromise().then(
 			() => {
 				this.isRequestLoading = false;
+
+				if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
+					this.impersonationService.impersonationUser = updatedUser;
+					this.impersonationService.setStorage(updatedUser);
+					this.impersonationService.onChange.emit(updatedUser);
+				}
+
+				if (this.authUser.id === updatedUser.id) {
+					this.userInfoService.setUserInfo(updatedUser);
+				}
+
 				this.onSaved.emit({
 					isNewUser: this.isNewUser
 				});

@@ -80,7 +80,7 @@
                            [(ngModel)]="timeFrom"
                            [textMask]="{mask: timeMask, guide: false, keepCharPositions: true}"
                            (focus)="isFromToFormFocus = true"
-                           (blur)="validateFromToForm()">
+                           (change)="validateFromToForm()">
                 </div>
                 <span class="ct-actions-icon"></span>
                 <div class="ct-to-time">
@@ -89,7 +89,7 @@
                            [(ngModel)]="timeTo"
                            [textMask]="{mask: timeMask, guide: false, keepCharPositions: true}"
                            (focus)="isFromToFormFocus = true"
-                           (blur)="validateFromToForm()">
+                           (change)="validateFromToForm()">
                 </div>
             </div>
         </div>

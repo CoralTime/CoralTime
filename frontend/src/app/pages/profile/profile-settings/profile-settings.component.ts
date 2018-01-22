@@ -179,7 +179,13 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitNotifications(notificationsObject, this.userModel.id)
 			.subscribe(() => {
-					this.userInfoService.setUserInfo(notificationsObject);
+					if (this.impersonationService.impersonationId) {
+						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, notificationsObject);
+						this.impersonationService.setStorage(impersonateUser);
+					} else {
+						this.userInfoService.setUserInfo(notificationsObject);
+					}
+
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {
@@ -198,7 +204,14 @@ export class ProfileSettingsComponent implements OnInit {
 			.subscribe((userModel: any) => {
 					this.isEmailChanged = false;
 					this.userModel.email = userModel.Email;
-					this.userInfoService.setUserInfo(personalInfoObject);
+
+					if (this.impersonationService.impersonationId) {
+						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, personalInfoObject);
+						this.impersonationService.setStorage(impersonateUser);
+					} else {
+						this.userInfoService.setUserInfo(personalInfoObject);
+					}
+
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {
@@ -222,7 +235,13 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitPreferences(preferencesObject, this.userModel.id)
 			.subscribe(() => {
-					this.userInfoService.setUserInfo(preferencesObject);
+					if (this.impersonationService.impersonationId) {
+						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
+						this.impersonationService.setStorage(impersonateUser);
+					} else {
+						this.userInfoService.setUserInfo(preferencesObject);
+					}
+
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {

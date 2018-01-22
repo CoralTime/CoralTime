@@ -36,8 +36,8 @@ export class TimeDirective {
 		this.oldValue = this.el.nativeElement.value;
 	}
 
-	@HostListener('blur')
-	onBlur() {
+	@HostListener('change')
+	onModelChange() {
 		let time: string = this.el.nativeElement.value;
 		time = this.convertTimeToString(this.convertTimeToMinutes(time));
 
