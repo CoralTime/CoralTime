@@ -6,6 +6,7 @@ import { CalendarService } from '../../services/calendar.service';
 import { User } from '../../models/user';
 import { ImpersonationService } from '../../services/impersonation.service';
 import * as moment from 'moment';
+import { Subscription } from 'rxjs/Subscription';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -23,6 +24,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
 	projectIds: number[] = [];
 	projects: CustomSelectItem[] = [];
 	showOnlyActive: boolean = true;
+
+	private subscriptionImpersonation: Subscription;
 
 	constructor(private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,
@@ -59,6 +62,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		});
 
 		this.loadProjects(this.showOnlyActive);
+		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
+			this.loadProjects(this.showOnlyActive);
+		});
+
 	}
 
 	onResize(event): void {

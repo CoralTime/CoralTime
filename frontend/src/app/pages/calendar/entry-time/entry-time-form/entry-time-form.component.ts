@@ -203,7 +203,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.startTimer();
 			}
 			this.calendarService.isTimerActivated = this.isTimerShown;
-			this.calendarService.setDefaultProject(this.projectModel);
+			this.projectsService.setDefaultProject(this.projectModel);
 			this.closeEntryTimeForm.emit();
 		});
 	}
@@ -327,7 +327,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.isRequestLoading = false;
 				this.saveTimeEntry(this.currentTimeEntry);
 				this.calendarService.isTimerActivated = this.isTimerShown;
-				this.calendarService.setDefaultProject(this.projectModel);
+				this.projectsService.setDefaultProject(this.projectModel);
 
 				if (!this.currentTimeEntry.id) {
 					this.notificationService.success('New Time Entry has been successfully created.');
@@ -406,7 +406,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.projectList = this.removeNonActiveProjects(res);
 			this.projectList = this.filterProjects(this.projectList);
 
-			this.defaultProject = this.calendarService.defaultProject;
+			this.defaultProject = this.projectsService.defaultProject;
 			if (this.defaultProject) {
 				this.projectModel = ArrayUtils.findByProperty(this.projectList, 'id',
 					this.currentTimeEntry.projectId || this.defaultProject.id || this.userInfo.defaultProjectId);

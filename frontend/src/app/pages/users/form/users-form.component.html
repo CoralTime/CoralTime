@@ -35,7 +35,8 @@
 
             <div *ngIf="user.id">
                 <label class="ct-form-label">User Status</label>
-                <ct-select [disabled]="user.fullName == authUser.nickname" [name]="'state'"
+                <ct-select [disabled]="user?.id == authUser.id || user.id == impersonateUser?.id"
+                           [name]="'state'"
                            [displayName]="'title'" [trackBy]="'value'"
                            [(ngModel)]="stateModel"
                            (ngModelChange)="stateOnChange()"
@@ -104,7 +105,8 @@
 
             <div>
                 <label class="ct-form-label">Role</label>
-                <ct-select [disabled]="user.fullName == authUser.nickname" [name]="'role'"
+                <ct-select [disabled]="user?.id == authUser.id || user.id == impersonateUser?.id"
+                           [name]="'role'"
                            [displayName]="'title'" [trackBy]="'value'"
                            [(ngModel)]="roleModel"
                            (ngModelChange)="roleOnChange()"
