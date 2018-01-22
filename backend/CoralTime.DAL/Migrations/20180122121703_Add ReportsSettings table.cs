@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CoralTime.DAL.Migrations
 {
-    public partial class AddReportsSettings : Migration
+    public partial class AddReportsSettingstable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

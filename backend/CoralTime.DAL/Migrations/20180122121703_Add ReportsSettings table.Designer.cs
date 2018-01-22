@@ -9,8 +9,8 @@ using CoralTime.Common.Constants;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20180119143411_Add Reports Settings")]
-    partial class AddReportsSettings
+    [Migration("20180122121703_Add ReportsSettings table")]
+    partial class AddReportsSettingstable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
