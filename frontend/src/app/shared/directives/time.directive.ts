@@ -1,84 +1,66 @@
-import { Directive, ElementRef, HostListener, Output, EventEmitter, Input } from '@angular/core';
+import { Directive, ElementRef, HostListener, Output, EventEmitter } from '@angular/core';
 
 @Directive({
-	selector: '[time]',
-	host: {
-		'(ngModelChange)': 'onInputChange($event)'
-	}
+	selector: '[time]'
 })
 
 export class TimeDirective {
-	@Input() time: number;
 	@Output() ngModelChange: EventEmitter<any> = new EventEmitter();
 
-	private valueChanged: boolean = false;
-	private oldValue: string = '';
+	private oldValue: string;
 
 	constructor(private el: ElementRef) {
 	}
 
 	@HostListener('keydown', ['$event'])
 	onKeyDown(event: KeyboardEvent) {
-		let current: string = this.el.nativeElement.value;
+		let time: string = this.el.nativeElement.value;
 
 		switch (event.key) {
-			case 'Tab' :
-				this.valueChanged = current && current !== this.oldValue;
-				return;
 			case 'ArrowDown' :
-				current = current ? String(+current - 1) : String(+this.oldValue - 1);
+				time = this.convertTimeToString(this.convertTimeToMinutes(time) - 30);
 				break;
 			case 'ArrowUp' :
-				current = current ? String(+current + 1) : String(+this.oldValue + 1);
+				time = this.convertTimeToString(this.convertTimeToMinutes(time) + 30);
 				break;
 		}
 
-		current = this.limitTime(current);
-		if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-			current = this.formatTime(current);
+		if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Tab') {
+			this.ngModelChange.emit(time);
 		}
-
-		this.ngModelChange.emit(current);
 	}
 
 	@HostListener('focus')
 	onFocus() {
-		this.valueChanged = false;
+		this.el.nativeElement.select();
 		this.oldValue = this.el.nativeElement.value;
-		this.el.nativeElement.value = '';
 	}
 
-	@HostListener('blur')
-	onBlur() {
+	@HostListener('change')
+	onModelChange() {
 		let time: string = this.el.nativeElement.value;
-		if (!this.valueChanged) {
-			time = this.oldValue;
-			this.el.nativeElement.value = this.oldValue;
-		}
-		time = time ? this.formatTime(this.limitTime(time)) : '00';
+		time = this.convertTimeToString(this.convertTimeToMinutes(time));
 
-		this.ngModelChange.emit(time);
+		if (time !== this.oldValue) {
+			this.ngModelChange.emit(time);
+		}
 	}
 
-	onInputChange(value: string): void {
-		if (isNaN(+value)) {
-			this.el.nativeElement.value = this.oldValue;
-		}
-		this.valueChanged = true;
+	private convertTimeToMinutes(time: string): number {
+		let arr = time.split(':');
+		return (+arr[0] || 0) * 60 + (+arr[1] || 0);
 	}
 
-	private formatTime(time?: string): string {
-		return (+time >= 0 && +time < 10) ? '0' + +time : time;
+	private convertTimeToString(time: number): string {
+		time = this.limitTime(time);
+		let h = Math.floor(time / 60);
+		let m = time % 60;
+
+		return ('00' + h).slice(-2) + ':' + ('00' + m).slice(-2);
 	}
 
-	private limitTime(time: string): string {
-		if (+time < 0) {
-			time = '0';
-		}
-		if (+time >= this.time) {
-			time = this.time - 1 + '';
-		}
-
-		return time;
+	private limitTime(time: number): number {
+		let limitedTime = time % (60 * 24);
+		return limitedTime >= 0 ? limitedTime : limitedTime + (60 * 24);
 	}
 }

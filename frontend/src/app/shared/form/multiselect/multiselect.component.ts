@@ -1,5 +1,5 @@
 import {
-	Component, Input, Output, EventEmitter, forwardRef, ViewChild, OnChanges, SimpleChanges
+	Component, Input, Output, EventEmitter, forwardRef, ViewChild, OnChanges, SimpleChanges, HostListener
 } from '@angular/core';
 import { DomHandler } from 'primeng/components/dom/domhandler';
 import { ObjectUtils } from 'primeng/components/utils/ObjectUtils';
@@ -137,5 +137,12 @@ export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges 
 				this.slimScroll.getBarHeight();
 			}
 		}, 0);
+	}
+
+	@HostListener('document:keydown', ['$event'])
+	onKeyDown(event: KeyboardEvent) {
+		if (this.overlayVisible && event.key === 'Enter') {
+			this.submit(event);
+		}
 	}
 }
