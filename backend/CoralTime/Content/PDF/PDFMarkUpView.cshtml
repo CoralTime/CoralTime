@@ -1,4 +1,4 @@
-@using CoralTime.BL.Services.Reports.Export
+﻿@using CoralTime.BL.Services.Reports.Export
 @using CoralTime.Common.Constants @*todo @Constants.ReportsGroupBy.Clients.ToString()*@
 
 @model CoralTime.ViewModels.Reports.PDF.ReportsPDFCommonView
@@ -38,16 +38,16 @@
             <tr class="rowCommonEntityHeaders containerFlex">
                 @foreach (var entityHeader in entity.TotalHeaders)
                 {
-                    if (entityHeader.NameDefault == ReportExportService.ExternalProperties.TotalActualTime.ToString() || entityHeader.NameDefault == ReportExportService.ExternalProperties.TotalEstimatedTime.ToString())
+                    if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString() || entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
                     {
-                        if (entityHeader.NameDefault == ReportExportService.ExternalProperties.TotalActualTime.ToString())
+                        if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString())
                         {
                             <td class="columnCommonEntityHeaders childFlexRight2">
                                 <span>@entityHeader.NameDisplay</span> 
                                 <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
                             </td>
                         }
-                        else if (entityHeader.NameDefault == ReportExportService.ExternalProperties.TotalEstimatedTime.ToString())
+                        else if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
                         {
                             <td class="columnCommonEntityHeaders childFlexRight2">
                                 <span>@entityHeader.NameDisplay</span>
@@ -74,7 +74,7 @@
             <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
                 @foreach (var entityHeaders in entity.EntityHeaders)
                 {
-                    if (entityHeaders.Value == ReportExportService.NameDisplays.Notes.ToString())
+                    if (entityHeaders.Value == ReportsExportService.NameDisplays.Notes.ToString())
                     {
                         <td class="columnNestedEntityRows">
                             <span>@entityHeaders.NameDisplay</span>
@@ -95,7 +95,7 @@
                 <tr style="max-width: 500px;">
                     @foreach (var entityRow in entityRows)
                     {
-                        if (entityRow.NameDefault == ReportExportService.InternalProperties.Description.ToString())
+                        if (entityRow.NameDefault == ReportsExportService.InternalProperties.Description.ToString())
                         {
                             <td class="columnNestedEntityRows">
                                 <span>@entityRow.Value</span>
