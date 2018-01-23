@@ -1,14 +1,11 @@
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
-using CoralTime.Common.Models;
 using CoralTime.Services;
 using CoralTime.ViewModels.TimeEntries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using CoralTime.Common.Helpers;
-using Microsoft.OData.Edm.Library;
 
 namespace CoralTime.Api.v1.Odata
 {
@@ -25,7 +22,7 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBeginOffset, dateEndOffset));
+                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBegin, dateEnd));
             }
             catch (Exception e)
             {

@@ -1,8 +1,8 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
-using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.Services;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

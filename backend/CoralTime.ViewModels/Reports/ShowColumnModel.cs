@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CoralTime.Common.Models
+namespace CoralTime.ViewModels.Reports
 {
     public class ShowColumnModel
     {

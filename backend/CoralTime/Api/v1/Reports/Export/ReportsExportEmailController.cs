@@ -19,7 +19,7 @@ namespace CoralTime.Api.v1.Reports.Export
             : base(logger, service) { }
 
         [HttpPost]
-        public async Task<IActionResult> ReportsExportEmail([FromBody]ReportsExportSendView reportsGridData)
+        public async Task<IActionResult> ReportsExportEmail([FromBody]ReportsExportEmailView reportsGridData)
         {
             try
             {

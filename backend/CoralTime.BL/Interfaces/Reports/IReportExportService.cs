@@ -1,5 +1,5 @@
-﻿using CoralTime.Common.Models.Reports.Request.Grid;
-using CoralTime.ViewModels.Reports.Request.Emails;
+﻿using CoralTime.ViewModels.Reports.Request.Emails;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -20,14 +20,14 @@ namespace CoralTime.BL.Interfaces.Reports
         FileResult ExportFileGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
 
         // Sent reports as email.
-        Task ExportEmailGroupByNone(string userName, ReportsExportSendView emailData);
+        Task ExportEmailGroupByNone(string userName, ReportsExportEmailView emailData);
 
-        Task ExportEmailGroupByProjects(string userName, ReportsExportSendView emailData);
+        Task ExportEmailGroupByProjects(string userName, ReportsExportEmailView emailData);
 
-        Task ExportEmailGroupByUsers(string userName, ReportsExportSendView emailData);
+        Task ExportEmailGroupByUsers(string userName, ReportsExportEmailView emailData);
 
-        Task ExportEmailGroupByDates(string userName, ReportsExportSendView emailData);
+        Task ExportEmailGroupByDates(string userName, ReportsExportEmailView emailData);
 
-        Task ExportEmailGroupByClients(string userName, ReportsExportSendView emailData);
+        Task ExportEmailGroupByClients(string userName, ReportsExportEmailView emailData);
     }
 }

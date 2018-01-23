@@ -1,4 +1,4 @@
-﻿using CoralTime.Common.Models.Reports.Responce;
+﻿using CoralTime.ViewModels.Reports.Responce;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

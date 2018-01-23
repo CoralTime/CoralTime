@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using CoralTime.Common.Models;
+﻿using CoralTime.ViewModels.DateFormat;
 using System;
+using System.Collections.Generic;
 
 namespace CoralTime.Common.Constants
 {

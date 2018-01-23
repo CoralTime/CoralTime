@@ -1,4 +1,4 @@
-﻿namespace CoralTime.ViewModels.Reports.Request
+﻿namespace CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy
 {
     public class ReportsDropDownGroupBy
     {

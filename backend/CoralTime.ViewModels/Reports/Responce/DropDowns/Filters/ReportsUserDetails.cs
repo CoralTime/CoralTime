@@ -1,4 +1,4 @@
-﻿namespace CoralTime.Common.Models.Reports.Responce.DropDowns.Filters
+﻿namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 {
     public class ReportsUserDetails
     {

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace CoralTime.Common.Models.Reports
+namespace CoralTime.ViewModels.Reports
 {
     public interface IRequestReportsSettings
     {

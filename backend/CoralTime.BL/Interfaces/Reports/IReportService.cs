@@ -1,6 +1,6 @@
-﻿using CoralTime.Common.Models.Reports.Request.Grid;
-using CoralTime.Common.Models.Reports.Responce.DropDowns.Filters;
-using CoralTime.ViewModels.Reports;
+﻿using CoralTime.ViewModels.Reports;
+using CoralTime.ViewModels.Reports.Request.Grid;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 using System;
 
 namespace CoralTime.BL.Interfaces.Reports

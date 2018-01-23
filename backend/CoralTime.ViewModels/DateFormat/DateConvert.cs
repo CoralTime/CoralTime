@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace CoralTime.Common.Models
+namespace CoralTime.ViewModels.DateFormat
 {
     public class DateConvert
     {

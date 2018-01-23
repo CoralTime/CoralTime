@@ -1,5 +1,4 @@
-﻿using CoralTime.Common.Models;
-using CoralTime.ViewModels.TimeEntries;
+﻿using CoralTime.ViewModels.TimeEntries;
 using System;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-﻿namespace CoralTime.Common.Models.Reports.Request.Grid
+﻿namespace CoralTime.ViewModels.Reports.Request.Grid
 {
     public class RequestReportsGrid
     {

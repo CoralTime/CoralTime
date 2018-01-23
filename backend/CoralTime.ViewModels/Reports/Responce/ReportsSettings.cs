@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoralTime.Common.Models.Reports.Responce
+namespace CoralTime.ViewModels.Reports.Responce
 {
     public class ReportsSettings : IReportsSettings
     {

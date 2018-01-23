@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
-using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.DAL.Repositories;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Hosting;
 using System;
 using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;

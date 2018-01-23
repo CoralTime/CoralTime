@@ -1,4 +1,4 @@
-﻿using CoralTime.Common.Models;
+﻿using CoralTime.ViewModels.DateFormat;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
@@ -6,8 +6,6 @@ using CoralTime.ViewModels.Member.MemberPreferencesView;
 using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using CoralTime.DAL.Models;
 
 namespace CoralTime.BL.Interfaces
 {

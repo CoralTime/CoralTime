@@ -1,12 +1,11 @@
-﻿using System;
-using CoralTime.BL.Services.Reports.Export;
+﻿using CoralTime.BL.Services.Reports.Export;
 using CoralTime.Common.Constants;
-using CoralTime.Common.Models.Reports.Request.Grid;
-using CoralTime.Common.Models.Reports.Responce.DropDowns.Filters;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports.Request;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -3,7 +3,6 @@ using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.Common.Models;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;

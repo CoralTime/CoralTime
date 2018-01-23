@@ -1,8 +1,8 @@
-﻿using CoralTime.Common.Models.Reports.Request.Grid;
+﻿using CoralTime.ViewModels.Reports.Request.Grid;
 
 namespace CoralTime.ViewModels.Reports.Request.Emails
 {
-    public class ReportsExportSendView : RequestReportsGrid
+    public class ReportsExportEmailView : RequestReportsGrid
     {
         public string ToEmail { get; set; }
 

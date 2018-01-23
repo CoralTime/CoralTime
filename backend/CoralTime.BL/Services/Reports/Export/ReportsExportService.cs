@@ -2,11 +2,10 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
-using CoralTime.Common.Models;
-using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.PDF;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

@@ -1,4 +1,4 @@
-﻿namespace CoralTime.Common.Models
+﻿namespace CoralTime.ViewModels.Reports
 {
     public class ShowColumnDescription
     {

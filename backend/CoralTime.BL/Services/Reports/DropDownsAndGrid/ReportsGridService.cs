@@ -1,9 +1,9 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.Common.Models.Reports.Request.Grid;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
