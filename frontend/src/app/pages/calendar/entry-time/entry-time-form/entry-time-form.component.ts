@@ -17,6 +17,7 @@ import { ImpersonationService } from '../../../../services/impersonation.service
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../../models/user';
 import { SelectItem } from 'primeng/primeng';
+import { isString } from 'util';
 import * as moment from 'moment';
 
 export class Time {
@@ -259,11 +260,16 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.timeTo = '00:00';
 	}
 
-	validateFromToForm(): void {
+	validateFromToForm(timeFrom: string, timeTo: string): void {
+		if (!isString(timeFrom) || !isString(timeTo)) {
+			return;
+		}
+
 		this.isFormChanged = true;
 		this.isFromToFormChanged = true;
 		this.isFromToFormFocus = false;
-		this.timeTo = this.getMax(this.timeFrom, this.timeTo);
+
+		this.timeTo = this.getMax(timeFrom, timeTo);
 		this.setActualTime();
 		this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
 	}
@@ -350,7 +356,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				}
 			});
 	}
-
 
 	private isFromToTimeValid(): boolean {
 		return this.dayInfo.timeEntries

@@ -5,6 +5,7 @@ import { Directive, ElementRef, HostListener, Output, EventEmitter } from '@angu
 })
 
 export class TimeDirective {
+	@Output() change: EventEmitter<any> = new EventEmitter();
 	@Output() ngModelChange: EventEmitter<any> = new EventEmitter();
 
 	private oldValue: string;
@@ -36,13 +37,14 @@ export class TimeDirective {
 		this.oldValue = this.el.nativeElement.value;
 	}
 
-	@HostListener('change')
-	onModelChange() {
+	@HostListener('blur')
+	onBlur() {
 		let time: string = this.el.nativeElement.value;
 		time = this.convertTimeToString(this.convertTimeToMinutes(time));
 
 		if (time !== this.oldValue) {
 			this.ngModelChange.emit(time);
+			this.change.emit(time);
 		}
 	}
 
