@@ -4,8 +4,8 @@ using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
 using CoralTime.Common.Models;
-using CoralTime.DAL.Models;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
+using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.TimeEntries;
 using System;
@@ -153,7 +153,7 @@ namespace CoralTime.BL.Services
             #endregion
         }
 
-        public bool Delete(int timeEntryId, string userName)
+        public void Delete(int timeEntryId, string userName)
         {
             var timeEntryById = GetRelatedTimeEntryById(timeEntryId);
 
@@ -177,8 +177,6 @@ namespace CoralTime.BL.Services
             {
                 Uow.TimeEntryRepository.Delete(timeEntryById.Id);
                 Uow.Save();
-
-                return true;
             }
             catch (Exception e)
             {

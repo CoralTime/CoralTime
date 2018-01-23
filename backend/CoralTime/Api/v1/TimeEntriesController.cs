@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Globalization;
 
 namespace CoralTime.Api.v1.Odata
 {
@@ -112,8 +111,8 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                var result = _service.Delete(id, this.GetUserNameWithImpersonation());
-                return new JsonResult(string.Empty);
+                _service.Delete(id, this.GetUserNameWithImpersonation());
+                return Ok();
             }
             catch (Exception e)
             {
