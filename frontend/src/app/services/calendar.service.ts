@@ -38,9 +38,8 @@ export class CalendarService {
 			});
 	}
 
-	Delete(id: string): Observable<TimeEntry[]> {
-		return this.http.delete(this.constantService.timeEntriesApi + id)
-			.map((res: Response) => res.json());
+	Delete(id: string): Observable<Response> {
+		return this.http.delete(this.constantService.timeEntriesApi + id);
 	}
 
 	Patch(obj: TimeEntry, id: string): Observable<any> {
