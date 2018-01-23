@@ -21,7 +21,7 @@ namespace CoralTime.BL.Services
         public TimeEntryService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
-        public IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTime dateStart, DateTime dateEnd)
+        public IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
             var relatedMemberByName = GetRelatedMemberByUserName(userName);
 

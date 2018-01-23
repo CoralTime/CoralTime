@@ -21,18 +21,10 @@ namespace CoralTime.Api.v1.Odata
 
         // GET: api/v1/odata/TimeEntries
         [HttpGet]
-        public IActionResult Get(DateTime dateBegin, DateTime dateEnd)
+        public IActionResult Get(DateTimeOffset dateBegin, DateTimeOffset dateEnd)
         {
-            var z = dateBegin.ToUniversalTime();
-            var z2 = dateEnd.ToUniversalTime();
             try
             {
-                //DateTime dt = DateTime.ParseExact(dateEnd, "yyyy-MM-ddTHH:mm:ssZ", null);
-                //var dateBeginOffset = DateTimeOffset.Parse(dateBegin, null).Date;
-                //var dateEndOffset = DateTimeOffset.Parse(dateEnd, null).Date.AddDays(1).AddMilliseconds(-1);
-                var dateBeginOffset = dateBegin;
-                var dateEndOffset = dateEnd;
-
                 return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBeginOffset, dateEndOffset));
             }
             catch (Exception e)

@@ -7,7 +7,7 @@ namespace CoralTime.BL.Interfaces
 {
     public interface ITimeEntryService
     {
-        IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTime dateSart, DateTime dateEnd);
+        IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTimeOffset dateSart, DateTimeOffset dateEnd);
 
         TimeEntryView GetById(int id, string userName);
 
