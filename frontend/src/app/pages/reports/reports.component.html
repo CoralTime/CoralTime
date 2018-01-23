@@ -41,8 +41,8 @@
                         <ct-multiselect
                                 class="ct-columns-multiselect ct-columns-button"
                                 [styleClass]="'ct-reports-settings-multiselect'"
-                                [(ngModel)]="showColumnIds"
-                                (onSubmitAction)="submitSettings(showColumnIds)"
+                                [(ngModel)]="reportFilters.showColumnIds"
+                                (onSubmitAction)="submitSettings(reportFilters.showColumnIds)"
                                 [showSubmitButton]="true"
                                 [showActionsPanel]="false"
                                 [showFilterSearch]="false"
@@ -58,8 +58,8 @@
                     <label class="ct-filter-label">Filter by</label>
                     <ct-multiselect
                             [styleClass]="'ct-reports-multiselect'"
-                            [(ngModel)]="clientIds"
-                            (onSubmitAction)="toggleClient(clientIds)"
+                            [(ngModel)]="reportFilters.clientIds"
+                            (onSubmitAction)="toggleClient(reportFilters.clientIds)"
                             [showSubmitButton]="true"
                             [appendTo]="'body'"
                             [defaultLabel]="'All Clients'"
@@ -71,8 +71,8 @@
                     </ct-multiselect>
                     <ct-multiselect
                             [styleClass]="'ct-reports-multiselect'"
-                            [(ngModel)]="projectIds"
-                            (onSubmitAction)="toggleProject(projectIds)"
+                            [(ngModel)]="reportFilters.projectIds"
+                            (onSubmitAction)="toggleProject(reportFilters.projectIds)"
                             [showSubmitButton]="true"
                             [appendTo]="'body'"
                             [defaultLabel]="'All Projects'"
@@ -85,7 +85,7 @@
                     <ct-multiselect
                             *ngIf="isUsersFilterShown"
                             [styleClass]="'ct-reports-multiselect'"
-                            [(ngModel)]="userIds"
+                            [(ngModel)]="reportFilters.memberIds"
                             (onSubmitAction)="toggleUser()"
                             [showSubmitButton]="true"
                             [appendTo]="'body'"
@@ -99,9 +99,9 @@
                 </div>
                 <div class="ct-report-filters-block">
                     <label class="ct-filter-label">Group by</label>
-                    <ct-select [name]="'group'"
+                    <ct-select [name]="'groupBy'"
                                [defaultValue]="'Date'"
-                               [displayName]="'groupByDescription'" [trackBy]="'groupById'"
+                               [displayName]="'description'" [trackBy]="'id'"
                                [(ngModel)]="groupModel"
                                (change)="groupByChange()"
                                [options]="groupByItems">
@@ -117,8 +117,8 @@
         <div class="ct-reports-data">
             <ct-reports-grid *ngFor="let gridData of reportsGridData?.reportsGridView"
                              class="ct-reports-grid"
-                             [groupBy]="groupModel?.groupById"
-                             [showColumns]="showColumns"
+                             [groupById]="groupModel?.id"
+                             [showColumnIds]="showColumnIds"
                              [gridData]="gridData"></ct-reports-grid>
 
             <div *ngIf="reportsGridData?.reportsGridView.length == 0" class="ct-nodata">
@@ -131,13 +131,13 @@
             <div class="ui-datatable-tablewrapper">
                 <table>
                     <tr>
-                        <td *ngIf="groupModel?.groupById != 3 && showColumns.indexOf(2) > -1" class="ct-cell-date"></td>
-                        <td *ngIf="groupModel?.groupById != 4" class="ct-cell-client"></td>
-                        <td *ngIf="groupModel?.groupById != 1" class="ct-cell-project"></td>
-                        <td *ngIf="groupModel?.groupById != 2" class="ct-cell-user"></td>
+                        <td *ngIf="groupModel?.id != 3 && showColumnIds?.indexOf(2) > -1" class="ct-cell-date"></td>
+                        <td *ngIf="groupModel?.id != 4" class="ct-cell-client"></td>
+                        <td *ngIf="groupModel?.id != 1" class="ct-cell-project"></td>
+                        <td *ngIf="groupModel?.id != 2" class="ct-cell-user"></td>
                         <td class="ct-cell-task"></td>
-                        <td *ngIf="showColumns.indexOf(4) > -1" class="ct-cell-start"></td>
-                        <td *ngIf="showColumns.indexOf(4) > -1" class="ct-cell-finish"></td>
+                        <td *ngIf="showColumnIds?.indexOf(4) > -1" class="ct-cell-start"></td>
+                        <td *ngIf="showColumnIds?.indexOf(4) > -1" class="ct-cell-finish"></td>
 
                         <td class="ct-cell-actual">
                             <div class="ct-total-hours-tracked">
@@ -145,13 +145,13 @@
                             </div>
                         </td>
 
-                        <td *ngIf="showColumns.indexOf(1) > -1" class="ct-cell-estimated">
-                            <div class="ct-total-hours-planned" *ngIf="showColumns.indexOf(1) > -1">
+                        <td *ngIf="showColumnIds?.indexOf(1) > -1" class="ct-cell-estimated">
+                            <div class="ct-total-hours-planned" *ngIf="showColumnIds?.indexOf(1) > -1">
                                 <span>{{getTimeString(reportsGridData?.grandEstimatedTime)}}</span>
                             </div>
                         </td>
 
-                        <td *ngIf="showColumns.indexOf(3) > -1"></td>
+                        <td *ngIf="showColumnIds?.indexOf(3) > -1"></td>
                     </tr>
                 </table>
             </div>

@@ -13,8 +13,8 @@ import * as moment from 'moment';
 
 export class ReportsGridComponent implements OnChanges {
 	@Input() gridData: ReportGridView;
-	@Input() groupBy: number;
-	@Input() showColumns: number[];
+	@Input() groupById: number;
+	@Input() showColumnIds: number[] = [];
 
 	dateFormat: string;
 	gridDataRows: ReportItem[];
