@@ -267,6 +267,7 @@ export class ReportsComponent implements OnInit {
 
 	submitSettings(showColumnIds: number[]): void {
 		this.showColumnIds = showColumnIds;
+		this.getReportGrid();
 	}
 
 	exportAs(fileTypeId: number): void {
