@@ -12,23 +12,26 @@
                            required validate-onblur autofocus
                            type="email" name="clientFrom" [email]="!!model.fromEmail"
                            [(ngModel)]="model.fromEmail"
-                           (ngModelChange)="checkIsFromEmailEmpty()"
                            [pattern]="emailPattern">
                 </div>
-                <div class="ct-error-text" *ngIf="!fromEmail.pristine && fromEmail.errors?.pattern">Invalid email</div>
-                <div *ngIf="emailFromError"
-                     class="ct-error-text">{{emailFromError}}
+                <div class="ct-error-text" *ngIf="isFormErrorsShown && fromEmail.errors?.pattern">Invalid email</div>
+                <div *ngIf="isFormErrorsShown && fromEmail.errors?.required" class="ct-error-text">
+                    Client sender email is required.
                 </div>
             </div>
 
             <div>
                 <label class="ct-form-label">To</label>
                 <div class="ct-required-field-container">
-                    <ct-input-list [name]="'client'" required
+                    <ct-input-list [name]="'client'" required #toEmail="ngModel"
                                    [displayName]="'email'" [trackBy]="'id'"
                                    [(ngModel)]="model.toEmail"
                                    [options]="clients"
                                    [pattern]="emailPattern"></ct-input-list>
+                </div>
+                <div class="ct-error-text" *ngIf="isFormErrorsShown && toEmail.errors?.pattern">Invalid email</div>
+                <div class="ct-error-text" *ngIf="isFormErrorsShown && toEmail.errors?.required">
+                    Client recipient email is required.
                 </div>
 
                 <button *ngIf="model.ccEmails.length == 0" class="ct-link-text" (click)="model.ccEmails.push(null)">Cc</button>
@@ -62,10 +65,8 @@
 
             <div>
                 <label class="ct-form-label">Subject</label>
-                <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" name="subject"
-                           [(ngModel)]="model.subject" pattern=".*[^\s]+.*" required/>
-                </div>
+                           [(ngModel)]="model.subject" pattern=".*[^\s]+.*"/>
             </div>
 
             <div>
