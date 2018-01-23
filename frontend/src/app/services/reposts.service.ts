@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
 import { saveAs as importedSaveAs } from 'file-saver';
 import { SendReportsFormModel } from '../pages/reports/reports-send/reports-send.component';
-import { DatePeriod } from '../pages/reports/range-datepicker/range-datepicker.service';
 import { CustomSelectItem } from '../shared/form/multiselect/multiselect.component';
 
 export interface ReportDropdowns {

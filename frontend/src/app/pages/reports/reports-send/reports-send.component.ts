@@ -66,7 +66,6 @@ export class ReportsSendComponent implements OnInit {
 
 	clients: Client[];
 	clientModel: Client;
-	emailFromError: string;
 	emailPattern = EMAIL_PATTERN;
 	isCcFormValid: boolean = true;
 	isBccFormValid: boolean = true;
@@ -95,15 +94,6 @@ export class ReportsSendComponent implements OnInit {
 			+ ' - ' + this.formatDate(this.model.valuesSaved.dateTo);
 	}
 
-	checkIsFromEmailEmpty(): void {
-		this.emailFromError = null;
-
-		if (!this.model.fromEmail) {
-			this.emailFromError = 'Client sender email is required.';
-			return;
-		}
-	}
-
 	showErrors(): void {
 		this.isFormErrorsShown = true;
 		setTimeout(() => this.isFormErrorsShown = false, 3000);
@@ -111,7 +101,6 @@ export class ReportsSendComponent implements OnInit {
 
 	submit(form: NgForm): void {
 		if (form.invalid || !this.isCcFormValid || !this.isBccFormValid) {
-			this.checkIsFromEmailEmpty();
 			this.showErrors();
 			return;
 		}
