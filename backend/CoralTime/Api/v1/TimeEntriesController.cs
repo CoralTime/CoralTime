@@ -1,34 +1,28 @@
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
-using CoralTime.Common.Models;
 using CoralTime.Services;
 using CoralTime.ViewModels.TimeEntries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Globalization;
 
 namespace CoralTime.Api.v1.Odata
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class TimeEntriesController : _BaseController<TimeEntriesController, ITimeEntryService>
+    public class TimeEntriesController : BaseController<TimeEntriesController, ITimeEntryService>
     {
         public TimeEntriesController(ITimeEntryService service, ILogger<TimeEntriesController> logger)
             : base(logger, service) { }
 
         // GET: api/v1/odata/TimeEntries
         [HttpGet]
-        public IActionResult Get(string dateBegin, string dateEnd)
+        public IActionResult Get(DateTimeOffset dateBegin, DateTimeOffset dateEnd)
         {
             try
             {
-                //DateTime dt = DateTime.ParseExact(dateEnd, "yyyy-MM-ddTHH:mm:ssZ", null);
-                var dateBeginOffset = DateTimeOffset.Parse(dateBegin, null).Date;
-                var dateEndOffset = DateTimeOffset.Parse(dateEnd, null).Date.AddDays(1).AddMilliseconds(-1);
-
-                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBeginOffset, dateEndOffset));
+                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBegin, dateEnd));
             }
             catch (Exception e)
             {
@@ -112,8 +106,8 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                var result = _service.Delete(id, this.GetUserNameWithImpersonation());
-                return new JsonResult(string.Empty);
+                _service.Delete(id, this.GetUserNameWithImpersonation());
+                return Ok();
             }
             catch (Exception e)
             {

@@ -1,5 +1,5 @@
 using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
 using CoralTime.DAL.Models;
 using CoralTime.Services;
@@ -19,7 +19,7 @@ namespace CoralTime.Api.v1.Odata.Members
     [Authorize]
     [EnableQuery]
     [Route("api/v1/odata/[controller]")]
-    public class MembersController : _BaseController<MembersController, IMemberService>
+    public class MembersController : BaseController<MembersController, IMemberService>
     {
         public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper)
             : base(logger, mapper, service) { }

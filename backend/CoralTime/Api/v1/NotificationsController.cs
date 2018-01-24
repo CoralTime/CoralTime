@@ -1,4 +1,4 @@
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Helpers;
 using CoralTime.ViewModels.Errors;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
     [CheckSecureHeader(Constants.SecureHeaderNotification)]
-    public class NotificationsController : _BaseController<NotificationsController, INotificationService>
+    public class NotificationsController : BaseController<NotificationsController, INotificationService>
     {
         public NotificationsController(INotificationService service, ILogger<NotificationsController> logger)
             : base(logger, service) { }

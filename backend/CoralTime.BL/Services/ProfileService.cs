@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.Common.Models;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
+using CoralTime.ViewModels.DateFormat;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
@@ -24,7 +24,7 @@ using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
 {
-    public class ProfileService : _BaseService, IProfileService
+    public class ProfileService : BaseService, IProfileService
     {
         private readonly IConfiguration _config;
         private readonly IMemberService _memberService;

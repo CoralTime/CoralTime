@@ -1,5 +1,5 @@
 using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
 using CoralTime.DAL.Models;
 using CoralTime.Services;
@@ -19,7 +19,7 @@ namespace CoralTime.Api.v1.Odata
     [Route("api/v1/odata/[controller]")]
     [EnableQuery]
     [Authorize]
-    public class TasksController :  _BaseController<TasksController, ITasksService>
+    public class TasksController :  BaseController<TasksController, ITasksService>
     {
         public TasksController(ITasksService service, IMapper mapper, ILogger<TasksController> logger)
             : base(logger, mapper, service) { }

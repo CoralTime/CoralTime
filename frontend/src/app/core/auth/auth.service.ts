@@ -119,7 +119,7 @@ export class AuthService {
 					}
 
 					this.logout();
-					return null;
+					return Observable.of(null);
 				})
 				.catch(error => {
 					this.logout();

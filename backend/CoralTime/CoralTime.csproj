@@ -9,12 +9,22 @@
     <RuntimeIdentifiers>win10-x64;win7-x64</RuntimeIdentifiers>
     <RuntimeFrameworkVersion>1.1.2</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon></ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAzure|AnyCPU'" />
   <ItemGroup>
+    <Compile Remove="Configs\**" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="Configs\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="Configs\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="Configs\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Remove="node_modules" />
+    <None Remove="tempkey.rsa" />
     <Content Include="Content\PDF\Site.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -95,8 +105,5 @@
     <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
     <ProjectReference Include="..\CoralTime.BL\CoralTime.BL.csproj" />
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configs\" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,4 @@
-﻿using CoralTime.Common.Constants;
-using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Reports;
+﻿using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.PDF;
 using RazorLight;
 using System;
@@ -13,7 +11,7 @@ using WkWrap.Core;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService
+    public partial class ReportsExportService
     {
         private byte[] CreateFilePDF<T>(IReportsGrandGridView<T> groupedList)
         {

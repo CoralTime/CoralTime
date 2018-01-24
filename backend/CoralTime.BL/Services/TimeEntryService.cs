@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.Common.Models;
-using CoralTime.DAL.Models;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
+using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.TimeEntries;
 using System;
@@ -14,14 +13,14 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class TimeEntryService : _BaseService, ITimeEntryService
+    public class TimeEntryService : BaseService, ITimeEntryService
     {
         private bool IsOnlyMemberAtProject { get; set; }
 
         public TimeEntryService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
-        public IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTime dateStart, DateTime dateEnd)
+        public IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
             var relatedMemberByName = GetRelatedMemberByUserName(userName);
 
@@ -153,7 +152,7 @@ namespace CoralTime.BL.Services
             #endregion
         }
 
-        public bool Delete(int timeEntryId, string userName)
+        public void Delete(int timeEntryId, string userName)
         {
             var timeEntryById = GetRelatedTimeEntryById(timeEntryId);
 
@@ -177,8 +176,6 @@ namespace CoralTime.BL.Services
             {
                 Uow.TimeEntryRepository.Delete(timeEntryById.Id);
                 Uow.Save();
-
-                return true;
             }
             catch (Exception e)
             {
@@ -190,21 +187,21 @@ namespace CoralTime.BL.Services
 
         #region Added Methods for Get Related Entities.
 
-        private ApplicationUser GetRelatedUserByName(string userName)
-        {
-            var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
-            if (relatedUserByName == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
-            }
+        //private ApplicationUser GetRelatedUserByName(string userName)
+        //{
+        //    var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
+        //    if (relatedUserByName == null)
+        //    {
+        //        throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
+        //    }
 
-            if (!relatedUserByName.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
-            }
+        //    if (!relatedUserByName.IsActive)
+        //    {
+        //        throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
+        //    }
 
-            return relatedUserByName;
-        }
+        //    return relatedUserByName;
+        //}
 
         private Member GetRelatedMemberByUserName(string userName)
         {
@@ -285,7 +282,7 @@ namespace CoralTime.BL.Services
 
         private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, string userName, out Member relatedMemberByName, out Project relatedProjectById)
         {
-            var relatedUserByName = GetRelatedUserByName(userName);
+            var relatedUserByName = Uow.UserRepository.GetRelatedUserByName(userName); 
             relatedMemberByName = GetRelatedMemberByUserName(userName);
 
             IsOnlyMemberAtProject = !IsAdminOrManagerOfProject(relatedUserByName.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);

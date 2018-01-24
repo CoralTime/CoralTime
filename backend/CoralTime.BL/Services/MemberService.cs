@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
@@ -21,7 +21,7 @@ using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
 {
-    public class MemberService : _BaseService, IMemberService
+    public class MemberService : BaseService, IMemberService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;

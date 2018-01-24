@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class MemberAvatarRepository: _BaseRepository<MemberAvatar>
+    public class MemberAvatarRepository: BaseRepository<MemberAvatar>
     {
         public MemberAvatarRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }

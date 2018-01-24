@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class ProjectService : _BaseService, IProjectService
+    public class ProjectService : BaseService, IProjectService
     {
         public ProjectService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }

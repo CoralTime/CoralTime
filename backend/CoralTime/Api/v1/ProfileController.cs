@@ -1,4 +1,4 @@
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
 using CoralTime.Services;
 using CoralTime.ViewModels.Member.MemberNotificationView;
@@ -14,7 +14,7 @@ namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
     [Authorize]
-    public class ProfileController : _BaseController<ProfileController, IProfileService>
+    public class ProfileController : BaseController<ProfileController, IProfileService>
     {
         public ProfileController(IProfileService service, ILogger<ProfileController> logger)
             : base(logger, service) { }

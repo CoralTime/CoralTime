@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.Models;
@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class TasksService : _BaseService, ITasksService
+    public class TasksService : BaseService, ITasksService
     {
         public TasksService(UnitOfWork uow, IMapper mapper) 
             : base(uow, mapper) { }

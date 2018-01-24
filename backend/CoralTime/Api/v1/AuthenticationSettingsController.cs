@@ -7,7 +7,7 @@ using System;
 namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
-    public class AuthenticationSettingsController : _BaseController<AuthenticationSettingsController, object>
+    public class AuthenticationSettingsController : BaseController<AuthenticationSettingsController, object>
     {
         private readonly IConfiguration _config;
 

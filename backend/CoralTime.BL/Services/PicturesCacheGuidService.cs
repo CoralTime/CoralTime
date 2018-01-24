@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
+using CoralTime.BL.Interfaces;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.PicturesCacheGuid;
 
 namespace CoralTime.BL.Services
 {
-    public class PicturesCacheGuidService : _BaseService, IPicturesCacheGuid
+    public class PicturesCacheGuidService : BaseService, IPicturesCacheGuid
     {
         public PicturesCacheGuidService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }

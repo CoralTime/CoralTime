@@ -291,6 +291,47 @@ namespace CoralTime.DAL.Migrations
                     b.ToTable("ProjectRoles");
                 });
 
+            modelBuilder.Entity("CoralTime.DAL.Models.ReportsSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ClientIds");
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("CreatorId");
+
+                    b.Property<DateTime>("DateFrom");
+
+                    b.Property<DateTime>("DateTo");
+
+                    b.Property<int>("GroupById");
+
+                    b.Property<string>("LastEditorUserId");
+
+                    b.Property<DateTime>("LastUpdateDate");
+
+                    b.Property<int>("MemberId");
+
+                    b.Property<string>("MemberIds");
+
+                    b.Property<string>("ProjectIds");
+
+                    b.Property<string>("ShowColumnIds");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("LastEditorUserId");
+
+                    b.HasIndex("MemberId")
+                        .IsUnique();
+
+                    b.ToTable("ReportsSettings");
+                });
+
             modelBuilder.Entity("CoralTime.DAL.Models.Setting", b =>
                 {
                     b.Property<string>("Name")
@@ -354,20 +395,13 @@ namespace CoralTime.DAL.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(500);
 
-                    b.Property<bool>("IsEditable");
-
                     b.Property<bool>("IsFromToShow");
-
-                    b.Property<bool>("IsLocked");
 
                     b.Property<string>("LastEditorUserId");
 
                     b.Property<DateTime>("LastUpdateDate");
 
                     b.Property<int>("MemberId");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(200);
 
                     b.Property<int>("PlannedTime");
 
@@ -629,6 +663,22 @@ namespace CoralTime.DAL.Migrations
                     b.HasOne("CoralTime.DAL.Models.ApplicationUser", "LastEditor")
                         .WithMany()
                         .HasForeignKey("LastEditorUserId");
+                });
+
+            modelBuilder.Entity("CoralTime.DAL.Models.ReportsSettings", b =>
+                {
+                    b.HasOne("CoralTime.DAL.Models.ApplicationUser", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("CoralTime.DAL.Models.ApplicationUser", "LastEditor")
+                        .WithMany()
+                        .HasForeignKey("LastEditorUserId");
+
+                    b.HasOne("CoralTime.DAL.Models.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CoralTime.DAL.Models.TaskType", b =>

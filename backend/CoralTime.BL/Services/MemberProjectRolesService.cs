@@ -1,21 +1,20 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces;
-using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
+using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.MemberProjectRoles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
-using CoralTime.ViewModels.Member;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class MemberProjectRolesService : _BaseService, IMemberProjectRolesService
+    public class MemberProjectRolesService : BaseService, IMemberProjectRolesService
     {
         private readonly IProjectService _projectService;
 

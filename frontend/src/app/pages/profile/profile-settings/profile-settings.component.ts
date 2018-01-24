@@ -132,12 +132,15 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	resetPassword(): void {
-		this.enterEmailService.sendEmail(this.userModel.email).then((emailResponse) => {
-			if (emailResponse.isSentEmail) {
-				this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;
-				setTimeout(() => this.resetPasswordMessage = '', 5000);
-			}
-		});
+		this.enterEmailService.sendEmail(this.userModel.email).then(
+			(emailResponse) => {
+				if (emailResponse.isSentEmail) {
+					this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;
+					setTimeout(() => this.resetPasswordMessage = '', 5000);
+				} else {
+					this.notificationService.danger('Error when resetting the password.');
+				}
+			}, error => this.notificationService.danger('Error when resetting the password.'));
 	}
 
 	sendEmailDayOnChange(): void {
@@ -176,7 +179,13 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitNotifications(notificationsObject, this.userModel.id)
 			.subscribe(() => {
-					this.userInfoService.setUserInfo(notificationsObject);
+					if (this.impersonationService.impersonationId) {
+						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, notificationsObject);
+						this.impersonationService.setStorage(impersonateUser);
+					} else {
+						this.userInfoService.setUserInfo(notificationsObject);
+					}
+
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {
@@ -195,7 +204,16 @@ export class ProfileSettingsComponent implements OnInit {
 			.subscribe((userModel: any) => {
 					this.isEmailChanged = false;
 					this.userModel.email = userModel.Email;
-					this.userInfoService.setUserInfo(personalInfoObject);
+
+					if (this.impersonationService.impersonationId) {
+						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, personalInfoObject);
+						this.impersonationService.impersonationUser = impersonateUser;
+						this.impersonationService.setStorage(impersonateUser);
+						this.impersonationService.onChange.emit(impersonateUser);
+					} else {
+						this.userInfoService.setUserInfo(personalInfoObject);
+					}
+
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {
@@ -219,7 +237,13 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitPreferences(preferencesObject, this.userModel.id)
 			.subscribe(() => {
-					this.userInfoService.setUserInfo(preferencesObject);
+					if (this.impersonationService.impersonationId) {
+						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
+						this.impersonationService.setStorage(impersonateUser);
+					} else {
+						this.userInfoService.setUserInfo(preferencesObject);
+					}
+
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				error => {

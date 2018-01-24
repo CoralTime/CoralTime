@@ -1,11 +1,9 @@
 using AutoMapper;
+using CoralTime.BL.Interfaces;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.BL.Services;
-using CoralTime.BL.Services.Reports.DDAndGrid;
+using CoralTime.BL.Services.Reports.DropDownsAndGrid;
 using CoralTime.BL.Services.Reports.Export;
-using CoralTime.BL.ServicesInterfaces;
-using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
-using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
-using CoralTime.BL.ServicesInterfaces.Reports.Export;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.DAL;
@@ -245,7 +243,7 @@ namespace CoralTime
             // Add application services.
             services.AddSingleton<IConfiguration>(sp => Configuration);
 
-            services.AddScoped<_BaseService>();
+            services.AddScoped<BaseService>();
             services.AddScoped<UnitOfWork>();
             services.AddScoped<IPersistedGrantDbContext, AppDbContext>();
 
@@ -265,7 +263,7 @@ namespace CoralTime
             services.AddScoped<ITasksService, TasksService>();
             services.AddScoped<ITimeEntryService, TimeEntryService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<IReportExportService, ReportExportService>();
+            services.AddScoped<IReportExportService, ReportsExportService>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)

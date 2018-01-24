@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class ProjectRepository : _BaseRepository<Project>
+    public class ProjectRepository : BaseRepository<Project>
     {
         public ProjectRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }

@@ -19,6 +19,7 @@ import { ROWS_ON_PAGE } from '../../core/constant.service';
 
 export class UsersComponent implements OnInit {
 	currentUserId: number;
+	impersonateUserId: number;
 	isActiveTab: boolean = true;
 	isAllUsers: boolean = false;
 	filterStr: string = '';
@@ -44,6 +45,7 @@ export class UsersComponent implements OnInit {
 
 	ngOnInit() {
 		this.currentUserId = this.authService.getAuthUser().id;
+		this.impersonateUserId = this.impersonationService.impersonationId;
 		this.getUsers();
 	}
 

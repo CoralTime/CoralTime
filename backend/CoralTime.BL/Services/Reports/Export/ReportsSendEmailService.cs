@@ -1,44 +1,44 @@
 ﻿using CoralTime.Common.Helpers;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.ReportsEmails;
+using CoralTime.ViewModels.Reports.Request.Emails;
 using MimeKit;
 using System.Threading.Tasks;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService
+    public partial class ReportsExportService
     {
-        public async Task SentGroupByNone(string userName, ReportsSendAsEmailView emailData)
+        public async Task ExportEmailGroupByNone(string userName, ReportsExportEmailView emailData)
         {
-            var groupByNone = _reportService.GroupByNone(userName, emailData);
+            var groupByNone = _reportService.ReportsGridGroupByNone(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByNone);
         }
 
-        public async Task SentGroupByProjects(string userName, ReportsSendAsEmailView emailData)
+        public async Task ExportEmailGroupByProjects(string userName, ReportsExportEmailView emailData)
         {
-            var groupByProjects = _reportService.GroupByProjects(userName, emailData);
+            var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByProjects);
         }
 
-        public async Task SentGroupByUsers(string userName, ReportsSendAsEmailView emailData)
+        public async Task ExportEmailGroupByUsers(string userName, ReportsExportEmailView emailData)
         {
-            var groupByUsers = _reportService.GroupByUsers(userName, emailData);
+            var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByUsers);
         }
 
-        public async Task SentGroupByDates(string userName, ReportsSendAsEmailView emailData)
+        public async Task ExportEmailGroupByDates(string userName, ReportsExportEmailView emailData)
         {
-            var groupByDates = _reportService.GroupByDates(userName, emailData);
+            var groupByDates = _reportService.ReportsGridGroupByDates(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByDates);
         }
 
-        public async Task SentGroupByClients(string userName, ReportsSendAsEmailView emailData)
+        public async Task ExportEmailGroupByClients(string userName, ReportsExportEmailView emailData)
         {
-            var groupByClients = _reportService.GroupByClients(userName, emailData);
+            var groupByClients = _reportService.ReportsGridGroupByClients(userName, emailData);
             await SendReportWithGroupingAsync(emailData, groupByClients);
         }
 
-        private async Task SendReportWithGroupingAsync<T>(ReportsSendAsEmailView emailData, IReportsGrandGridView<T> groupedList)
+        private async Task SendReportWithGroupingAsync<T>(ReportsExportEmailView emailData, IReportsGrandGridView<T> groupedList)
         {
             var fileByte = CreateReportFileByteUpdateFileNameContentType(emailData, groupedList, out var contentType);
 

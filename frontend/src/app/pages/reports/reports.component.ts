@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {
 	ReportsService, ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportsSettings
+	GroupByItem, ClientDetail, ReportFilters
 } from '../../services/reposts.service';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
 import { ArrayUtils } from '../../core/object-utils';
@@ -25,18 +25,16 @@ import Moment = moment.Moment;
 export class ReportsComponent implements OnInit {
 	reportDropdowns: ReportDropdowns;
 	reportsGridData: ReportGrid;
+	reportFilters: ReportFilters;
 
-	clientIds: number[];
 	clientItems: CustomSelectItem[] = [];
 	clients: ClientDetail[] = [];
 	selectedClients: ClientDetail[] = [];
 
-	projectIds: number[] = [];
 	projects: ProjectDetail[] = [];
 	projectItems: CustomSelectItem[] = [];
 	selectedProjects: ProjectDetail[] = [];
 
-	userIds: number[] = [];
 	users: UserDetail[] = [];
 	userItems: CustomSelectItem[] = [];
 
@@ -50,7 +48,6 @@ export class ReportsComponent implements OnInit {
 
 	showColumnItems: CustomSelectItem[];
 	showColumnIds: number[];
-	showColumns: number[];
 
 	isDatepickerShown: boolean = false;
 	isDatepickerAnimating: boolean = false;
@@ -76,42 +73,68 @@ export class ReportsComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.route.data.forEach((data: { user: User }) => {
+		this.route.data.forEach((data: { user: User, reportFilters: ReportDropdowns }) => {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 			this.dateFormat = this.userInfo.dateFormat;
 			this.dateFormatId = this.userInfo.dateFormatId;
 			this.firstDayOfWeek = this.userInfo.weekStart;
 			this.rangeDatepickerService.setDatePeriodList(this.userInfo.weekStart);
+			this.setReportDropdowns(data.reportFilters);
 		});
-		this.getReportSettings();
 		this.isUsersFilterShown = this.authService.isUserAdminOrManager;
-		this.getReportDropdowns();
 		this.getReportGrid();
 	}
 
 	groupByChange(): void {
-		this.updateReportSettings();
+		this.reportFilters.groupById = this.groupModel.id;
 		this.getReportGrid();
 	}
 
-	getReportDropdowns(): void {
-		this.reportsService.getReportDropdowns().subscribe((res: ReportDropdowns) => {
-			this.reportDropdowns = res;
+	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
+		this.reportDropdowns = reportDropdowns;
 
-			this.getClientItems(res.clientsDetails);
-			this.getProjectItems(this.clients);
-			this.getUserItems(this.projects);
-		});
+		this.setReportFilters(reportDropdowns.valuesSaved);
+		this.setReportsGroupBy(reportDropdowns.values.groupBy);
+		this.setShowColumnItems();
+
+		this.getClientItems(reportDropdowns.values.filters);
+		this.getProjectItems(this.clients);
+		this.getUserItems(this.projects);
+	}
+
+	private setReportsGroupBy(groupByArray: GroupByItem[]): void {
+		this.groupByItems = groupByArray;
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportFilters.groupById);
+	}
+
+	private setReportFilters(reportFilters: ReportFilters): void {
+		this.reportFilters = new ReportFilters(reportFilters);
+		this.showColumnIds = this.reportFilters.showColumnIds || [];
+
+		if (reportFilters.dateFrom && reportFilters.dateTo) {
+			this.datePeriodOnChange(new DatePeriod(moment(reportFilters.dateFrom), moment(reportFilters.dateTo)));
+		} else {
+			this.datePeriod = this.rangeDatepickerService.getDatePeriodList()['This Week'];
+			this.datePeriodOnChange(this.datePeriod);
+		}
+	}
+
+	private setShowColumnItems(): void {
+		this.showColumnItems = [
+			new CustomSelectItem('Show Estimated Hours', 1),
+			new CustomSelectItem('Show Date', 2),
+			new CustomSelectItem('Show Notes', 3),
+			new CustomSelectItem('Show Start/Finish Time', 4)
+		];
 	}
 
 	getReportGrid(): void {
+		this.reportFilters.dateFrom = this.convertMomentToString(this.datePeriod.dateFrom);
+		this.reportFilters.dateTo = this.convertMomentToString(this.datePeriod.dateTo)
+			|| this.convertMomentToString(this.datePeriod.dateFrom);
+
 		let filters = {
-			dateFrom: this.convertMomentToString(this.datePeriod.dateFrom),
-			dateTo: this.convertMomentToString(this.datePeriod.dateTo) || this.convertMomentToString(this.datePeriod.dateFrom),
-			projectIds: this.projectIds,
-			memberIds: this.userIds,
-			clientIds: this.clientIds,
-			groupById: this.groupModel ? this.groupModel.groupById : 3
+			valuesSaved: this.reportFilters
 		};
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
@@ -132,17 +155,6 @@ export class ReportsComponent implements OnInit {
 		}
 
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
-	}
-
-	private updateReportSettings(): void {
-		this.reportsService.setReportSettings({
-			clientIds: this.clientIds,
-			datePeriod: this.datePeriod,
-			groupById: this.groupModel ? this.groupModel.groupById : 3,
-			projectIds: this.projectIds,
-			showColumnIds: this.showColumnIds,
-			userIds: this.userIds,
-		});
 	}
 
 	// ACTIONS
@@ -178,7 +190,6 @@ export class ReportsComponent implements OnInit {
 	datePeriodOnChange(datePeriod: DatePeriod): void {
 		this.datePeriod = datePeriod;
 		this.setDateString(datePeriod);
-		this.updateReportSettings();
 	}
 
 	getNewPeriod(isNext: boolean = true): void {
@@ -201,27 +212,20 @@ export class ReportsComponent implements OnInit {
 
 		this.setDateString(this.datePeriod);
 		this.getReportGrid();
-		this.updateReportSettings();
 	}
 
 	openSendReportsDialog(): void {
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
-			clientIds: this.clientIds,
 			dateFormatId: this.dateFormatId,
-			dateFrom: this.convertMomentToString(this.datePeriod.dateFrom),
-			dateTo: this.convertMomentToString(this.datePeriod.dateTo) || this.convertMomentToString(this.datePeriod.dateFrom),
-			groupById: this.groupModel ? this.groupModel.groupById : 3,
-			memberIds: this.userIds,
-			projectIds: this.projectIds,
-			showColumnIds: this.showColumnIds
+			valuesSaved: this.reportFilters
 		});
 		this.reportsSendRef.componentInstance.dateFormat = this.dateFormat;
 		this.reportsSendRef.componentInstance.userInfo = this.userInfo;
 
-		if (this.projectIds.length === 1) {
+		if (this.reportFilters.projectIds.length === 1) {
 			this.reportsSendRef.componentInstance.projectName
-				= ArrayUtils.findByProperty(this.projectItems, 'value', this.projectIds[0]).label;
+				= ArrayUtils.findByProperty(this.projectItems, 'value', this.reportFilters.projectIds[0]).label;
 		}
 
 		this.reportsSendRef.componentInstance.onSubmit.subscribe((event) => {
@@ -239,12 +243,12 @@ export class ReportsComponent implements OnInit {
 	}
 
 	resetFilters(): void {
-		this.clientIds = [];
-		this.projectIds = [];
-		this.userIds = [];
+		this.reportFilters.clientIds = [];
+		this.reportFilters.projectIds = [];
+		this.reportFilters.memberIds = [];
 		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById === 3);
-		this.toggleClient(this.clientIds);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
+		this.toggleClient(this.reportFilters.clientIds);
 	}
 
 	private changeCloseParameter(): void {
@@ -262,22 +266,16 @@ export class ReportsComponent implements OnInit {
 	}
 
 	submitSettings(showColumnIds: number[]): void {
-		this.showColumns = showColumnIds;
-		this.updateReportSettings();
+		this.showColumnIds = showColumnIds;
+		this.getReportGrid();
 	}
 
 	exportAs(fileTypeId: number): void {
 		let filters = {
-			clientIds: this.clientIds,
-			dateFormatId: this.dateFormatId,
-			dateFrom: this.convertMomentToString(this.datePeriod.dateFrom),
-			dateTo: this.convertMomentToString(this.datePeriod.dateTo) || this.convertMomentToString(this.datePeriod.dateFrom),
 			fileTypeId: fileTypeId,
-			groupById: this.groupModel ? this.groupModel.groupById : 3,
-			memberIds: this.userIds,
-			projectIds: this.projectIds,
-			showColumnIds: this.showColumnIds
+			valuesSaved: this.reportFilters
 		};
+
 		this.reportsService.exportAs(filters).subscribe();
 	}
 
@@ -300,16 +298,16 @@ export class ReportsComponent implements OnInit {
 
 		this.getProjectItems(this.selectedClients.length ? this.selectedClients : this.clients);
 
-		this.projectIds = this.projectIds.filter((projectId: number) => {
+		this.reportFilters.projectIds = this.reportFilters.projectIds.filter((projectId: number) => {
 			return this.projects.find((project: ProjectDetail) => project.projectId === projectId);
 		});
 
-		this.toggleProject(this.projectIds);
+		this.toggleProject(this.reportFilters.projectIds);
 	}
 
 	toggleArchivedClients(): void {
 		this.showOnlyActiveClients = !this.showOnlyActiveClients;
-		this.getClientItems(this.reportDropdowns.clientsDetails);
+		this.getClientItems(this.reportDropdowns.values.filters);
 	}
 
 	toggleProject(projectIds: number[] = []): void {
@@ -321,7 +319,7 @@ export class ReportsComponent implements OnInit {
 
 		this.getUserItems(this.selectedProjects.length ? this.selectedProjects : this.projects);
 
-		this.userIds = this.userIds.filter((userId: number) => {
+		this.reportFilters.memberIds = this.reportFilters.memberIds.filter((userId: number) => {
 			return this.users.find((user: UserDetail) => user.userId === userId);
 		});
 
@@ -330,16 +328,15 @@ export class ReportsComponent implements OnInit {
 
 	toggleArchivedProjects(): void {
 		this.showOnlyActiveProjects = !this.showOnlyActiveProjects;
-		this.getProjectItems(this.selectedClients.length ? this.selectedClients : this.reportDropdowns.clientsDetails);
+		this.getProjectItems(this.selectedClients.length ? this.selectedClients : this.reportDropdowns.values.filters);
 
-		if (this.reportDropdowns.isAdminCurrentUser || this.reportDropdowns.isManagerCurrentUser) {
+		if (this.reportDropdowns.values.userDetails.isAdminCurrentUser || this.reportDropdowns.values.userDetails.isManagerCurrentUser) {
 			this.getUserItems(this.projects);
 		}
 	}
 
 	toggleUser(): void {
 		this.getReportGrid();
-		this.updateReportSettings();
 	}
 
 	toggleArchivedUsers(): void {
@@ -376,7 +373,7 @@ export class ReportsComponent implements OnInit {
 	private getUsersFromProjects(projects: ProjectDetail[]): UserDetail[] {
 		let users = [];
 
-		if (!this.reportDropdowns.isAdminCurrentUser && this.reportDropdowns.isManagerCurrentUser) {
+		if (!this.reportDropdowns.values.userDetails.isAdminCurrentUser && this.reportDropdowns.values.userDetails.isManagerCurrentUser) {
 			projects = projects.filter((project: ProjectDetail) => project.isUserManagerOnProject === true);
 		}
 
@@ -405,37 +402,5 @@ export class ReportsComponent implements OnInit {
 				return true;
 			}
 		}, Object.create(null));
-	}
-
-	private getReportSettings(): void {
-		this.setShowColumnItems();
-		let reportsSettings: ReportsSettings = this.reportsService.getReportSettings();
-
-		this.showColumnIds = reportsSettings.showColumnIds;
-		this.showColumns = this.showColumnIds;
-		this.clientIds = reportsSettings.clientIds;
-		this.projectIds = reportsSettings.projectIds;
-		this.userIds = reportsSettings.userIds;
-
-		if (reportsSettings.datePeriod) {
-			this.datePeriodOnChange(reportsSettings.datePeriod);
-		} else {
-			this.datePeriod = this.rangeDatepickerService.getDatePeriodList()['This Week'];
-			this.datePeriodOnChange(this.datePeriod);
-		}
-
-		this.reportsService.getReportsGroupBy().subscribe((res: GroupByItem[]) => {
-			this.groupByItems = res;
-			this.groupModel = this.groupByItems.find((group: GroupByItem) => group.groupById === reportsSettings.groupById);
-		});
-	}
-
-	private setShowColumnItems(): void {
-		this.showColumnItems = [
-			new CustomSelectItem('Show Estimated Hours', 1),
-			new CustomSelectItem('Show Date', 2),
-			new CustomSelectItem('Show Notes', 3),
-			new CustomSelectItem('Show Start/Finish Time', 4)
-		];
 	}
 }

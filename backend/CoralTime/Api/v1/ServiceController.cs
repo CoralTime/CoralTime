@@ -1,5 +1,4 @@
-using CoralTime.BL.ServicesInterfaces;
-using CoralTime.BL.ServicesInterfaces.MemberProjecRole;
+using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
 using CoralTime.Common.Middlewares;
@@ -11,7 +10,7 @@ namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
     [CheckSecureHeader(Constants.SecureHeaderService)]
-    public class ServiceController : _BaseController<ServiceController, IMemberService>
+    public class ServiceController : BaseController<ServiceController, IMemberService>
     {
         private readonly IMemberProjectRolesService _roleService;
 

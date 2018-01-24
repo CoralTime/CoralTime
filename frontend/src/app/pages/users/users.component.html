@@ -62,7 +62,9 @@
 
             <p-column [style]="{'width':'60px'}">
                 <ng-template let-col let-user="rowData" pTemplate="body">
-                    <a *ngIf="user.id != currentUserId" class="ct-grid-link" (click)="impersonateMember(user)"><i class="ct-edit-timesheet-icon"></i></a>
+                    <a *ngIf="user.id !== currentUserId && user.id !== impersonateUserId" class="ct-grid-link" (click)="impersonateMember(user)">
+                        <i class="ct-edit-timesheet-icon"></i>
+                    </a>
                 </ng-template>
             </p-column>
         </p-dataTable>

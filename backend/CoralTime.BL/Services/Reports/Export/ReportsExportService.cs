@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
-using CoralTime.BL.ServicesInterfaces.Reports.DDAndGrid;
-using CoralTime.BL.ServicesInterfaces.Reports.Export;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
-using CoralTime.Common.Models;
+using CoralTime.Common.Helpers;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.PDF;
+using CoralTime.ViewModels.Reports.Request.Grid;
+using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,19 +18,16 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Reports.PDF;
-using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService : _BaseService, IReportExportService
+    public partial class ReportsExportService : BaseService, IReportExportService
     {
         private IHostingEnvironment _environment { get; }
         private readonly IConfiguration _configuration;
         private readonly IReportService _reportService;
 
-        public ReportExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportService reportService)
+        public ReportsExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportService reportService)
             : base(uow, mapper)
         {
             _configuration = configuration;
@@ -133,7 +131,16 @@ namespace CoralTime.BL.Services.Reports.Export
             ExcludePropertyByDefault.TaskId.ToString(),
         };
 
-        private readonly ShowColumnModel[] showColumnsInfo =
+
+        private enum ShowColumnModelIds
+        {
+            ShowEstimatedTime = 1 ,
+            ShowDate = 2,
+            ShowNotes = 3,
+            ShowStartFinish = 4
+        }
+
+        public static readonly ShowColumnModel[] showColumnsInfo =
         {
             //new ShowColumnModel{ Id = 0, ShowColumnDescriptions = new List<ShowColumnDescription>
             //{
@@ -141,21 +148,21 @@ namespace CoralTime.BL.Services.Reports.Export
             //    new ShowColumnDescription { Name = InternalProperties.TotalActualTime.ToString(), Description = "Show Total Actual Hours" },
             //    new ShowColumnDescription { Name = ExternalProperties.GrandActualTime.ToString(), Description = "Show Grand Actual Hours" },
             //}},
-            new ShowColumnModel{ Id = 1, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowEstimatedTime, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.EstimatedTime.ToString(), Description = "Show Estimated Hours" },
                 new ShowColumnDescription { Name = InternalProperties.TotalEstimatedTime.ToString(), Description = "Show Total Estimated Hours" },
                 new ShowColumnDescription { Name = ExternalProperties.GrandEstimatedTime.ToString(), Description = "Show Grand Estimated Hours" },
             }},
-            new ShowColumnModel{ Id = 2, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowDate, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.Date.ToString(), Description = "Show Date"}
             }},
-            new ShowColumnModel{ Id = 3, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowNotes, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.Description.ToString(), Description = "Show Notes"}
             }},
-            new ShowColumnModel{ Id = 4, ShowColumnDescriptions = new List<ShowColumnDescription>
+            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowStartFinish, ShowColumnDescriptions = new List<ShowColumnDescription>
             {
                 new ShowColumnDescription { Name = InternalProperties.TimeFrom.ToString(), Description = "Show Start Time"},
                 new ShowColumnDescription { Name = InternalProperties.TimeTo.ToString(), Description = "Show Finish Time"}
@@ -166,41 +173,41 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. 
 
-        public FileResult ExportGroupByNone(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByNone(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByNone = _reportService.GroupByNone(userName, reportsGridData);
+            var groupByNone = _reportService.ReportsGridGroupByNone(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByNone);
 
             return result;
         }
 
-        public FileResult ExportGroupByProjects(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByProjects(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByProjects = _reportService.GroupByProjects(userName, reportsGridData);
+            var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByProjects);
 
             return result;
         }
 
-        public FileResult ExportGroupByUsers(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByUsers(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByUsers = _reportService.GroupByUsers(userName, reportsGridData);
+            var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByUsers);
 
             return result;
         }
 
-        public FileResult ExportGroupByDates(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByDates(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByDates = _reportService.GroupByDates(userName, reportsGridData);
+            var groupByDates = _reportService.ReportsGridGroupByDates(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByDates);
 
             return result;
         }
 
-        public FileResult ExportGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByClient = _reportService.GroupByClients(userName, reportsGridData);
+            var groupByClient = _reportService.ReportsGridGroupByClients(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByClient);
 
             return result;
@@ -292,9 +299,9 @@ namespace CoralTime.BL.Services.Reports.Export
 
             #region Set Global Properties. 
 
-            GroupById = reportsGridData.GroupById ?? 0;
+            GroupById = reportsGridData.ValuesSaved.GroupById;
 
-            ShowColumnIds = reportsGridData.ShowColumnIds;
+            ShowColumnIds = reportsGridData.ValuesSaved.ShowColumnIds;
 
             DateFormatId = reportsGridData.DateFormatId;
 

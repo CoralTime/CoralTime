@@ -9,6 +9,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ConvertersViews\ReportView\ReportsGridItemView.cs" />
+    <Compile Remove="Migrations\20180119132135_Initial2.cs" />
+    <Compile Remove="Migrations\20180119134640_Add Reports Settings.cs" />
+    <Compile Remove="Migrations\20180119135000_Add Reports Settings.cs" />
+    <Compile Remove="Migrations\20180119135209_Add Reports Settings.cs" />
+    <Compile Remove="Migrations\20180119135404_Add Reports Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />

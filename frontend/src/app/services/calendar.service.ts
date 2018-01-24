@@ -3,14 +3,11 @@ import { Observable } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 import { TimeEntry, CalendarDay } from '../models/calendar';
 import { ArrayUtils } from '../core/object-utils';
-import { AuthService } from '../core/auth/auth.service';
-import { Project } from '../models/project';
 import { ConstantService } from '../core/constant.service';
 import * as moment from 'moment';
 
 @Injectable()
 export class CalendarService {
-	defaultProject: Project;
 	dragEffect: string = 'move';
 	draggedTimeEntry: TimeEntry;
 	fakeCalendarTaskHeight: number;
@@ -22,16 +19,8 @@ export class CalendarService {
 
 	calendar: CalendarDay[] = [];
 
-	constructor(private authService: AuthService,
-	            private constantService: ConstantService,
+	constructor(private constantService: ConstantService,
 	            private http: Http) {
-		if (localStorage.hasOwnProperty('DEFAULT_PROJECT')) {
-			this.defaultProject = JSON.parse(localStorage.getItem('DEFAULT_PROJECT'));
-		}
-
-		this.authService.onChange.subscribe(() => {
-			this.setDefaultProject(null);
-		});
 	}
 
 	getTimeEntries(dateFrom: Date, dif?: number): Observable<TimeEntry[]> {
@@ -49,9 +38,8 @@ export class CalendarService {
 			});
 	}
 
-	Delete(id: string): Observable<TimeEntry[]> {
-		return this.http.delete(this.constantService.timeEntriesApi + id)
-			.map((res: Response) => res.json());
+	Delete(id: string): Observable<Response> {
+		return this.http.delete(this.constantService.timeEntriesApi + id);
 	}
 
 	Patch(obj: TimeEntry, id: string): Observable<any> {
@@ -92,11 +80,6 @@ export class CalendarService {
 	getWeekBeginning(date: Date, firstDayOfWeek: number): Date {
 		let firstDayCorrection: number = ((date.getDay() < firstDayOfWeek) ? -7 : 0);
 		return new Date(date.setDate(date.getDate() - date.getDay() + firstDayOfWeek + firstDayCorrection));
-	}
-
-	setDefaultProject(project: Project): void {
-		this.defaultProject = project;
-		localStorage.setItem('DEFAULT_PROJECT', JSON.stringify(project));
 	}
 
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {

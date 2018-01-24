@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
-    public partial class ReportExportService
+    public partial class ReportsExportService
     {
         private byte[] CreateFileCSV<T>(IReportsGrandGridView<T> data)
         {

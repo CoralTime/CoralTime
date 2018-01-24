@@ -1,16 +1,13 @@
 ﻿using CoralTime.Common.Constants;
-using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace CoralTime.DAL.Repositories
 {
     // TODO Rewrite  Convert -> Convert To with mapper!
-    public class MemberProjectRoleRepository : _BaseRepository<MemberProjectRole>
+    public class MemberProjectRoleRepository : BaseRepository<MemberProjectRole>
     {
         private readonly AppDbContext _context;
 

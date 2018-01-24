@@ -3,20 +3,20 @@ using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Request.ReportsGrid;
+using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using static CoralTime.Common.Constants.Constants;
 
-namespace CoralTime.BL.Services.Reports.DDAndGrid
+namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
 
-        public ReportsGrandGridTimeEntryView GroupByNone(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridTimeEntry = new ReportsGrandGridTimeEntryView
             {
@@ -44,7 +44,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             return result;
         }
 
-        public ReportsGrandGridProjectsView GroupByProjects(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridProjects = new ReportsGrandGridProjectsView
             {
@@ -73,7 +73,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             return result;
         }
 
-        public ReportsGrandGridMembersView GroupByUsers(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridUsers = new ReportsGrandGridMembersView
             {
@@ -102,7 +102,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             return result;
         }
 
-        public ReportsGrandGridDatesView GroupByDates(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridDates = new ReportsGrandGridDatesView
             {
@@ -130,7 +130,7 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
             return result;
         }
 
-        public ReportsGrandGridClients GroupByClients(string userName, RequestReportsGrid reportsGridData)
+        public ReportsGrandGridClients ReportsGridGroupByClients(string userName, RequestReportsGrid reportsGridData)
         {
             var reportsGridClients = new ReportsGrandGridClients
             {
@@ -179,28 +179,28 @@ namespace CoralTime.BL.Services.Reports.DDAndGrid
 
             CommonHelpers.SetRangeOfWeekByDate(out var weekStart, out var weekEnd, DateTime.Now);
 
-            DateFrom = reportsGridData?.DateFrom ?? weekStart;
-            DateTo = reportsGridData?.DateTo ?? weekEnd;
+            DateFrom = reportsGridData.ValuesSaved?.DateFrom ?? weekStart;
+            DateTo = reportsGridData.ValuesSaved?.DateTo ?? weekEnd;
 
             // By Dates (default grouping, i.e. "Group by None"; direct order).
             var timeEntriesByDateOfUser = GetTimeEntryByDate(currentMember, DateFrom, DateTo);
 
             // By Projects.
-            if (reportsGridData?.ProjectIds != null && reportsGridData.ProjectIds.Length > 0)
+            if (reportsGridData.ValuesSaved?.ProjectIds != null && reportsGridData.ValuesSaved.ProjectIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ProjectIds.Contains(x.ProjectId));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ValuesSaved.ProjectIds.Contains(x.ProjectId));
             }
 
             // By Members.
-            if (reportsGridData?.MemberIds != null && reportsGridData.MemberIds.Length > 0)
+            if (reportsGridData.ValuesSaved?.MemberIds != null && reportsGridData.ValuesSaved.MemberIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.MemberIds.Contains(x.MemberId));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ValuesSaved.MemberIds.Contains(x.MemberId));
             }
 
             // By Clients that has Projects.
-            if (reportsGridData?.ClientIds != null && reportsGridData.ClientIds.Length > 0)
+            if (reportsGridData.ValuesSaved?.ClientIds != null && reportsGridData.ValuesSaved.ClientIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridData.ClientIds.Contains(WithoutClient.Id));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.ValuesSaved.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridData.ValuesSaved.ClientIds.Contains(WithoutClient.Id));
             }
 
             return timeEntriesByDateOfUser;

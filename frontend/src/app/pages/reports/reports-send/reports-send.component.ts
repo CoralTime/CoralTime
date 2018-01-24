@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ClientsService } from '../../../services/clients.service';
 import { Client } from '../../../models/client';
-import { ReportsService } from '../../../services/reposts.service';
+import { ReportFilters, ReportsService } from '../../../services/reposts.service';
 import { NgForm } from '@angular/forms';
 import { User } from '../../../models/user';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
@@ -10,37 +10,25 @@ import * as moment from 'moment';
 export class SendReportsFormModel {
 	bccEmails: string[];
 	ccEmails: string[];
-	clientIds: number[];
 	comment: string;
 	dateFormatId: number;
-	dateFrom: string;
-	dateTo: string;
 	fileTypeId: number;
 	fromEmail: string;
-	groupById: number;
-	memberIds: number[];
-	projectIds: number[];
-	showColumnIds: number;
 	subject: string;
 	toEmail: string;
+	valuesSaved: ReportFilters;
 
 	constructor(data: any = null) {
 		if (data) {
 			this.bccEmails = data.bccEmails || [];
 			this.ccEmails = data.ccEmails || [];
-			this.clientIds = data.clientIds;
 			this.comment = data.comment;
 			this.dateFormatId = data.dateFormatId;
-			this.dateFrom = data.dateFrom;
-			this.dateTo = data.dateTo;
 			this.fileTypeId = data.fileTypeId;
 			this.fromEmail = data.fromEmail;
-			this.groupById = data.groupById;
-			this.memberIds = data.memberIds;
-			this.projectIds = data.projectIds;
-			this.showColumnIds = data.showColumnIds;
 			this.subject = data.subject;
 			this.toEmail = data.toEmail;
+			this.valuesSaved = data.valuesSaved;
 		}
 	}
 }
@@ -78,7 +66,6 @@ export class ReportsSendComponent implements OnInit {
 
 	clients: Client[];
 	clientModel: Client;
-	emailFromError: string;
 	emailPattern = EMAIL_PATTERN;
 	isCcFormValid: boolean = true;
 	isBccFormValid: boolean = true;
@@ -96,24 +83,15 @@ export class ReportsSendComponent implements OnInit {
 	ngOnInit() {
 		this.clientsService.getClients().subscribe((clients) => {
 			this.clients = clients.filter((client: Client) => !!client.email === true);
-			if (this.model.clientIds && this.model.clientIds.length === 1) {
-				let selectedClient = clients.filter((client: Client) => client.id === this.model.clientIds[0])[0];
+			if (this.model.valuesSaved.clientIds && this.model.valuesSaved.clientIds.length === 1) {
+				let selectedClient = clients.filter((client: Client) => client.id === this.model.valuesSaved.clientIds[0])[0];
 				this.model.toEmail = selectedClient.email;
 			}
 		});
 		this.model.fromEmail = this.userInfo.email;
 		let addProjectName = this.projectName ? this.projectName + ': ' : '';
-		this.model.subject = 'CoralTime: ' + addProjectName + this.formatDate(this.model.dateFrom)
-			+ ' - ' + this.formatDate(this.model.dateTo);
-	}
-
-	checkIsFromEmailEmpty(): void {
-		this.emailFromError = null;
-
-		if (!this.model.fromEmail) {
-			this.emailFromError = 'Client sender email is required.';
-			return;
-		}
+		this.model.subject = 'CoralTime: ' + addProjectName + this.formatDate(this.model.valuesSaved.dateFrom)
+			+ ' - ' + this.formatDate(this.model.valuesSaved.dateTo);
 	}
 
 	showErrors(): void {
@@ -123,7 +101,6 @@ export class ReportsSendComponent implements OnInit {
 
 	submit(form: NgForm): void {
 		if (form.invalid || !this.isCcFormValid || !this.isBccFormValid) {
-			this.checkIsFromEmailEmpty();
 			this.showErrors();
 			return;
 		}
@@ -135,7 +112,7 @@ export class ReportsSendComponent implements OnInit {
 		});
 	}
 
-	private formatDate(utcDate: string): string {
+	private formatDate(utcDate: Date | string): string {
 		if (!utcDate) {
 			return;
 		}

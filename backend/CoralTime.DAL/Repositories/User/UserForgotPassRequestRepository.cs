@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class UserForgotPassRequestRepository : _BaseRepository<UserForgotPassRequest>
+    public class UserForgotPassRequestRepository : BaseRepository<UserForgotPassRequest>
     {
         private readonly AppDbContext _context;
 

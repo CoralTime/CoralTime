@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports.ReportsDropwDowns;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 
 namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
 {
