@@ -4,9 +4,9 @@ namespace CoralTime.ViewModels.Reports.Responce
 {
     public class ReportsSettings : IReportsSettings
     {
-        public DateTime DateFrom { get; set; }
+        public DateTime? DateFrom { get; set; }
 
-        public DateTime DateTo { get; set; }
+        public DateTime? DateTo { get; set; }
 
         public string ProjectIds { get; set; }
 
@@ -14,7 +14,7 @@ namespace CoralTime.ViewModels.Reports.Responce
 
         public string ClientIds { get; set; }
 
-        public int GroupById { get; set; }
+        public int? GroupById { get; set; }
 
         public string ShowColumnIds { get; set; }
     }

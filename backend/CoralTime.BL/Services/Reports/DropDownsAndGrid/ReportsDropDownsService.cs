@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public ReportsDropDownsView ReportsDropDowns(string userName)
         {
-            var user = Uow.UserRepository.GetRelatedUserByName(userName);
+            Uow.UserRepository.GetRelatedUserByName(userName);
             var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(userName);
 
             var reportDropDowns = new ReportsDropDownsView
@@ -194,9 +194,20 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             if (reportsSettings != null)
             {
-                dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
-                dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
-                dropDownsValuesSaved.GroupById = reportsSettings.GroupById;
+                if (reportsSettings.GroupById.HasValue)
+                {
+                    dropDownsValuesSaved.GroupById = reportsSettings.GroupById;
+                }
+
+                if (reportsSettings.DateFrom.HasValue)
+                {
+                    dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
+                }
+
+                if (reportsSettings.DateTo.HasValue)
+                {
+                    dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
+                }
 
                 if (!string.IsNullOrEmpty(reportsSettings.ClientIds))
                 {

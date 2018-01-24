@@ -16,11 +16,11 @@ namespace CoralTime.DAL.Models
         [ForeignKey("MemberId")]
         public Member Member { get; set; }
 
-        public DateTime DateFrom { get; set; }
+        public DateTime? DateFrom { get; set; }
 
-        public DateTime DateTo { get; set; }
+        public DateTime? DateTo { get; set; }
 
-        public int GroupById { get; set; }
+        public int? GroupById { get; set; }
 
         public string ClientIds { get; set; }
 
