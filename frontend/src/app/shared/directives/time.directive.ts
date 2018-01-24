@@ -5,8 +5,8 @@ import { Directive, ElementRef, HostListener, Output, EventEmitter } from '@angu
 })
 
 export class TimeDirective {
-	@Output() change: EventEmitter<any> = new EventEmitter();
 	@Output() ngModelChange: EventEmitter<any> = new EventEmitter();
+	@Output() timeChanged: EventEmitter<any> = new EventEmitter();
 
 	private oldValue: string;
 
@@ -44,7 +44,7 @@ export class TimeDirective {
 
 		if (time !== this.oldValue) {
 			this.ngModelChange.emit(time);
-			this.change.emit(time);
+			this.timeChanged.emit(time);
 		}
 	}
 

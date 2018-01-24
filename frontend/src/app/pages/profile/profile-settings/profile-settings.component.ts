@@ -207,7 +207,9 @@ export class ProfileSettingsComponent implements OnInit {
 
 					if (this.impersonationService.impersonationId) {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, personalInfoObject);
+						this.impersonationService.impersonationUser = impersonateUser;
 						this.impersonationService.setStorage(impersonateUser);
+						this.impersonationService.onChange.emit(impersonateUser);
 					} else {
 						this.userInfoService.setUserInfo(personalInfoObject);
 					}
