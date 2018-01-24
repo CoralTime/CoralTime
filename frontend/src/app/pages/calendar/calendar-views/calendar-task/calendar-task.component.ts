@@ -84,7 +84,8 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	calculateCalendarTaskHeight(): number {
-		return Math.max(this.timeEntry.time / 3600, 1) * 132  - 42;
+		let taskHeight = Math.max(this.timeEntry.time / 3600, 1) * 142  - 42;
+		return this.timeEntry.isFromToShow ? taskHeight - 25 : taskHeight;
 	}
 
 	duplicateAction(): void {

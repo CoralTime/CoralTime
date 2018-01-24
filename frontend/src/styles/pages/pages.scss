@@ -95,9 +95,20 @@ html, body {
 }
 
 .ct-impersonation-header + .ct-wrapper {
-  margin-top: 50px;
+  padding-top: 50px;
+  height: calc(100% - 50px);
 
-  .ct-calendar-weekly-view .ct-calendar .ct-calendar-day-title {
-    top: 160px;
+  .ct-calendar-weekly-view .ct-calendar {
+    .ct-calendar-day-title {
+      top: 160px;
+    }
+
+    .ct-calendar-day {
+      min-height: calc(100vh - 160px);
+    }
+  }
+
+  .ct-grid-container .ui-datatable-scrollable-body {
+    max-height: calc(100vh - 196px);
   }
 }

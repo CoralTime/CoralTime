@@ -261,10 +261,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	validateFromToForm(timeFrom: string, timeTo: string): void {
-		if (!isString(timeFrom) || !isString(timeTo)) {
-			return;
-		}
-
 		this.isFormChanged = true;
 		this.isFromToFormChanged = true;
 		this.isFromToFormFocus = false;
