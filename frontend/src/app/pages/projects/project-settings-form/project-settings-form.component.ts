@@ -51,8 +51,9 @@ export class ProjectSettingsFormComponent implements OnInit {
 	@Input() project: Project;
 	@Output() onSaved = new EventEmitter();
 
-	model: ProjectSettingsModel;
 	lockPeriodModel: any;
+	model: ProjectSettingsModel;
+	numberMask = [/[1-9]/, /\d/];
 
 	lockPediods = [
 		{value: 2, viewValue: 'Month'},
@@ -69,12 +70,6 @@ export class ProjectSettingsFormComponent implements OnInit {
 
 	lockPeriodOnChange(): void {
 		this.model.lockPeriod = this.lockPeriodModel.value;
-	}
-
-	validateDaysNumber(daysNumber: number): number {
-		daysNumber = Math.max(1, +daysNumber);
-		daysNumber = Math.min(99, +daysNumber);
-		return daysNumber;
 	}
 
 	save(): void {

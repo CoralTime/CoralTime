@@ -13,9 +13,9 @@
             <p>
                 Lock time entries in
                 <md-input-container>
-                    <input type="number" mdInput min="1" max="99" name="daysBeforeStopEditJobs"
+                    <input type="number" mdInput name="daysBeforeStopEditJobs"
                            [(ngModel)]="model.daysBeforeStopEditTimeEntries"
-                           (ngModelChange)="model.daysBeforeStopEditTimeEntries = validateDaysNumber(model.daysBeforeStopEditTimeEntries)"
+                           [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isTimeLockEnabled"
                            [disabled]="!model.isTimeLockEnabled"/>
                 </md-input-container>
@@ -39,9 +39,9 @@
             <p>
                 Send notification email if the time entries missed for more than
                 <md-input-container>
-                    <input type="number" mdInput min="1" max="99" name="notificationDay" numberOnly
+                    <input type="number" mdInput name="notificationDay"
                            [(ngModel)]="model.notificationDay"
-                           (ngModelChange)="model.notificationDay = validateDaysNumber(model.notificationDay)"
+                           [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isNotificationEnabled"
                            [disabled]="!model.isNotificationEnabled">
                 </md-input-container>
