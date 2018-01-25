@@ -36,7 +36,7 @@ export class TimeDirective {
 		this.oldValue = this.el.nativeElement.value;
 		setTimeout(() => {
 			this.el.nativeElement.select();
-		});
+		}, 0);
 	}
 
 	@HostListener('blur')
