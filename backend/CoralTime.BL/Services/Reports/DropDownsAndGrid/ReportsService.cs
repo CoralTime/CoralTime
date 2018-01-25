@@ -29,11 +29,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             Uow.UserRepository.GetRelatedUserByName(userName);
             var member = Uow.MemberRepository.GetQueryByUserName(userName);
 
-            var repotsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdAsNoTrakingWithIncludes(member.Id);
+            var repotsSettings = Uow.ReportsSettingsRepository.GetQueryAsNoTrakingDefaultByMemberId(member.Id);
 
             var newReportsSettings = new ReportsSettings
             {
                 Id = repotsSettings?.Id ?? 0,
+                IsDefaultQuery = true,
 
                 MemberId = member.Id,
                 GroupById = reportsSettings.GroupById ?? (int) Constants.ReportsGroupBy.Date,

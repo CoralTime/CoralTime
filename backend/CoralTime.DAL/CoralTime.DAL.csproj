@@ -14,6 +14,9 @@
     <Compile Remove="Migrations\20180119135000_Add Reports Settings.cs" />
     <Compile Remove="Migrations\20180119135209_Add Reports Settings.cs" />
     <Compile Remove="Migrations\20180119135404_Add Reports Settings.cs" />
+    <Compile Remove="Migrations\20180125202132_add bool field IsDefaulQuery in ReportsSettings.cs" />
+    <Compile Remove="Migrations\20180125202207_add bool field IsDefaultQuery in ReportsSettings.cs" />
+    <Compile Remove="Migrations\20180125202244_Add bool field IsDefaultQuery in ReportsSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />

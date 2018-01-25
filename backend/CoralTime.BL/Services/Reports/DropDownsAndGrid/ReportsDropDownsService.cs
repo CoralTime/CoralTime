@@ -189,6 +189,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             // Group By Date as default.
             dropDownsValuesSaved.GroupById = reportsSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
 
+            // Show all columns as default.
+            dropDownsValuesSaved.ShowColumnIds = reportsSettings?.ShowColumnIds == null
+                ? new[]
+                {
+                    (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowDate,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
+                }
+                : ConvertStringToArrayOfInts(reportsSettings.ShowColumnIds);
+
             if (reportsSettings != null)
             {
                 dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
@@ -197,15 +208,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 dropDownsValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(reportsSettings.ClientIds);
                 dropDownsValuesSaved.ProjectIds = ConvertStringToArrayOfInts(reportsSettings.ProjectIds);
                 dropDownsValuesSaved.MemberIds = ConvertStringToArrayOfInts(reportsSettings.MemberIds);
-
-                if (!string.IsNullOrEmpty(reportsSettings.MemberIds))
-                {
-                    dropDownsValuesSaved.MemberIds = reportsSettings.MemberIds?.Split(',').Select(int.Parse).ToArray();
-                }
-
-                dropDownsValuesSaved.ShowColumnIds = ConvertStringToArrayOfInts(reportsSettings.ShowColumnIds);
             }
-            
+
             return dropDownsValuesSaved;
         }
 

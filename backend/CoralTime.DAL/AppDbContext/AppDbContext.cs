@@ -106,6 +106,9 @@ namespace CoralTime.DAL
             builder.Entity<PersistedGrant>()
                 .HasKey(p => p.Key);
 
+            builder.Entity<ReportsSettings>()
+                .HasIndex(t => new { ReportsSettingsId = t.MemberId, t.IsDefaultQuery }).IsUnique();
+
             base.OnModelCreating(builder);
         }
     }

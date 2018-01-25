@@ -14,9 +14,9 @@ namespace CoralTime.DAL.Repositories
             return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId);
         }
 
-        public ReportsSettings GetQueryByMemberIdAsNoTrakingWithIncludes(int memberId)
+        public ReportsSettings GetQueryAsNoTrakingDefaultByMemberId(int memberId)
         {
-            return GetQueryAsNoTrakingWithIncludes().FirstOrDefault(x => x.MemberId == memberId);
+            return GetQueryAsNoTrakingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery);
         }
     }
 }

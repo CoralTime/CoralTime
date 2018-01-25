@@ -132,7 +132,7 @@ namespace CoralTime.BL.Services.Reports.Export
         };
 
 
-        private enum ShowColumnModelIds
+        public enum ShowColumnModelIds
         {
             ShowEstimatedTime = 1 ,
             ShowDate = 2,
