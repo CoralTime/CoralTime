@@ -37,12 +37,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 newReportsSettings.GroupById = reportsSettings.GroupById;
             }
 
-            if (newReportsSettings.DateFrom.HasValue)
+            if (reportsSettings.DateFrom.HasValue)
             {
                 newReportsSettings.DateFrom = reportsSettings.DateFrom;
             }
 
-            if (newReportsSettings.DateTo.HasValue)
+            if (reportsSettings.DateTo.HasValue)
             {
                 newReportsSettings.DateTo = reportsSettings.DateTo;
             }
