@@ -192,13 +192,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var reportsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdWithIncludes(memberByUserName.Id);
 
+            // Group By Date as default.
+            dropDownsValuesSaved.GroupById = reportsSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
+
             if (reportsSettings != null)
             {
-                if (reportsSettings.GroupById.HasValue)
-                {
-                    dropDownsValuesSaved.GroupById = reportsSettings.GroupById;
-                }
-
                 if (reportsSettings.DateFrom.HasValue)
                 {
                     dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
