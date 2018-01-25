@@ -33,8 +33,10 @@ export class TimeDirective {
 
 	@HostListener('focus')
 	onFocus() {
-		this.el.nativeElement.select();
 		this.oldValue = this.el.nativeElement.value;
+		setTimeout(() => {
+			this.el.nativeElement.select();
+		});
 	}
 
 	@HostListener('blur')
