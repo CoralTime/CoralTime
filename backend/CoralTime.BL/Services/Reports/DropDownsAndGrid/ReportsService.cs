@@ -5,6 +5,7 @@ using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using CoralTime.Common.Constants;
 using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
@@ -28,65 +29,31 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             Uow.UserRepository.GetRelatedUserByName(userName);
             var member = Uow.MemberRepository.GetQueryByUserName(userName);
 
-            var newReportsSettings = new ReportsSettings();
+            var repotsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdAsNoTrakingWithIncludes(member.Id);
 
-            newReportsSettings.MemberId = member.Id;
-
-            if (reportsSettings.GroupById.HasValue)
+            var newReportsSettings = new ReportsSettings
             {
-                newReportsSettings.GroupById = reportsSettings.GroupById;
-            }
+                Id = repotsSettings?.Id ?? 0,
 
-            if (reportsSettings.DateFrom.HasValue)
-            {
-                newReportsSettings.DateFrom = reportsSettings.DateFrom;
-            }
-
-            if (reportsSettings.DateTo.HasValue)
-            {
-                newReportsSettings.DateTo = reportsSettings.DateTo;
-            }
-
-            if (reportsSettings.ProjectIds != null)
-            {
-                newReportsSettings.ProjectIds = string.Join(",", reportsSettings.ProjectIds);
-            }
-
-            if (reportsSettings.MemberIds != null)
-            {
-                newReportsSettings.MemberIds = string.Join(",", reportsSettings.MemberIds);
-            }
-
-            if (reportsSettings.ClientIds != null)
-            {
-                newReportsSettings.ClientIds = string.Join(",", reportsSettings.ClientIds);
-            }
-
-            if (reportsSettings.ShowColumnIds != null)
-            {
-                newReportsSettings.ShowColumnIds = string.Join(",", reportsSettings.ShowColumnIds);
-            }
+                MemberId = member.Id,
+                GroupById = reportsSettings.GroupById ?? (int)Constants.ReportsGroupBy.Date,
+                DateFrom = reportsSettings.DateFrom,
+                DateTo = reportsSettings.DateTo,
+                ProjectIds = reportsSettings.ProjectIds != null ? string.Join(",", reportsSettings.ProjectIds) : null,
+                MemberIds = reportsSettings.MemberIds != null ? string.Join(",", reportsSettings.MemberIds) : null,
+                ClientIds = reportsSettings.ClientIds != null ? string.Join(",", reportsSettings.ClientIds) : null,
+                ShowColumnIds = reportsSettings.ShowColumnIds != null ? string.Join(",", reportsSettings.ShowColumnIds) : null
+            };
 
             try
             {
-                var repotsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdWithIncludes(member.Id);
-
                 if (repotsSettings == null)
                 {
                     Uow.ReportsSettingsRepository.Insert(newReportsSettings);
                 }
                 else
                 {
-                    repotsSettings.DateFrom = newReportsSettings.DateFrom;
-                    repotsSettings.DateTo = newReportsSettings.DateTo;
-                    repotsSettings.GroupById = newReportsSettings.GroupById;
-                    repotsSettings.ClientIds = newReportsSettings.ClientIds;
-                    repotsSettings.ProjectIds = newReportsSettings.ProjectIds;
-                    repotsSettings.MemberIds = newReportsSettings.MemberIds;
-                    repotsSettings.ShowColumnIds = newReportsSettings.ShowColumnIds;
-
-                    //var repotsSettings = Mapper.Map<ReportsSettings, ReportsSettings>(newReportsSettings);
-                    Uow.ReportsSettingsRepository.Update(repotsSettings);
+                    Uow.ReportsSettingsRepository.Update(newReportsSettings);
                 }
 
                 Uow.Save();
