@@ -36,13 +36,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 Id = repotsSettings?.Id ?? 0,
 
                 MemberId = member.Id,
-                GroupById = reportsSettings.GroupById ?? (int)Constants.ReportsGroupBy.Date,
+                GroupById = reportsSettings.GroupById ?? (int) Constants.ReportsGroupBy.Date,
                 DateFrom = reportsSettings.DateFrom,
                 DateTo = reportsSettings.DateTo,
-                ProjectIds = reportsSettings.ProjectIds != null ? string.Join(",", reportsSettings.ProjectIds) : null,
-                MemberIds = reportsSettings.MemberIds != null ? string.Join(",", reportsSettings.MemberIds) : null,
-                ClientIds = reportsSettings.ClientIds != null ? string.Join(",", reportsSettings.ClientIds) : null,
-                ShowColumnIds = reportsSettings.ShowColumnIds != null ? string.Join(",", reportsSettings.ShowColumnIds) : null
+                ProjectIds = ConvertFromArrayOfIntsToString(reportsSettings.ProjectIds),
+                MemberIds = ConvertFromArrayOfIntsToString(reportsSettings.MemberIds),
+                ClientIds = ConvertFromArrayOfNullableIntsToString(reportsSettings.ClientIds),
+                ShowColumnIds = ConvertFromArrayOfIntsToString(reportsSettings.ShowColumnIds)
             };
 
             try
@@ -62,6 +62,16 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 throw new CoralTimeDangerException("An error occurred while creating new client", e);
             }
+        }
+
+        private static string ConvertFromArrayOfIntsToString(int[] array)
+        {
+            return array != null ? string.Join(",", array) : null;
+        }
+
+        private static string ConvertFromArrayOfNullableIntsToString(int?[] array)
+        {
+            return array != null ? string.Join(",", array) : null;
         }
     }
 }

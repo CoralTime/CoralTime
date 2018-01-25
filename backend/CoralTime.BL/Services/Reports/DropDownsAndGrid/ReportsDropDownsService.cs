@@ -15,12 +15,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
     {
         readonly List<ReportsDropDownGroupBy> DropDownGroupBy = new List<ReportsDropDownGroupBy>
         {
-            //new ReportsDropDownGroupBy
-            //{
-            //    GroupById = (int) Constants.ReportsGroupBy.None,
-            //    GroupByDescription = Constants.ReportsGroupBy.None.ToString()
-            //},
-
             new ReportsDropDownGroupBy
             {
                 Id = (int) Constants.ReportsGroupBy.Project,
@@ -197,41 +191,45 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             if (reportsSettings != null)
             {
-                if (reportsSettings.DateFrom.HasValue)
-                {
-                    dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
-                }
+                dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
+                dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
 
-                if (reportsSettings.DateTo.HasValue)
-                {
-                    dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
-                }
-
-                if (!string.IsNullOrEmpty(reportsSettings.ClientIds))
-                {
-                    dropDownsValuesSaved.ClientIds = reportsSettings.ClientIds?.Split(',')
-                        .Where(x => !string.IsNullOrWhiteSpace(x))
-                        .Select(x => (int?)Convert.ToInt32(x))
-                        .ToArray();
-                }
-
-                if (!string.IsNullOrEmpty(reportsSettings.ProjectIds))
-                {
-                    dropDownsValuesSaved.ProjectIds = reportsSettings.ProjectIds?.Split(',').Select(int.Parse).ToArray();
-                }
+                dropDownsValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(reportsSettings.ClientIds);
+                dropDownsValuesSaved.ProjectIds = ConvertStringToArrayOfInts(reportsSettings.ProjectIds);
+                dropDownsValuesSaved.MemberIds = ConvertStringToArrayOfInts(reportsSettings.MemberIds);
 
                 if (!string.IsNullOrEmpty(reportsSettings.MemberIds))
                 {
                     dropDownsValuesSaved.MemberIds = reportsSettings.MemberIds?.Split(',').Select(int.Parse).ToArray();
                 }
 
-                if (!string.IsNullOrEmpty(reportsSettings.ShowColumnIds))
-                {
-                    dropDownsValuesSaved.ShowColumnIds = reportsSettings.ShowColumnIds?.Split(',').Select(int.Parse).ToArray();
-                }
+                dropDownsValuesSaved.ShowColumnIds = ConvertStringToArrayOfInts(reportsSettings.ShowColumnIds);
             }
             
             return dropDownsValuesSaved;
+        }
+
+        private static int[] ConvertStringToArrayOfInts(string sourceString)
+        {
+            if (!string.IsNullOrEmpty(sourceString))
+            {
+                return sourceString.Split(',').Select(int.Parse).ToArray();
+            }
+
+            return null;
+        }
+
+        private static int?[] ConvertStringToArrayOfNullableInts(string sourceString)
+        {
+            if (!string.IsNullOrEmpty(sourceString))
+            {
+                return sourceString.Split(',')
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => (int?) Convert.ToInt32(x))
+                    .ToArray();
+            }
+
+            return null;
         }
     }
 }
