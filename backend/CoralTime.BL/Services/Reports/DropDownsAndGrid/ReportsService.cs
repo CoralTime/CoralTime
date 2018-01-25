@@ -25,15 +25,27 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName)
         {
-            var user = Uow.UserRepository.GetRelatedUserByName(userName);
+            Uow.UserRepository.GetRelatedUserByName(userName);
             var member = Uow.MemberRepository.GetQueryByUserName(userName);
 
             var newReportsSettings = new ReportsSettings();
 
             newReportsSettings.MemberId = member.Id;
-            newReportsSettings.DateFrom = reportsSettings.DateFrom;
-            newReportsSettings.DateTo = reportsSettings.DateTo;
-            newReportsSettings.GroupById = reportsSettings.GroupById;
+
+            if (reportsSettings.GroupById.HasValue)
+            {
+                newReportsSettings.GroupById = reportsSettings.GroupById;
+            }
+
+            if (newReportsSettings.DateFrom.HasValue)
+            {
+                newReportsSettings.DateFrom = reportsSettings.DateFrom;
+            }
+
+            if (newReportsSettings.DateTo.HasValue)
+            {
+                newReportsSettings.DateTo = reportsSettings.DateTo;
+            }
 
             if (reportsSettings.ProjectIds != null)
             {

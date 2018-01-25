@@ -9,9 +9,10 @@ using CoralTime.Common.Constants;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180124161827_Update dates type in ReportsSettings")]
+    partial class UpdatedatestypeinReportsSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -306,7 +307,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<DateTime?>("DateTo");
 
-                    b.Property<int?>("GroupById");
+                    b.Property<int>("GroupById");
 
                     b.Property<string>("LastEditorUserId");
 

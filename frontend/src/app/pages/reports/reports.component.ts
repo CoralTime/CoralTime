@@ -246,8 +246,10 @@ export class ReportsComponent implements OnInit {
 		this.reportFilters.clientIds = [];
 		this.reportFilters.projectIds = [];
 		this.reportFilters.memberIds = [];
+		this.reportFilters.showColumnIds = [1, 2, 3, 4];
 		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
 		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
+		this.reportFilters.groupById = this.groupModel.id;
 		this.toggleClient(this.reportFilters.clientIds);
 	}
 

@@ -298,8 +298,8 @@ namespace CoralTime.BL.Services.Reports.Export
             RunSetCommonValuesForExport = true;
 
             #region Set Global Properties. 
-
-            GroupById = reportsGridData.ValuesSaved.GroupById;
+            // TODO change type!
+            GroupById = reportsGridData.ValuesSaved.GroupById ?? 3;
 
             ShowColumnIds = reportsGridData.ValuesSaved.ShowColumnIds;
 

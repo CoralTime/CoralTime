@@ -4,11 +4,11 @@ namespace CoralTime.ViewModels.Reports
 {
     public interface IRequestReportsSettings
     {
-        DateTime DateFrom { get; set; }
+        DateTime? DateFrom { get; set; }
 
-        DateTime DateTo { get; set; }
+        DateTime? DateTo { get; set; }
 
-        int GroupById { get; set; }
+        int? GroupById { get; set; }
 
         int?[] ClientIds { get; set; }
 
