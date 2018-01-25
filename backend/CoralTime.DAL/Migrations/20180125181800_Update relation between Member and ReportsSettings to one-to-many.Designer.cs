@@ -9,9 +9,10 @@ using CoralTime.Common.Constants;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180125181800_Update relation between Member and ReportsSettings to one-to-many")]
+    partial class UpdaterelationbetweenMemberandReportsSettingstoonetomany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")

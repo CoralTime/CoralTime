@@ -11,6 +11,8 @@ namespace CoralTime.DAL.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public string Name { get; set; }
+
         public int MemberId { get; set; }
 
         [ForeignKey("MemberId")]

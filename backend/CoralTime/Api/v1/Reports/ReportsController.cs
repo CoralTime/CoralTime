@@ -18,7 +18,7 @@ namespace CoralTime.Api.v1.Reports
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult ReportsDropdowns()
+        public IActionResult Dropdowns()
         {
             try
             {
@@ -33,49 +33,61 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult ReportsGrid([FromBody]RequestReportsGrid reportsGridData)
+        public IActionResult Grid([FromBody]RequestReportsGrid reportsGrid)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Model");
+            }
             try
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveReportsSettings(reportsGridData.ValuesSaved, userName);
+                _service.SaveReportsSettings(reportsGrid.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGrid.ValuesSaved.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGrid));
                     }
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGrid));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGrid));
                     }
 
                     case (int) Constants.ReportsGroupBy.Client:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGrid));
                     }
 
                     default:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByNone(userName, reportsGridData));
+                        return BadRequest("Invalid Grouping value");
                     }
                 }
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridData});\n {e}");
+                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGrid});\n {e}");
                 var errors = ExceptionsChecker.CheckProjectsException(e);
                 return BadRequest(errors);
             }
+        }
+
+        [HttpPost]
+        [Route("SaveQuery")]
+        public IActionResult SaveQuery([FromBody] RequestReportsSaveQuery reportsSaveQuery)
+        {
+
+            return null;
         }
     }
 }
