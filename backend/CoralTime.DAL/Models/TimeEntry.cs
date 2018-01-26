@@ -48,15 +48,5 @@ namespace CoralTime.DAL.Models
         public string Description { get; set; }
 
         public bool IsFromToShow { get; set; }
-
-        ////TODO DEL
-        //[MaxLength(200)]
-        //public string Name { get; set; }
-        
-        ////TODO DEL
-        //public bool IsEditable { get; set; }
-        
-        ////TODO Remove this property!
-        //public bool IsLocked { get; set; } // = false when Set lock TimeEntries in Project Settings.
     }
 }

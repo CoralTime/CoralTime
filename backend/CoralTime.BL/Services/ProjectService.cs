@@ -6,8 +6,8 @@ using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels.Projects;
 using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.Projects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace CoralTime.BL.Services
                 .Select(x => x.Project)
                 .ToList();
 
-                return targetedProjects.Select(p =>p.GetViewManageProjectsOfManager(Mapper, GetCacheMembersActiveCount(), getGlobalTasks));
+                return targetedProjects.Select(p => p.GetViewManageProjectsOfManager(Mapper, GetCacheMembersActiveCount(), getGlobalTasks));
             }
 
             #endregion Constrain for manager: return all projects for Member where it assing at Manager. Tab "Projects - Grid" available (Front-end check) if return something.
@@ -219,7 +219,7 @@ namespace CoralTime.BL.Services
             if (projectById == null || !projectById.IsActive)
             {
                 {
-                    throw new CoralTimeEntityNotFoundException("project with id " + 
+                    throw new CoralTimeEntityNotFoundException("project with id " +
                        $"{id} not found or is not active");
                 }
             }
@@ -241,7 +241,6 @@ namespace CoralTime.BL.Services
 
         #region Added methods.
 
-
         private List<ProjectView> GetProjectsForMember(int memberId, string userName)
         {
             // Get all roles where member is assign.
@@ -251,21 +250,6 @@ namespace CoralTime.BL.Services
 
             // Get projects from roles where member is assign.
             var projects = memberProjectRoles.Select(x => x.Project.GetViewProjectFromProjMemberRole(Mapper, userName)).ToList();
-
-            #region //TODO just save it.
-
-            //// Get All TimeEntry where mebmer is NOT assigned.
-            //var tasks = Uow.TimeEntryRepository
-            //    .GetQuery()
-            //    .Include( t => t.Project)
-            //    .Where(t => t.MemberId == memberId && projects.All(p => p.Id != t.ProjectId))
-            //    .ToList();
-
-            //// All proj not assign, but time was pasted.
-            //var projectWithTimeEntry = tasks.Select(x => ConvertTo.ProjectFromProjMemberRoleView(x.Project, userName)).ToList();
-            //projects.AddRange(projectWithTimeEntry);
-
-            #endregion //TODO just save it.
 
             return projects;
         }

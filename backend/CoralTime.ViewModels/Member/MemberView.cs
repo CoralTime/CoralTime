@@ -9,7 +9,7 @@ namespace CoralTime.ViewModels.Member
 {
     public class MemberView : IMemberPersonalInfoView, IMemberNotificationView, IMemberPreferencesView
     {
-        [Key]
+        [Key]        
         public int Id { get; set; }
 
         public string FullName { get; set; }

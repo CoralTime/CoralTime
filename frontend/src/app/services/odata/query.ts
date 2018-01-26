@@ -84,11 +84,12 @@ export class ODataQuery<T> extends ODataOperation<T> {
 
 	private buildResourceURL(): string {
 		this._property = this._property ? '/' + this._property : '';
-		return this.config.baseUrl + '/' + this._typeName + this._property + '/';
+		return this.config.baseUrl + '/' + this._typeName + this._property + '()';
 	}
 
-	private capitalizeFirstLetter(string): string {
-		return string.charAt(0).toUpperCase() + string.slice(1);
+    private capitalizeFirstLetter(string): string {
+        return string;
+		//return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
 	getQueryParams(): URLSearchParams {

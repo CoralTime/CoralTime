@@ -30,10 +30,10 @@ export class ProjectsService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -48,7 +48,7 @@ export class ProjectsService {
 			.Query();
 
 		query.OrderBy('name asc');
-		filters.push('IsActive eq true');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.Exec().map(res => res.map((x: any) => new Project(x)));
@@ -66,7 +66,7 @@ export class ProjectsService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Name) eq \'' + name + '\'');
+		query.Filter('tolower(name) eq \'' + name + '\'');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -94,10 +94,10 @@ export class ProjectsService {
 			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -123,13 +123,13 @@ export class ProjectsService {
 			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('ClientId eq ' + clientId);
+		filters.push('clientId eq ' + clientId);
 
 		if (isActive) {
-			filters.push('IsActive eq ' + isActive);
+			filters.push('isActive eq ' + isActive);
 		}
 		query.Filter(filters.join(' and '));
 

@@ -28,15 +28,15 @@ export class UsersService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(UserName),\'' +
+			filters.push('contains(tolower(userName),\'' +
 				filterStr.trim().toLowerCase() + '\')' +
-				' or contains(tolower(FullName),\'' +
+				' or contains(tolower(fullName),\'' +
 				filterStr.trim().toLowerCase() + '\')' +
-				' or contains(tolower(Email),\'' + filterStr.trim().toLowerCase() + '\')');
+				' or contains(tolower(email),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
 		if (typeof isActive !== 'undefined') {
-			filters.push('IsActive eq ' + isActive);
+			filters.push('isActive eq ' + isActive);
 		}
 
 		if (filters.length) {
@@ -65,11 +65,11 @@ export class UsersService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(MemberName),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(memberName),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('ProjectId eq ' + projectId);
-		filters.push('IsMemberActive eq true');
+		filters.push('projectId eq ' + projectId);
+		filters.push('isMemberActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -79,7 +79,7 @@ export class UsersService {
 	}
 
 	getUnassignedUsersWithCount(event, filterStr = '', projectId: number): Observable<PagedResult<User>> {
-		let odata = this.odataFactory.CreateService<User>('MemberProjectRoles(' + projectId + ')/Members');
+		let odata = this.odataFactory.CreateService<User>('MemberProjectRoles(' + projectId + ')/members');
 
 		let filters = [];
 		let query = odata
@@ -88,16 +88,16 @@ export class UsersService {
 			.Skip(event.first);
 
 		if (event.sortField) {
-			query.OrderBy('FullName ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
+			query.OrderBy('fullName ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		} else {
-			query.OrderBy('FullName asc');
+			query.OrderBy('fullName asc');
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(FullName),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(fullName),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq true');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -116,7 +116,7 @@ export class UsersService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(UserName) eq \'' + username + '\'');
+		query.Filter('tolower(userName) eq \'' + username + '\'');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -135,7 +135,7 @@ export class UsersService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Email) eq \'' + email + '\'');
+		query.Filter('tolower(email) eq \'' + email + '\'');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -149,7 +149,7 @@ export class UsersService {
 			.Query()
 			.Top(1);
 
-		query.Filter('Id eq ' + id);
+		query.Filter('id eq ' + id);
 
 		return query.Exec()
 			.flatMap(result => {
@@ -170,15 +170,15 @@ export class UsersService {
 		if (event.sortField) {
 			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		} else {
-			query.OrderBy('ProjectName asc');
+			query.OrderBy('projectName asc');
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(ProjectName),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(projectName),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('MemberId eq ' + memberId);
-		filters.push('IsProjectActive eq true');
+		filters.push('memberId eq ' + memberId);
+		filters.push('isProjectActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -188,7 +188,7 @@ export class UsersService {
 	}
 
 	getUnassignedProjectsWithCount(event, filterStr = '', memberId: number): Observable<PagedResult<Project>> {
-		let odata = this.odataFactory.CreateService<Project>('MemberProjectRoles(' + memberId + ')/Projects');
+		let odata = this.odataFactory.CreateService<Project>('MemberProjectRoles(' + memberId + ')/projects');
 
 		let filters = [];
 		let query = odata
@@ -199,15 +199,15 @@ export class UsersService {
 		if (event.sortField) {
 			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		} else {
-			query.OrderBy('Name asc');
+			query.OrderBy('name asc');
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq true');
-		filters.push('IsPrivate eq true');
+		filters.push('isActive eq true');
+		filters.push('isPrivate eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {

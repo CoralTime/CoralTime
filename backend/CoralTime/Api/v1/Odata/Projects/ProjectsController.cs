@@ -1,22 +1,18 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Middlewares;
 using CoralTime.Services;
-using CoralTime.ViewModels.Errors;
 using CoralTime.ViewModels.Projects;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 
 namespace CoralTime.Api.v1.Odata.Projects
 {
-    [EnableQuery]
     [Route("api/v1/odata/[controller]")]
     [Authorize]
-    public class ProjectsController : BaseController<ProjectsController, IProjectService>
+    public class ProjectsController : BaseODataController<ProjectsController, IProjectService>
     {
         public ProjectsController(IProjectService service, ILogger<ProjectsController> logger)
             : base(logger, service) { }
@@ -31,15 +27,14 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Get method {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // GET api/v1/odata/Projects(2)
-        [HttpGet("{id}/Members")]
-        public ActionResult GetMembers(int id)
+        [ODataRoute("Projects({id})/members")]
+        [HttpGet("{id}/members")]
+        public IActionResult GetMembers([FromODataUri] int id)
         {
             try
             {
@@ -47,15 +42,14 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetMembers method with parameters ({id});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // GET api/v1/odata/Projects(2)
+        [ODataRoute("Projects({id})")]
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById([FromODataUri]  int id)
         {
             try
             {
@@ -64,20 +58,18 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetById with parameters ({id});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // POST api/v1/odata/Projects
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public IActionResult Create([FromBody]ProjectView projectData)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequestErrors();
+                SendInvalidModelResponse();
             }
 
             try
@@ -89,19 +81,18 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Create methodwith parameters ({JsonConvert.SerializeObject(projectData)});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // PUT api/v1/odata/Projects(1)
+        [ODataRoute("Projects({id})")]
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]dynamic project)
+        public IActionResult Update([FromODataUri] int id, [FromBody]dynamic project)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequestErrors();
+                SendInvalidModelResponse();
             }
 
             project.Id = id;
@@ -113,19 +104,18 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Update method with parameters ({id}, {project});\n {e} ");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // PATCH api/v1/odata/Projects(1)
+        [ODataRoute("Projects({id})")]
         [HttpPatch("{id}")]
-        public IActionResult Patch(int id, [FromBody]dynamic project)
+        public IActionResult Patch([FromODataUri] int id, [FromBody]dynamic project)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequestErrors();
+                SendInvalidModelResponse();
             }
 
             project.Id = id;
@@ -137,29 +127,15 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Patch method with parameters ({id}, {project});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
-        private IActionResult BadRequestErrors()
-        {
-            return BadRequest(new List<ErrorView>
-            {
-                new ErrorView
-                {
-                    Source = "Other",
-                    Title = "",
-                    Details = "ModelState is invalid."
-                }
-            });
-        }
-
         // DELETE api/v1/odata/Projects(1)
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "admin")]
+        [ODataRoute("Projects({id})")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromODataUri] int id)
         {
             return BadRequest($"Can't delete the project with Id - {id}");
         }

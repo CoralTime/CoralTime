@@ -22,7 +22,7 @@ namespace CoralTime.Tests
             {
                 new Claim(JwtClaimTypes.Name, "Admin"),
                 new Claim(JwtClaimTypes.Role, Constants.AdminRole),
-                new Claim(JwtClaimTypes.Id,"3066"), 
+                new Claim(JwtClaimTypes.Id,"3066"),
             }, "test");
             return claims;
         }

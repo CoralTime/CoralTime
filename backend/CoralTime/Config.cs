@@ -57,7 +57,7 @@ namespace CoralTime
                         "WebAPI"
                     },
                     AllowOfflineAccess = true, // For refresh token.
-                },
+                 },
 
                 // Authentication client for Azure AD
                 new Client
@@ -69,7 +69,7 @@ namespace CoralTime
                     //{
                     //    new Secret("secret".Sha256())
                     //},
-                    AllowedGrantTypes = GrantTypes.List("azureAuth"),
+                    AllowedGrantTypes = {"azureAuth"},//GrantTypes.List("azureAuth"),
 
                     AllowedScopes =
                     {

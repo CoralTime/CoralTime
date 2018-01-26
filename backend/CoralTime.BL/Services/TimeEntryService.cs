@@ -342,7 +342,6 @@ namespace CoralTime.BL.Services
                 totalTimeForDay = totalTimeForDay + newTime;
             }
 
-            //TODO return !(timeEntry.Time/3600 >= 24) && !(Math.Abs(timeEntry.TimeTo - timeEntry.TimeFrom) >= TimeSpan.FromDays(1).TotalSeconds);
             if (totalTimeForDay > Constants.SecondsInThisDay)
             {
                 throw new CoralTimeDangerException($"Total work time on the date {timeEntryView.Date} is greater than 24 hours");

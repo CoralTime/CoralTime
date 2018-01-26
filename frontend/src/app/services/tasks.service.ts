@@ -32,11 +32,11 @@ export class TasksService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
-		filters.push('ProjectId eq null');
+		filters.push('isActive eq ' + isActive);
+		filters.push('projectId eq null');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -61,10 +61,10 @@ export class TasksService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -95,11 +95,11 @@ export class TasksService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq true');
-		filters.push('(ProjectId eq ' + projectId + ' or ProjectId eq null)');
+		filters.push('isActive eq true');
+		filters.push('(projectId eq ' + projectId + ' or projectId eq null)');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -118,7 +118,7 @@ export class TasksService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Name) eq \'' + name + '\' and ProjectId eq null');
+		query.Filter('tolower(name) eq \'' + name + '\' and projectId eq null');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -134,11 +134,11 @@ export class TasksService {
 
 		query.OrderBy('name asc');
 		if (projectId) {
-			filters.push('(ProjectId eq ' + projectId + ' or ProjectId eq null)');
+			filters.push('(projectId eq ' + projectId + ' or projectId eq null)');
 		} else {
-			filters.push('ProjectId eq null');
+			filters.push('projectId eq null');
 		}
-		filters.push('IsActive eq true');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
