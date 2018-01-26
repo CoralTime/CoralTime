@@ -42,11 +42,11 @@ export class TimeDirective {
 	@HostListener('blur')
 	onBlur() {
 		let time: string = this.el.nativeElement.value;
-		time = this.convertTimeToString(this.convertTimeToMinutes(time));
 
 		if (time !== this.oldValue) {
-			this.ngModelChange.emit(time);
+			time = this.convertTimeToString(this.convertTimeToMinutes(time));
 			this.timeChanged.emit(time);
+			this.ngModelChange.emit(time);
 		}
 	}
 
