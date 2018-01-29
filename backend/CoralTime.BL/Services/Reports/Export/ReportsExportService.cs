@@ -18,6 +18,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
@@ -173,42 +174,42 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. 
 
-        public FileResult ExportFileGroupByNone(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByNoneAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
             var groupByNone = _reportService.ReportsGridGroupByNone(userName, reportsGridData);
-            var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByNone);
+            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByNone);
 
             return result;
         }
 
-        public FileResult ExportFileGroupByProjects(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByProjectsAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
             var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, reportsGridData);
-            var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByProjects);
+            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByProjects);
 
             return result;
         }
 
-        public FileResult ExportFileGroupByUsers(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByUsersAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
             var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, reportsGridData);
-            var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByUsers);
+            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByUsers);
 
             return result;
         }
 
-        public FileResult ExportFileGroupByDates(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByDatesAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
             var groupByDates = _reportService.ReportsGridGroupByDates(userName, reportsGridData);
-            var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByDates);
+            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByDates);
 
             return result;
         }
 
-        public FileResult ExportFileGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByClientsAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
             var groupByClient = _reportService.ReportsGridGroupByClients(userName, reportsGridData);
-            var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByClient);
+            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByClient);
 
             return result;
         }
@@ -217,11 +218,11 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. (Common methods)
 
-        private FileStreamResult GetExportFileWithGrouping<T>(RequestReportsGrid reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
+        private async System.Threading.Tasks.Task<FileStreamResult> GetExportFileWithGroupingAsync<T>(RequestReportsGrid reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
         {
-            var fileByte = CreateReportFileByteUpdateFileNameContentType(reportsGridData, groupingList, out var contentType);
+            var result = await CreateReportFileByteUpdateFileNameContentTypeAsync(reportsGridData, groupingList);
 
-            var fileStreamResult = SaveFileToFileStreamResult(httpContext, contentType, fileByte);
+            var fileStreamResult = SaveFileToFileStreamResult(httpContext, result.Item1, result.Item2);
 
             return fileStreamResult;
         }
@@ -238,12 +239,12 @@ namespace CoralTime.BL.Services.Reports.Export
             return fileStreamResult;
         }
 
-        private byte[] CreateReportFileByteUpdateFileNameContentType<T>(RequestReportsGrid reportsGridData, IReportsGrandGridView<T> groupingList, out string contentType)
+        private async Task<Tuple <string, byte[]>> CreateReportFileByteUpdateFileNameContentTypeAsync<T>(RequestReportsGrid reportsGridData, IReportsGrandGridView<T> groupingList)
         {
             SetCommonValuesForExport<T>(reportsGridData);
 
             var file = new byte[0];
-            contentType = string.Empty;
+            var contentType = string.Empty;
 
             fileName = GetFileName(fileName);
 
@@ -270,14 +271,14 @@ namespace CoralTime.BL.Services.Reports.Export
                 case (int) FileType.PDF:
                 {
                     fileName = fileName + ExtensionPDF;
-                    file = CreateFilePDF(groupingList);
+                    file = await CreateFilePDFAsync(groupingList);
                     contentType = ContentTypePDF;
 
                     break;
                 }
             }
 
-            return file;
+            return Tuple.Create(contentType, file);
         }
 
 

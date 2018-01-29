@@ -9,15 +9,15 @@ namespace CoralTime.BL.Interfaces.Reports
     public interface IReportExportService
     {
         // Export Excel, CSV, PDF. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
-        FileResult ExportFileGroupByNone(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
+        Task<FileResult> ExportFileGroupByNoneAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
 
-        FileResult ExportFileGroupByProjects(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
+        Task<FileResult> ExportFileGroupByProjectsAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
 
-        FileResult ExportFileGroupByUsers(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
+        Task<FileResult> ExportFileGroupByUsersAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
 
-        FileResult ExportFileGroupByDates(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
+        Task<FileResult> ExportFileGroupByDatesAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
 
-        FileResult ExportFileGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
+        Task<FileResult> ExportFileGroupByClientsAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext);
 
         // Sent reports as email.
         Task ExportEmailGroupByNone(string userName, ReportsExportEmailView emailData);

@@ -522,7 +522,7 @@ namespace CoralTime.BL.Services
                 catch (Exception e)
                 {
                     Uow.MemberRepository.LinkedCacheClear();
-                    throw new CoralTimeDangerException($"Error update member claims by MemberId = {memberId}.");
+                    throw new CoralTimeDangerException($"Error update member claims by MemberId = {memberId}.", e);
                 }
             }
         }
