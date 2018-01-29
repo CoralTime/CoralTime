@@ -18,7 +18,7 @@ namespace CoralTime.Api.v1.Reports
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult Dropdowns()
+        public IActionResult GetDropdownsByReportsSettingsValues()
         {
             try
             {
@@ -33,39 +33,41 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult Grid([FromBody]RequestReportsGrid reportsGrid)
+        public IActionResult GetFilteredGridByReportsSettingsValues([FromBody]ReportsGridView reportsGridView)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Model");
             }
+
             try
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveReportsSettings(reportsGrid.ValuesSaved, userName);
+                reportsGridView.ValuesSaved.IsUpdateCustomQuery = false;
+                _service.SaveOrUpdateReportsSettingsQuery(reportsGridView.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGrid.ValuesSaved.GroupById)
+                switch (reportsGridView.ValuesSaved.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGrid));
+                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGrid));
+                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGrid));
+                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Client:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGrid));
+                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridView));
                     }
 
                     default:
@@ -76,18 +78,33 @@ namespace CoralTime.Api.v1.Reports
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGrid});\n {e}");
+                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridView});\n {e}");
                 var errors = ExceptionsChecker.CheckProjectsException(e);
                 return BadRequest(errors);
             }
         }
 
-        [HttpPost]
-        [Route("SaveQuery")]
-        public IActionResult SaveQuery([FromBody] RequestReportsSaveQuery reportsSaveQuery)
-        {
 
-            return null;
+        [HttpPut]
+        public IActionResult UpdateSavedValuesForCustomReportsSettings([FromBody] ReportsSettingsView reportsSettingsView)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Model");
+            }
+
+            reportsSettingsView.IsUpdateCustomQuery = true;
+            _service.SaveOrUpdateReportsSettingsQuery(reportsSettingsView, this.GetUserNameWithImpersonation());
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCustomReportsSettings(int id)
+        {
+            _service.DeleteCustomReportsSettings(id, this.GetUserNameWithImpersonation());
+
+            return Ok();
         }
     }
 }

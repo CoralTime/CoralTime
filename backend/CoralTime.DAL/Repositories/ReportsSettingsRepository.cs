@@ -1,4 +1,5 @@
-﻿using CoralTime.DAL.Models;
+﻿using System.Collections.Generic;
+using CoralTime.DAL.Models;
 using Microsoft.Extensions.Caching.Memory;
 using System.Linq;
 
@@ -9,14 +10,19 @@ namespace CoralTime.DAL.Repositories
         public ReportsSettingsRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        public ReportsSettings GetQueryByMemberIdWithIncludes(int memberId)
+        public List<ReportsSettings> GetQueriesByMemberIdWithIncludes(int memberId)
         {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId);
+            return GetQueryWithIncludes().Where(x => x.MemberId == memberId).ToList();
         }
 
-        public ReportsSettings GetQueryAsNoTrakingDefaultByMemberId(int memberId)
+        public IQueryable<ReportsSettings> GetEntitiesOutOfContext()
         {
-            return GetQueryAsNoTrakingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery);
+            return GetQueryAsNoTrakingWithIncludes();
+        }
+
+        public ReportsSettings GetEntitiesOutOfContextForThisMemberById(int id, int memberId)
+        {
+            return GetQueryAsNoTrakingWithIncludes().FirstOrDefault(x => x.Id == id && x.MemberId == memberId);
         }
     }
 }

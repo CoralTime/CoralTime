@@ -1,11 +1,11 @@
 ﻿namespace CoralTime.ViewModels.Reports.Request.Grid
 {
-    public class RequestReportsGrid
+    public class ReportsGridView
     {
         public int DateFormatId { get; set; }
 
         public int? FileTypeId { get; set; }
 
-        public RequestReportsSettings ValuesSaved { get; set; }
+        public ReportsSettingsView ValuesSaved { get; set; }
     }
 }

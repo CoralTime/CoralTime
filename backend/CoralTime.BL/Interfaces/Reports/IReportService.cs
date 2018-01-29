@@ -13,16 +13,18 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns(string userName);
 
-        void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName);
+        void SaveOrUpdateReportsSettingsQuery(ReportsSettingsView reportsSettings, string userName);
 
-        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData);
+        void DeleteCustomReportsSettings(int id, string userName);
 
-        ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, ReportsGridView reportsGridData);
 
-        ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, ReportsGridView reportsGridData);
 
-        ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, ReportsGridView reportsGridData);
 
-        ReportsGrandGridClients ReportsGridGroupByClients(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, ReportsGridView reportsGridData);
+
+        ReportsGrandGridClients ReportsGridGroupByClients(string userName, ReportsGridView reportsGridData);
     }
 }

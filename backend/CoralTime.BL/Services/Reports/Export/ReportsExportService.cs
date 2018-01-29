@@ -173,7 +173,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. 
 
-        public FileResult ExportFileGroupByNone(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByNone(string userName, ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByNone = _reportService.ReportsGridGroupByNone(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByNone);
@@ -181,7 +181,7 @@ namespace CoralTime.BL.Services.Reports.Export
             return result;
         }
 
-        public FileResult ExportFileGroupByProjects(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByProjects(string userName, ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByProjects);
@@ -189,7 +189,7 @@ namespace CoralTime.BL.Services.Reports.Export
             return result;
         }
 
-        public FileResult ExportFileGroupByUsers(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByUsers(string userName, ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByUsers);
@@ -197,7 +197,7 @@ namespace CoralTime.BL.Services.Reports.Export
             return result;
         }
 
-        public FileResult ExportFileGroupByDates(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByDates(string userName, ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByDates = _reportService.ReportsGridGroupByDates(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByDates);
@@ -205,7 +205,7 @@ namespace CoralTime.BL.Services.Reports.Export
             return result;
         }
 
-        public FileResult ExportFileGroupByClients(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public FileResult ExportFileGroupByClients(string userName, ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByClient = _reportService.ReportsGridGroupByClients(userName, reportsGridData);
             var result = GetExportFileWithGrouping(reportsGridData, httpContext, groupByClient);
@@ -217,7 +217,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. (Common methods)
 
-        private FileStreamResult GetExportFileWithGrouping<T>(RequestReportsGrid reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
+        private FileStreamResult GetExportFileWithGrouping<T>(ReportsGridView reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
         {
             var fileByte = CreateReportFileByteUpdateFileNameContentType(reportsGridData, groupingList, out var contentType);
 
@@ -238,7 +238,7 @@ namespace CoralTime.BL.Services.Reports.Export
             return fileStreamResult;
         }
 
-        private byte[] CreateReportFileByteUpdateFileNameContentType<T>(RequestReportsGrid reportsGridData, IReportsGrandGridView<T> groupingList, out string contentType)
+        private byte[] CreateReportFileByteUpdateFileNameContentType<T>(ReportsGridView reportsGridData, IReportsGrandGridView<T> groupingList, out string contentType)
         {
             SetCommonValuesForExport<T>(reportsGridData);
 
@@ -293,7 +293,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private bool RunSetCommonValuesForExport { get; set; }
 
-        private void SetCommonValuesForExport<T>(RequestReportsGrid reportsGridData)
+        private void SetCommonValuesForExport<T>(ReportsGridView reportsGridData)
         {
             RunSetCommonValuesForExport = true;
 

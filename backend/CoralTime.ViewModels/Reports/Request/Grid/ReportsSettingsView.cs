@@ -1,8 +1,9 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace CoralTime.ViewModels.Reports.Request.Grid
 {
-    public class RequestReportsSettings : IRequestReportsSettings
+    public class ReportsSettingsView : IReportsSettings
     {
         public DateTime? DateFrom { get; set; }
 
@@ -17,5 +18,14 @@ namespace CoralTime.ViewModels.Reports.Request.Grid
         public int[] MemberIds { get; set; }
 
         public int[] ShowColumnIds { get; set; }
+
+        public int? QueryId { get; set; }
+
+        public string QueryName{ get; set; }
+
+        public bool IsDefaultQuery { get; set; }
+
+        [JsonIgnore]
+        public bool IsUpdateCustomQuery { get; set; }
     }
 }

@@ -9,9 +9,10 @@ using CoralTime.Common.Constants;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180126153028_Update property name for ReportsSettings from 'Name' to 'QueryName'")]
+    partial class UpdatepropertynameforReportsSettingsfromNametoQueryName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -296,6 +297,8 @@ namespace CoralTime.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ClientIds");
+
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("CreatorId");
@@ -303,14 +306,6 @@ namespace CoralTime.DAL.Migrations
                     b.Property<DateTime?>("DateFrom");
 
                     b.Property<DateTime?>("DateTo");
-
-                    b.Property<string>("FilterClientIds");
-
-                    b.Property<string>("FilterMemberIds");
-
-                    b.Property<string>("FilterProjectIds");
-
-                    b.Property<string>("FilterShowColumnIds");
 
                     b.Property<int?>("GroupById");
 
@@ -322,7 +317,13 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("MemberId");
 
+                    b.Property<string>("MemberIds");
+
+                    b.Property<string>("ProjectIds");
+
                     b.Property<string>("QueryName");
+
+                    b.Property<string>("ShowColumnIds");
 
                     b.HasKey("Id");
 

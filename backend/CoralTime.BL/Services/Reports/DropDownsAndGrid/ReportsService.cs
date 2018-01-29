@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
+using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Hosting;
 using System;
-using CoralTime.Common.Constants;
+using CoralTime.DAL.Models;
 using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;
+using System.Linq;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -24,45 +26,105 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public DateTime DateTo { get; set; }
 
-        public void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName)
+        public void SaveOrUpdateReportsSettingsQuery(ReportsSettingsView reportsSettingsView, string userName)
         {
             Uow.UserRepository.GetRelatedUserByName(userName);
             var member = Uow.MemberRepository.GetQueryByUserName(userName);
 
-            var repotsSettings = Uow.ReportsSettingsRepository.GetQueryAsNoTrakingDefaultByMemberId(member.Id);
+            var isDefaultQuery = CheckCustomOrDefaultQuery(reportsSettingsView.QueryName);
 
-            var newReportsSettings = new ReportsSettings
-            {
-                Id = repotsSettings?.Id ?? 0,
-                IsDefaultQuery = true,
+            CheckEmptyQueryNameForCustomQuery(reportsSettingsView.QueryName, isDefaultQuery);
 
-                MemberId = member.Id,
-                GroupById = reportsSettings.GroupById ?? (int) Constants.ReportsGroupBy.Date,
-                DateFrom = reportsSettings.DateFrom,
-                DateTo = reportsSettings.DateTo,
-                ProjectIds = ConvertFromArrayOfIntsToString(reportsSettings.ProjectIds),
-                MemberIds = ConvertFromArrayOfIntsToString(reportsSettings.MemberIds),
-                ClientIds = ConvertFromArrayOfNullableIntsToString(reportsSettings.ClientIds),
-                ShowColumnIds = ConvertFromArrayOfIntsToString(reportsSettings.ShowColumnIds)
-            };
+            var reportsSettingsFromDb = GetReportsSettingsByMemberIdAndQueryName(member.Id, isDefaultQuery, reportsSettingsView.QueryName);
+
+            var newReportsSettings = SetValuesForNewReportsSettings(reportsSettingsView, reportsSettingsFromDb, isDefaultQuery, member);
 
             try
             {
-                if (repotsSettings == null)
+                if (reportsSettingsFromDb == null)
                 {
                     Uow.ReportsSettingsRepository.Insert(newReportsSettings);
                 }
-                else
+                else 
                 {
-                    Uow.ReportsSettingsRepository.Update(newReportsSettings);
+                    if (reportsSettingsView.IsUpdateCustomQuery)
+                    {
+                        Uow.ReportsSettingsRepository.Update(newReportsSettings);
+                    }
                 }
 
                 Uow.Save();
             }
             catch (Exception e)
             {
-                throw new CoralTimeDangerException("An error occurred while creating new client", e);
+                throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
             }
+        }
+
+        public void DeleteCustomReportsSettings(int id, string userName)
+        {
+            Uow.UserRepository.GetRelatedUserByName(userName);
+            var member = Uow.MemberRepository.GetQueryByUserName(userName);
+
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntitiesOutOfContextForThisMemberById(id, member.Id);
+
+            CheckReportsSettingsByIdForThisMember(id, getReportsSettingsByid);
+
+            var isDefaultQuery = CheckCustomOrDefaultQuery(getReportsSettingsByid.QueryName);
+            if (!isDefaultQuery)
+            {
+                Uow.ReportsSettingsRepository.Delete(id);
+                Uow.Save();
+            }
+            else
+            {
+                throw new CoralTimeDangerException("You cannot delete default query for ReportsSettings");
+            }
+        }
+
+        private void CheckReportsSettingsByIdForThisMember(int id, ReportsSettings getReportsSettingsByid)
+        {
+            if (getReportsSettingsByid == null)
+            {
+                throw new CoralTimeEntityNotFoundException($"There is no record for this member by id = {id}");
+            }
+        }
+
+        private ReportsSettings GetReportsSettingsByMemberIdAndQueryName(int memberId, bool isDefaultQuery, string queryName)
+        {
+            return Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName);
+        }
+
+        private static bool CheckCustomOrDefaultQuery(string queryName)
+        {
+            return string.IsNullOrEmpty(queryName);
+        }
+
+        private void CheckEmptyQueryNameForCustomQuery(string queryName, bool isDefaultQuery)
+        {
+            if (!isDefaultQuery && queryName == string.Empty)
+            {
+                throw new CoralTimeUpdateException("Property \"QueryName\" for custom ReportsSettings query can not contain an empty value.");
+            }
+        }
+
+        private ReportsSettings SetValuesForNewReportsSettings(ReportsSettingsView reportsSettings, ReportsSettings reportsSettingsFromDb, bool isDefaultQuery, Member member)
+        {
+            return new ReportsSettings
+            {
+                Id = reportsSettingsFromDb?.Id ?? 0,
+                IsDefaultQuery = isDefaultQuery,
+                QueryName = reportsSettings.QueryName,
+
+                MemberId = member.Id,
+                GroupById = reportsSettings.GroupById ?? (int) Constants.ReportsGroupBy.Date,
+                DateFrom = reportsSettings.DateFrom,
+                DateTo = reportsSettings.DateTo,
+                FilterProjectIds = ConvertFromArrayOfIntsToString(reportsSettings.ProjectIds),
+                FilterMemberIds = ConvertFromArrayOfIntsToString(reportsSettings.MemberIds),
+                FilterClientIds = ConvertFromArrayOfNullableIntsToString(reportsSettings.ClientIds),
+                FilterShowColumnIds = ConvertFromArrayOfIntsToString(reportsSettings.ShowColumnIds)
+            };
         }
 
         private static string ConvertFromArrayOfIntsToString(int[] array)

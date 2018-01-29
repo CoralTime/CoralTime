@@ -1,13 +1,14 @@
-﻿using CoralTime.Data.Models;
-using CoralTime.ViewModels.Reports.ReportsGrid;
+﻿using CoralTime.DAL.Models;
+using CoralTime.ViewModels.Reports;
+using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 
 namespace CoralTime.Data.Converters.ConvertTo
 {
     public static partial class ConvertTo
     {
-        private static ReportsGridItemView MapToReportsGridItemView(TimeEntry timeEntry, Member member)
+        private static ReportsGridItemsView MapToReportsGridItemView(TimeEntry timeEntry, Member member)
         {
-            return new ReportsGridItemView
+            return new IReportsGridItemsView
             {
                 ActualTime = timeEntry.Time,
                 Date = timeEntry.Date,

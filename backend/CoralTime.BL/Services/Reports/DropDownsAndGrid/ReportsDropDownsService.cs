@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var reportDropDowns = new ReportsDropDownsView
             {
                 Values = CreateDropDownValues(memberByUserName),
-                ValuesSaved = CreateDropDownValuesSaved(memberByUserName)
+                ValuesSaved = CreateDropDownValuesSaved(memberByUserName.Id)
             };
 
             return reportDropDowns;
@@ -180,37 +180,44 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return dropDownValues;
         }
 
-        private RequestReportsSettings CreateDropDownValuesSaved(Member memberByUserName)
+        private List<ReportsSettingsView> CreateDropDownValuesSaved(int memberId)
         {
-            var dropDownsValuesSaved = new RequestReportsSettings();
+            var dropDownsValuesSavedList = new List<ReportsSettingsView>();
 
-            var reportsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdWithIncludes(memberByUserName.Id);
+            var reportsSettings = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(memberId);
 
-            // Group By Date as default.
-            dropDownsValuesSaved.GroupById = reportsSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
-
-            // Show all columns as default.
-            dropDownsValuesSaved.ShowColumnIds = reportsSettings?.ShowColumnIds == null
-                ? new[]
-                {
-                    (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
-                    (int) ReportsExportService.ShowColumnModelIds.ShowDate,
-                    (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
-                    (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
-                }
-                : ConvertStringToArrayOfInts(reportsSettings.ShowColumnIds);
-
-            if (reportsSettings != null)
+            foreach (var reportSettings in reportsSettings)
             {
-                dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
-                dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
+                var dropDownsValuesSaved = new ReportsSettingsView();
 
-                dropDownsValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(reportsSettings.ClientIds);
-                dropDownsValuesSaved.ProjectIds = ConvertStringToArrayOfInts(reportsSettings.ProjectIds);
-                dropDownsValuesSaved.MemberIds = ConvertStringToArrayOfInts(reportsSettings.MemberIds);
+                // Group By Date as default.
+                dropDownsValuesSaved.GroupById = reportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
+
+                // Show all columns as default.
+                dropDownsValuesSaved.ShowColumnIds = reportSettings?.FilterShowColumnIds == null
+                    ? new[]
+                    {
+                        (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
+                        (int) ReportsExportService.ShowColumnModelIds.ShowDate,
+                        (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
+                        (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
+                    }
+                    : ConvertStringToArrayOfInts(reportSettings.FilterShowColumnIds);
+
+                if (reportSettings != null)
+                {
+                    dropDownsValuesSaved.DateFrom = reportSettings.DateFrom;
+                    dropDownsValuesSaved.DateTo = reportSettings.DateTo;
+
+                    dropDownsValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(reportSettings.FilterClientIds);
+                    dropDownsValuesSaved.ProjectIds = ConvertStringToArrayOfInts(reportSettings.FilterProjectIds);
+                    dropDownsValuesSaved.MemberIds = ConvertStringToArrayOfInts(reportSettings.FilterMemberIds);
+                }
+
+                dropDownsValuesSavedList.Add(dropDownsValuesSaved);
             }
 
-            return dropDownsValuesSaved;
+            return dropDownsValuesSavedList;
         }
 
         private static int[] ConvertStringToArrayOfInts(string sourceString)
