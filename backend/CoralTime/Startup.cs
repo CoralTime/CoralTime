@@ -4,6 +4,7 @@ using CoralTime.BL.Interfaces.Reports;
 using CoralTime.BL.Services;
 using CoralTime.BL.Services.Reports.DropDownsAndGrid;
 using CoralTime.BL.Services.Reports.Export;
+using CoralTime.Common.Attributes;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.DAL;
@@ -188,7 +189,9 @@ namespace CoralTime
             services.AddScoped<ITasksService, TasksService>();
             services.AddScoped<ITimeEntryService, TimeEntryService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<IReportExportService, ReportsExportService>();
+
+            services.AddScoped<CheckServiceSecureHeaderFilter>();
+            services.AddScoped<CheckNotificationSecureHeaderFilter>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)

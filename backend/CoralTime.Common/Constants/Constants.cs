@@ -18,9 +18,9 @@ namespace CoralTime.Common.Constants
 
         public static string EnvName { get; set; }
 
-        public const string SecureHeaderNotification = "SecureHeaderNotification";
+        public const string SecureHeaderNotificationName = "SecureHeaderNotification";
 
-        public const string SecureHeaderService = "SecureHeaderService";
+        public const string SecureHeaderServiceName = "SecureHeaderService";
 
         public enum LockTimePeriod
         {

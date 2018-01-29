@@ -1,6 +1,5 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Constants;
-using CoralTime.Common.Helpers;
+using CoralTime.Common.Attributes;
 using CoralTime.Common.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using System;
 namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
-    [CheckSecureHeader(Constants.SecureHeaderService)]
+    [ServiceFilter(typeof(CheckServiceSecureHeaderFilter))]
     public class ServiceController : BaseController<ServiceController, IMemberService>
     {
         private readonly IMemberProjectRolesService _roleService;
