@@ -189,6 +189,7 @@ namespace CoralTime
             services.AddScoped<ITasksService, TasksService>();
             services.AddScoped<ITimeEntryService, TimeEntryService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IReportExportService, ReportsExportService>();
 
             services.AddScoped<CheckServiceSecureHeaderFilter>();
             services.AddScoped<CheckNotificationSecureHeaderFilter>();
