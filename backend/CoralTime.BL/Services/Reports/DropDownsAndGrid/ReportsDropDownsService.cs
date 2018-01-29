@@ -186,39 +186,52 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var reportsSettings = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(memberId);
 
-            foreach (var reportSettings in reportsSettings)
+            var defaultReportSettings = reportsSettings.FirstOrDefault(x => x.IsDefaultQuery);
+            var customReportSettings = reportsSettings.Where(x => !x.IsDefaultQuery);
+
+            CreateReportsSettingsEntity(defaultReportSettings, dropDownsValuesSavedList, true);
+
+            foreach (var reportSettings in customReportSettings)
             {
-                var dropDownsValuesSaved = new ReportsSettingsView();
-
-                // Group By Date as default.
-                dropDownsValuesSaved.GroupById = reportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
-
-                // Show all columns as default.
-                dropDownsValuesSaved.ShowColumnIds = reportSettings?.FilterShowColumnIds == null
-                    ? new[]
-                    {
-                        (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
-                        (int) ReportsExportService.ShowColumnModelIds.ShowDate,
-                        (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
-                        (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
-                    }
-                    : ConvertStringToArrayOfInts(reportSettings.FilterShowColumnIds);
-
-                if (reportSettings != null)
-                {
-                    dropDownsValuesSaved.DateFrom = reportSettings.DateFrom;
-                    dropDownsValuesSaved.DateTo = reportSettings.DateTo;
-
-                    dropDownsValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(reportSettings.FilterClientIds);
-                    dropDownsValuesSaved.ProjectIds = ConvertStringToArrayOfInts(reportSettings.FilterProjectIds);
-                    dropDownsValuesSaved.MemberIds = ConvertStringToArrayOfInts(reportSettings.FilterMemberIds);
-                    dropDownsValuesSaved.IsDefaultQuery = reportSettings.IsDefaultQuery;
-                }
-
-                dropDownsValuesSavedList.Add(dropDownsValuesSaved);
+                CreateReportsSettingsEntity(reportSettings, dropDownsValuesSavedList, false);
             }
 
             return dropDownsValuesSavedList;
+        }
+
+        private void CreateReportsSettingsEntity(ReportsSettings defaultReportSettings, List<ReportsSettingsView> dropDownsValuesSavedList, bool isDefaultQuery)
+        {
+            var dropDownsDefaultValuesSaved = new ReportsSettingsView();
+
+            // Group By Date as default.
+            dropDownsDefaultValuesSaved.GroupById = defaultReportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
+
+            // Show all columns as default.
+            dropDownsDefaultValuesSaved.ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
+                ? new[]
+                {
+                    (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowDate,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
+                }
+                : ConvertStringToArrayOfInts(defaultReportSettings.FilterShowColumnIds);
+
+            if (defaultReportSettings != null)
+            {
+                dropDownsDefaultValuesSaved.DateFrom = defaultReportSettings.DateFrom;
+                dropDownsDefaultValuesSaved.DateTo = defaultReportSettings.DateTo;
+
+                dropDownsDefaultValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(defaultReportSettings.FilterClientIds);
+                dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
+                dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
+                dropDownsDefaultValuesSaved.IsDefaultQuery = isDefaultQuery;
+                dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
+                dropDownsDefaultValuesSaved.QueryId = defaultReportSettings.Id;
+
+            }
+
+            dropDownsValuesSavedList.Add(dropDownsDefaultValuesSaved);
         }
 
         private static int[] ConvertStringToArrayOfInts(string sourceString)
