@@ -45,9 +45,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 {
                     Uow.ReportsSettingsRepository.Insert(newReportsSettings);
                 }
-                else 
+                else
                 {
-                    if (reportsSettingsView.IsUpdateCustomQuery)
+                    var updateOnlyDefaultQuery = isDefaultQuery && !reportsSettingsView.IsUpdateCustomQuery;
+                    var updateOnlyCustomQuery = isDefaultQuery && reportsSettingsView.IsUpdateCustomQuery;
+
+                    if (updateOnlyDefaultQuery || updateOnlyCustomQuery)
                     {
                         Uow.ReportsSettingsRepository.Update(newReportsSettings);
                     }

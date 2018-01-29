@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Web.Http;
 
 namespace CoralTime.Api.v1.Reports
 {
@@ -44,7 +45,6 @@ namespace CoralTime.Api.v1.Reports
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                reportsGridView.ValuesSaved.IsUpdateCustomQuery = false;
                 _service.SaveOrUpdateReportsSettingsQuery(reportsGridView.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
@@ -94,6 +94,7 @@ namespace CoralTime.Api.v1.Reports
             }
 
             reportsSettingsView.IsUpdateCustomQuery = true;
+
             _service.SaveOrUpdateReportsSettingsQuery(reportsSettingsView, this.GetUserNameWithImpersonation());
 
             return Ok();
