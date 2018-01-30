@@ -35,7 +35,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             CheckEmptyQueryNameForCustomQuery(reportsSettingsView.QueryName, isDefaultQuery);
 
-            var reportsSettingsFromDb = GetReportsSettingsByMemberIdAndQueryName(member.Id, isDefaultQuery, reportsSettingsView.QueryId);
+            var reportsSettingsFromDb = GetReportsSettingsByMemberIdAndQueryName(member.Id, isDefaultQuery, reportsSettingsView.QueryId, reportsSettingsView.QueryName);
 
             var newReportsSettings = SetValuesForNewReportsSettings(reportsSettingsView, reportsSettingsFromDb, isDefaultQuery, member);
 
@@ -93,11 +93,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private ReportsSettings GetReportsSettingsByMemberIdAndQueryName(int memberId, bool isDefaultQuery, int? queryId)
+        private ReportsSettings GetReportsSettingsByMemberIdAndQueryName(int memberId, bool isDefaultQuery, int? queryId, string queryName)
         {
             var reportsSettings = queryId == null 
-                ? Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery)
-                : Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.Id == queryId); 
+                ? Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName)
+                : Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName && x.Id == queryId); 
 
             return reportsSettings;
         }
