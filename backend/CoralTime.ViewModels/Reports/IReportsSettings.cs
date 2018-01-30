@@ -21,7 +21,5 @@ namespace CoralTime.ViewModels.Reports
         int? QueryId { get; set; }
 
         string QueryName { get; set; }
-
-        bool IsUpdateCustomQuery { get; set; }
     }
 }

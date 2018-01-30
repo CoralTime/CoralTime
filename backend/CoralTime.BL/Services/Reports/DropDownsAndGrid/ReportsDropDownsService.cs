@@ -13,7 +13,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {
-        readonly List<ReportsDropDownGroupBy> DropDownGroupBy = new List<ReportsDropDownGroupBy>
+        private readonly List<ReportsDropDownGroupBy> _dropDownGroupBy = new List<ReportsDropDownGroupBy>
         {
             new ReportsDropDownGroupBy
             {
@@ -180,10 +180,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var dropDownValues = new ReportsDropDownValues
             {
                 Filters = reportClientView,
-                GroupBy = DropDownGroupBy,
+                GroupBy = _dropDownGroupBy,
                 ShowColumns = ReportsExportService.showColumnsInfo,
                 UserDetails = userDetails,
-                CustomQueries = valuesCustomQueries
+                CustomQueries = valuesCustomQueries.OrderBy(x => x.QueryName).ToList()
             };
 
             return dropDownValues;
@@ -225,9 +225,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
                 dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
                 dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
-                dropDownsDefaultValuesSaved.QueryId = isDefaultQuery 
-                    ? null 
-                    : defaultReportSettings?.Id;
+                dropDownsDefaultValuesSaved.QueryId = isDefaultQuery ? null : defaultReportSettings?.Id;
             }
 
             return dropDownsDefaultValuesSaved;

@@ -13,9 +13,9 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns(string userName);
 
-        void SaveOrUpdateReportsSettingsQuery(ReportsSettingsView reportsSettings, string userName);
+        void SaveReportsSettings(ReportsSettingsView reportsSettings, string userName);
 
-        void UpdateCustomQuery(ReportsSettingsView reportsSettings, string userName);
+        void UpdateCustomReportsSettings(ReportsSettingsView reportsSettings, string userName);
         
         void DeleteCustomReportsSettings(int id, string userName);
 

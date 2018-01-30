@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 
 namespace CoralTime.Api.v1.Reports
 {
@@ -18,7 +19,7 @@ namespace CoralTime.Api.v1.Reports
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetDropdownsByReportsSettingsValues()
+        public IActionResult GetDropdowns()
         {
             try
             {
@@ -33,7 +34,7 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult GetFilteredGridByReportsSettingsValues([FromBody] ReportsGridView reportsGridView)
+        public IActionResult GetGrid([FromBody] ReportsGridView reportsGridView)
         {
             if (!ModelState.IsValid)
             {
@@ -44,7 +45,7 @@ namespace CoralTime.Api.v1.Reports
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveOrUpdateReportsSettingsQuery(reportsGridView.ValuesSaved, userName);
+                _service.SaveReportsSettings(reportsGridView.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridView.ValuesSaved.GroupById)
@@ -85,7 +86,7 @@ namespace CoralTime.Api.v1.Reports
 
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]ReportsSettingsView reportsSettingsView)
+        public IActionResult UpdateCustomReportsSettings(int id, [FromBody]ReportsSettingsView reportsSettingsView)
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +95,7 @@ namespace CoralTime.Api.v1.Reports
 
             reportsSettingsView.QueryId = id;
 
-            _service.UpdateCustomQuery(reportsSettingsView, this.GetUserNameWithImpersonation());
+            _service.UpdateCustomReportsSettings(reportsSettingsView, this.GetUserNameWithImpersonation());
 
             return Ok();
         }

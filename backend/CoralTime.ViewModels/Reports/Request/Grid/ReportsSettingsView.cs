@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace CoralTime.ViewModels.Reports.Request.Grid
 {
@@ -22,8 +21,5 @@ namespace CoralTime.ViewModels.Reports.Request.Grid
         public int? QueryId { get; set; }
 
         public string QueryName{ get; set; }
-
-        [JsonIgnore]
-        public bool IsUpdateCustomQuery { get; set; }
     }
 }
