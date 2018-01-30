@@ -94,9 +94,7 @@ namespace CoralTime.Api.v1.Reports
 
             reportsSettingsView.QueryId = id;
 
-            reportsSettingsView.IsUpdateCustomQuery = true;
-
-            _service.SaveOrUpdateReportsSettingsQuery(reportsSettingsView, this.GetUserNameWithImpersonation());
+            _service.UpdateCustomQuery(reportsSettingsView, this.GetUserNameWithImpersonation());
 
             return Ok();
         }

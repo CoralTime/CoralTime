@@ -64,6 +64,34 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
+        public void UpdateCustomQuery(ReportsSettingsView reportsSettingsView, string userName)
+        {
+            Uow.UserRepository.GetRelatedUserByName(userName);
+            var member = Uow.MemberRepository.GetQueryByUserName(userName);
+
+            var isDefaultQuery = CheckCustomOrDefaultQuery(reportsSettingsView.QueryName);
+
+            CheckEmptyQueryNameForCustomQuery(reportsSettingsView.QueryName, isDefaultQuery);
+
+            var reportsSettingsFromDb = GetCustomQueriesForUpdate(member.Id, reportsSettingsView.QueryId);
+
+            var newReportsSettings = SetValuesForNewReportsSettings(reportsSettingsView, reportsSettingsFromDb, isDefaultQuery, member);
+
+            try
+            {
+                if (reportsSettingsFromDb != null)
+                {
+                    Uow.ReportsSettingsRepository.Update(newReportsSettings);
+
+                    Uow.Save();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
+            }
+        }
+
         public void DeleteCustomReportsSettings(int id, string userName)
         {
             Uow.UserRepository.GetRelatedUserByName(userName);
@@ -95,11 +123,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportsSettings GetReportsSettingsByMemberIdAndQueryName(int memberId, bool isDefaultQuery, int? queryId, string queryName)
         {
-            var reportsSettings = queryId == null 
-                ? Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName)
-                : Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName && x.Id == queryId); 
+            return Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName);
+        }
 
-            return reportsSettings;
+        private ReportsSettings GetCustomQueriesForUpdate(int memberId, int? queryId)
+        {
+           return Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
         }
 
         private static bool CheckCustomOrDefaultQuery(string queryName)
