@@ -23,6 +23,7 @@ namespace CoralTime.ViewModels.Reports.Request.Grid
 
         public string QueryName{ get; set; }
 
+        [JsonIgnore]
         public bool IsDefaultQuery { get; set; }
 
         [JsonIgnore]

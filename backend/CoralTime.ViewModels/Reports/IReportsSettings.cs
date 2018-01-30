@@ -1,5 +1,4 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace CoralTime.ViewModels.Reports
 {
@@ -25,7 +24,6 @@ namespace CoralTime.ViewModels.Reports
 
         bool IsDefaultQuery { get; set; }
 
-        [JsonIgnore]
         bool IsUpdateCustomQuery { get; set; }
     }
 }

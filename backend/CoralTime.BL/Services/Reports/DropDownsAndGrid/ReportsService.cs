@@ -2,13 +2,13 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
+using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Hosting;
 using System;
-using CoralTime.DAL.Models;
-using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;
 using System.Linq;
+using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {

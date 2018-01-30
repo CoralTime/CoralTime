@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CoralTime.ViewModels.Reports.Request.Grid;
+﻿using CoralTime.ViewModels.Reports.Request.Grid;
 
 namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 {
@@ -8,11 +7,11 @@ namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
         public ReportsDropDownsView()
         {
             Values = new ReportsDropDownValues();
-            ValuesSaved = new List<ReportsSettingsView>();
+            ValuesDefaultQuery = new ReportsSettingsView();
         }
 
         public ReportsDropDownValues Values { get; set; }
 
-        public List<ReportsSettingsView> ValuesSaved { get; set; }
+        public ReportsSettingsView ValuesDefaultQuery { get; set; }
     }
 }

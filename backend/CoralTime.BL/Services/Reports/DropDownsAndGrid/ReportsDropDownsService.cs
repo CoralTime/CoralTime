@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var reportDropDowns = new ReportsDropDownsView
             {
                 Values = CreateDropDownValues(memberByUserName),
-                ValuesSaved = CreateDropDownValuesSaved(memberByUserName.Id)
+                ValuesDefaultQuery = CreateDropDownValuesSaved(memberByUserName.Id)
             };
 
             return reportDropDowns;
@@ -169,37 +169,36 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 IsManagerCurrentUser = memberByUserName.User.IsManager,
             };
 
+            var valuesCustomQueries = new List<ReportsSettingsView>();
+
+            var customReportsSettings = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(memberByUserName.Id).Where(x => !x.IsDefaultQuery);
+            foreach (var customReportSettings in customReportsSettings)
+            {
+                valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings, false));
+            }
+
             var dropDownValues = new ReportsDropDownValues
             {
                 Filters = reportClientView,
                 GroupBy = DropDownGroupBy,
                 ShowColumns = ReportsExportService.showColumnsInfo,
                 UserDetails = userDetails,
+                ValuesCustomQueries = valuesCustomQueries
             };
 
             return dropDownValues;
         }
 
-        private List<ReportsSettingsView> CreateDropDownValuesSaved(int memberId)
+        private ReportsSettingsView CreateDropDownValuesSaved(int memberId)
         {
-            var dropDownsValuesSavedList = new List<ReportsSettingsView>();
+            var reportsSettings = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(memberId).FirstOrDefault(x => x.IsDefaultQuery);
 
-            var reportsSettings = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(memberId);
-
-            var defaultReportSettings = reportsSettings.FirstOrDefault(x => x.IsDefaultQuery);
-            var customReportSettings = reportsSettings.Where(x => !x.IsDefaultQuery);
-
-            CreateReportsSettingsEntity(defaultReportSettings, dropDownsValuesSavedList, true);
-
-            foreach (var reportSettings in customReportSettings)
-            {
-                CreateReportsSettingsEntity(reportSettings, dropDownsValuesSavedList, false);
-            }
+            var dropDownsValuesSavedList = CreateReportsSettingsEntity(reportsSettings, true);
 
             return dropDownsValuesSavedList;
         }
 
-        private void CreateReportsSettingsEntity(ReportsSettings defaultReportSettings, List<ReportsSettingsView> dropDownsValuesSavedList, bool isDefaultQuery)
+        private ReportsSettingsView CreateReportsSettingsEntity(ReportsSettings defaultReportSettings,  bool isDefaultQuery)
         {
             var dropDownsDefaultValuesSaved = new ReportsSettingsView();
 
@@ -227,34 +226,26 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
                 dropDownsDefaultValuesSaved.IsDefaultQuery = isDefaultQuery;
                 dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
-                dropDownsDefaultValuesSaved.QueryId = defaultReportSettings.Id;
-
+                dropDownsDefaultValuesSaved.QueryId = isDefaultQuery 
+                    ? null 
+                    : defaultReportSettings?.Id;
             }
 
-            dropDownsValuesSavedList.Add(dropDownsDefaultValuesSaved);
+            return dropDownsDefaultValuesSaved;
         }
 
         private static int[] ConvertStringToArrayOfInts(string sourceString)
         {
-            if (!string.IsNullOrEmpty(sourceString))
-            {
-                return sourceString.Split(',').Select(int.Parse).ToArray();
-            }
-
-            return null;
+            return !string.IsNullOrEmpty(sourceString)
+                ? sourceString.Split(',').Select(int.Parse).ToArray()
+                : null;
         }
 
         private static int?[] ConvertStringToArrayOfNullableInts(string sourceString)
         {
-            if (!string.IsNullOrEmpty(sourceString))
-            {
-                return sourceString.Split(',')
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Select(x => (int?) Convert.ToInt32(x))
-                    .ToArray();
-            }
-
-            return null;
+            return !string.IsNullOrEmpty(sourceString)
+                ? sourceString.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => (int?) Convert.ToInt32(x)).ToArray()
+                : null;
         }
     }
 }

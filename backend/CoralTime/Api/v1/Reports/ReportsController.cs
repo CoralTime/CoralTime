@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Web.Http;
 
 namespace CoralTime.Api.v1.Reports
 {
@@ -34,7 +33,7 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult GetFilteredGridByReportsSettingsValues([FromBody]ReportsGridView reportsGridView)
+        public IActionResult GetFilteredGridByReportsSettingsValues([FromBody] ReportsGridView reportsGridView)
         {
             if (!ModelState.IsValid)
             {
@@ -83,7 +82,6 @@ namespace CoralTime.Api.v1.Reports
                 return BadRequest(errors);
             }
         }
-
 
         [HttpPut]
         public IActionResult UpdateSavedValuesForCustomReportsSettings([FromBody] ReportsSettingsView reportsSettingsView)
