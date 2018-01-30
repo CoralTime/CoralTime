@@ -8,7 +8,7 @@ import { CustomSelectItem } from '../shared/form/multiselect/multiselect.compone
 
 export interface ReportDropdowns {
 	values: ReportDropdownsDetails;
-	valuesSaved: ReportFilters;
+	defaultQuery: ReportFilters;
 }
 
 export class ReportFilters {
@@ -18,16 +18,20 @@ export class ReportFilters {
 	groupById: number;
 	memberIds: number[];
 	projectIds: number[];
+	queryId: number;
+	queryName: string;
 	showColumnIds: number[];
 
 	constructor(obj: any) {
 		this.clientIds = obj.clientIds || [];
 		this.dateFrom = obj.dateFrom;
 		this.dateTo = obj.dateTo;
-		this.groupById = obj.groupById;
+		this.groupById = obj.groupById || 3;
 		this.memberIds = obj.memberIds || [];
 		this.projectIds = obj.projectIds || [];
-		this.showColumnIds = obj.showColumnIds || [];
+		this.queryId = obj.queryId;
+		this.queryName = obj.queryName;
+		this.showColumnIds = obj.showColumnIds || [1, 2, 3, 4];
 	}
 }
 
@@ -36,6 +40,7 @@ export interface ReportDropdownsDetails {
 	groupBy: GroupByItem[];
 	showColumns: CustomSelectItem;
 	userDetails: CurrentUserDetails;
+	customQueries: ReportFilters[];
 }
 
 export interface CurrentUserDetails {
@@ -111,6 +116,14 @@ export interface GroupByItem {
 export class ReportsService {
 	constructor(private constantService: ConstantService,
 	            private http: Http) {
+	}
+
+	Delete(id: number): Observable<Response> {
+		return this.http.delete(this.constantService.reportsApi + '/' +  id);
+	}
+
+	Put(id: number, obj: ReportFilters): Observable<Response> {
+		return this.http.put(this.constantService.reportsApi + '/' +  id, obj);
 	}
 
 	getReportDropdowns(): Observable<ReportDropdowns> {

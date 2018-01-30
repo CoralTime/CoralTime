@@ -5,6 +5,7 @@
                [disabled]="disabled"
                [placeholder]="placeholder"
                (focus)="openList()"
+               (blur)="_onInputBlur()"
                [attr.maxlength]="maxlength"
                [(ngModel)]="modelValue"
                (ngModelChange)="updateModel(modelValue)">

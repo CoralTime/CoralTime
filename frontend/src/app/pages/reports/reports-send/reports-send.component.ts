@@ -28,7 +28,7 @@ export class SendReportsFormModel {
 			this.fromEmail = data.fromEmail;
 			this.subject = data.subject;
 			this.toEmail = data.toEmail;
-			this.valuesSaved = data.valuesSaved;
+			this.valuesSaved = data.defaultQuery;
 		}
 	}
 }
