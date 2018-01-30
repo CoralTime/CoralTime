@@ -11,7 +11,7 @@ using System.Linq;
 namespace CoralTime.Api.v1
 {
     [EnableQuery]
-    public class BaseODataController<T, S> : ODataController where T : class
+    public abstract class BaseODataController<T, S> : ODataController where T : class
     {
         protected readonly ILogger<T> _logger;
         protected readonly IMapper _mapper;
@@ -28,11 +28,6 @@ namespace CoralTime.Api.v1
         {
             _logger = logger;
             _service = service;
-        }
-
-        public BaseODataController(ILogger<T> logger)
-        {
-            _logger = logger;
         }
 
         protected IActionResult SendErrorResponse(Exception e)

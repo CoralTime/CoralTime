@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
-using System;
 
 namespace CoralTime.Common.Attributes
 {
-    public class BaseCheckSecureHeaderFilter : ActionFilterAttribute
+    public abstract class BaseCheckSecureHeaderFilter : ActionFilterAttribute
     {
         protected readonly IConfiguration _config;
 
@@ -23,14 +22,8 @@ namespace CoralTime.Common.Attributes
             }
         }
 
-        protected virtual string GetSecureHeaderName()
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract string GetSecureHeaderName();
 
-        protected virtual string GetSecureHeaderValue()
-        {
-            throw new NotImplementedException();
-        }
+        protected abstract string GetSecureHeaderValue();
     }
 }
