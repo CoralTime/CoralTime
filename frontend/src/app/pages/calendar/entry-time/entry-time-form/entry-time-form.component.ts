@@ -269,6 +269,10 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.setActualTime();
 		this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
 	}
+	
+	private isFromToFormValueValid(): boolean {
+		return this.convertFormValueToSeconds(this.timeTo) > this.convertFormValueToSeconds(this.timeFrom);
+	}
 
 	private fillFromToForm(): void {
 		this.currentTimeEntry.isFromToShow = true;
@@ -313,6 +317,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		let isNewTimeEntry: boolean;
 
 		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
+		this.currentTimeEntry.isFromToShow = this.currentTimeEntry.isFromToShow && this.isFromToFormValueValid();
 		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.getAuthUser().id;
 
 		if (this.currentTimeEntry.id) {

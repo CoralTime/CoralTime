@@ -253,6 +253,53 @@ $fieldHeight: 30px;
       }
     }
 
+    .ct-query-block {
+      position: relative;
+      float: right;
+      margin-right: 20px;
+    }
+
+    ct-input-list {
+      position: relative;
+      display: inline-block;
+      margin-left: 4px;
+
+      .ct-input {
+        border: 0;
+        height: 30px;
+      }
+
+      .ct-options-list {
+        position: absolute;
+        display: flex;
+        top: 44px;
+        left: 0;
+      }
+    }
+
+    .ct-actions-drop-menu {
+      width: 140px;
+      top: 15px;
+      right: 100px;
+    }
+
+    .ct-menu-open-link {
+      margin: 0 10px;
+      cursor: pointer;
+
+      i {
+        vertical-align: middle;
+      }
+
+      &:hover i{
+        background-color: #ddd;
+      }
+
+      &.ct-disabled {
+        opacity: 0.5;
+      }
+    }
+
     .ct-close {
       float: right;
       line-height: 50px;

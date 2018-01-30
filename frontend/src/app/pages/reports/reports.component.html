@@ -108,6 +108,29 @@
                     </ct-select>
                 </div>
                 <span class="ct-close" (click)="resetFilters()">Reset</span>
+                <div class="ct-report-filters-block ct-query-block">
+                    <label class="ct-filter-label">Query</label>
+                    <ct-input-list [name]="'query'"
+                                   [displayName]="'queryName'" [trackBy]="'queryId'"
+                                   [(ngModel)]="queryName"
+                                   [options]="queryItems"
+                                   (valueSelected)="queryOnChange($event)"></ct-input-list>
+                    <a *ngIf="true" class="ct-menu-open-link" [class.ct-disabled]="!queryName" (click)="menu.toggleMenu()">
+                        <i class="material-icons">more_horiz</i>
+                    </a>
+
+                    <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu">
+                        <ct-menu-item [class.ct-disabled]="!queryName || isQueryExist()">
+                            <a md-ripple (click)="createQuery()">Create</a>
+                        </ct-menu-item>
+                        <ct-menu-item [class.ct-disabled]="!isQueryExist()">
+                            <a md-ripple (click)="updateQuery()">Update</a>
+                        </ct-menu-item>
+                        <ct-menu-item [class.ct-disabled]="!isQueryExist()">
+                            <a md-ripple (click)="deleteQuery()">Delete</a>
+                        </ct-menu-item>
+                    </ct-menu>
+                </div>
             </div>
         </div>
 

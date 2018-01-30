@@ -105,7 +105,7 @@
 
             <div>
                 <label class="ct-form-label">Role</label>
-                <ct-select [disabled]="user?.id == authUser.id || user.id == impersonateUser?.id"
+                <ct-select [disabled]="user.id === authUser.id || user.id === impersonateUser?.id"
                            [name]="'role'"
                            [displayName]="'title'" [trackBy]="'value'"
                            [(ngModel)]="roleModel"

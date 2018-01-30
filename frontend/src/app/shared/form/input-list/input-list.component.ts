@@ -47,6 +47,7 @@ export class InputListComponent implements ControlValueAccessor {
 	@Input('canClickOverlay') canClickOverlay: boolean = false;
 
 	@Output() change: EventEmitter<InputChange> = new EventEmitter<InputChange>();
+	@Output() valueSelected: EventEmitter<any> = new EventEmitter();
 
 	isOpen: boolean = false;
 	modelValue: any = '';
@@ -89,6 +90,7 @@ export class InputListComponent implements ControlValueAccessor {
 		}
 		this.onTouched();
 
+		this.valueSelected.emit(this.modelValue);
 		this._emitChangeEvent();
 	}
 
@@ -163,6 +165,10 @@ export class InputListComponent implements ControlValueAccessor {
 	 */
 	setDisabledState(isDisabled: boolean) {
 		this.disabled = isDisabled;
+	}
+
+	_onInputBlur() {
+		this.onTouched();
 	}
 
 	closeList(): void {
