@@ -35,7 +35,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             CheckEmptyQueryNameForCustomQuery(reportsSettingsView.QueryName, isDefaultQuery);
 
-            var reportsSettingsFromDb = GetReportsSettingsByMemberIdAndQueryName(member.Id, isDefaultQuery, reportsSettingsView.QueryName);
+            var reportsSettingsFromDb = GetReportsSettingsByMemberIdAndQueryName(member.Id, isDefaultQuery, reportsSettingsView.QueryId);
 
             var newReportsSettings = SetValuesForNewReportsSettings(reportsSettingsView, reportsSettingsFromDb, isDefaultQuery, member);
 
@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 else
                 {
                     var updateOnlyDefaultQuery = isDefaultQuery && !reportsSettingsView.IsUpdateCustomQuery;
-                    var updateOnlyCustomQuery = isDefaultQuery && reportsSettingsView.IsUpdateCustomQuery;
+                    var updateOnlyCustomQuery = !isDefaultQuery && reportsSettingsView.IsUpdateCustomQuery;
 
                     if (updateOnlyDefaultQuery || updateOnlyCustomQuery)
                     {
@@ -93,9 +93,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private ReportsSettings GetReportsSettingsByMemberIdAndQueryName(int memberId, bool isDefaultQuery, string queryName)
+        private ReportsSettings GetReportsSettingsByMemberIdAndQueryName(int memberId, bool isDefaultQuery, int? queryId)
         {
-            return Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.QueryName == queryName);
+            var reportsSettings = queryId == null 
+                ? Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery)
+                : Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().FirstOrDefault(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery && x.Id == queryId); 
+
+            return reportsSettings;
         }
 
         private static bool CheckCustomOrDefaultQuery(string queryName)

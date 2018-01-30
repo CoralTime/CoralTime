@@ -8,11 +8,11 @@ namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
         public ReportsDropDownValues()
         {
             UserDetails = new ReportsUserDetails();
-            ValuesCustomQueries = new List<ReportsSettingsView>();
+            CustomQueries = new List<ReportsSettingsView>();
         }
 
         public ReportsUserDetails UserDetails { get; set; }
 
-        public List<ReportsSettingsView> ValuesCustomQueries { get; set; }
+        public List<ReportsSettingsView> CustomQueries { get; set; }
     }
 }

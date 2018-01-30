@@ -83,13 +83,16 @@ namespace CoralTime.Api.v1.Reports
             }
         }
 
-        [HttpPut]
-        public IActionResult UpdateSavedValuesForCustomReportsSettings([FromBody] ReportsSettingsView reportsSettingsView)
+
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody]ReportsSettingsView reportsSettingsView)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Model");
             }
+
+            reportsSettingsView.QueryId = id;
 
             reportsSettingsView.IsUpdateCustomQuery = true;
 

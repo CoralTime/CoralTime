@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var reportDropDowns = new ReportsDropDownsView
             {
                 Values = CreateDropDownValues(memberByUserName),
-                ValuesDefaultQuery = CreateDropDownValuesSaved(memberByUserName.Id)
+                DefaultQuery = CreateDropDownValuesSaved(memberByUserName.Id)
             };
 
             return reportDropDowns;
@@ -183,7 +183,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 GroupBy = DropDownGroupBy,
                 ShowColumns = ReportsExportService.showColumnsInfo,
                 UserDetails = userDetails,
-                ValuesCustomQueries = valuesCustomQueries
+                CustomQueries = valuesCustomQueries
             };
 
             return dropDownValues;
@@ -224,7 +224,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 dropDownsDefaultValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(defaultReportSettings.FilterClientIds);
                 dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
                 dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
-                dropDownsDefaultValuesSaved.IsDefaultQuery = isDefaultQuery;
                 dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
                 dropDownsDefaultValuesSaved.QueryId = isDefaultQuery 
                     ? null 

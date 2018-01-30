@@ -22,8 +22,6 @@ namespace CoralTime.ViewModels.Reports
 
         string QueryName { get; set; }
 
-        bool IsDefaultQuery { get; set; }
-
         bool IsUpdateCustomQuery { get; set; }
     }
 }

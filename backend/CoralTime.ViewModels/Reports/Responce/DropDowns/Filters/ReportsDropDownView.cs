@@ -7,11 +7,11 @@ namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
         public ReportsDropDownsView()
         {
             Values = new ReportsDropDownValues();
-            ValuesDefaultQuery = new ReportsSettingsView();
+            DefaultQuery = new ReportsSettingsView();
         }
 
         public ReportsDropDownValues Values { get; set; }
 
-        public ReportsSettingsView ValuesDefaultQuery { get; set; }
+        public ReportsSettingsView DefaultQuery { get; set; }
     }
 }
