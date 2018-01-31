@@ -85,6 +85,10 @@
     text-overflow: ellipsis;
     overflow: hidden;
     box-shadow: none !important;
+
+    &.ct-select-default-text {
+      color: $gray-text;
+    }
   }
 
   &.ct-select-opened {

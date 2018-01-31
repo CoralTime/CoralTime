@@ -5,7 +5,9 @@
          (clickOutside)="closeSelect()">
         <div class="ct-select" [class.ct-disabled]="disabled"
              (click)="toggleSelect()">
-            <div class="ct-select-selected-options-text">{{getSelectedOptionsText()}}</div>
+            <div class="ct-select-selected-options-text" [class.ct-select-default-text]="!selectedObject">
+                {{getSelectedOptionsText()}}
+            </div>
             <i *ngIf="icon" class="fa ct-users-project-edit-role fa-{{icon}}"></i>
         </div>
         <md-list class="ct-select-options-list" [style.maxHeight.px]="maxHeight" #mdList>

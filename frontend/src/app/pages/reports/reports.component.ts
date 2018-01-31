@@ -126,6 +126,7 @@ export class ReportsComponent implements OnInit {
 	private setReportsQueryItems(reportDropdowns: ReportDropdowns): void {
 		this.queryItems = reportDropdowns.values.customQueries;
 		this.queryName = reportDropdowns.defaultQuery.queryName;
+		this.reportFilters.queryName = null;
 	}
 
 	private setShowColumnItems(): void {
@@ -152,6 +153,7 @@ export class ReportsComponent implements OnInit {
 					this.reportsGridData = res;
 				},
 				() => {
+					this.notificationService.danger('Error loading reports grid.');
 					this.datePeriod = new DatePeriod(null);
 				});
 	}
