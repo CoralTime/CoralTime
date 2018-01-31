@@ -25,6 +25,7 @@ using IdentityServer4.Stores;
 using IdentityServer4.Validation;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OData.Edm;
 using NLog.Extensions.Logging;
 using NLog.Web;
@@ -90,8 +92,19 @@ namespace CoralTime
             services.AddMvc();
 
             // Add OData
-            // Comment this string for update swagger.json.
             services.AddOData();
+
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            });
 
             SetupIdentity(services);
 
@@ -141,8 +154,6 @@ namespace CoralTime
             {
                 routeBuilder.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
                 routeBuilder.MapODataServiceRoute("ODataRoute", "api/v1/odata", edmModel);
-
-                // Work-around for #1175
                 routeBuilder.EnableDependencyInjection();
             });
 
@@ -153,7 +164,7 @@ namespace CoralTime
             // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/v1/swagger", "CoralTime V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoralTime V1");
             });
 
             Constants.EnvName = env.EnvironmentName;
