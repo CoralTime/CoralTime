@@ -344,9 +344,9 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			this.currentTimeEntry.isFromToShow = false;
 		} else {
 			this.currentTimeEntry.time = this.ticks;
-			this.currentTimeEntry.timeFrom = null;
+			this.currentTimeEntry.timeFrom = DateUtils.getSecondsFromStartDay() - this.ticks;
 			this.currentTimeEntry.timeTimerStart = -1;
-			this.currentTimeEntry.timeTo = null;
+			this.currentTimeEntry.timeTo = this.currentTimeEntry.timeFrom + this.ticks;
 			this.actualTime = this.splitTime(this.currentTimeEntry.time);
 		}
 

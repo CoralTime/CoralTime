@@ -225,8 +225,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
 			this.currentTimeEntry.timeTo = null;
 		} else {
+			this.currentTimeEntry.isFromToShow = true;
 			this.currentTimeEntry.time = this.ticks;
+			this.currentTimeEntry.timeFrom = DateUtils.getSecondsFromStartDay() - this.ticks;
 			this.currentTimeEntry.timeTimerStart = -1;
+			this.currentTimeEntry.timeTo = this.currentTimeEntry.timeFrom + this.ticks;
 			this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
 		}
 
