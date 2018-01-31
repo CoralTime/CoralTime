@@ -15,8 +15,6 @@ namespace CoralTime.BL.Interfaces.Reports
 
         void SaveReportsSettings(ReportsSettingsView reportsSettings, string userName);
 
-        void UpdateCustomReportsSettings(ReportsSettingsView reportsSettings, string userName);
-        
         void DeleteCustomReportsSettings(int id, string userName);
 
         ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, ReportsGridView reportsGridData);

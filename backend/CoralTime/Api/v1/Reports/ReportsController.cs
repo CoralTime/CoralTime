@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Net;
 
 namespace CoralTime.Api.v1.Reports
 {
@@ -82,22 +81,6 @@ namespace CoralTime.Api.v1.Reports
                 var errors = ExceptionsChecker.CheckProjectsException(e);
                 return BadRequest(errors);
             }
-        }
-
-
-        [HttpPut("{id}")]
-        public IActionResult UpdateCustomReportsSettings(int id, [FromBody]ReportsSettingsView reportsSettingsView)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Model");
-            }
-
-            reportsSettingsView.QueryId = id;
-
-            _service.UpdateCustomReportsSettings(reportsSettingsView, this.GetUserNameWithImpersonation());
-
-            return Ok();
         }
 
         [HttpDelete("{id}")]

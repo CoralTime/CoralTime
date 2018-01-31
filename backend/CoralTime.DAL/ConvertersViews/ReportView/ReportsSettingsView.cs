@@ -7,13 +7,13 @@ namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
 {
     public static partial class ExstensionsMethods
     {
-        public static ReportsSettings GetView(this ReportsSettingsView reportsSettingsView, ReportsSettings reportsSettingsFromDb, bool isDefaultQuery, int memberId)
+        public static ReportsSettings GetView(this ReportsSettingsView reportsSettingsView, ReportsSettings reportsSettingsFromDb, bool isDefaultQuery, string queryName, int memberId)
         {
             return new ReportsSettings
             {
                 Id = reportsSettingsFromDb?.Id ?? 0,
                 IsDefaultQuery = isDefaultQuery,
-                QueryName = reportsSettingsView.QueryName,
+                QueryName = queryName,
                 MemberId = memberId,
 
                 GroupById = reportsSettingsView.GroupById ?? (int)Constants.ReportsGroupBy.Date,

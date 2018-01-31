@@ -22,6 +22,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             if (!isDefaultQuery)
             {
                 var customReportsSettings = SetForReportsSettingsFromDbValuesOfView(reportsSettingsView, memberId, false);
+
+                CheckReportsSettingsByIdForThisMember(reportsSettingsView.QueryId, customReportsSettings);
+
                 InsertOrUpdateReportsSettings(customReportsSettings, isInsertable: true, isUpdatable: false);
             }
         }
@@ -60,28 +63,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportsSettings SetForReportsSettingsFromDbValuesOfView(ReportsSettingsView reportsSettingsView, int memberId, bool isDefaultQuery)
         {
-            var reportsSettingsFromDb = GetReportsSettingByMemberIdAndTypeQueryAndQueryName(memberId, isDefaultQuery, reportsSettingsView.QueryName, null);
+            var queryName = isDefaultQuery ? null : reportsSettingsView.QueryName;
 
-            var reportsSettings = reportsSettingsView.GetView(reportsSettingsFromDb, isDefaultQuery, memberId);
+            var reportsSettingsFromDb = GetReportsSettingByMemberIdAndTypeQueryAndQueryName(memberId, isDefaultQuery, queryName, null);
+
+            var reportsSettings = reportsSettingsView.GetView(reportsSettingsFromDb, isDefaultQuery, queryName, memberId);
 
             return reportsSettings;
-        }
-
-        public void UpdateCustomReportsSettings(ReportsSettingsView reportsSettingsView, string userName)
-        {
-            Uow.UserRepository.GetRelatedUserByName(userName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
-
-            var isDefaultQuery = IsDefaultQuery(reportsSettingsView.QueryName);
-
-            if (!isDefaultQuery)
-            {
-                var customReportsSettings = SetForReportsSettingsFromDbValuesOfView(reportsSettingsView, memberId, false);
-
-                CheckReportsSettingsByIdForThisMember(reportsSettingsView.QueryId, customReportsSettings);
-
-                InsertOrUpdateReportsSettings(customReportsSettings, isInsertable: false, isUpdatable: true);
-            }
         }
 
         public void DeleteCustomReportsSettings(int id, string userName)
@@ -123,9 +111,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
             else
             {
-                var tempQueryName = isDefaultQuery ? null : queryName;
-
-                return reportsSettings.FirstOrDefault(x => x.QueryName == tempQueryName);
+                return reportsSettings.FirstOrDefault(x => x.QueryName == queryName);
             }
         }
     }
