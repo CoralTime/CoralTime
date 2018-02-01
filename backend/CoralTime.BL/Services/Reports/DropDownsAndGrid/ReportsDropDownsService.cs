@@ -171,7 +171,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var valuesCustomQueries = new List<ReportsSettingsView>();
 
-            var customQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(member.Id).Where(x => !x.IsCurrentQuery);
+            var customQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(member.Id).Where(x => x.QueryName != null);
             foreach (var customReportSettings in customQueries)
             {
                 valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings));
