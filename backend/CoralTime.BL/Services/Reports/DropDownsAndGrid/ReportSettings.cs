@@ -9,43 +9,64 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportService
     {
-        public void SaveReportsSettings(ReportsSettingsView reportsSettingsView, string userName)
+        public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView, string userName)
         {
             Uow.UserRepository.GetRelatedUserByName(userName);
             var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
 
-            var isDefaultQuery = IsDefaultQuery(reportsSettingsView.QueryName);
-
-            var defaultReportsSettings = SetForReportsSettingsFromDbValuesOfView(reportsSettingsView, memberId, true);
-            InsertOrUpdateReportsSettings(defaultReportsSettings, isInsertable: true, isUpdatable: true);
-
-            if (!isDefaultQuery)
+            if (IsDefaultQuery(reportsSettingsView.QueryName))
             {
-                var customReportsSettings = SetForReportsSettingsFromDbValuesOfView(reportsSettingsView, memberId, false);
-
-                CheckReportsSettingsByIdForThisMember(reportsSettingsView.QueryId, customReportsSettings);
-
-                InsertOrUpdateReportsSettings(customReportsSettings, isInsertable: true, isUpdatable: false);
+                var defaultQuery = SetValuesForQuery(reportsSettingsView, memberId);
+                SaveQueryToReportsSettings(defaultQuery);
             }
+
+            //if (!isDefaultQuery)
+            //{
+            //    var customReportsSettings = SetForReportsSettingsFromDbValuesOfView(reportsSettingsView, memberId, false);
+
+            //    CheckReportsSettingsByIdForThisMember(reportsSettingsView.QueryId, customReportsSettings);
+
+            //    InsertOrUpdateReportsSettings(customReportsSettings, isInsertable: true, isUpdatable: false);
+            //}
         }
 
-        public void InsertOrUpdateReportsSettings(ReportsSettings reportsSettings,  bool isInsertable, bool isUpdatable)
+        public void SaveCustomQuery(ReportsSettingsView reportsSettings, string userName)
+        {
+
+        }
+
+        public void DeleteCustomQuery(int id, string userName)
+        {
+            //Uow.UserRepository.GetRelatedUserByName(userName);
+            //var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
+
+            //var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntitiesOutOfContextForThisMemberById(id, memberId);
+
+            //CheckReportsSettingsByIdForThisMember(id, getReportsSettingsByid);
+
+            //var isDefaultQuery = IsDefaultQuery(getReportsSettingsByid.QueryName);
+            //if (!isDefaultQuery)
+            //{
+            //    Uow.ReportsSettingsRepository.Delete(id);
+            //    Uow.Save();
+            //}
+            //else
+            //{
+            //    throw new CoralTimeDangerException("You cannot delete default query for ReportsSettings");
+            //}
+        }
+
+        private void SaveQueryToReportsSettings(ReportsSettings reportsSettings)
         {
             try
             {
                 if (reportsSettings.Id == 0)
                 {
-                    if (isInsertable)
-                    {
-                        Uow.ReportsSettingsRepository.Insert(reportsSettings);
-                    }
+                    Uow.ReportsSettingsRepository.Insert(reportsSettings);
                 }
                 else
                 {
-                    if (isUpdatable)
-                    {
-                        Uow.ReportsSettingsRepository.Update(reportsSettings);
-                    }
+                    Uow.ReportsSettingsRepository.Update(reportsSettings);
                 }
 
                 Uow.Save();
@@ -61,36 +82,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return string.IsNullOrEmpty(queryName);
         }
 
-        private ReportsSettings SetForReportsSettingsFromDbValuesOfView(ReportsSettingsView reportsSettingsView, int memberId, bool isDefaultQuery)
+        private ReportsSettings SetValuesForQuery(ReportsSettingsView reportsSettingsView, int memberId)
         {
-            var queryName = isDefaultQuery ? null : reportsSettingsView.QueryName;
+            var queryFromDb = GetQueryFromReportsSettings(memberId, reportsSettingsView.QueryName, reportsSettingsView.QueryId);
 
-            var reportsSettingsFromDb = GetReportsSettingByMemberIdAndTypeQueryAndQueryName(memberId, isDefaultQuery, queryName, null);
-
-            var reportsSettings = reportsSettingsView.GetView(reportsSettingsFromDb, isDefaultQuery, queryName, memberId);
+            var reportsSettings = reportsSettingsView.GetView(queryFromDb, memberId);
 
             return reportsSettings;
-        }
-
-        public void DeleteCustomReportsSettings(int id, string userName)
-        {
-            Uow.UserRepository.GetRelatedUserByName(userName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
-
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntitiesOutOfContextForThisMemberById(id, memberId);
-
-            CheckReportsSettingsByIdForThisMember(id, getReportsSettingsByid);
-
-            var isDefaultQuery = IsDefaultQuery(getReportsSettingsByid.QueryName);
-            if (!isDefaultQuery)
-            {
-                Uow.ReportsSettingsRepository.Delete(id);
-                Uow.Save();
-            }
-            else
-            {
-                throw new CoralTimeDangerException("You cannot delete default query for ReportsSettings");
-            }
         }
 
         private void CheckReportsSettingsByIdForThisMember(int? id, ReportsSettings reportsSettings)
@@ -101,17 +99,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private ReportsSettings GetReportsSettingByMemberIdAndTypeQueryAndQueryName(int memberId, bool isDefaultQuery, string queryName, int? queryId)
+        private ReportsSettings GetQueryFromReportsSettings(int memberId, string queryName, int? queryId = null)
         {
-            var reportsSettings = Uow.ReportsSettingsRepository.GetEntitiesOutOfContext().Where(x => x.MemberId == memberId && x.IsDefaultQuery == isDefaultQuery);
-
-            if (queryId != null)
+            if (queryId == null)
             {
-                return reportsSettings.FirstOrDefault(x => x.Id == queryId);
+                return Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberidQueryname(memberId, queryName);
             }
             else
             {
-                return reportsSettings.FirstOrDefault(x => x.QueryName == queryName);
+                return Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberidQuerynameQueryId(memberId, queryName, queryId);
             }
         }
     }

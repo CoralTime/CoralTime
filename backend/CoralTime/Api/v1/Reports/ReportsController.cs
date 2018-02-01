@@ -33,7 +33,7 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult GetGrid([FromBody] ReportsGridView reportsGridView)
+        public IActionResult GetGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
         {
             if (!ModelState.IsValid)
             {
@@ -44,7 +44,7 @@ namespace CoralTime.Api.v1.Reports
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveReportsSettings(reportsGridView.ValuesSaved, userName);
+                _service.SaveCurrentQuery(reportsGridView.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridView.ValuesSaved.GroupById)
@@ -83,10 +83,20 @@ namespace CoralTime.Api.v1.Reports
             }
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteCustomReportsSettings(int id)
+        [HttpPost]
+        [Route("CustomQuery")]
+        public IActionResult SaveCustomQuery([FromBody] ReportsGridView reportsGridView)
         {
-            _service.DeleteCustomReportsSettings(id, this.GetUserNameWithImpersonation());
+            _service.SaveCustomQuery(reportsGridView.ValuesSaved, this.GetUserNameWithImpersonation());
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        [Route("CustomQuery")]
+        public IActionResult DeleteCustomQuery(int id)
+        {
+            _service.DeleteCustomQuery(id, this.GetUserNameWithImpersonation());
 
             return Ok();
         }

@@ -13,9 +13,11 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns(string userName);
 
-        void SaveReportsSettings(ReportsSettingsView reportsSettings, string userName);
+        void SaveCurrentQuery(ReportsSettingsView reportsSettings, string userName);
 
-        void DeleteCustomReportsSettings(int id, string userName);
+        void SaveCustomQuery(ReportsSettingsView reportsSettings, string userName);
+
+        void DeleteCustomQuery(int id, string userName);
 
         ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, ReportsGridView reportsGridData);
 

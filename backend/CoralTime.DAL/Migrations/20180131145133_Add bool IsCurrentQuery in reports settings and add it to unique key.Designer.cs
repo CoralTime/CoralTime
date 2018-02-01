@@ -9,9 +9,10 @@ using CoralTime.Common.Constants;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180131145133_Add bool IsCurrentQuery in reports settings and add it to unique key")]
+    partial class AddboolIsCurrentQueryinreportssettingsandaddittouniquekey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -316,6 +317,8 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<bool>("IsCurrentQuery");
 
+                    b.Property<bool>("IsDefaultQuery");
+
                     b.Property<string>("LastEditorUserId");
 
                     b.Property<DateTime>("LastUpdateDate");
@@ -330,7 +333,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.HasIndex("LastEditorUserId");
 
-                    b.HasIndex("MemberId", "QueryName")
+                    b.HasIndex("MemberId", "IsDefaultQuery", "IsCurrentQuery", "QueryName")
                         .IsUnique();
 
                     b.ToTable("ReportsSettings");

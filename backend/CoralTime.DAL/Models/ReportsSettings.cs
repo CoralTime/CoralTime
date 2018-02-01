@@ -32,6 +32,6 @@ namespace CoralTime.DAL.Models
 
         public string FilterShowColumnIds { get; set; }
 
-        public bool IsDefaultQuery { get; set; }
+        public bool IsCurrentQuery { get; set; }
     }
 }
