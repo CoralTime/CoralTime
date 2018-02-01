@@ -174,7 +174,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var customQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(member.Id).Where(x => !x.IsCurrentQuery);
             foreach (var customReportSettings in customQueries)
             {
-                valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings, false));
+                valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings));
             }
 
             var dropDownValues = new ReportsDropDownValues
@@ -193,12 +193,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var reportsSettings = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(memberId).FirstOrDefault(x => x.IsCurrentQuery);
 
-            var dropDownsValuesSavedList = CreateReportsSettingsEntity(reportsSettings, true);
+            var dropDownsValuesSavedList = CreateReportsSettingsEntity(reportsSettings);
 
             return dropDownsValuesSavedList;
         }
 
-        private ReportsSettingsView CreateReportsSettingsEntity(ReportsSettings defaultReportSettings, bool isDefaultQuery)
+        private ReportsSettingsView CreateReportsSettingsEntity(ReportsSettings defaultReportSettings)
         {
             var dropDownsDefaultValuesSaved = new ReportsSettingsView();
 
@@ -225,7 +225,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
                 dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
                 dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
-                dropDownsDefaultValuesSaved.QueryId = isDefaultQuery ? null : defaultReportSettings?.Id;
             }
 
             return dropDownsDefaultValuesSaved;
