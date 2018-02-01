@@ -4,9 +4,9 @@ using CoralTime.ViewModels.Reports;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         private static void SetReportsGridItemViewValues<T>(KeyValuePair<T, IEnumerable<TimeEntry>> timeEntries, IReportsGridTotalItemsView reportGridView, IMapper _mapper)
         {

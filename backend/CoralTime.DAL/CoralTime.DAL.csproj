@@ -8,7 +8,7 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="ConvertersViews\ReportView\ReportsGridItemView.cs" />
+    <Compile Remove="ConvertersOfViewModels\ReportViewModel\ReportsGridItemView.cs" />
     <Compile Remove="Migrations\20180119132135_Initial2.cs" />
     <Compile Remove="Migrations\20180119134640_Add Reports Settings.cs" />
     <Compile Remove="Migrations\20180119135000_Add Reports Settings.cs" />
@@ -35,8 +35,5 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ConvertersViews\ClientView" />
   </ItemGroup>
 </Project>

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static ProjectView GetView(this Project project, IMapper _mapper)
         {

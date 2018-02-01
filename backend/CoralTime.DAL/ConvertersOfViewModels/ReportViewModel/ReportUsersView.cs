@@ -2,9 +2,9 @@
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static ReportUsersView GetViewReportUsers(this Member member, int roleId, IMapper _mapper)
         {

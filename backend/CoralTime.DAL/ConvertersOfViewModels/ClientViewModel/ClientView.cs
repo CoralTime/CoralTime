@@ -3,9 +3,9 @@ using AutoMapper;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Clients;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static ClientView GetView(this Client client, IMapper _mapper)
         {

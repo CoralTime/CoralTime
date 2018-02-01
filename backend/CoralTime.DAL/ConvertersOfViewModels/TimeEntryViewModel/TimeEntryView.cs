@@ -5,9 +5,9 @@ using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.TimeEntries;
 using System.Linq;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static TimeEntryView GetView(this TimeEntry timeEntry, IMapper _mapper)
         {

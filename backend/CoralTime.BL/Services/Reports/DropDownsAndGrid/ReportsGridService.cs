@@ -1,6 +1,6 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
+using CoralTime.DAL.ConvertersOfViewModels;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Grid;

@@ -2,9 +2,9 @@
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Profiles;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static MemberAvatarView GetViewMemberIcon(this MemberAvatar memberAvatar, IMapper _mapper, int memberId)
         {

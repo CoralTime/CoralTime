@@ -4,9 +4,9 @@ using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
 using System.Linq;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static ReportsGrandGridMembersView GetViewReportsGrandGridClients(this ReportsGrandGridMembersView reportsGridEntitiesClients, Dictionary<Member, IEnumerable<TimeEntry>> timeEntries, IMapper _mapper)
         {

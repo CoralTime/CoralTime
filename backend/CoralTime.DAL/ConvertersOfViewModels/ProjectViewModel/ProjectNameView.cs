@@ -2,9 +2,9 @@
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Projects;
 
-namespace CoralTime.DAL.ConvertersViews.ExstensionsMethods
+namespace CoralTime.DAL.ConvertersOfViewModels
 {
-    public static partial class ExstensionsMethods
+    public static partial class ConvertersOfViewModels
     {
         public static ProjectNameView GetViewProjectName(this Project project, IMapper _mapper)
         {
