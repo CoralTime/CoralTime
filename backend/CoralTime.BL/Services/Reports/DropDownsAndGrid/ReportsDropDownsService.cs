@@ -171,7 +171,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var valuesCustomQueries = new List<ReportsSettingsView>();
 
-            var customQueries = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(member.Id).Where(x => !x.IsCurrentQuery);
+            var customQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(member.Id).Where(x => !x.IsCurrentQuery);
             foreach (var customReportSettings in customQueries)
             {
                 valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings, false));
@@ -191,7 +191,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportsSettingsView CreateDropDownValuesSaved(int memberId)
         {
-            var reportsSettings = Uow.ReportsSettingsRepository.GetQueriesByMemberIdWithIncludes(memberId).FirstOrDefault(x => x.IsCurrentQuery);
+            var reportsSettings = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(memberId).FirstOrDefault(x => x.IsCurrentQuery);
 
             var dropDownsValuesSavedList = CreateReportsSettingsEntity(reportsSettings, true);
 
