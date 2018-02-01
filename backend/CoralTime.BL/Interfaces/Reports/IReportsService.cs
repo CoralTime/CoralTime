@@ -5,19 +5,13 @@ using System;
 
 namespace CoralTime.BL.Interfaces.Reports
 {
-    public interface IReportService
+    public interface IReportsService
     {
         DateTime DateFrom { get; set; }
 
         DateTime DateTo { get; set; }
 
         ReportsDropDownsView ReportsDropDowns(string userName);
-
-        void SaveCurrentQuery(ReportsSettingsView reportsSettings, string userName);
-
-        void SaveCustomQuery(ReportsSettingsView reportsSettings, string userName);
-
-        void DeleteCustomQuery(int id, string userName);
 
         ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, ReportsGridView reportsGridData);
 

@@ -66,14 +66,6 @@
 
         #endregion
 
-        //#region SettingsRepository
-
-        //private SettingsRepository _settingsRepository;
-
-        //public SettingsRepository SettingsRepository => _settingsRepository ?? (_settingsRepository = new SettingsRepository(_context, _memoryCache, _userId));
-
-        //#endregion SettingsRepository
-
         #region UserForgotPassRequestRepository
 
         private UserForgotPassRequestRepository _userForgotPassRequestRepository;

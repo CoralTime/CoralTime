@@ -20,7 +20,6 @@ namespace CoralTime.DAL.ConvertersOfModels
             reportsSettings.FilterMemberIds = CommonHelpers.ConvertFromArrayOfIntsToString(reportsSettingsView.MemberIds);
             reportsSettings.FilterClientIds = CommonHelpers.ConvertFromArrayOfNullableIntsToString(reportsSettingsView.ClientIds);
             reportsSettings.FilterShowColumnIds = CommonHelpers.ConvertFromArrayOfIntsToString(reportsSettingsView.ShowColumnIds);
-            
         }
         
         public static ReportsSettings CreateModelForInsert(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)
@@ -34,8 +33,6 @@ namespace CoralTime.DAL.ConvertersOfModels
 
         public static ReportsSettings UpdateModelForUpdates(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)
         {
-            //reportsSettings.Id = reportsSettings.Id;
-
             MapViewToModel(reportsSettings, reportsSettingsView, memberId);
 
             return reportsSettings;

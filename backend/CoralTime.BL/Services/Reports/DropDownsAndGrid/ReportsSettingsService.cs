@@ -1,13 +1,18 @@
-﻿using CoralTime.Common.Exceptions;
+﻿using AutoMapper;
+using CoralTime.BL.Interfaces.Reports;
+using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertersOfModels;
+using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using System;
-using ReportsSettings = CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public partial class ReportService
+    public class ReportsSettingsService : BaseService, IReportsSettingsService
     {
+        public ReportsSettingsService(UnitOfWork uow, IMapper mapper) 
+            : base(uow, mapper) { }
+
         public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView, string userName)
         {
             Uow.UserRepository.GetRelatedUserByName(userName);
@@ -92,7 +97,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
             try
             {
-
                 if (queryFromReportsSettings == null)
                 {
                     queryFromReportsSettings =  queryFromReportsSettings.CreateModelForInsert(reportsSettingsView, memberId);
@@ -112,7 +116,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private void CheckCustomQueryForThisMember(int? id, ReportsSettings reportsSettings)
+        private void CheckCustomQueryForThisMember(int? id, DAL.Models.ReportsSettings reportsSettings)
         {
             if (reportsSettings == null)
             {

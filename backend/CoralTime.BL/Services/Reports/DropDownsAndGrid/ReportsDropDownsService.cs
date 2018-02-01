@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public partial class ReportService
+    public partial class ReportsService
     {
         private readonly List<ReportsDropDownGroupBy> _dropDownGroupBy = new List<ReportsDropDownGroupBy>
         {

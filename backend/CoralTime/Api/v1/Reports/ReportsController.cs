@@ -12,10 +12,15 @@ namespace CoralTime.Api.v1.Reports
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class ReportsController : BaseController<ReportsController, IReportService>
+    public class ReportsController : BaseController<ReportsController, IReportsService>
     {
-        public ReportsController(IReportService service, ILogger<ReportsController> logger)
-            : base(logger, service) { }
+        private IReportsSettingsService _reportsSettingsService;
+
+        public ReportsController(IReportsService service, ILogger<ReportsController> logger, IReportsSettingsService reportsSettingsService)
+            : base(logger, service)
+        {
+            _reportsSettingsService = reportsSettingsService;
+        }
 
         [HttpGet]
         public IActionResult GetDropdowns()
@@ -44,7 +49,7 @@ namespace CoralTime.Api.v1.Reports
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveCurrentQuery(reportsGridView.ValuesSaved, userName);
+                _reportsSettingsService.SaveCurrentQuery(reportsGridView.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridView.ValuesSaved.GroupById)
@@ -87,7 +92,7 @@ namespace CoralTime.Api.v1.Reports
         [Route("CustomQuery")]
         public IActionResult SaveCustomQuery([FromBody] ReportsGridView reportsGridView)
         {
-            _service.SaveCustomQuery(reportsGridView.ValuesSaved, this.GetUserNameWithImpersonation());
+            _reportsSettingsService.SaveCustomQuery(reportsGridView.ValuesSaved, this.GetUserNameWithImpersonation());
 
             return Ok();
         }
@@ -96,7 +101,7 @@ namespace CoralTime.Api.v1.Reports
         [Route("CustomQuery")]
         public IActionResult DeleteCustomQuery(int id)
         {
-            _service.DeleteCustomQuery(id, this.GetUserNameWithImpersonation());
+            _reportsSettingsService.DeleteCustomQuery(id, this.GetUserNameWithImpersonation());
 
             return Ok();
         }

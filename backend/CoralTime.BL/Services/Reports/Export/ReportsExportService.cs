@@ -25,9 +25,9 @@ namespace CoralTime.BL.Services.Reports.Export
     {
         private IHostingEnvironment _environment { get; }
         private readonly IConfiguration _configuration;
-        private readonly IReportService _reportService;
+        private readonly IReportsService _reportService;
 
-        public ReportsExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportService reportService)
+        public ReportsExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportsService reportService)
             : base(uow, mapper)
         {
             _configuration = configuration;

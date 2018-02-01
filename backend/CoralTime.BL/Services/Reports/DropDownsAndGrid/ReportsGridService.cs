@@ -12,7 +12,7 @@ using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public partial class ReportService
+    public partial class ReportsService
     {
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
 
