@@ -23,6 +23,32 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 SaveQuery(reportsSettingsView, memberId);
             }
+            else
+            {
+                var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
+                if(queryFromReportsSettings != null)
+                {
+                    try
+                    {
+                        ResetIsCustomQueryForAllQueries(memberId);
+
+                        SetIsCurrentQueryTrue(queryFromReportsSettings);
+
+                        Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
+
+                        Uow.Save();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
+                    }
+                }
+            }
+        }
+
+        private void SetIsCurrentQueryTrue(ReportsSettings queryFromReportsSettings)
+        {
+            queryFromReportsSettings.IsCurrentQuery = true;
         }
 
         public void SaveCustomQuery(ReportsSettingsView reportsSettingsView, string userName)
@@ -101,11 +127,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 if (queryFromReportsSettings == null)
                 {
                     queryFromReportsSettings =  queryFromReportsSettings.CreateModelForInsert(reportsSettingsView, memberId);
+
+                    SetIsCurrentQueryTrue(queryFromReportsSettings);
+
                     Uow.ReportsSettingsRepository.Insert(queryFromReportsSettings);
                 }
                 else
                 {
                     queryFromReportsSettings = queryFromReportsSettings.UpdateModelForUpdates(reportsSettingsView, memberId);
+
+                    SetIsCurrentQueryTrue(queryFromReportsSettings);
+
                     Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
                 }
 

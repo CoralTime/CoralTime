@@ -12,7 +12,6 @@ namespace CoralTime.DAL.ConvertersOfModels
             reportsSettings.QueryName = reportsSettingsView.QueryName;
             reportsSettings.MemberId = memberId;
 
-            reportsSettings.IsCurrentQuery = true;
             reportsSettings.GroupById = reportsSettingsView.GroupById ?? (int)Constants.ReportsGroupBy.Date;
             reportsSettings.DateFrom = reportsSettingsView.DateFrom;
             reportsSettings.DateTo = reportsSettingsView.DateTo;

@@ -87,23 +87,5 @@ namespace CoralTime.Api.v1.Reports
                 return BadRequest(errors);
             }
         }
-
-        [HttpPost]
-        [Route("CustomQuery")]
-        public IActionResult SaveCustomQuery([FromBody] ReportsGridView reportsGridView)
-        {
-            _reportsSettingsService.SaveCustomQuery(reportsGridView.ValuesSaved, this.GetUserNameWithImpersonation());
-
-            return Ok();
-        }
-
-        [HttpDelete("{id}")]
-        [Route("CustomQuery")]
-        public IActionResult DeleteCustomQuery(int id)
-        {
-            _reportsSettingsService.DeleteCustomQuery(id, this.GetUserNameWithImpersonation());
-
-            return Ok();
-        }
     }
 }
