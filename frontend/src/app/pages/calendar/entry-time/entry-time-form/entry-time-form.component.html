@@ -36,7 +36,7 @@
         <ct-textarea class="ct-description-block"
                      [name]="'description'"
                      [placeholder]="'Add task details'"
-                     [maxlength]="500"
+                     [maxlength]="1000"
                      [canResize]="true"
                      [(ngModel)]="currentTimeEntry.description"
                      (ngModelChange)="descriptionOnChange()"></ct-textarea>
@@ -118,6 +118,6 @@
                 (click)="submit()"
                 [disabled]="entryTimeForm.invalid || entryTimeForm.pristine || isRequestLoading">Done
         </button>
-        <button type="button" class="ct-close" (click)="closeForm()">Cancel</button>
+        <button type="button" class="ct-close" (click)="closeForm()" ctClickClose>Cancel</button>
     </div>
 </form>
