@@ -119,11 +119,11 @@ export class ReportsService {
 	}
 
 	createQuery(obj: any): Observable<Response> {
-		return this.http.post(this.constantService.reportsApi + '/CustomQuery', obj);
+		return this.http.post(this.constantService.reportsApi + 'Settings/CustomQuery', obj);
 	}
 
 	deleteQuery(queryId: number): Observable<Response> {
-		return this.http.delete(this.constantService.reportsApi + '/CustomQuery/' + queryId);
+		return this.http.delete(this.constantService.reportsApi + 'Settings/CustomQuery/' + queryId);
 	}
 
 	getReportDropdowns(): Observable<ReportDropdowns> {
