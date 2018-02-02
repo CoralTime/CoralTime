@@ -67,7 +67,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             Uow.UserRepository.GetRelatedUserByName(userName);
             var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
 
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberidQueryId(id, memberId);
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberidQueryId(memberId: memberId, queryId: id);
 
             CheckCustomQueryForThisMember(id, getReportsSettingsByid);
 
