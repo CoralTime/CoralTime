@@ -1,5 +1,4 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Services;
 using CoralTime.ViewModels.Projects;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
@@ -23,7 +22,7 @@ namespace CoralTime.Api.v1.Odata.Projects
         {
             try
             {
-                return Ok(_service.TimeTrackerAllProjects(this.GetUserNameWithImpersonation()));
+                return Ok(_service.TimeTrackerAllProjects());
             }
             catch (Exception e)
             {
@@ -53,7 +52,7 @@ namespace CoralTime.Api.v1.Odata.Projects
         {
             try
             {
-                var result = _service.GetById(id, this.GetUserNameWithImpersonation());
+                var result = _service.GetById(id);
                 return new ObjectResult(result);
             }
             catch (Exception e)
@@ -74,7 +73,7 @@ namespace CoralTime.Api.v1.Odata.Projects
 
             try
             {
-                var result = _service.Create(projectData, this.GetUserName());
+                var result = _service.Create(projectData);
                 var locationUri = $"{Request.Host}/api/v1/odata/Projects({result.Id})";
 
                 return Created(locationUri, result);
@@ -99,7 +98,7 @@ namespace CoralTime.Api.v1.Odata.Projects
 
             try
             {
-                var result = _service.Update(project, this.GetUserName());
+                var result = _service.Update(project);
                 return new ObjectResult(result);
             }
             catch (Exception e)
@@ -122,7 +121,7 @@ namespace CoralTime.Api.v1.Odata.Projects
 
             try
             {
-                var result = _service.Patch(project, this.GetUserName());
+                var result = _service.Patch(project);
                 return new ObjectResult(result);
             }
             catch (Exception e)

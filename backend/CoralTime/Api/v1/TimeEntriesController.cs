@@ -1,6 +1,5 @@
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.TimeEntries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +21,7 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                return new JsonResult(_service.GetAllTimeEntries(this.GetUserNameWithImpersonation(), dateBegin, dateEnd));
+                return new JsonResult(_service.GetAllTimeEntries(dateBegin, dateEnd));
             }
             catch (Exception e)
             {
@@ -38,7 +37,7 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                return new JsonResult(_service.GetById(id, this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.GetById(id));
             }
             catch (Exception e)
             {
@@ -54,7 +53,7 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                return new JsonResult(_service.Create(timeEntryView, this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.Create(timeEntryView));
             }
             catch (Exception e)
             {
@@ -72,7 +71,7 @@ namespace CoralTime.Api.v1.Odata
 
             try
             {
-                return new JsonResult(_service.Update(timeEntryView, this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.Update(timeEntryView));
             }
             catch (Exception e)
             {
@@ -90,7 +89,7 @@ namespace CoralTime.Api.v1.Odata
 
             try
             {
-                return new JsonResult(_service.Patch(timeEntryTime, this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.Patch(timeEntryTime));
             }
             catch (Exception e)
             {
@@ -106,7 +105,7 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                _service.Delete(id, this.GetUserNameWithImpersonation());
+                _service.Delete(id);
                 return Ok();
             }
             catch (Exception e)

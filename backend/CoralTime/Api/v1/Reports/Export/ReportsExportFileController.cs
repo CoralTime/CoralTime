@@ -1,6 +1,5 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,41 +15,39 @@ namespace CoralTime.Api.v1.Reports.Export
     public class ReportsExportFileController : BaseController<ReportsExportFileController, IReportExportService>
     {
         public ReportsExportFileController(IReportExportService service, ILogger<ReportsExportFileController> logger)
-            : base (logger, service) { }
+            : base(logger, service) { }
 
         [HttpPost]
         public async Task<IActionResult> ReportsExportFileAsync([FromBody]RequestReportsGrid reportsGridData)
         {
             try
             {
-                var userName = this.GetUserNameWithImpersonation();
-
                 switch (reportsGridData.ValuesSaved.GroupById)
                 {
-                    case (int) ReportsGroupBy.Project:
-                    {
-                        return await _service.ExportFileGroupByProjectsAsync(userName, reportsGridData, HttpContext);
-                    }
+                    case (int)ReportsGroupBy.Project:
+                        {
+                            return await _service.ExportFileGroupByProjectsAsync(reportsGridData, HttpContext);
+                        }
 
-                    case (int) ReportsGroupBy.User:
-                    {
-                        return await _service.ExportFileGroupByUsersAsync(userName, reportsGridData, HttpContext);
-                    }
+                    case (int)ReportsGroupBy.User:
+                        {
+                            return await _service.ExportFileGroupByUsersAsync(reportsGridData, HttpContext);
+                        }
 
-                    case (int) ReportsGroupBy.Date:
-                    {
-                        return await _service.ExportFileGroupByDatesAsync(userName, reportsGridData, HttpContext);
-                    }
+                    case (int)ReportsGroupBy.Date:
+                        {
+                            return await _service.ExportFileGroupByDatesAsync(reportsGridData, HttpContext);
+                        }
 
-                    case (int) ReportsGroupBy.Client:
-                    {
-                        return await _service.ExportFileGroupByClientsAsync(userName, reportsGridData, HttpContext);
-                    }
+                    case (int)ReportsGroupBy.Client:
+                        {
+                            return await _service.ExportFileGroupByClientsAsync(reportsGridData, HttpContext);
+                        }
 
                     default:
-                    {
-                        return await _service.ExportFileGroupByNoneAsync(userName, reportsGridData, HttpContext);
-                    }
+                        {
+                            return await _service.ExportFileGroupByNoneAsync(reportsGridData, HttpContext);
+                        }
                 }
             }
             catch (InvalidOperationException invalidOperationException)

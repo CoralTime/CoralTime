@@ -8,33 +8,33 @@ namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        public async Task ExportEmailGroupByNone(string userName, ReportsExportEmailView emailData)
+        public async Task ExportEmailGroupByNone(ReportsExportEmailView emailData)
         {
-            var groupByNone = _reportService.ReportsGridGroupByNone(userName, emailData);
+            var groupByNone = _reportService.ReportsGridGroupByNone(emailData);
             await SendReportWithGroupingAsync(emailData, groupByNone);
         }
 
-        public async Task ExportEmailGroupByProjects(string userName, ReportsExportEmailView emailData)
+        public async Task ExportEmailGroupByProjects(ReportsExportEmailView emailData)
         {
-            var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, emailData);
+            var groupByProjects = _reportService.ReportsGridGroupByProjects(emailData);
             await SendReportWithGroupingAsync(emailData, groupByProjects);
         }
 
-        public async Task ExportEmailGroupByUsers(string userName, ReportsExportEmailView emailData)
+        public async Task ExportEmailGroupByUsers(ReportsExportEmailView emailData)
         {
-            var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, emailData);
+            var groupByUsers = _reportService.ReportsGridGroupByUsers(emailData);
             await SendReportWithGroupingAsync(emailData, groupByUsers);
         }
 
-        public async Task ExportEmailGroupByDates(string userName, ReportsExportEmailView emailData)
+        public async Task ExportEmailGroupByDates(ReportsExportEmailView emailData)
         {
-            var groupByDates = _reportService.ReportsGridGroupByDates(userName, emailData);
+            var groupByDates = _reportService.ReportsGridGroupByDates(emailData);
             await SendReportWithGroupingAsync(emailData, groupByDates);
         }
 
-        public async Task ExportEmailGroupByClients(string userName, ReportsExportEmailView emailData)
+        public async Task ExportEmailGroupByClients(ReportsExportEmailView emailData)
         {
-            var groupByClients = _reportService.ReportsGridGroupByClients(userName, emailData);
+            var groupByClients = _reportService.ReportsGridGroupByClients(emailData);
             await SendReportWithGroupingAsync(emailData, groupByClients);
         }
 

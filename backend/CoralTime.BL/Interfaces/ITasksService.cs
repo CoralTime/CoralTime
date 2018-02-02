@@ -10,11 +10,11 @@ namespace CoralTime.BL.Interfaces
 
         TaskType GetById(int id);
 
-        TaskType Create(TaskView timeEntryTypeData, string userName);
+        TaskType Create(TaskView timeEntryTypeData);
 
-        TaskType Update(dynamic timeEntryTypeData, string userName);
+        TaskType Update(dynamic timeEntryTypeData);
 
-        TaskType Patch(dynamic timeEntryTypeData, string userName);
+        TaskType Patch(dynamic timeEntryTypeData);
 
         bool Delete(int id);
     }

@@ -35,11 +35,11 @@ namespace CoralTime.BL.Services
             _isDemo = bool.Parse(_configuration["DemoSiteMode"]);
         }
 
-        public IEnumerable<MemberView> GetAllMembers(string userName)
+        public IEnumerable<MemberView> GetAllMembers()
         {
             var globalActiveProjCount = Uow.ProjectRepository.LinkedCacheGetList().Where(x => !x.IsPrivate && x.IsActive).Select(x => x.Id).ToArray();
 
-            var allMembers = GetAllMembersCommon(userName);
+            var allMembers = GetAllMembersCommon(InpersonatedUserName);
             var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper));
 
             return allMembersView;
@@ -97,25 +97,25 @@ namespace CoralTime.BL.Services
             }
         }
 
-        public async Task<MemberView> Update(string userName, MemberView memberView)
+        public async Task<MemberView> Update(MemberView memberView)
         {
-            var memberByName = Uow.MemberRepository.GetQueryByUserName(userName);
+            var memberByName = Uow.MemberRepository.GetQueryByUserName(CurrentUserName);
 
             if (memberByName == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found.");
             }
 
             if (!memberByName.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} is not active.");
             }
 
             var memberId = memberView.Id;
 
             if (memberByName.Id != memberId && !memberByName.User.IsAdmin)
             {
-                throw new CoralTimeForbiddenException($"Member with userName {userName} can't change other user's data.");
+                throw new CoralTimeForbiddenException($"Member with userName {CurrentUserName} can't change other user's data.");
             }
 
             if (! EmailChecker.IsValidEmail(memberView.Email))
@@ -655,7 +655,7 @@ namespace CoralTime.BL.Services
             }));
         }
 
-        public IEnumerable<Member> GetAllMembersCommon(string userName)
+        private IEnumerable<Member> GetAllMembersCommon(string userName)
         {
             var userByName = Uow.UserRepository.LinkedCacheGetByName(userName);
             if (userByName == null)
@@ -713,40 +713,6 @@ namespace CoralTime.BL.Services
 
             return projects;
         }
-
-        //private ApplicationUser GetRelatedUserByName(string userName)
-        //{
-        //    var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
-        //    if (relatedUserByName == null)
-        //    {
-        //        throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
-        //    }
-
-        //    if (!relatedUserByName.IsActive)
-        //    {
-        //        throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
-        //    }
-
-        //    return relatedUserByName;
-        //}
-
-        //private Member GetRelatedMemberByUserName(string userName)
-        //{
-        //    var relatedMemberByName = Uow.MemberRepository.LinkedCacheGetByName(userName);
-        //    if (relatedMemberByName == null)
-        //    {
-        //        throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found.");
-        //    }
-
-        //    //var relatedMemberById = Uow.MemberRepository.LinkedCacheGetById(memberId);
-        //    //if (relatedMemberById == null)
-        //    //{
-        //    //    throw new CoralTimeEntityNotFoundException($"Member with id = {memberId} not found.");
-        //    //}
-
-        //    return relatedMemberByName;
-        //}
-
         #endregion
     }
 }

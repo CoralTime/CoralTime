@@ -32,7 +32,6 @@ namespace CoralTime.Services
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).Distinct().ToList();
 
-            //add isManager claim (more flexible than store at db)??
             claims.Add(new Claim(type:Constants.JwtIsManagerClaimType, value:user.IsManager.ToString().ToLower()));
 
             var resultClaims = new List<Claim>();

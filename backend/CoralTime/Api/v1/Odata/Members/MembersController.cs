@@ -28,7 +28,7 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                return Ok(_service.GetAllMembers(this.GetUserNameWithImpersonation()));
+                return Ok(_service.GetAllMembers());
             }
             catch (Exception e)
             {
@@ -111,7 +111,7 @@ namespace CoralTime.Api.v1.Odata.Members
 
             try
             {
-                var updatedMember = await _service.Update(this.GetUserName(), memberView);
+                var updatedMember = await _service.Update(memberView);
 
                 if (memberView.SendInvitationEmail)
                 {

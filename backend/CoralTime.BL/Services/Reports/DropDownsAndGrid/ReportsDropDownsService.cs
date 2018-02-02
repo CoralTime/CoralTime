@@ -46,10 +46,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         };
 
-        public ReportsDropDownsView ReportsDropDowns(string userName)
+        public ReportsDropDownsView ReportsDropDowns()
         {
-            var user = Uow.UserRepository.GetRelatedUserByName(userName);
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var user = Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
+            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
 
             var reportDropDowns = new ReportsDropDownsView
             {

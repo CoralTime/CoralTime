@@ -11,18 +11,18 @@ namespace CoralTime.BL.Interfaces.Reports
 
         DateTime DateTo { get; set; }
 
-        ReportsDropDownsView ReportsDropDowns(string userName);
+        ReportsDropDownsView ReportsDropDowns();
 
-        void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName);
+        void SaveReportsSettings(RequestReportsSettings reportsSettings);
 
-        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridProjectsView ReportsGridGroupByProjects(RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridMembersView ReportsGridGroupByUsers(RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridDatesView ReportsGridGroupByDates(RequestReportsGrid reportsGridData);
 
-        ReportsGrandGridClients ReportsGridGroupByClients(string userName, RequestReportsGrid reportsGridData);
+        ReportsGrandGridClients ReportsGridGroupByClients(RequestReportsGrid reportsGridData);
     }
 }

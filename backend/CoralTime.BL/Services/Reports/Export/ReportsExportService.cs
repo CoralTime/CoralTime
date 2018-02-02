@@ -174,41 +174,41 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. 
 
-        public async Task<FileResult> ExportFileGroupByNoneAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByNoneAsync(RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByNone = _reportService.ReportsGridGroupByNone(userName, reportsGridData);
+            var groupByNone = _reportService.ReportsGridGroupByNone(reportsGridData);
             var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByNone);
 
             return result;
         }
 
-        public async Task<FileResult> ExportFileGroupByProjectsAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByProjectsAsync(RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByProjects = _reportService.ReportsGridGroupByProjects(userName, reportsGridData);
+            var groupByProjects = _reportService.ReportsGridGroupByProjects(reportsGridData);
             var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByProjects);
 
             return result;
         }
 
-        public async Task<FileResult> ExportFileGroupByUsersAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByUsersAsync(RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByUsers = _reportService.ReportsGridGroupByUsers(userName, reportsGridData);
+            var groupByUsers = _reportService.ReportsGridGroupByUsers(reportsGridData);
             var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByUsers);
 
             return result;
         }
 
-        public async Task<FileResult> ExportFileGroupByDatesAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByDatesAsync(RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByDates = _reportService.ReportsGridGroupByDates(userName, reportsGridData);
+            var groupByDates = _reportService.ReportsGridGroupByDates(reportsGridData);
             var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByDates);
 
             return result;
         }
 
-        public async Task<FileResult> ExportFileGroupByClientsAsync(string userName, RequestReportsGrid reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupByClientsAsync(RequestReportsGrid reportsGridData, HttpContext httpContext)
         {
-            var groupByClient = _reportService.ReportsGridGroupByClients(userName, reportsGridData);
+            var groupByClient = _reportService.ReportsGridGroupByClients(reportsGridData);
             var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByClient);
 
             return result;

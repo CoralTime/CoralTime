@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using CoralTime.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using CoralTime.Common.Constants;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -15,16 +16,18 @@ namespace CoralTime.DAL.Repositories
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext _context;
         private readonly IMemoryCache _memoryCache;
+        public readonly string CurrentUserName;
+        public readonly string InpersonatedUserName;
         private readonly string _userId;
-
-        //  private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public UnitOfWork(UserManager<ApplicationUser> userManager, AppDbContext context, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _context = context;
             _memoryCache = memoryCache;
-            _userId = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject)?.Value;
+            CurrentUserName = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
+            InpersonatedUserName = GetUserNameWithImpersonation(httpContextAccessor);
+            _userId = httpContextAccessor?.HttpContext?.User.Claims?.FirstOrDefault(c=> c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
         }
 
         public int Save()
@@ -45,6 +48,26 @@ namespace CoralTime.DAL.Repositories
             {
                 throw new CoralTimeDangerException("Other error related with Save data.", e);
             }
+        }
+
+        private string GetUserNameWithImpersonation(IHttpContextAccessor httpContextAccessor)
+        {
+            var isImpersonatedUser = httpContextAccessor?.HttpContext?.Request?.Headers?.TryGetValue(Constants.ImpersonatedUserNameHeader, out var inpersonatedUserName)?? false;
+
+            var currentUserClaims = httpContextAccessor?.HttpContext?.User?.Claims;
+
+            if (!isImpersonatedUser)
+            {
+                var currentUserName = currentUserClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name).Value;
+                return currentUserName;
+            }
+
+            if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.AdminRole)
+            {
+                throw new CoralTimeForbiddenException($"You can not impersonate user with userName {inpersonatedUserName}");
+            }
+
+            return inpersonatedUserName.ToString();
         }
 
         //public int Save<T>()

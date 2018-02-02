@@ -11,22 +11,22 @@ namespace CoralTime.BL.Interfaces
 {
     public interface IProfileService
     {
-        List<ProfileProjectView> GetMemberProjects(string userName);
+        List<ProfileProjectView> GetMemberProjects();
 
-        MemberAvatarView GetMemberAvatar(string userName, int memberId);
+        MemberAvatarView GetMemberAvatar(int memberId);
 
-        MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile, string userName);
+        MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile);
 
-        MemberAvatarView GetMemberIcon(string userName, int memberId);
+        MemberAvatarView GetMemberIcon(int memberId);
 
         DateConvert[] GetDateFormats();
 
-        List<ProfileProjectMemberView> GetProjectMembers(int projectId, string userName);
+        List<ProfileProjectMemberView> GetProjectMembers(int projectId);
 
-        MemberView PatchNotifications(string userName, MemberNotificationView memberNotificationView);
+        MemberView PatchNotifications(MemberNotificationView memberNotificationView);
 
-        MemberView PatchPreferences(string userName, MemberPreferencesView memberPreferencesView);
+        MemberView PatchPreferences(MemberPreferencesView memberPreferencesView);
 
-        MemberView PatchPersonalInfo(string userName, MemberPersonalInfoView memberPreferencesView);
+        MemberView PatchPersonalInfo(MemberPersonalInfoView memberPreferencesView);
     }
 }

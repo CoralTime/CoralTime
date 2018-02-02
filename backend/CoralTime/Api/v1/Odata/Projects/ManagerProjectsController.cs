@@ -1,6 +1,5 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.Services;
 using CoralTime.ViewModels.Projects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +22,7 @@ namespace CoralTime.Api.v1.Odata.Projects
         {
             try
             {
-                var projects = _service.ManageProjectsOfManager(this.GetUserNameWithImpersonation()).Select(_mapper.Map<ProjectView, ManagerProjectsView>) ;
+                var projects = _service.ManageProjectsOfManager().Select(_mapper.Map<ProjectView, ManagerProjectsView>);
 
                 return Ok(projects);
             }

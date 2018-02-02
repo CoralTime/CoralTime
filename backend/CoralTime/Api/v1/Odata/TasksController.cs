@@ -55,7 +55,7 @@ namespace CoralTime.Api.v1.Odata
 
             try
             {
-                var result = _service.Create(taskTypeData, this.GetUserName());
+                var result = _service.Create(taskTypeData);
 
                 var locationUri = $"{Request.Host}/api/v1/odata/Tasks({result.Id})";
 
@@ -80,7 +80,7 @@ namespace CoralTime.Api.v1.Odata
             taskTypeData.Id = id;
             try
             {
-                var result = _service.Update(taskTypeData, this.GetUserName());
+                var result = _service.Update(taskTypeData);
                 return new ObjectResult(_mapper.Map<TaskType, TaskView>(result));
             }
             catch (Exception e)
@@ -102,9 +102,7 @@ namespace CoralTime.Api.v1.Odata
             taskTypeData.Id = id;
             try
             {
-                var userName = this.GetUserName();
-
-                var result = _service.Patch(taskTypeData, userName);
+                var result = _service.Patch(taskTypeData);
                 return new ObjectResult(_mapper.Map<TaskType, TaskView>(result));
             }
             catch (Exception e)

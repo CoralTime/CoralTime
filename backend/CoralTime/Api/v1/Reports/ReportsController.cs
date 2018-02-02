@@ -22,7 +22,7 @@ namespace CoralTime.Api.v1.Reports
         {
             try
             {
-                return new JsonResult(_service.ReportsDropDowns(this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.ReportsDropDowns());
             }
             catch (Exception e)
             {
@@ -37,36 +37,34 @@ namespace CoralTime.Api.v1.Reports
         {
             try
             {
-                var userName = this.GetUserNameWithImpersonation();
-
-                _service.SaveReportsSettings(reportsGridData.ValuesSaved, userName);
+                _service.SaveReportsSettings(reportsGridData.ValuesSaved);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridData.ValuesSaved.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByProjects(reportsGridData));
                     }
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByUsers(reportsGridData));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByDates(reportsGridData));
                     }
 
                     case (int) Constants.ReportsGroupBy.Client:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByClients(reportsGridData));
                     }
 
                     default:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByNone(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByNone(reportsGridData));
                     }
                 }
             }

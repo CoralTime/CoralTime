@@ -1,5 +1,4 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Services;
 using CoralTime.ViewModels.MemberProjectRoles;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
@@ -23,7 +22,7 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                return Ok(_service.GetAllProjectRoles(this.GetUserNameWithImpersonation()));
+                return Ok(_service.GetAllProjectRoles());
             }
             catch (Exception e)
             {
@@ -82,7 +81,7 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                var value = _service.Create(this.GetUserNameWithImpersonation(), projectRole);
+                var value = _service.Create(projectRole);
                 var locationUri = $"{Request.Host}/api/v1/odata/MemberProjectRoles({value.Id})";
 
                 return Created(locationUri, value);
@@ -100,7 +99,7 @@ namespace CoralTime.Api.v1.Odata.Members
             projectRole.Id = id;
             try
             {
-                var value = _service.Update(this.GetUserNameWithImpersonation(), projectRole);
+                var value = _service.Update(projectRole);
 
                 return new ObjectResult(value);
             }
@@ -119,7 +118,7 @@ namespace CoralTime.Api.v1.Odata.Members
 
             try
             {
-                var value = _service.Patch(this.GetUserNameWithImpersonation(), projectRole);
+                var value = _service.Patch(projectRole);
                 return new ObjectResult(value);
             }
             catch (Exception e)
@@ -135,7 +134,7 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                _service.Delete(this.GetUserNameWithImpersonation(), id);
+                _service.Delete(id);
 
                 return new ObjectResult(null);
             }

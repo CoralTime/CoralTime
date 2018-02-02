@@ -23,10 +23,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public DateTime DateTo { get; set; }
 
-        public void SaveReportsSettings(RequestReportsSettings reportsSettings, string userName)
+        public void SaveReportsSettings(RequestReportsSettings reportsSettings)
         {
-            var user = Uow.UserRepository.GetRelatedUserByName(userName);
-            var member = Uow.MemberRepository.GetQueryByUserName(userName);
+            var user = Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
+            var member = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName);
 
             var newReportsSettings = new ReportsSettings();
 
