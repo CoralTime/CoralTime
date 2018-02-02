@@ -13,6 +13,7 @@ import { ReportsSendComponent } from './reports-send/reports-send.component';
 import { ReportsSendFormComponent } from './reports-send/form/reports-send-form.component';
 import { EmailsEqualValidatorDirective } from './reports-send/form/emails-equal-validator.directive';
 import { EmailInvalidValidatorDirective } from './reports-send/form/email-invalid-validator.directive';
+import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 
 @NgModule({
 	imports: [
@@ -26,10 +27,12 @@ import { EmailInvalidValidatorDirective } from './reports-send/form/email-invali
 		ReportsSendComponent,
 		ReportsSendFormComponent,
 		EmailsEqualValidatorDirective,
-		EmailInvalidValidatorDirective
+		EmailInvalidValidatorDirective,
+		ReportsQueryFormComponent
 	],
 	entryComponents: [
-		ReportsSendComponent
+		ReportsSendComponent,
+		ReportsQueryFormComponent
 	],
 	providers: [
 		{

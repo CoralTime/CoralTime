@@ -85,12 +85,55 @@ $fieldHeight: 30px;
     height: 30px;
     line-height: 30px;
 
-    > div {
+    .ct-reports-actions-block {
       float: right;
       position: relative;
 
       > * {
         display: inline-block;
+      }
+    }
+  }
+
+  .ct-query-block {
+    position: relative;
+    float: left;
+
+    .ct-select {
+      display: none;
+    }
+
+    .ct-select-component {
+      margin: 0;
+      position: absolute;
+      width: 114px;
+    }
+
+    .ct-query-text {
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 110px;
+      vertical-align: middle;
+    }
+
+    .ct-select-open-button {
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      outline: none;
+
+      i {
+        vertical-align: middle;
+      }
+
+      &:hover i{
+        background-color: #ddd;
+      }
+
+      &.ct-disabled {
+        opacity: 0.5;
       }
     }
   }
@@ -250,53 +293,6 @@ $fieldHeight: 30px;
 
       .mat-list-item-content {
         font-size: $baseFont;
-      }
-    }
-
-    .ct-query-block {
-      position: relative;
-      float: right;
-      margin-right: 20px;
-    }
-
-    ct-input-list {
-      position: relative;
-      display: inline-block;
-      margin-left: 4px;
-
-      .ct-input {
-        border: 0;
-        height: 30px;
-      }
-
-      .ct-options-list {
-        position: absolute;
-        display: flex;
-        top: 44px;
-        left: 0;
-      }
-    }
-
-    .ct-actions-drop-menu {
-      width: 140px;
-      top: 20px;
-      right: 10px;
-    }
-
-    .ct-menu-open-link {
-      margin: 0 10px;
-      cursor: pointer;
-
-      i {
-        vertical-align: middle;
-      }
-
-      &:hover i{
-        background-color: #ddd;
-      }
-
-      &.ct-disabled {
-        opacity: 0.5;
       }
     }
 
