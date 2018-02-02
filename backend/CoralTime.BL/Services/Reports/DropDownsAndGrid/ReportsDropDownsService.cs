@@ -225,6 +225,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
                 dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
                 dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
+                dropDownsDefaultValuesSaved.QueryId = defaultReportSettings.Id;
             }
 
             return dropDownsDefaultValuesSaved;
