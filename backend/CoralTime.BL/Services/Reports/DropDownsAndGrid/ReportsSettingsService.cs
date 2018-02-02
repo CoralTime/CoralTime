@@ -26,7 +26,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             else
             {
                 var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
-                if(queryFromReportsSettings != null)
+                if(queryFromReportsSettings != null && !queryFromReportsSettings.IsCurrentQuery)
                 {
                     try
                     {
