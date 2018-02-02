@@ -36,6 +36,7 @@
     }
 
     .slimscroll-wrapper {
+      float: left;
       margin: 0 0 -2px 0 !important;
     }
 
@@ -85,6 +86,10 @@
     text-overflow: ellipsis;
     overflow: hidden;
     box-shadow: none !important;
+
+    &.ct-select-default-text {
+      color: $gray-text;
+    }
   }
 
   &.ct-select-opened {

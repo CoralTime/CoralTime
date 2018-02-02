@@ -66,7 +66,6 @@ export class CalendarDayComponent implements OnInit {
 	addNewTimeEntry(currentDate: Date): void {
 		let newTimeEntry = {
 			date: currentDate,
-			description: '',
 			projectName: 'Select Project',
 			taskName: 'Select Task'
 		};

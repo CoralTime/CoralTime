@@ -11,13 +11,17 @@ $textAreaHeight: 116px;
 
   .ct-textarea {
     box-sizing: border-box;
+    width: 100%;
     min-height: $textAreaHeight;
-    outline: none;
+    padding: 0;
     background: $primary-btn-text;
+    border: none;
+    outline: none;
     font-family: Roboto Regular, sans-serif;
     font-size: 14px;
     line-height: 1.25;
     overflow: hidden;
+
   }
 
   .ct-textarea-container {
@@ -35,4 +39,22 @@ $textAreaHeight: 116px;
       min-height: 0;
     }
   }
+}
+
+::-webkit-input-placeholder {
+  color: $gray-text;
+}
+
+::-moz-placeholder {
+  color: $gray-text;
+}
+
+/* Firefox 19+ */
+:-moz-placeholder {
+  color: $gray-text;
+}
+
+/* Firefox 18- */
+:-ms-input-placeholder {
+  color: $gray-text;
 }

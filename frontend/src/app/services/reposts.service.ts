@@ -8,7 +8,7 @@ import { CustomSelectItem } from '../shared/form/multiselect/multiselect.compone
 
 export interface ReportDropdowns {
 	values: ReportDropdownsDetails;
-	defaultQuery: ReportFilters;
+	currentQuery: ReportFilters;
 }
 
 export class ReportFilters {
@@ -118,12 +118,12 @@ export class ReportsService {
 	            private http: Http) {
 	}
 
-	Delete(id: number): Observable<Response> {
-		return this.http.delete(this.constantService.reportsApi + '/' +  id);
+	createQuery(obj: any): Observable<Response> {
+		return this.http.post(this.constantService.reportsApi + '/CustomQuery', obj);
 	}
 
-	Put(id: number, obj: ReportFilters): Observable<Response> {
-		return this.http.put(this.constantService.reportsApi + '/' +  id, obj);
+	deleteQuery(queryId: number): Observable<Response> {
+		return this.http.delete(this.constantService.reportsApi + '/CustomQuery/' + queryId);
 	}
 
 	getReportDropdowns(): Observable<ReportDropdowns> {

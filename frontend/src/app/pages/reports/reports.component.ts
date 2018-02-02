@@ -14,6 +14,7 @@ import { MdDialog, MdDialogRef } from '@angular/material';
 import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
 import { NotificationService } from '../../core/notification.service';
 import { ImpersonationService } from '../../services/impersonation.service';
+import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -42,7 +43,7 @@ export class ReportsComponent implements OnInit {
 	groupModel: GroupByItem;
 
 	queryItems: ReportFilters[] = [];
-	queryName: string;
+	queryModel: ReportFilters;
 
 	isUsersFilterShown: boolean = false;
 	showOnlyActiveClients: boolean = true;
@@ -54,7 +55,7 @@ export class ReportsComponent implements OnInit {
 
 	isDatepickerShown: boolean = false;
 	isDatepickerAnimating: boolean = false;
-	canCloseDatepicker: boolean = true;
+	canToggleDatepicker: boolean = true;
 	dateFormat: string;
 	dateFormatId: number;
 	datePeriod: DatePeriod;
@@ -64,6 +65,7 @@ export class ReportsComponent implements OnInit {
 	oldDateString: string;
 	userInfo: User;
 
+	private reportsQueryRef: MdDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MdDialogRef<ReportsSendComponent>;
 
 	constructor(public dialog: MdDialog,
@@ -85,18 +87,13 @@ export class ReportsComponent implements OnInit {
 			this.setReportDropdowns(data.reportFilters);
 		});
 		this.isUsersFilterShown = this.authService.isUserAdminOrManager;
-		this.getReportGrid();
-	}
-
-	groupByChange(): void {
-		this.reportFilters.groupById = this.groupModel.id;
-		this.getReportGrid();
+		this.getReportGrid(!!this.reportFilters.queryId);
 	}
 
 	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
 		this.reportDropdowns = reportDropdowns;
 
-		this.setReportFilters(reportDropdowns.defaultQuery);
+		this.setReportFilters(reportDropdowns.currentQuery);
 		this.setReportsGroupBy(reportDropdowns.values.groupBy);
 		this.setReportsQueryItems(reportDropdowns);
 		this.setShowColumnItems();
@@ -125,7 +122,7 @@ export class ReportsComponent implements OnInit {
 
 	private setReportsQueryItems(reportDropdowns: ReportDropdowns): void {
 		this.queryItems = reportDropdowns.values.customQueries;
-		this.queryName = reportDropdowns.defaultQuery.queryName;
+		this.queryModel = ArrayUtils.findByProperty(this.queryItems, 'queryId', reportDropdowns.currentQuery.queryId);
 	}
 
 	private setShowColumnItems(): void {
@@ -137,23 +134,26 @@ export class ReportsComponent implements OnInit {
 		];
 	}
 
-	getReportGrid(): Promise<void> {
+	getReportGrid(isCustomQuery?: boolean): void {
 		this.reportFilters.dateFrom = this.convertMomentToString(this.datePeriod.dateFrom);
 		this.reportFilters.dateTo = this.convertMomentToString(this.datePeriod.dateTo)
 			|| this.convertMomentToString(this.datePeriod.dateFrom);
+		if (!isCustomQuery) {
+			this.reportFilters.queryId = null;
+			this.reportFilters.queryName = null;
+		}
 
 		let filters = {
 			valuesSaved: this.reportFilters
 		};
 
-		return this.reportsService.getReportGrid(filters)
-			.toPromise()
-			.then((res: ReportGrid) => {
-					this.reportsGridData = res;
-				},
-				() => {
-					this.datePeriod = new DatePeriod(null);
-				});
+		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
+				this.reportsGridData = res;
+			},
+			() => {
+				this.notificationService.danger('Error loading reports grid.');
+				this.datePeriod = new DatePeriod(null);
+			});
 	}
 
 	getTimeString(time: number, showDefaultValue: boolean = false): string {
@@ -168,22 +168,55 @@ export class ReportsComponent implements OnInit {
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
 	}
 
-	// ACTIONS
+	// QUERY ACTIONS
+
+	openQueryDialog(): void {
+		this.reportsQueryRef = this.dialog.open(ReportsQueryFormComponent);
+		this.reportsQueryRef.componentInstance.model = this.reportFilters;
+
+		this.reportsQueryRef.componentInstance.onSubmit.subscribe((response) => {
+			this.reportsQueryRef.close();
+			this.onSubmitQueryForm(response);
+		});
+	}
+
+	onSubmitQueryForm(isError: boolean): void {
+		if (!isError) {
+			this.updateQueryItems();
+			this.notificationService.success('Reports query has been successfully created.');
+		} else {
+			this.notificationService.danger('Error creating reports query.');
+		}
+	}
+
+	deleteQuery(queryModel: ReportFilters): void {
+		this.reportsService.deleteQuery(queryModel.queryId)
+			.subscribe(() => {
+					this.notificationService.success('Report query has been successfully deleted.');
+					this.updateQueryItems();
+				},
+				error => this.notificationService.danger('Error deleting report query.'));
+	}
+
+	queryOnChange(queryModel: ReportFilters): void {
+		this.setReportFilters(queryModel);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportFilters.groupById);
+
+		this.getReportGrid(true);
+	}
+
+	private updateQueryItems(): void {
+		this.reportsService.getReportDropdowns().subscribe((reportDropdowns: ReportDropdowns) => {
+			this.setReportsQueryItems(reportDropdowns);
+		});
+	}
+
+	// DATEPICKER
 
 	cancelUpdatingReportGrid(): void {
 		this.dateString = this.oldDateString;
 		this.datePeriod = this.oldDatePeriod;
 		this.closeRangeDatepicker();
-	}
-
-	toggleRangeDatepicker(): void {
-		if (this.isDatepickerShown && this.canCloseDatepicker) {
-			this.closeRangeDatepicker();
-			this.getReportGrid();
-		} else {
-			this.openRangeDatepicker();
-		}
-		this.changeCloseParameter();
 	}
 
 	closeRangeDatepicker(): void {
@@ -196,6 +229,21 @@ export class ReportsComponent implements OnInit {
 		this.oldDatePeriod = this.datePeriod;
 		this.isDatepickerShown = true;
 		setTimeout(() => this.isDatepickerAnimating = true, 300);
+	}
+
+	toggleRangeDatepicker(event?: MouseEvent): void {
+		if (event && (<HTMLElement>event.target).classList.contains('fa-times') || !this.canToggleDatepicker) {
+			return;
+		}
+
+		if (this.isDatepickerShown) {
+			this.closeRangeDatepicker();
+			this.getReportGrid();
+		} else {
+			this.openRangeDatepicker();
+		}
+
+		this.changeToggleParameter();
 	}
 
 	datePeriodOnChange(datePeriod: DatePeriod): void {
@@ -225,6 +273,22 @@ export class ReportsComponent implements OnInit {
 		this.getReportGrid();
 	}
 
+	private changeToggleParameter(): void {
+		this.canToggleDatepicker = false;
+		setTimeout(() => this.canToggleDatepicker = true, 300);
+	}
+
+	private convertMomentToString(moment: Moment): string {
+		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
+	}
+
+	private setDateString(period: DatePeriod): void {
+		let selectedRange = new DatePeriod(period.dateFrom, period.dateTo);
+		this.dateString = this.rangeDatepickerService.setDateStringPeriod(selectedRange);
+	}
+
+	// SEND REPORTS
+
 	openSendReportsDialog(): void {
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
@@ -253,32 +317,7 @@ export class ReportsComponent implements OnInit {
 		}
 	}
 
-	resetFilters(): void {
-		this.queryName = null;
-		this.reportFilters = new ReportFilters({});
-		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
-		this.toggleClient(this.reportFilters.clientIds);
-	}
-
-	private changeCloseParameter(): void {
-		this.canCloseDatepicker = false;
-		setTimeout(() => this.canCloseDatepicker = true, 0);
-	}
-
-	private convertMomentToString(moment: Moment): string {
-		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
-	}
-
-	private setDateString(period: DatePeriod): void {
-		let selectedRange = new DatePeriod(period.dateFrom, period.dateTo);
-		this.dateString = this.rangeDatepickerService.setDateStringPeriod(selectedRange);
-	}
-
-	submitSettings(showColumnIds: number[]): void {
-		this.showColumnIds = showColumnIds;
-		this.getReportGrid();
-	}
+	// GENERAL
 
 	exportAs(fileTypeId: number): void {
 		let filters = {
@@ -297,7 +336,25 @@ export class ReportsComponent implements OnInit {
 		window.print();
 	}
 
+	resetFilters(): void {
+		this.queryModel = null;
+		this.reportFilters = new ReportFilters({});
+		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
+		this.toggleClient(this.reportFilters.clientIds);
+	}
+
+	submitSettings(showColumnIds: number[]): void {
+		this.showColumnIds = showColumnIds;
+		this.getReportGrid();
+	}
+
 	// FILTERS
+
+	groupByChange(): void {
+		this.reportFilters.groupById = this.groupModel.id;
+		this.getReportGrid();
+	}
 
 	toggleClient(clientIds: number[] = []): void {
 		this.selectedClients = [];
@@ -352,62 +409,6 @@ export class ReportsComponent implements OnInit {
 	toggleArchivedUsers(): void {
 		this.showOnlyActiveUsers = !this.showOnlyActiveUsers;
 		this.getUserItems(this.selectedProjects.length ? this.selectedProjects : this.projects);
-	}
-
-	// QUERY ACTIONS
-
-	isQueryExist(): boolean {
-		return this.queryName && !!ArrayUtils.findByProperty(this.queryItems, 'queryName', this.queryName);
-	}
-
-	createQuery(): void {
-		this.reportFilters.queryId = null;
-		this.reportFilters.queryName = this.queryName;
-
-		this.getReportGrid().then(() => {
-			this.updateQueryItems();
-			this.notificationService.success('Report query has been successfully created.');
-		});
-	}
-
-	deleteQuery(): void {
-		let queryModel: ReportFilters = ArrayUtils.findByProperty(this.queryItems, 'queryName', this.queryName);
-		if (queryModel) {
-			this.queryName = '';
-			this.reportsService.Delete(queryModel.queryId)
-				.subscribe(() => {
-						this.notificationService.success('Report query has been successfully deleted.');
-						this.updateQueryItems();
-					},
-					error => this.notificationService.danger('Error deleting report query.'));
-		}
-	}
-
-	updateQuery(): void {
-		let queryModel: ReportFilters = ArrayUtils.findByProperty(this.queryItems, 'queryName', this.queryName);
-		this.reportsService.Put(queryModel.queryId, this.reportFilters)
-			.subscribe(() => {
-					this.notificationService.success('Report query has been successfully updated.');
-					this.updateQueryItems();
-				},
-				error => this.notificationService.danger('Error updating report query.'));
-	}
-
-	queryOnChange(queryName: string): void {
-		let queryModel: ReportFilters = ArrayUtils.findByProperty(this.queryItems, 'queryName', queryName);
-		if (queryModel) {
-			this.reportFilters = new ReportFilters(queryModel);
-			this.setReportFilters(this.reportFilters);
-			this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportFilters.groupById);
-
-			this.getReportGrid();
-		}
-	}
-
-	private updateQueryItems(): void {
-		this.reportsService.getReportDropdowns().subscribe((reportDropdowns: ReportDropdowns) => {
-			this.queryItems = reportDropdowns.values.customQueries;
-		});
 	}
 
 	private getClientItems(clients: ClientDetail[]): void {
