@@ -55,7 +55,7 @@ export class ReportsComponent implements OnInit {
 
 	isDatepickerShown: boolean = false;
 	isDatepickerAnimating: boolean = false;
-	canCloseDatepicker: boolean = true;
+	canToggleDatepicker: boolean = true;
 	dateFormat: string;
 	dateFormatId: number;
 	datePeriod: DatePeriod;
@@ -190,7 +190,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	deleteQuery(queryModel: ReportFilters): void {
-		this.reportsService.deleteQuery(queryModel.queryId = null)
+		this.reportsService.deleteQuery(queryModel.queryId)
 			.subscribe(() => {
 					this.notificationService.success('Report query has been successfully deleted.');
 					this.updateQueryItems();
@@ -211,22 +211,12 @@ export class ReportsComponent implements OnInit {
 		});
 	}
 
-	// GENERAL ACTIONS
+	// DATEPICKER
 
 	cancelUpdatingReportGrid(): void {
 		this.dateString = this.oldDateString;
 		this.datePeriod = this.oldDatePeriod;
 		this.closeRangeDatepicker();
-	}
-
-	toggleRangeDatepicker(): void {
-		if (this.isDatepickerShown && this.canCloseDatepicker) {
-			this.closeRangeDatepicker();
-			this.getReportGrid();
-		} else {
-			this.openRangeDatepicker();
-		}
-		this.changeCloseParameter();
 	}
 
 	closeRangeDatepicker(): void {
@@ -239,6 +229,21 @@ export class ReportsComponent implements OnInit {
 		this.oldDatePeriod = this.datePeriod;
 		this.isDatepickerShown = true;
 		setTimeout(() => this.isDatepickerAnimating = true, 300);
+	}
+
+	toggleRangeDatepicker(event?: MouseEvent): void {
+		if (event && (<HTMLElement>event.target).classList.contains('fa-times') || !this.canToggleDatepicker) {
+			return;
+		}
+
+		if (this.isDatepickerShown) {
+			this.closeRangeDatepicker();
+			this.getReportGrid();
+		} else {
+			this.openRangeDatepicker();
+		}
+
+		this.changeToggleParameter();
 	}
 
 	datePeriodOnChange(datePeriod: DatePeriod): void {
@@ -268,6 +273,22 @@ export class ReportsComponent implements OnInit {
 		this.getReportGrid();
 	}
 
+	private changeToggleParameter(): void {
+		this.canToggleDatepicker = false;
+		setTimeout(() => this.canToggleDatepicker = true, 300);
+	}
+
+	private convertMomentToString(moment: Moment): string {
+		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
+	}
+
+	private setDateString(period: DatePeriod): void {
+		let selectedRange = new DatePeriod(period.dateFrom, period.dateTo);
+		this.dateString = this.rangeDatepickerService.setDateStringPeriod(selectedRange);
+	}
+
+	// SEND REPORTS
+
 	openSendReportsDialog(): void {
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
@@ -296,32 +317,7 @@ export class ReportsComponent implements OnInit {
 		}
 	}
 
-	resetFilters(): void {
-		this.queryModel = null;
-		this.reportFilters = new ReportFilters({});
-		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
-		this.toggleClient(this.reportFilters.clientIds);
-	}
-
-	private changeCloseParameter(): void {
-		this.canCloseDatepicker = false;
-		setTimeout(() => this.canCloseDatepicker = true, 0);
-	}
-
-	private convertMomentToString(moment: Moment): string {
-		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
-	}
-
-	private setDateString(period: DatePeriod): void {
-		let selectedRange = new DatePeriod(period.dateFrom, period.dateTo);
-		this.dateString = this.rangeDatepickerService.setDateStringPeriod(selectedRange);
-	}
-
-	submitSettings(showColumnIds: number[]): void {
-		this.showColumnIds = showColumnIds;
-		this.getReportGrid();
-	}
+	// GENERAL
 
 	exportAs(fileTypeId: number): void {
 		let filters = {
@@ -338,6 +334,19 @@ export class ReportsComponent implements OnInit {
 
 	printPage(): void {
 		window.print();
+	}
+
+	resetFilters(): void {
+		this.queryModel = null;
+		this.reportFilters = new ReportFilters({});
+		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
+		this.toggleClient(this.reportFilters.clientIds);
+	}
+
+	submitSettings(showColumnIds: number[]): void {
+		this.showColumnIds = showColumnIds;
+		this.getReportGrid();
 	}
 
 	// FILTERS

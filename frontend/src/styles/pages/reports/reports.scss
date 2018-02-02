@@ -99,6 +99,10 @@ $fieldHeight: 30px;
     position: relative;
     float: left;
 
+    > * {
+      vertical-align: middle;
+    }
+
     .ct-select {
       display: none;
     }
@@ -106,23 +110,27 @@ $fieldHeight: 30px;
     .ct-select-component {
       margin: 0;
       position: absolute;
-      width: 114px;
+      width: 208px;
     }
 
     .ct-query-text {
+      box-sizing: border-box;
       display: inline-block;
+      margin-left: -5px;
+      padding: 0 5px;
+      width: 110px;
       text-overflow: ellipsis;
       overflow: hidden;
-      width: 110px;
-      vertical-align: middle;
+      text-align: center;
+      cursor: pointer;
     }
 
     .ct-select-open-button {
-      cursor: pointer;
       background: none;
       border: none;
       padding: 0;
       outline: none;
+      cursor: pointer;
 
       i {
         vertical-align: middle;
@@ -135,6 +143,16 @@ $fieldHeight: 30px;
       &.ct-disabled {
         opacity: 0.5;
       }
+    }
+
+    .ct-close {
+      display: none;
+      margin-left: -10px;
+      font-size: 14px;
+    }
+
+    .ct-query-text:hover + .ct-close, .ct-close:hover {
+      display: inline-block;
     }
   }
 
@@ -175,6 +193,7 @@ $fieldHeight: 30px;
 
     .fa {
       width: 15px;
+      height: 20px;
       text-align: center;
     }
 

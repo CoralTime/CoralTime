@@ -30,7 +30,7 @@
                                          [class.ct-datepicker-opened]="isDatepickerAnimating"
                                          [datePeriod]="datePeriod"
                                          [firstDayOfWeek]="firstDayOfWeek"
-                                         (clickOutside)="toggleRangeDatepicker()"
+                                         (clickOutside)="toggleRangeDatepicker($event)"
                                          (onPeriodChanged)="datePeriodOnChange($event)"
                                          (closed)="toggleRangeDatepicker()"></ct-range-datepicker>
                     <div class="ct-btn-block">
