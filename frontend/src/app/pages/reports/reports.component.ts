@@ -141,6 +141,7 @@ export class ReportsComponent implements OnInit {
 		if (!isCustomQuery) {
 			this.reportFilters.queryId = null;
 			this.reportFilters.queryName = null;
+			this.queryModel = null;
 		}
 
 		let filters = {
