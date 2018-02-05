@@ -12,13 +12,18 @@ namespace CoralTime.Api.v1.Reports
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class ReportsController : BaseController<ReportsController, IReportService>
+    public class ReportsController : BaseController<ReportsController, IReportsService>
     {
-        public ReportsController(IReportService service, ILogger<ReportsController> logger)
-            : base(logger, service) { }
+        private IReportsSettingsService _reportsSettingsService;
+
+        public ReportsController(IReportsService service, ILogger<ReportsController> logger, IReportsSettingsService reportsSettingsService)
+            : base(logger, service)
+        {
+            _reportsSettingsService = reportsSettingsService;
+        }
 
         [HttpGet]
-        public IActionResult ReportsDropdowns()
+        public IActionResult GetDropdowns()
         {
             try
             {
@@ -33,46 +38,51 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult ReportsGrid([FromBody]RequestReportsGrid reportsGridData)
+        public IActionResult GetGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Model");
+            }
+
             try
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _service.SaveReportsSettings(reportsGridData.ValuesSaved, userName);
+                _reportsSettingsService.SaveCurrentQuery(reportsGridView.ValuesSaved, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGridView.ValuesSaved.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Client:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridData));
+                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridView));
                     }
 
                     default:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByNone(userName, reportsGridData));
+                        return BadRequest("Invalid Grouping value");
                     }
                 }
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridData});\n {e}");
+                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridView});\n {e}");
                 var errors = ExceptionsChecker.CheckProjectsException(e);
                 return BadRequest(errors);
             }

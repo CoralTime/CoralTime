@@ -8,12 +8,15 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="ConvertersViews\ReportView\ReportsGridItemView.cs" />
+    <Compile Remove="ConvertersOfViewModels\ReportViewModel\ReportsGridItemView.cs" />
     <Compile Remove="Migrations\20180119132135_Initial2.cs" />
     <Compile Remove="Migrations\20180119134640_Add Reports Settings.cs" />
     <Compile Remove="Migrations\20180119135000_Add Reports Settings.cs" />
     <Compile Remove="Migrations\20180119135209_Add Reports Settings.cs" />
     <Compile Remove="Migrations\20180119135404_Add Reports Settings.cs" />
+    <Compile Remove="Migrations\20180125202132_add bool field IsDefaulQuery in ReportsSettings.cs" />
+    <Compile Remove="Migrations\20180125202207_add bool field IsDefaultQuery in ReportsSettings.cs" />
+    <Compile Remove="Migrations\20180125202244_Add bool field IsDefaultQuery in ReportsSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />
@@ -32,8 +35,5 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ConvertersViews\ClientView" />
   </ItemGroup>
 </Project>

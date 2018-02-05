@@ -11,7 +11,7 @@ export class ClickCloseDirective {
 	@HostListener('document:keydown', ['$event'])
 	onKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {
-			this.el.nativeElement.click()
+			this.el.nativeElement.click();
 		}
 	}
 }

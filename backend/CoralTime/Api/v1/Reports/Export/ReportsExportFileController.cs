@@ -18,7 +18,7 @@ namespace CoralTime.Api.v1.Reports.Export
             : base (logger, service) { }
 
         [HttpPost]
-        public IActionResult ReportsExportFile([FromBody]RequestReportsGrid reportsGridData)
+        public IActionResult ReportsExportFile([FromBody]ReportsGridView reportsGridData)
         {
             try
             {

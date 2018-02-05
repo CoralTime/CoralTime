@@ -262,8 +262,9 @@ namespace CoralTime
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ITasksService, TasksService>();
             services.AddScoped<ITimeEntryService, TimeEntryService>();
-            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IReportsService, ReportsService>();
             services.AddScoped<IReportExportService, ReportsExportService>();
+            services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)
@@ -288,8 +289,7 @@ namespace CoralTime
 
             app.Use(async (context, next) =>
             {
-                if (context.Request.Path.HasValue && null != angularRoutes.FirstOrDefault(
-                        ar => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
+                if (context.Request.Path.HasValue && null != angularRoutes.FirstOrDefault(ar => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
                 {
                     context.Request.Path = new PathString("/");
 

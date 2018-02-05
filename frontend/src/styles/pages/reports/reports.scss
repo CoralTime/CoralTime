@@ -85,13 +85,74 @@ $fieldHeight: 30px;
     height: 30px;
     line-height: 30px;
 
-    > div {
+    .ct-reports-actions-block {
       float: right;
       position: relative;
 
       > * {
         display: inline-block;
       }
+    }
+  }
+
+  .ct-query-block {
+    position: relative;
+    float: left;
+
+    > * {
+      vertical-align: middle;
+    }
+
+    .ct-select {
+      display: none;
+    }
+
+    .ct-select-component {
+      margin: 0;
+      position: absolute;
+      width: 208px;
+    }
+
+    .ct-query-text {
+      box-sizing: border-box;
+      display: inline-block;
+      margin-left: -5px;
+      padding: 0 5px;
+      width: 110px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .ct-select-open-button {
+      background: none;
+      border: none;
+      padding: 0;
+      outline: none;
+      cursor: pointer;
+
+      i {
+        vertical-align: middle;
+      }
+
+      &:hover i{
+        background-color: #ddd;
+      }
+
+      &.ct-disabled {
+        opacity: 0.5;
+      }
+    }
+
+    .ct-close {
+      display: none;
+      margin-left: -10px;
+      font-size: 14px;
+    }
+
+    .ct-query-text:hover + .ct-close, .ct-close:hover {
+      display: inline-block;
     }
   }
 
@@ -132,6 +193,7 @@ $fieldHeight: 30px;
 
     .fa {
       width: 15px;
+      height: 20px;
       text-align: center;
     }
 

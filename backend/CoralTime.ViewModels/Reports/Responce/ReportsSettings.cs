@@ -8,14 +8,14 @@ namespace CoralTime.ViewModels.Reports.Responce
 
         public DateTime? DateTo { get; set; }
 
-        public string ProjectIds { get; set; }
+        public string FilterProjectIds { get; set; }
 
-        public string MemberIds { get; set; }
+        public string FilterMemberIds { get; set; }
 
-        public string ClientIds { get; set; }
+        public string FilterClientIds { get; set; }
 
         public int? GroupById { get; set; }
 
-        public string ShowColumnIds { get; set; }
+        public string FilterShowColumnIds { get; set; }
     }
 }

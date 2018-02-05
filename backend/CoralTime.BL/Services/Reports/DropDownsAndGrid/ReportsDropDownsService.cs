@@ -1,6 +1,6 @@
 ﻿using CoralTime.BL.Services.Reports.Export;
 using CoralTime.Common.Constants;
-using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
+using CoralTime.DAL.ConvertersOfViewModels;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
@@ -11,16 +11,10 @@ using System.Linq;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public partial class ReportService
+    public partial class ReportsService
     {
-        readonly List<ReportsDropDownGroupBy> DropDownGroupBy = new List<ReportsDropDownGroupBy>
+        private readonly List<ReportsDropDownGroupBy> _dropDownGroupBy = new List<ReportsDropDownGroupBy>
         {
-            //new ReportsDropDownGroupBy
-            //{
-            //    GroupById = (int) Constants.ReportsGroupBy.None,
-            //    GroupByDescription = Constants.ReportsGroupBy.None.ToString()
-            //},
-
             new ReportsDropDownGroupBy
             {
                 Id = (int) Constants.ReportsGroupBy.Project,
@@ -54,13 +48,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var reportDropDowns = new ReportsDropDownsView
             {
                 Values = CreateDropDownValues(memberByUserName),
-                ValuesSaved = CreateDropDownValuesSaved(memberByUserName)
+                CurrentQuery = CreateDropDownValuesSaved(memberByUserName.Id)
             };
 
             return reportDropDowns;
         }
 
-        private ReportsDropDownValues CreateDropDownValues(Member memberByUserName)
+        private ReportsDropDownValues CreateDropDownValues(Member member)
         {
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
@@ -71,7 +65,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             #region GetProjects allProjectsForAdmin or projectsWithAssignUsersAndPublicProjects.
 
-            if (memberByUserName.User.IsAdmin)
+            if (member.User.IsAdmin)
             {
                 var allProjectsForAdmin = Uow.ProjectRepository.LinkedCacheGetList().ToList();
                 projectsOfClients = allProjectsForAdmin;
@@ -79,7 +73,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             else
             {
                 var projectsWithAssignUsersAndPublicProjects = Uow.ProjectRepository.LinkedCacheGetList()
-                    .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(memberByUserName.Id) || !x.IsPrivate).ToList();
+                    .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(member.Id) || !x.IsPrivate).ToList();
 
                 projectsOfClients.AddRange(projectsWithAssignUsersAndPublicProjects);
             }
@@ -127,15 +121,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     {
                         ProjectId = project.Id,
                         ProjectName = project.Name,
-                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == memberByUserName.Id)?.RoleId ?? 0,
+                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == member.Id)?.RoleId ?? 0,
                         IsProjectActive = project.IsActive,
                     };
 
                     #region Set all users at Project constrain only for: Admin, Manager at this project.
 
-                    var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == memberByUserName.Id && r.RoleId == managerRoleId);
+                    var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == member.Id && r.RoleId == managerRoleId);
 
-                    if (memberByUserName.User.IsAdmin || isManagerOnProject)
+                    if (member.User.IsAdmin || isManagerOnProject)
                     {
                         var usersDetailsView = project.MemberProjectRoles.Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
 
@@ -169,69 +163,86 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var userDetails = new ReportsUserDetails
             {
-                CurrentUserFullName = memberByUserName.FullName,
-                CurrentUserId = memberByUserName.Id,
-                IsAdminCurrentUser = memberByUserName.User.IsAdmin,
-                IsManagerCurrentUser = memberByUserName.User.IsManager,
+                CurrentUserFullName = member.FullName,
+                CurrentUserId = member.Id,
+                IsAdminCurrentUser = member.User.IsAdmin,
+                IsManagerCurrentUser = member.User.IsManager,
             };
+
+            var valuesCustomQueries = new List<ReportsSettingsView>();
+
+            var customQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(member.Id).Where(x => x.QueryName != null);
+            foreach (var customReportSettings in customQueries)
+            {
+                valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings));
+            }
 
             var dropDownValues = new ReportsDropDownValues
             {
                 Filters = reportClientView,
-                GroupBy = DropDownGroupBy,
+                GroupBy = _dropDownGroupBy,
                 ShowColumns = ReportsExportService.showColumnsInfo,
                 UserDetails = userDetails,
+                CustomQueries = valuesCustomQueries.OrderBy(x => x.QueryName).ToList()
             };
 
             return dropDownValues;
         }
 
-        private RequestReportsSettings CreateDropDownValuesSaved(Member memberByUserName)
+        private ReportsSettingsView CreateDropDownValuesSaved(int memberId)
         {
-            var dropDownsValuesSaved = new RequestReportsSettings();
+            var reportsSettings = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(memberId).FirstOrDefault(x => x.IsCurrentQuery);
 
-            var reportsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdWithIncludes(memberByUserName.Id);
+            var dropDownsValuesSavedList = CreateReportsSettingsEntity(reportsSettings);
+
+            return dropDownsValuesSavedList;
+        }
+
+        private ReportsSettingsView CreateReportsSettingsEntity(ReportsSettings defaultReportSettings)
+        {
+            var dropDownsDefaultValuesSaved = new ReportsSettingsView();
 
             // Group By Date as default.
-            dropDownsValuesSaved.GroupById = reportsSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
+            dropDownsDefaultValuesSaved.GroupById = defaultReportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
 
-            if (reportsSettings != null)
+            // Show all columns as default.
+            dropDownsDefaultValuesSaved.ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
+                ? new[]
+                {
+                    (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowDate,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
+                    (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
+                }
+                : ConvertStringToArrayOfInts(defaultReportSettings.FilterShowColumnIds);
+
+            if (defaultReportSettings != null)
             {
-                if (reportsSettings.DateFrom.HasValue)
-                {
-                    dropDownsValuesSaved.DateFrom = reportsSettings.DateFrom;
-                }
+                dropDownsDefaultValuesSaved.DateFrom = defaultReportSettings.DateFrom;
+                dropDownsDefaultValuesSaved.DateTo = defaultReportSettings.DateTo;
 
-                if (reportsSettings.DateTo.HasValue)
-                {
-                    dropDownsValuesSaved.DateTo = reportsSettings.DateTo;
-                }
-
-                if (!string.IsNullOrEmpty(reportsSettings.ClientIds))
-                {
-                    dropDownsValuesSaved.ClientIds = reportsSettings.ClientIds?.Split(',')
-                        .Where(x => !string.IsNullOrWhiteSpace(x))
-                        .Select(x => (int?)Convert.ToInt32(x))
-                        .ToArray();
-                }
-
-                if (!string.IsNullOrEmpty(reportsSettings.ProjectIds))
-                {
-                    dropDownsValuesSaved.ProjectIds = reportsSettings.ProjectIds?.Split(',').Select(int.Parse).ToArray();
-                }
-
-                if (!string.IsNullOrEmpty(reportsSettings.MemberIds))
-                {
-                    dropDownsValuesSaved.MemberIds = reportsSettings.MemberIds?.Split(',').Select(int.Parse).ToArray();
-                }
-
-                if (!string.IsNullOrEmpty(reportsSettings.ShowColumnIds))
-                {
-                    dropDownsValuesSaved.ShowColumnIds = reportsSettings.ShowColumnIds?.Split(',').Select(int.Parse).ToArray();
-                }
+                dropDownsDefaultValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(defaultReportSettings.FilterClientIds);
+                dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
+                dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
+                dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
+                dropDownsDefaultValuesSaved.QueryId = defaultReportSettings.Id;
             }
-            
-            return dropDownsValuesSaved;
+
+            return dropDownsDefaultValuesSaved;
+        }
+
+        private static int[] ConvertStringToArrayOfInts(string sourceString)
+        {
+            return !string.IsNullOrEmpty(sourceString)
+                ? sourceString.Split(',').Select(int.Parse).ToArray()
+                : null;
+        }
+
+        private static int?[] ConvertStringToArrayOfNullableInts(string sourceString)
+        {
+            return !string.IsNullOrEmpty(sourceString)
+                ? sourceString.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => (int?) Convert.ToInt32(x)).ToArray()
+                : null;
         }
     }
 }

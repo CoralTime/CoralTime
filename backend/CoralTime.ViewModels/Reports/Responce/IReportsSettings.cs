@@ -10,12 +10,12 @@ namespace CoralTime.ViewModels.Reports.Responce
 
         int? GroupById { get; set; }
 
-        string ClientIds { get; set; }
+        string FilterClientIds { get; set; }
 
-        string ProjectIds { get; set; }
+        string FilterProjectIds { get; set; }
 
-        string MemberIds { get; set; }
+        string FilterMemberIds { get; set; }
 
-        string ShowColumnIds { get; set; }
+        string FilterShowColumnIds { get; set; }
     }
 }

@@ -53,7 +53,8 @@
                     <a [routerLink]="['/profile']" title="View Profile" class="ct-userpic">
                         <ct-user-pic [userId]='impersonationId || authUser.id'></ct-user-pic>
                     </a>
-                    <i class="fa" [ngClass]="isProfileNavMenuOpen ? 'fa-caret-up' : 'fa-caret-down'" (click)="toggleProfileNavMenu(profileNavMenu)" title="View Settings"></i>
+                    <i class="fa" [ngClass]="isProfileNavMenuOpen ? 'fa-caret-up' : 'fa-caret-down'"
+                       (click)="toggleProfileNavMenu(profileNavMenu)"></i>
                 </div>
 
                 <ct-menu #profileNavMenu class="ct-nav-drop-menu" xPosition="before" (closed)="isProfileNavMenuOpen = false">
