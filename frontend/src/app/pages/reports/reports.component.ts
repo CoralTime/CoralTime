@@ -145,7 +145,7 @@ export class ReportsComponent implements OnInit {
 		}
 
 		let filters = {
-			valuesSaved: this.reportFilters
+			currentQuery: this.reportFilters
 		};
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
@@ -294,7 +294,7 @@ export class ReportsComponent implements OnInit {
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
 			dateFormatId: this.dateFormatId,
-			valuesSaved: this.reportFilters
+			currentQuery: this.reportFilters
 		});
 		this.reportsSendRef.componentInstance.dateFormat = this.dateFormat;
 		this.reportsSendRef.componentInstance.userInfo = this.userInfo;
@@ -322,8 +322,9 @@ export class ReportsComponent implements OnInit {
 
 	exportAs(fileTypeId: number): void {
 		let filters = {
+			dateFormatId: this.userInfo.dateFormatId,
 			fileTypeId: fileTypeId,
-			valuesSaved: this.reportFilters
+			currentQuery: this.reportFilters
 		};
 
 		this.reportsService.exportAs(filters).subscribe();

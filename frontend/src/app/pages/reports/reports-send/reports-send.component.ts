@@ -16,7 +16,7 @@ export class SendReportsFormModel {
 	fromEmail: string;
 	subject: string;
 	toEmail: string;
-	valuesSaved: ReportFilters;
+	currentQuery: ReportFilters;
 
 	constructor(data: any = null) {
 		if (data) {
@@ -28,7 +28,7 @@ export class SendReportsFormModel {
 			this.fromEmail = data.fromEmail;
 			this.subject = data.subject;
 			this.toEmail = data.toEmail;
-			this.valuesSaved = data.currentQuery;
+			this.currentQuery = data.currentQuery;
 		}
 	}
 }
@@ -83,15 +83,15 @@ export class ReportsSendComponent implements OnInit {
 	ngOnInit() {
 		this.clientsService.getClients().subscribe((clients) => {
 			this.clients = clients.filter((client: Client) => !!client.email === true);
-			if (this.model.valuesSaved.clientIds && this.model.valuesSaved.clientIds.length === 1) {
-				let selectedClient = clients.filter((client: Client) => client.id === this.model.valuesSaved.clientIds[0])[0];
+			if (this.model.currentQuery.clientIds && this.model.currentQuery.clientIds.length === 1) {
+				let selectedClient = clients.filter((client: Client) => client.id === this.model.currentQuery.clientIds[0])[0];
 				this.model.toEmail = selectedClient.email;
 			}
 		});
 		this.model.fromEmail = this.userInfo.email;
 		let addProjectName = this.projectName ? this.projectName + ': ' : '';
-		this.model.subject = 'CoralTime: ' + addProjectName + this.formatDate(this.model.valuesSaved.dateFrom)
-			+ ' - ' + this.formatDate(this.model.valuesSaved.dateTo);
+		this.model.subject = 'CoralTime: ' + addProjectName + this.formatDate(this.model.currentQuery.dateFrom)
+			+ ' - ' + this.formatDate(this.model.currentQuery.dateTo);
 	}
 
 	showErrors(): void {
