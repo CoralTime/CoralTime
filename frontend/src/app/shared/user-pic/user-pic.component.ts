@@ -35,7 +35,7 @@ export class UserPicComponent implements OnChanges, OnInit {
 
 	getUserPicture(userId: number, fullSize: boolean): void {
 		this.userPicService.getUserPicture(userId, fullSize).subscribe((img: string) => {
-			if (img.length) {
+			if (img && img.length) {
 				this.imageData = IMG_BASE64 + img;
 				this.hasUserPic = true;
 			} else {
