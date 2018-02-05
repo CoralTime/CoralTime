@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoralTime.DAL.ConvertersViews.ExstensionsMethods;
+using CoralTime.DAL.ConvertersOfViewModels;
 
 namespace CoralTime.BL.Services
 {

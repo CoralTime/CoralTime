@@ -12,13 +12,18 @@ namespace CoralTime.Api.v1.Reports
 {
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class ReportsController : BaseController<ReportsController, IReportService>
+    public class ReportsController : BaseController<ReportsController, IReportsService>
     {
-        public ReportsController(IReportService service, ILogger<ReportsController> logger)
-            : base(logger, service) { }
+        private IReportsSettingsService _reportsSettingsService;
+
+        public ReportsController(IReportsService service, ILogger<ReportsController> logger, IReportsSettingsService reportsSettingsService)
+            : base(logger, service)
+        {
+            _reportsSettingsService = reportsSettingsService;
+        }
 
         [HttpGet]
-        public IActionResult ReportsDropdowns()
+        public IActionResult GetDropdowns()
         {
             try
             {
@@ -33,11 +38,16 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult ReportsGrid([FromBody]RequestReportsGrid reportsGridData)
+        public IActionResult GetGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridData)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Model");
+            }
+
             try
             {
-                _service.SaveReportsSettings(reportsGridData.ValuesSaved);
+                _reportsSettingsService.SaveCurrentQuery(reportsGridData.ValuesSaved);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridData.ValuesSaved.GroupById)
@@ -64,7 +74,7 @@ namespace CoralTime.Api.v1.Reports
 
                     default:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByNone(reportsGridData));
+                        return BadRequest("Invalid Grouping value");
                     }
                 }
             }

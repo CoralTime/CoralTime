@@ -44,6 +44,7 @@ export class SelectComponent implements ControlValueAccessor {
 	isOpen: boolean = false;
 	isAnimate: boolean = false;
 	isListShowToTop: boolean = false;
+	selectedObject: any;
 
 	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
 	@ViewChild('mdList', {read: ElementRef}) mdList: ElementRef;
@@ -60,7 +61,6 @@ export class SelectComponent implements ControlValueAccessor {
 
 	private oldSelectedObject: any;
 	private scrollTopNumber: number = 0;
-	private selectedObject: any;
 
 	private _controlValueAccessorChangeFn: (value: any) => void = () => {};
 	private onTouched: () => any = () => {};

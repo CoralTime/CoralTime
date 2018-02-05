@@ -107,7 +107,7 @@ namespace CoralTime.DAL
                 .HasKey(p => p.Key);
 
             builder.Entity<ReportsSettings>()
-                .HasIndex(x => x.MemberId).IsUnique();
+                .HasIndex(t => new { ReportsSettingsId = t.MemberId, t.QueryName }).IsUnique();
 
             base.OnModelCreating(builder);
         }

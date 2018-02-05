@@ -12,7 +12,7 @@ import { NotAuthGuard } from './auth/not-auth-guard.service';
 import { LoadingIndicatorService } from './loading-indicator.service';
 import { CustomBrowserXhr } from './custom-browser-xhr';
 import { AclService } from './auth/acl.service';
-import { RavenErrorHandler } from './services/raven-error-handler';
+import { CustomErrorHandler } from './services/raven-error-handler';
 import { UserInfoService } from './auth/user-info.service';
 import { UserPicService } from '../services/user-pic.service';
 
@@ -39,7 +39,7 @@ import { UserPicService } from '../services/user-pic.service';
 		},
 		{
 			provide: ErrorHandler,
-			useClass: RavenErrorHandler
+			useClass: CustomErrorHandler
 		},
 		ODataServiceFactory,
 		AuthService,

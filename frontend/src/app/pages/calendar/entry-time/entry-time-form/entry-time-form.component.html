@@ -35,14 +35,14 @@
         </div>
         <ct-textarea class="ct-description-block"
                      [name]="'description'"
-                     [placeholder]="'No comments'"
-                     [maxlength]="500"
+                     [placeholder]="'Add task details'"
+                     [maxlength]="1000"
                      [canResize]="true"
                      [(ngModel)]="currentTimeEntry.description"
                      (ngModelChange)="descriptionOnChange()"></ct-textarea>
     </div>
     <div class="ct-time-actions clearfix">
-        <button class="ct-timer" md-button
+        <button class="ct-timer" type="button" md-button
                 [disabled]="!canActivateTimer()"
                 (click)="toggleTimer()"
                 [class.ct-timer-started]="isTimerShown">
@@ -62,7 +62,7 @@
                 Stop Timer
             </div>
         </button>
-        <button *ngIf="!currentTimeEntry.isFromToShow"
+        <button type="button" *ngIf="!currentTimeEntry.isFromToShow"
                 class="ct-time-path"
                 [disabled]="isTimerShown"
                 (click)="openFromToForm()">
@@ -76,18 +76,18 @@
             <div class="ct-from-to-form">
                 <div class="ct-from-time">
                     <label for="timeFrom" class="ct-label">From:</label>
-                    <input id="timeFrom" name="timeFrom" autocomplete="off" maxlength="5" time
+                    <input id="timeFrom" name="timeFrom" autocomplete="off" time
                            [(ngModel)]="timeFrom"
-                           [textMask]="{mask: timeMask, guide: false, keepCharPositions: true}"
+                           [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                            (focus)="isFromToFormFocus = true"
                            (timeChanged)="validateFromToForm($event, timeTo)">
                 </div>
                 <span class="ct-actions-icon"></span>
                 <div class="ct-to-time">
                     <label for="timeTo" class="ct-label">To:</label>
-                    <input id="timeTo" name="timeTo" autocomplete="off" maxlength="5" time
+                    <input id="timeTo" name="timeTo" autocomplete="off" time
                            [(ngModel)]="timeTo"
-                           [textMask]="{mask: timeMask, guide: false, keepCharPositions: true}"
+                           [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                            (focus)="isFromToFormFocus = true"
                            (timeChanged)="validateFromToForm(timeFrom, $event)">
                 </div>
@@ -97,17 +97,17 @@
     <div class="ct-time-period clearfix">
         <div class="ct-actual-time" [class.ct-disabled-form]="isTimerShown">
             <label for="actualTime" class="ct-period-icon" title="Tracked time"></label>
-            <input id="actualTime" name="actualTime" autocomplete="off" maxlength="5" time
+            <input id="actualTime" name="actualTime" autocomplete="off" time
                    [(ngModel)]="actualTime"
-                   [textMask]="{mask: timeMask, guide: false, keepCharPositions: true}"
+                   [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (ngModelChange)="actualTimeOnChange()"
                    [disabled]="isTimerShown">
         </div>
         <div class="ct-planned-time">
             <label for="plannedTime" class="ct-period-icon" title="Planned time"></label>
-            <input id="plannedTime" name="plannedTime" autocomplete="off" maxlength="5" time
+            <input id="plannedTime" name="plannedTime" autocomplete="off" time
                    [(ngModel)]="plannedTime"
-                   [textMask]="{mask: timeMask, guide: false, keepCharPositions: true}"
+                   [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (ngModelChange)="plannedTimeOnChange()"
                    [disabled]="isTimerShown">
         </div>
@@ -118,6 +118,6 @@
                 (click)="submit()"
                 [disabled]="entryTimeForm.invalid || entryTimeForm.pristine || isRequestLoading">Done
         </button>
-        <button type="button" class="ct-close" (click)="closeForm()">Cancel</button>
+        <button type="button" class="ct-close" (click)="closeForm()" ctClickClose>Cancel</button>
     </div>
 </form>

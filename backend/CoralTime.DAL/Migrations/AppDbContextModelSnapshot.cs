@@ -296,17 +296,25 @@ namespace CoralTime.DAL.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("ClientIds");
-
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("CreatorId");
 
-                    b.Property<DateTime>("DateFrom");
+                    b.Property<DateTime?>("DateFrom");
 
-                    b.Property<DateTime>("DateTo");
+                    b.Property<DateTime?>("DateTo");
 
-                    b.Property<int>("GroupById");
+                    b.Property<string>("FilterClientIds");
+
+                    b.Property<string>("FilterMemberIds");
+
+                    b.Property<string>("FilterProjectIds");
+
+                    b.Property<string>("FilterShowColumnIds");
+
+                    b.Property<int?>("GroupById");
+
+                    b.Property<bool>("IsCurrentQuery");
 
                     b.Property<string>("LastEditorUserId");
 
@@ -314,11 +322,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("MemberId");
 
-                    b.Property<string>("MemberIds");
-
-                    b.Property<string>("ProjectIds");
-
-                    b.Property<string>("ShowColumnIds");
+                    b.Property<string>("QueryName");
 
                     b.HasKey("Id");
 
@@ -326,7 +330,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.HasIndex("LastEditorUserId");
 
-                    b.HasIndex("MemberId")
+                    b.HasIndex("MemberId", "QueryName")
                         .IsUnique();
 
                     b.ToTable("ReportsSettings");
@@ -676,7 +680,7 @@ namespace CoralTime.DAL.Migrations
                         .HasForeignKey("LastEditorUserId");
 
                     b.HasOne("CoralTime.DAL.Models.Member", "Member")
-                        .WithMany()
+                        .WithMany("ReportsSettings")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

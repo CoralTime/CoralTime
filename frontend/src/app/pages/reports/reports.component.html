@@ -2,7 +2,21 @@
     <div class="ct-page-container">
         <div class="ct-page-header">
             <div class="ct-reports-settings">
-                <div>
+                <div class="ct-query-block">
+                    <button class="ct-select-open-button" [class.ct-disabled]="!queryItems.length">
+                        <i class="material-icons" (click)="querySelect.toggleSelect()">more_horiz</i>
+                    </button>
+                    <ct-select [name]="'query'" #querySelect
+                               [displayName]="'queryName'" [trackBy]="'queryId'"
+                               [(ngModel)]="queryModel"
+                               (change)="queryOnChange(queryModel)"
+                               [options]="queryItems">
+                    </ct-select>
+                    <span class="ct-query-text">{{queryModel?.queryName || 'Default query'}}</span>
+                    <span *ngIf="!queryModel" class="ct-close" (click)="openQueryDialog()">Create</span>
+                    <span *ngIf="queryModel" class="ct-close" (click)="deleteQuery(queryModel)">Delete</span>
+                </div>
+                <div class="ct-reports-actions-block">
                     <div class="ct-reports-time-period">
                         <a class="ct-prev" (click)="getNewPeriod(false)"></a>
                         <a class="ct-next" (click)="getNewPeriod()"></a>
@@ -16,7 +30,7 @@
                                          [class.ct-datepicker-opened]="isDatepickerAnimating"
                                          [datePeriod]="datePeriod"
                                          [firstDayOfWeek]="firstDayOfWeek"
-                                         (clickOutside)="toggleRangeDatepicker()"
+                                         (clickOutside)="toggleRangeDatepicker($event)"
                                          (onPeriodChanged)="datePeriodOnChange($event)"
                                          (closed)="toggleRangeDatepicker()"></ct-range-datepicker>
                     <div class="ct-btn-block">
