@@ -24,7 +24,7 @@ namespace CoralTime.Api.v1.Reports.Export
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGridData.CurrentQuery.GroupById)
                 {
                     case (int) ReportsGroupBy.Project:
                     {

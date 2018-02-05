@@ -49,10 +49,10 @@ namespace CoralTime.Api.v1.Reports
             {
                 var userName = this.GetUserNameWithImpersonation();
 
-                _reportsSettingsService.SaveCurrentQuery(reportsGridView.ValuesSaved, userName);
+                _reportsSettingsService.SaveCurrentQuery(reportsGridView.CurrentQuery, userName);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGridView.ValuesSaved.GroupById)
+                switch (reportsGridView.CurrentQuery.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
