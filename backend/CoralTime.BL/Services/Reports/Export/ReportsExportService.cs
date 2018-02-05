@@ -299,9 +299,9 @@ namespace CoralTime.BL.Services.Reports.Export
 
             #region Set Global Properties. 
             // TODO change type!
-            GroupById = reportsGridData.ValuesSaved.GroupById ?? 3;
+            GroupById = reportsGridData.CurrentQuery.GroupById ?? 3;
 
-            ShowColumnIds = reportsGridData.ValuesSaved.ShowColumnIds;
+            ShowColumnIds = reportsGridData.CurrentQuery.ShowColumnIds;
 
             DateFormatId = reportsGridData.DateFormatId;
 

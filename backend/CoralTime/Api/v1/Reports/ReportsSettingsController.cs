@@ -18,7 +18,7 @@ namespace CoralTime.Api.v1.Reports
         [Route("CustomQuery")]
         public IActionResult SaveCustomQuery([FromBody] ReportsGridView reportsGridView)
         {
-            _service.SaveCustomQuery(reportsGridView.ValuesSaved, this.GetUserNameWithImpersonation());
+            _service.SaveCustomQuery(reportsGridView.CurrentQuery, this.GetUserNameWithImpersonation());
 
             return Ok();
         }

@@ -2,9 +2,9 @@
     "name": "frontend_settings",
     "version": "v1.0.0",
     "scripts": {
-        "0_NpmVersion": "npm version",
-        "1_NpmInstall": "cd ../../frontend & npm install",
-        "2_BuildFrontEnd": "cd ../../frontend & npm run build",
-        "3_BuildProdFrontEnd": "cd ../../frontend & npm run production"
+        "0_Npm_Version": "npm version",
+        "1_Npm_Install": "cd ../../frontend & npm install",
+        "2_Build_FrontEnd_Developing": "cd ../../frontend & npm run build",
+        "3_Build_FrontEnd_Production": "cd ../../frontend & npm run production"
     }, "-vs-binding":{"Clean":["NpmBuild"]}
 }
