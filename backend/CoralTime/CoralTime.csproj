@@ -3,6 +3,30 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Content\PDF\Site.css" />
+    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.001" />
+    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.002" />
+    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003" />
+    <None Remove="Content\PDF\PDFMarkUpView.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\PDF\Site.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.001">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.002">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Content\PDF\PDFMarkUpView.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
     <PackageReference Include="Microsoft.NETCore.App" Version="2.0.5" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />

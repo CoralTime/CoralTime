@@ -289,7 +289,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private string GetAbbreviatedMonthName(DateTime date)
         {
-            return CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(date.Month) + " " + date.Day;
+            return CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedMonthName(date.Month) + " " + date.Day;
         }
 
         private bool RunSetCommonValuesForExport { get; set; }
