@@ -18,6 +18,8 @@ namespace CoralTime.Common.Constants
 
         public static string EnvName { get; set; }
 
+        public const string CoralTime = "CoralTime";
+
         public const string SecureHeaderNotification = "SecureHeaderNotification";
 
         public const string SecureHeaderService = "SecureHeaderService";
