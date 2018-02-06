@@ -1,7 +1,7 @@
 import { Http, Response, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
-import { TimeEntry, CalendarDay } from '../models/calendar';
+import { TimeEntry, CalendarDay, DateUtils } from '../models/calendar';
 import { ArrayUtils } from '../core/object-utils';
 import { ConstantService } from '../core/constant.service';
 import * as moment from 'moment';
@@ -23,13 +23,13 @@ export class CalendarService {
 	            private http: Http) {
 	}
 
-	getTimeEntries(dateFrom: Date, dif?: number): Observable<TimeEntry[]> {
-		let dateTo = this.moveDate(dateFrom, dif || 1);
-		let newDateTo = new Date(new Date(dateTo).setDate(dateTo.getDate() - 1));
+	getTimeEntries(dateFrom: string, dif?: number): Observable<TimeEntry[]> {
+		let dateTo = moment(this.moveDate(dateFrom, dif || 1)).toDate();
+		let newDateTo = DateUtils.formatDateToString(dateTo.setDate(dateTo.getDate() - 1));
 
 		let params = new URLSearchParams();
-		params.set('dateBegin', moment(dateFrom).format('YYYY-MM-DD') + 'T00:00:00Z');
-		params.set('dateEnd', moment(newDateTo).format('YYYY-MM-DD') + 'T23:59:59Z');
+		params.set('dateBegin', dateFrom + 'T00:00:00Z');
+		params.set('dateEnd', newDateTo + 'T23:59:59Z');
 
 		return this.http.get(this.constantService.timeEntriesApi, {search: params})
 			.map((res: Response) => {
@@ -57,14 +57,9 @@ export class CalendarService {
 			.map((res: Response) => res.json());
 	}
 
-	moveDate(date: Date, dif: number): Date {
-		let newDate = new Date(date);
-		return new Date(newDate.setDate(date.getDate() + dif));
-	}
-
-	getDayInfoByDate(timeEntryDate: Date): CalendarDay {
+	getDayInfoByDate(timeEntryDate: string): CalendarDay {
 		return this.calendar.find((day: CalendarDay) => {
-			return day.date.getDate() === (new Date(timeEntryDate)).getDate();
+			return moment(day.date).toDate().getDate() === moment(timeEntryDate).toDate().getDate();
 		});
 	}
 
@@ -77,9 +72,11 @@ export class CalendarService {
 		return totalTime;
 	}
 
-	getWeekBeginning(date: Date, firstDayOfWeek: number): Date {
-		let firstDayCorrection: number = ((date.getDay() < firstDayOfWeek) ? -7 : 0);
-		return new Date(date.setDate(date.getDate() - date.getDay() + firstDayOfWeek + firstDayCorrection));
+	getWeekBeginning(date: string, firstDayOfWeek: number): string {
+		let thisDate = moment(date).toDate();
+		let firstDayCorrection = (thisDate.getDay() < firstDayOfWeek) ? -7 : 0;
+		let dayCorrection = thisDate.setDate(thisDate.getDate() - thisDate.getDay() + firstDayOfWeek + firstDayCorrection);
+		return DateUtils.formatDateToString(new Date(dayCorrection));
 	}
 
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {
@@ -90,5 +87,10 @@ export class CalendarService {
 		ArrayUtils.sortByField(otherTimeEntries, 'id');
 
 		return [...arrayWithFromToPeriod, ...otherTimeEntries];
+	}
+
+	private moveDate(date: string, dif: number): string {
+		let newDate = moment(date).toDate();
+		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
 	}
 }

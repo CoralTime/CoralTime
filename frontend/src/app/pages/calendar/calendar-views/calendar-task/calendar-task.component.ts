@@ -47,7 +47,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	firstDayOfWeek: number;
 	lockReason: string = '';
 	plannedTime: Time;
-	selectedDate: Date;
+	selectedDate: string;
 	ticks: number;
 	timerValue: string;
 	timerSubscription: Subscription;
@@ -75,8 +75,8 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.selectedDate = this.currentTimeEntry.date;
 		this.isUserManagerOnProject = this.timeEntry.isUserManagerOnProject;
 
-		if (this.timeEntry.timeTimerStart > 0) {
-			this.startTimer(DateUtils.getSecondsFromStartDay() - this.timeEntry.timeTimerStart);
+		if (this.timeEntry.timeTimerStart && this.timeEntry.timeTimerStart !== -1) {
+			this.startTimer(DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeTimerStart);
 		}
 
 		this.checkTimeEntryStatus();
@@ -139,7 +139,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this.currentTimeEntry.date = date[0] ? DateUtils.convertMomentToUTC(moment(date[0])) : this.currentTimeEntry.date;
+		this.currentTimeEntry.date = date[0] ? DateUtils.formatDateToString(date[0]) : this.currentTimeEntry.date;
 		if (!this.isNewTrackedTimeValid(this.currentTimeEntry.date)) {
 			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 			this.closeAllMenus();
@@ -160,20 +160,20 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.closeAllMenus();
 	}
 
-	private isNewTrackedTimeValid(newDate: Date): boolean {
+	private isNewTrackedTimeValid(newDate: string): boolean {
 		this.setDayInfo(newDate);
 		return this.totalTrackedTimeForDay + this.currentTimeEntry.time <= MAX_TIMER_VALUE;
 	}
 
-	private onSubmitDialog(dateList: Date[]): void {
+	private onSubmitDialog(dateList: string[]): void {
 		let observable: Observable<any>;
 
-		if (dateList.some((date: Date) => !this.isNewTrackedTimeValid(date))) {
+		if (dateList.some((date: string) => !this.isNewTrackedTimeValid(date))) {
 			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 			return;
 		}
 
-		dateList.forEach((date: Date) => {
+		dateList.forEach((date: string) => {
 			this.currentTimeEntry.date = date;
 			observable = this.calendarService.Post(this.currentTimeEntry);
 
@@ -198,7 +198,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		return (time >= 0 && time < 10) ? '0' + time : time + '';
 	}
 
-	// ============
+	// GENERAL
 
 	setTimeString(s: number): string {
 		let m = Math.floor(s / 60);
@@ -219,15 +219,17 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	checkTimer(): void {
 		let obj: any;
-		if (!DateUtils.isToday(new Date(this.timeEntry.date)) || !this.isTimeEntryAvailable) {
+		if (!DateUtils.isToday(this.timeEntry.date) || !this.isTimeEntryAvailable) {
 			obj = {
-				time: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time),
-				timeFrom: this.totalTrackedTimeForDay - this.timeEntry.time,
+				isFromToShow: true,
+				time: this.ticks,
+				timeFrom: MAX_TIMER_VALUE - this.ticks,
 				timeTo: MAX_TIMER_VALUE,
 				timeTimerStart: -1
 			};
 		} else if (!this.isTrackedTimeValid()) {
 			obj = {
+				isFromToShow: true,
 				time: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time),
 				timeFrom: 0,
 				timeTo: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time),
@@ -328,7 +330,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private setDayInfo(date?: Date): void {
+	private setDayInfo(date?: string): void {
 		let dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
 		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'time');
 		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'plannedTime');
@@ -340,11 +342,12 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	private saveTimerStatus(): Promise<any> {
 		if (!this.isTimerShown) {
-			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
+			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 			this.currentTimeEntry.isFromToShow = false;
 		} else {
+			this.currentTimeEntry.isFromToShow = true;
 			this.currentTimeEntry.time = this.ticks;
-			this.currentTimeEntry.timeFrom = DateUtils.getSecondsFromStartDay() - this.ticks;
+			this.currentTimeEntry.timeFrom = Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0);
 			this.currentTimeEntry.timeTimerStart = -1;
 			this.currentTimeEntry.timeTo = this.currentTimeEntry.timeFrom + this.ticks;
 			this.actualTime = this.splitTime(this.currentTimeEntry.time);
