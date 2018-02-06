@@ -42,11 +42,6 @@ export class CalendarService {
 		return this.http.delete(this.constantService.timeEntriesApi + id);
 	}
 
-	Patch(obj: TimeEntry, id: string): Observable<any> {
-		return this.http.patch(this.constantService.timeEntriesApi + id, obj)
-			.map((res: Response) => res.json());
-	}
-
 	Post(obj: TimeEntry): Observable<any> {
 		return this.http.post(this.constantService.timeEntriesApi, obj)
 			.map((res: Response) => res.json());

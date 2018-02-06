@@ -83,9 +83,10 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.setDayInfo();
 	}
 
-	calculateCalendarTaskHeight(): number {
-		let taskHeight = Math.max(this.timeEntry.time / 3600, 1.5) * 95  - 42;
-		return this.timeEntry.isFromToShow ? taskHeight - 25 : taskHeight;
+	// MENU ACTIONS
+
+	deleteTimeEntry() {
+		this.timeEntryDeleted.emit();
 	}
 
 	duplicateAction(): void {
@@ -188,58 +189,30 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private splitTime(time: number = 0): Time {
-		let hours = Math.floor(time / 3600 >> 0);
-		let minutes = Math.floor(time / 60 >> 0) - hours * 60;
-		return new Time(this.formatTime(hours), this.formatTime(minutes));
-	}
-
-	private formatTime(time: number): string {
-		return (time >= 0 && time < 10) ? '0' + time : time + '';
-	}
-
-	// GENERAL
-
-	setTimeString(s: number): string {
-		let m = Math.floor(s / 60);
-		let h = Math.floor(m / 60);
-		m = m - h * 60;
-		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
-	}
-
-	openEntryTimeForm() {
-		if (this.isTimeEntryAvailable) {
-			this.form.toggleEntryTimeForm();
-		}
-	}
-
-	deleteTimeEntry() {
-		this.timeEntryDeleted.emit();
-	}
+	// TIMER ACTIONS
 
 	checkTimer(): void {
-		let obj: any;
+		let isChanged: boolean = false;
+
 		if (!DateUtils.isToday(this.timeEntry.date) || !this.isTimeEntryAvailable) {
-			obj = {
-				isFromToShow: true,
-				time: this.ticks,
-				timeFrom: MAX_TIMER_VALUE - this.ticks,
-				timeTo: MAX_TIMER_VALUE,
-				timeTimerStart: -1
-			};
+			isChanged = true;
+			this.currentTimeEntry.isFromToShow = true;
+			this.currentTimeEntry.time = this.ticks;
+			this.currentTimeEntry.timeFrom = MAX_TIMER_VALUE - this.ticks;
+			this.currentTimeEntry.timeTo = MAX_TIMER_VALUE;
+			this.currentTimeEntry.timeTimerStart = -1;
 		} else if (!this.isTrackedTimeValid()) {
-			obj = {
-				isFromToShow: true,
-				time: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time),
-				timeFrom: 0,
-				timeTo: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time),
-				timeTimerStart: -1
-			};
+			isChanged = true;
+			this.currentTimeEntry.isFromToShow = true;
+			this.currentTimeEntry.time = MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time);
+			this.currentTimeEntry.timeFrom = 0;
+			this.currentTimeEntry.timeTo = MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.time);
+			this.currentTimeEntry.timeTimerStart = -1;
 		}
 
-		if (obj) {
+		if (isChanged) {
 			this.autoStopTimer();
-			this.validateTimer(obj);
+			this.changeTimerStatus(this.currentTimeEntry);
 		}
 	}
 
@@ -281,59 +254,26 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	ngOnDestroy() {
-		if (this.timerSubscription) {
-			this.autoStopTimer();
-		}
-	}
-
-	private validateTimer(obj: any): Promise<any> {
-		return this.calendarService.Patch(obj, this.timeEntry.id.toString())
+	private changeTimerStatus(timeEntry: TimeEntry): void {
+		this.calendarService.Put(timeEntry, this.timeEntry.id.toString())
 			.toPromise().then(
-				() => {
-					this.calendarService.isTimerActivated = false;
+			() => {
+				this.calendarService.isTimerActivated = false;
 
-					this.timeEntry.time = obj.time;
-					this.timeEntry.timeFrom = obj.timeFrom;
-					this.timeEntry.timeTo = obj.timeTo;
-					this.timeEntry.timeTimerStart = obj.timeTimerStart;
+				this.timeEntry.isFromToShow = timeEntry.isFromToShow;
+				this.timeEntry.time = timeEntry.time;
+				this.timeEntry.timeFrom = timeEntry.timeFrom;
+				this.timeEntry.timeTo = timeEntry.timeTo;
+				this.timeEntry.timeTimerStart = timeEntry.timeTimerStart;
 
-					this.form.closeTimeEntryForm();
-					this.notificationService.danger('Total actual time can\'t be more than 24 hours. Timer has stopped');
-					return null;
-				},
-				error => {
-					this.notificationService.danger('Error changing Timer status');
-					return error;
-				});
-	}
-
-	private checkTimeEntryStatus(): void {
-		if (this.timeEntry.isLocked) {
-			this.lockReason += '\nTime Entry is locked, because the selected date is in the lock time entry period for the project.';
-		}
-
-		if (!this.timeEntry.isProjectActive) {
-			this.lockReason += '\nTime Entry is locked, because the project is archived.';
-		}
-
-		if (!this.timeEntry.isTaskTypeActive) {
-			this.lockReason += '\nTime Entry is locked, because the task is archived.';
-		}
-
-		if (this.isUserAdmin || this.isUserManagerOnProject) {
-			this.isTimeEntryAvailable = true;
-		} else {
-			this.isTimeEntryAvailable = !this.timeEntry.isLocked &&
-				this.timeEntry.isProjectActive &&
-				this.timeEntry.isTaskTypeActive;
-		}
-	}
-
-	private setDayInfo(date?: string): void {
-		let dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
-		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'time');
-		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'plannedTime');
+				this.form.closeTimeEntryForm();
+				this.notificationService.danger('Total actual time can\'t be more than 24 hours. Timer has stopped');
+				return null;
+			},
+			error => {
+				this.notificationService.danger('Error changing Timer status');
+				return error;
+			});
 	}
 
 	private isTrackedTimeValid(): boolean {
@@ -366,10 +306,74 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				});
 	}
 
+	// GENERAL
+
+	calculateCalendarTaskHeight(): number {
+		let taskHeight = Math.max(this.timeEntry.time / 3600, 1.5) * 95  - 42;
+		return this.timeEntry.isFromToShow ? taskHeight - 25 : taskHeight;
+	}
+
+	openEntryTimeForm() {
+		if (this.isTimeEntryAvailable) {
+			this.form.toggleEntryTimeForm();
+		}
+	}
+
+	setTimeString(s: number): string {
+		let m = Math.floor(s / 60);
+		let h = Math.floor(m / 60);
+		m = m - h * 60;
+		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
+	}
+
+	ngOnDestroy() {
+		if (this.timerSubscription) {
+			this.autoStopTimer();
+		}
+	}
+
+	private checkTimeEntryStatus(): void {
+		if (this.timeEntry.isLocked) {
+			this.lockReason += '\nTime Entry is locked, because the selected date is in the lock time entry period for the project.';
+		}
+
+		if (!this.timeEntry.isProjectActive) {
+			this.lockReason += '\nTime Entry is locked, because the project is archived.';
+		}
+
+		if (!this.timeEntry.isTaskTypeActive) {
+			this.lockReason += '\nTime Entry is locked, because the task is archived.';
+		}
+
+		if (this.isUserAdmin || this.isUserManagerOnProject) {
+			this.isTimeEntryAvailable = true;
+		} else {
+			this.isTimeEntryAvailable = !this.timeEntry.isLocked &&
+				this.timeEntry.isProjectActive &&
+				this.timeEntry.isTaskTypeActive;
+		}
+	}
+
+	private formatTime(time: number): string {
+		return (time >= 0 && time < 10) ? '0' + time : time + '';
+	}
+
+	private setDayInfo(date?: string): void {
+		let dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
+		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'time');
+		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'plannedTime');
+	}
+
 	private saveTimeEntry(timeEntry: TimeEntry): void {
 		for (let prop in this.timeEntry) {
 			this.timeEntry[prop] = timeEntry[prop];
 		}
+	}
+
+	private splitTime(time: number = 0): Time {
+		let hours = Math.floor(time / 3600 >> 0);
+		let minutes = Math.floor(time / 60 >> 0) - hours * 60;
+		return new Time(this.formatTime(hours), this.formatTime(minutes));
 	}
 
 	// MENU DISPLAYING

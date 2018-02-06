@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CalendarService } from '../../../services/calendar.service';
+import { DateUtils } from '../../../models/calendar';
 import * as moment from 'moment';
 import Moment = moment.Moment;
-import { DateUtils } from '../../../models/calendar';
 
 export class DatePeriod {
 	dateFrom: Moment;
@@ -100,8 +100,8 @@ export class RangeDatepickerService {
 	}
 
 	private getCurrentWeek(firstDayOfWeek: number): DatePeriod {
-		let weekBeginDay: string = this.service.getWeekBeginning(DateUtils.formatDateToString(this.getToday().dateFrom), firstDayOfWeek);
-		let weekEndDay: string = DateUtils.formatDateToString((moment(weekBeginDay).toDate().getTime() + 86400 * 6 * 1000));
+		let weekBeginDay: string = this.service.getWeekBeginning(DateUtils.formatDateToString(new Date()), firstDayOfWeek);
+		let weekEndDay: string = DateUtils.formatDateToString(moment(weekBeginDay).toDate().getTime() + 86400 * 6 * 1000);
 
 		return new DatePeriod(moment(weekBeginDay), moment(weekEndDay));
 	}
