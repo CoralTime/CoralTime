@@ -4,10 +4,10 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
 
 export interface Avatar {
-	AvatarFile: string;
-	AvatarFileName: string;
-	IsAvatar: boolean;
-	MemberId: number;
+	avatarFile: string;
+	avatarFileName: string;
+	isAvatar: boolean;
+	memberId: number;
 }
 
 export interface UserPicCache {
@@ -62,14 +62,14 @@ export class UserPicService {
 		}
 
 		if (userPic) {
-			return Observable.of(userPic.AvatarFile);
+			return Observable.of(userPic.avatarFile);
 		}
 		return this.loadUserPicture(userId, isAvatar);
 	}
 
 	private cacheUserPicture(userPic: Avatar, isAvatar: boolean): void {
 		this.userPicCache.userPictures = this.userPicCache.userPictures || [];
-		userPic.IsAvatar = isAvatar;
+		userPic.isAvatar = isAvatar;
 
 		this.userPicCache.userPictures.push(userPic);
 		localStorage.setItem(USER_PIC_CASH, JSON.stringify(this.userPicCache));
@@ -81,9 +81,9 @@ export class UserPicService {
 		}
 
 		if (isAvatar) {
-			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.MemberId === id && icon.IsAvatar === isAvatar)[0];
+			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.memberId === id && icon.isAvatar === isAvatar)[0];
 		} else {
-			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.MemberId === id)[0];
+			return this.userPicCache.userPictures.filter((icon: Avatar) => icon.memberId === id)[0];
 		}
 	}
 
@@ -92,7 +92,7 @@ export class UserPicService {
 			.map((res: Response) => {
 				let userPic: Avatar = res.json();
 				this.cacheUserPicture(userPic, isAvatar);
-				return userPic.AvatarFile;
+				return userPic.avatarFile;
 			});
 	}
 }

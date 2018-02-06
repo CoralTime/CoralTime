@@ -94,7 +94,7 @@ export class ProfileProjectMember {
 			return;
 		}
 		this.fullName = data.MemberName;
-		this.userId = data.MemberId;
+		this.userId = data.memberId;
 	}
 }
 
