@@ -14,7 +14,7 @@ namespace CoralTime
         [DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int cmdShow);
 
-        public static void Main(string[] args)
+        public static void Main()
         {
             var host = new WebHostBuilder()
                 .UseKestrel()

@@ -82,24 +82,6 @@ namespace CoralTime.Api.v1.Odata
             }
         }
 
-        // PATCH: api/v1/odata/TimeEntries(2)
-        [HttpPatch("{id}")]
-        public IActionResult Patch(int id, [FromBody]TimeEntryTime timeEntryTime)
-        {
-            timeEntryTime.Id = id;
-
-            try
-            {
-                return new JsonResult(_service.Patch(timeEntryTime, this.GetUserNameWithImpersonation()));
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"Patch method with parameters ({id}, {timeEntryTime});\n {e}");
-                var errors = ExceptionsChecker.CheckTimeEntriesException(e);
-                return BadRequest(errors);
-            }
-        }
-
         // DELETE api/v1/odata/TimeEntries(1)
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
