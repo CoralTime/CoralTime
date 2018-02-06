@@ -188,6 +188,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             // By Projects.
             if (reportsGridData.CurrentQuery?.ProjectIds != null && reportsGridData.CurrentQuery.ProjectIds.Length > 0)
             {
+                CheckAndSetIfInFilterChooseSingleProject(reportsGridData, timeEntriesByDateOfUser);
+
                 timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.CurrentQuery.ProjectIds.Contains(x.ProjectId));
             }
 
@@ -204,6 +206,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
 
             return timeEntriesByDateOfUser;
+        }
+
+        private void CheckAndSetIfInFilterChooseSingleProject(ReportsGridView reportsGridData, IQueryable<TimeEntry> timeEntriesByDateOfUser)
+        {
+            if (reportsGridData.CurrentQuery.ProjectIds.Length == 1)
+            {
+                var singleFilteredProjectId = reportsGridData.CurrentQuery.ProjectIds.FirstOrDefault();
+                SingleFilteredProjectName = Uow.ProjectRepository.LinkedCacheGetById(singleFilteredProjectId).Name;
+            }
         }
 
         private IQueryable<TimeEntry> GetTimeEntryByDate(Member currentMember, DateTime dateFrom, DateTime dateTo)

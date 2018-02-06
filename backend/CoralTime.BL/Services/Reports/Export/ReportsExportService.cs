@@ -57,7 +57,9 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Properties. 
 
-        private string fileName = "CoralTime Reports";
+        private string FileName { get; set; } = Constants.CoralTime;
+
+        private string ContentType { get; set; } = string.Empty;
 
         private DateTime DateFrom { get; set; }
 
@@ -219,59 +221,58 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private FileStreamResult GetExportFileWithGrouping<T>(ReportsGridView reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
         {
-            var fileByte = CreateReportFileByteUpdateFileNameContentType(reportsGridData, groupingList, out var contentType);
+            var fileByte = CreateReportFileByteUpdateFileNameContentType(reportsGridData, groupingList);
 
-            var fileStreamResult = SaveFileToFileStreamResult(httpContext, contentType, fileByte);
+            var fileStreamResult = SaveFileToFileStreamResult(httpContext, fileByte);
 
             return fileStreamResult;
         }
 
-        private FileStreamResult SaveFileToFileStreamResult(HttpContext httpContext, string contentType, byte[] fileByte)
+        private FileStreamResult SaveFileToFileStreamResult(HttpContext httpContext, byte[] fileByte)
         {
-            httpContext.Response.ContentType = contentType;
+            httpContext.Response.ContentType = ContentType;
 
-            var fileStreamResult = new FileStreamResult(new MemoryStream(fileByte), new MediaTypeHeaderValue(contentType))
+            var fileStreamResult = new FileStreamResult(new MemoryStream(fileByte), new MediaTypeHeaderValue(ContentType))
             {
-                FileDownloadName = fileName
+                FileDownloadName = FileName
             };
 
             return fileStreamResult;
         }
 
-        private byte[] CreateReportFileByteUpdateFileNameContentType<T>(ReportsGridView reportsGridData, IReportsGrandGridView<T> groupingList, out string contentType)
+        private byte[] CreateReportFileByteUpdateFileNameContentType<T>(ReportsGridView reportsGridData, IReportsGrandGridView<T> groupingList)
         {
             SetCommonValuesForExport<T>(reportsGridData);
 
             var file = new byte[0];
-            contentType = string.Empty;
 
-            fileName = GetFileName(fileName);
+            UpdateFileName();
 
             switch (reportsGridData.FileTypeId ?? 0)
             {
                 case (int) FileType.Excel:
                 {
-                    fileName = fileName + ExtensionXLSX;
+                    FileName = FileName + ExtensionXLSX;
                     file = CreateFileExcel(groupingList);
-                    contentType = ContentTypeXLSX;
+                    ContentType = ContentTypeXLSX;
 
                     break;
                 }
 
                 case (int) FileType.CSV:
                 {
-                    fileName = fileName + ExtensionCSV;
+                    FileName = FileName + ExtensionCSV;
                     file = CreateFileCSV(groupingList);
-                    contentType = ContentTypeCSV;
+                    ContentType = ContentTypeCSV;
 
                     break;
                 }
 
                 case (int) FileType.PDF:
                 {
-                    fileName = fileName + ExtensionPDF;
+                    FileName = FileName + ExtensionPDF;
                     file = CreateFilePDF(groupingList);
-                    contentType = ContentTypePDF;
+                    ContentType = ContentTypePDF;
 
                     break;
                 }
@@ -280,10 +281,16 @@ namespace CoralTime.BL.Services.Reports.Export
             return file;
         }
 
-
-        private string GetFileName(string fileName)
+        private void UpdateFileName()
         {
-            return fileName + " " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
+            if(!string.IsNullOrEmpty(_reportService.SingleFilteredProjectName))
+            {
+                FileName = FileName + " " + _reportService.SingleFilteredProjectName + " " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
+            }
+            else
+            {
+                FileName = FileName + " Reports " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
+            }
         }
 
         private string GetAbbreviatedMonthName(DateTime date)

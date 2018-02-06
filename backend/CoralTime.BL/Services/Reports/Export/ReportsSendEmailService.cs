@@ -40,7 +40,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private async Task SendReportWithGroupingAsync<T>(ReportsExportEmailView emailData, IReportsGrandGridView<T> groupedList)
         {
-            var fileByte = CreateReportFileByteUpdateFileNameContentType(emailData, groupedList, out var contentType);
+            var fileByte = CreateReportFileByteUpdateFileNameContentType(emailData, groupedList);
 
             #region Create and send message with file Attachment.
 
@@ -51,13 +51,13 @@ namespace CoralTime.BL.Services.Reports.Export
             };
 
             // Add file to message body
-            builder.Attachments.Add(fileName, fileByte);
+            builder.Attachments.Add(FileName, fileByte);
 
             var multipart = builder.ToMessageBody();
 
             var emailSender = new EmailSender(_configuration);
 
-            emailSender.CreateSimpleMessage(emailData.ToEmail, multipart, emailData.Subject ?? fileName, emailData.CcEmails, emailData.BccEmails);
+            emailSender.CreateSimpleMessage(emailData.ToEmail, multipart, emailData.Subject ?? FileName, emailData.CcEmails, emailData.BccEmails);
 
             await emailSender.SendMessageAsync();
 
