@@ -65,9 +65,27 @@ namespace CoralTime.Common.Constants
             new DateConvert {DateFormatId = 0, DateFormat = "DD/MM/YYYY", DateFormatDotNet = "dd/MM/yyyy", DateFormatDotNetShort = "dd/MM"},
             new DateConvert {DateFormatId = 1, DateFormat = "DD-MM-YYYY", DateFormatDotNet = "dd-MM-yyyy", DateFormatDotNetShort = "dd-MM"},
             new DateConvert {DateFormatId = 2, DateFormat = "DD.MM.YYYY", DateFormatDotNet = "dd.MM.yyyy", DateFormatDotNetShort = "dd.MM"},
+
             new DateConvert {DateFormatId = 3, DateFormat = "MM/DD/YYYY", DateFormatDotNet = "MM/dd/yyyy", DateFormatDotNetShort = "MM/dd"},
             new DateConvert {DateFormatId = 4, DateFormat = "MM-DD-YYYY", DateFormatDotNet = "MM-dd-yyyy", DateFormatDotNetShort = "MM-dd"},
             new DateConvert {DateFormatId = 5, DateFormat = "MM.DD.YYYY", DateFormatDotNet = "MM.dd.yyyy", DateFormatDotNetShort = "MM.dd"},
+
+            new DateConvert {DateFormatId = 6, DateFormat = "D/M/YY", DateFormatDotNet = "d/M/yy", DateFormatDotNetShort = "d/M"},
+            new DateConvert {DateFormatId = 7, DateFormat = "D-M-YY", DateFormatDotNet = "d-M-yy", DateFormatDotNetShort = "d-M"},
+            new DateConvert {DateFormatId = 8, DateFormat = "D.M.YY", DateFormatDotNet = "d.M.yy", DateFormatDotNetShort = "d.M"},
+
+            new DateConvert {DateFormatId = 9, DateFormat = "M/D/YY", DateFormatDotNet = "M/d/yy", DateFormatDotNetShort = "M/d"},
+            new DateConvert {DateFormatId = 10, DateFormat = "M-D-YY", DateFormatDotNet = "M-d-yy", DateFormatDotNetShort = "M-d"},
+            new DateConvert {DateFormatId = 11, DateFormat = "M.D.YY", DateFormatDotNet = "M.d.yy", DateFormatDotNetShort = "M.d"},
+
+            new DateConvert {DateFormatId = 12, DateFormat = "D/M/YYYY", DateFormatDotNet = "d/M/yyyy", DateFormatDotNetShort = "d/M"},
+            new DateConvert {DateFormatId = 13, DateFormat = "D-M-YYYY", DateFormatDotNet = "d-M-yyyy", DateFormatDotNetShort = "d-M"},
+            new DateConvert {DateFormatId = 14, DateFormat = "D.M.YYYY", DateFormatDotNet = "d.M.yyyy", DateFormatDotNetShort = "d.M"},
+                                            
+            new DateConvert {DateFormatId = 15, DateFormat = "M/D/YYYY", DateFormatDotNet = "M/d/yyyy", DateFormatDotNetShort = "M/d"},
+            new DateConvert {DateFormatId = 16, DateFormat = "M-D-YYYY", DateFormatDotNet = "M-d-yyyy", DateFormatDotNetShort = "M-d"},
+            new DateConvert {DateFormatId = 17, DateFormat = "M.D.YYYY", DateFormatDotNet = "M.d.yyyy", DateFormatDotNetShort = "M.d"},
+
         };
 
         public enum ReportsGroupBy
