@@ -23,7 +23,7 @@ export class ReportsQueryFormComponent {
 
 		this.isRequestLoading = true;
 		this.reportsService.createQuery({
-			valuesSaved: this.model
+			currentQuery: this.model
 		}).subscribe(() => {
 				this.isRequestLoading = false;
 				this.onSubmit.emit(null);

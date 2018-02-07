@@ -422,7 +422,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.currentTimeEntry.projectName = this.projectList[0].name;
 				this.currentTimeEntry.projectId = this.projectList[0].id;
 				this.currentTimeEntry.color = this.projectList[0].color;
-				this.loadTasks(this.timeEntry.projectId);
+				this.loadTasks(this.currentTimeEntry.projectId);
 			}
 
 			if (this.projectModel) {
@@ -430,7 +430,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.timeEntry.projectName = this.projectModel.name;
 				this.timeEntry.color = this.projectModel.color;
 			} else {
-				this.loadTasks(this.timeEntry.projectId);
+				this.loadTasks(this.currentTimeEntry.projectId);
 			}
 		});
 	}

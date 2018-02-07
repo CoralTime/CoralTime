@@ -291,6 +291,11 @@ export class ReportsComponent implements OnInit {
 	// SEND REPORTS
 
 	openSendReportsDialog(): void {
+		if (this.reportsGridData.grandActualTime === 0) {
+			this.notificationService.danger('There is no data to export.');
+			return;
+		}
+
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
 			dateFormatId: this.dateFormatId,
@@ -321,6 +326,11 @@ export class ReportsComponent implements OnInit {
 	// GENERAL
 
 	exportAs(fileTypeId: number): void {
+		if (this.reportsGridData.grandActualTime === 0) {
+			this.notificationService.danger('There is no data to export.');
+			return;
+		}
+
 		let filters = {
 			dateFormatId: this.userInfo.dateFormatId,
 			fileTypeId: fileTypeId,
