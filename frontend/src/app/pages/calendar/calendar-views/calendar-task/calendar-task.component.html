@@ -8,7 +8,9 @@
     {{setTimeString(timeEntry.timeFrom)}} - {{setTimeString(timeEntry.timeTo)}}
 </div>
 
-<a *ngIf="isTimeEntryAvailable && !isTimerShown" class="ct-menu-open-link" (click)="menu.toggleMenu()">
+<a *ngIf="isTimeEntryAvailable && !isTimerShown"
+   class="ct-menu-open-link" [class.ct-menu-opened]="menu.isOpen"
+   (click)="menu.toggleMenu()">
     <i class="material-icons">more_horiz</i>
 </a>
 
@@ -63,4 +65,3 @@
     </div>
     <div *ngIf="isTimerShown" title="Stop timer" (click)="stopTimer()" class="ct-calendar-task-stop-timer"></div>
 </div>
-
