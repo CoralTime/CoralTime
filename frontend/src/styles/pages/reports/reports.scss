@@ -46,9 +46,10 @@ $fieldHeight: 30px;
 
       span {
         display: inline-block;
-        max-width: 401px;
+        max-width: 400px;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
         vertical-align: bottom;
       }
     }
@@ -359,6 +360,7 @@ $fieldHeight: 30px;
         overflow: hidden;
         vertical-align: bottom;
         text-overflow: ellipsis;
+        white-space: nowrap;
         max-width: 400px;
       }
     }

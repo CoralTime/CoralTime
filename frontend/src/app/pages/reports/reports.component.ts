@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import {
 	ReportsService, ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters
+	GroupByItem, ClientDetail, ReportFilters, ReportGridView
 } from '../../services/reposts.service';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
-import { ArrayUtils } from '../../core/object-utils';
+import { ArrayUtils, ObjectUtils } from '../../core/object-utils';
 import { AuthService } from '../../core/auth/auth.service';
 import { DateUtils } from '../../models/calendar';
 import { DatePeriod, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
@@ -17,6 +17,9 @@ import { ImpersonationService } from '../../services/impersonation.service';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { LoadingIndicatorService } from '../../core/loading-indicator.service';
+
+const ROWS_TOTAL_NUMBER = 45;
 
 @Component({
 	selector: 'ct-reports',
@@ -27,6 +30,10 @@ export class ReportsComponent implements OnInit {
 	reportDropdowns: ReportDropdowns;
 	reportsGridData: ReportGrid;
 	reportFilters: ReportFilters;
+
+	isGridLoading: boolean = false;
+	gridNumber: number = 0;
+	pagedGridData: ReportGridView[] = [];
 
 	clientItems: CustomSelectItem[] = [];
 	clients: ClientDetail[] = [];
@@ -65,12 +72,15 @@ export class ReportsComponent implements OnInit {
 	oldDateString: string;
 	userInfo: User;
 
+	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
+
 	private reportsQueryRef: MdDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MdDialogRef<ReportsSendComponent>;
 
 	constructor(public dialog: MdDialog,
 	            private authService: AuthService,
 	            private impersonationService: ImpersonationService,
+	            private loadingIndicatorService: LoadingIndicatorService,
 	            private notificationService: NotificationService,
 	            private rangeDatepickerService: RangeDatepickerService,
 	            private reportsService: ReportsService,
@@ -134,6 +144,8 @@ export class ReportsComponent implements OnInit {
 		];
 	}
 
+	// GRID DISPLAYING
+
 	getReportGrid(isCustomQuery?: boolean): void {
 		this.reportFilters.dateFrom = this.convertMomentToString(this.datePeriod.dateFrom);
 		this.reportFilters.dateTo = this.convertMomentToString(this.datePeriod.dateTo)
@@ -150,6 +162,7 @@ export class ReportsComponent implements OnInit {
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
 				this.reportsGridData = res;
+				this.pagedGridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, [], 0);
 			},
 			() => {
 				this.notificationService.danger('Error loading reports grid.');
@@ -167,6 +180,49 @@ export class ReportsComponent implements OnInit {
 		}
 
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
+	}
+
+	private getNextGridDataPage(gridData: ReportGridView[], currentGridData: ReportGridView[], gridNumber: number): ReportGridView[] {
+		if (gridNumber >= gridData.length) {
+			return currentGridData;
+		}
+
+		let rowsNumber: number = -this.getRowsNumberFromLastGrid(currentGridData);
+		currentGridData.splice(currentGridData.length - 1, 1);
+
+		while (gridNumber < gridData.length && rowsNumber + gridData[gridNumber].items.length < ROWS_TOTAL_NUMBER) {
+			currentGridData.push(gridData[gridNumber]);
+			rowsNumber += gridData[gridNumber].items.length;
+			gridNumber++;
+		}
+
+		if (gridNumber + 1 < gridData.length) {
+			let last = ObjectUtils.deepCopy(gridData[gridNumber]);
+			last.items = last.items.splice(0, ROWS_TOTAL_NUMBER - rowsNumber);
+			currentGridData.push(last);
+		}
+
+		this.gridNumber = gridNumber;
+		return currentGridData;
+	}
+
+	private getRowsNumberFromLastGrid(gridData: ReportGridView[]): number {
+		return gridData.length > 0 ? gridData[gridData.length - 1].items.length : 0;
+	}
+
+	@HostListener('window:scroll')
+	onWindowScroll(): void {
+		if (!this.isGridLoading && this.gridNumber < this.pagedGridData.length
+			&& window.scrollY > this.scrollContainer.nativeElement.offsetHeight - window.innerHeight - 20) {
+			this.isGridLoading = true;
+			this.loadingIndicatorService.start();
+
+			setTimeout(() => {
+				this.pagedGridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, this.pagedGridData, this.gridNumber);
+				this.loadingIndicatorService.complete();
+				this.isGridLoading = false;
+			}, 0);
+		}
 	}
 
 	// QUERY ACTIONS

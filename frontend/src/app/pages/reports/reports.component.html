@@ -127,8 +127,8 @@
         <div class="ct-period-for-print ct-print-mode">
             Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}
         </div>
-        <div class="ct-reports-data">
-            <ct-reports-grid *ngFor="let gridData of reportsGridData?.reportsGridView"
+        <div class="ct-reports-data" #scrollContainer>
+            <ct-reports-grid *ngFor="let gridData of pagedGridData"
                              class="ct-reports-grid"
                              [groupById]="groupModel?.id"
                              [showColumnIds]="showColumnIds"
