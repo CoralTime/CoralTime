@@ -3,6 +3,8 @@ using CoralTime.Common.Helpers;
 using CoralTime.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -17,40 +19,45 @@ namespace CoralTime.DAL
             var config = serviceProvider.GetRequiredService<IConfiguration>();
             using (var db = serviceProvider.GetRequiredService<AppDbContext>())
             {
-                var sqlDb = db.Database;
-                
-                if (sqlDb != null)
+                var isExistDataBase = (db.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+
+                if (!isExistDataBase)
                 {
-                    // async method doesn't work for MySQL
-                    await db.Database.MigrateAsync();
-                    
-                    await InitializeRoles(serviceProvider);
-                    await InitializeProjectRoles(db);
-                    await InitializeSettings(serviceProvider, db);
+                    var sqlDb = db.Database;
 
-                    if (bool.Parse(config["AddTasks"]))
+                    if (sqlDb != null)
                     {
-                        await InitializeTaskTypes(serviceProvider, db);
-                    }
+                        // async method doesn't work for MySQL
+                        await db.Database.MigrateAsync();
 
-                    if (bool.Parse(config["AddAdmins"]))
-                    {
-                        await InitializeAdmins(serviceProvider, db);
-                    }
+                        await InitializeRoles(serviceProvider);
+                        await InitializeProjectRoles(db);
+                        await InitializeSettings(serviceProvider, db);
 
-                    if (bool.Parse(config["AddMembers"]))
-                    {
-                        await InitializeMembers(serviceProvider, db);
-                    }
+                        if (bool.Parse(config["AddTasks"]))
+                        {
+                            await InitializeTaskTypes(serviceProvider, db);
+                        }
 
-                    if (bool.Parse(config["AddClients"]))
-                    {
-                        await InitializeClients(serviceProvider, db);
-                    }
+                        if (bool.Parse(config["AddAdmins"]))
+                        {
+                            await InitializeAdmins(serviceProvider, db);
+                        }
 
-                    if (bool.Parse(config["AddProjects"]))
-                    {
-                        await InitializeProjects(serviceProvider, db);
+                        if (bool.Parse(config["AddMembers"]))
+                        {
+                            await InitializeMembers(serviceProvider, db);
+                        }
+
+                        if (bool.Parse(config["AddClients"]))
+                        {
+                            await InitializeClients(serviceProvider, db);
+                        }
+
+                        if (bool.Parse(config["AddProjects"]))
+                        {
+                            await InitializeProjects(serviceProvider, db);
+                        }
                     }
                 }
             }

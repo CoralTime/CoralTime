@@ -172,7 +172,7 @@ namespace CoralTime
             CombineFileWkhtmltopdf(env);
 
             // Uncomment to Create DB
-            //ApplicationDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
+            AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
         }
 
         private void AddApplicationServices(IServiceCollection services)
