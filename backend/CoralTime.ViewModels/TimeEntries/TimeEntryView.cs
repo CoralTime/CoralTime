@@ -10,6 +10,8 @@ namespace CoralTime.ViewModels.TimeEntries
 
         public int ProjectId { get; set; }
 
+        public string ProjectName { get; set; }
+
         public int MemberId { get; set; }
 
         public string MemberName { get; set; }
