@@ -55,7 +55,7 @@ namespace CoralTime
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add MySQL support (At first create DB on MySQL server.)
             //var sqlConnectionString = (Configuration.GetConnectionString("DefaultConnectionMySQL"));
@@ -112,6 +112,8 @@ namespace CoralTime
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
             });
+
+            return services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
