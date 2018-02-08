@@ -15,11 +15,12 @@ import { ReportsSendComponent, SendReportsFormModel } from './reports-send/repor
 import { NotificationService } from '../../core/notification.service';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
+import { LoadingIndicatorService } from '../../core/loading-indicator.service';
+import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
-import { LoadingIndicatorService } from '../../core/loading-indicator.service';
 
-const ROWS_TOTAL_NUMBER = 45;
+const ROWS_TOTAL_NUMBER = 50;
 
 @Component({
 	selector: 'ct-reports',
@@ -74,6 +75,7 @@ export class ReportsComponent implements OnInit {
 
 	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
 
+	private reportsConfirmationRef: MdDialogRef<ConfirmationComponent>;
 	private reportsQueryRef: MdDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MdDialogRef<ReportsSendComponent>;
 
@@ -166,7 +168,6 @@ export class ReportsComponent implements OnInit {
 			},
 			() => {
 				this.notificationService.danger('Error loading reports grid.');
-				this.datePeriod = new DatePeriod(null);
 			});
 	}
 
@@ -187,7 +188,7 @@ export class ReportsComponent implements OnInit {
 			return currentGridData;
 		}
 
-		let rowsNumber: number = -this.getRowsNumberFromLastGrid(currentGridData);
+		let rowsNumber: number = -this.getRowsNumberFromGrid([currentGridData[currentGridData.length - 1]]);
 		currentGridData.splice(currentGridData.length - 1, 1);
 
 		while (gridNumber < gridData.length && rowsNumber + gridData[gridNumber].items.length < ROWS_TOTAL_NUMBER) {
@@ -206,8 +207,17 @@ export class ReportsComponent implements OnInit {
 		return currentGridData;
 	}
 
-	private getRowsNumberFromLastGrid(gridData: ReportGridView[]): number {
-		return gridData.length > 0 ? gridData[gridData.length - 1].items.length : 0;
+	private getRowsNumberFromGrid(gridData: ReportGridView[]): number {
+		if (!gridData[0]) {
+			return 0;
+		}
+
+		let rowsNumber: number = 0;
+		gridData.forEach((grid: ReportGridView) => {
+			rowsNumber += grid.items.length;
+		});
+
+		return rowsNumber;
 	}
 
 	@HostListener('window:scroll')
@@ -381,6 +391,38 @@ export class ReportsComponent implements OnInit {
 
 	// GENERAL
 
+	checkDataAndPrintPage(): void {
+		if (this.reportsGridData.grandActualTime === 0) {
+			this.notificationService.danger('There is no data to print.');
+			return;
+		}
+
+		if (this.getRowsNumberFromGrid(this.reportsGridData.reportsGridView) > 300) {
+			this.openConfirmationDialog();
+		} else {
+			this.printPage();
+		}
+	}
+
+	private openConfirmationDialog(): void {
+		this.reportsConfirmationRef = this.dialog.open(ConfirmationComponent);
+		this.reportsConfirmationRef.componentInstance.message = 'Too much data can lead to display problems. Would you like to continue?';
+
+		this.reportsConfirmationRef.componentInstance.onSubmit.subscribe((confirm: boolean) => {
+			if (confirm) {
+				this.printPage();
+			}
+
+			this.reportsConfirmationRef.close();
+		});
+	}
+
+	private printPage(): void {
+		this.pagedGridData = this.reportsGridData.reportsGridView;
+		this.gridNumber = this.pagedGridData.length;
+		setTimeout(() => window.print(), 0);
+	}
+
 	exportAs(fileTypeId: number): void {
 		if (this.reportsGridData.grandActualTime === 0) {
 			this.notificationService.danger('There is no data to export.');
@@ -398,10 +440,6 @@ export class ReportsComponent implements OnInit {
 
 	formatDate(utcDate: Moment): string {
 		return this.dateFormat ? utcDate.format(this.dateFormat) : utcDate.toDate().toLocaleDateString();
-	}
-
-	printPage(): void {
-		window.print();
 	}
 
 	resetFilters(): void {
