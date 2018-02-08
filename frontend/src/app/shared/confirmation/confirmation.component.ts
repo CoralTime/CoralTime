@@ -6,6 +6,8 @@ import { Component, Output, EventEmitter } from '@angular/core';
 })
 
 export class ConfirmationComponent {
+	message: string;
+
 	@Output() onSubmit = new EventEmitter();
 
 	submit(confirm: boolean) {

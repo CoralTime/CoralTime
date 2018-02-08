@@ -19,6 +19,7 @@ import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
 import { element } from 'protractor';
 import { UserPicModule } from './user-pic/user-pic.module';
+import { ConfirmationComponent } from './confirmation/confirmation.component';
 
 @NgModule({
 	imports: [
@@ -39,7 +40,8 @@ import { UserPicModule } from './user-pic/user-pic.module';
 	],
 	declarations: [
 		ReadMoreComponent,
-		LoadingBarComponent
+		LoadingBarComponent,
+		ConfirmationComponent
 	],
 	exports: [
 		CommonModule,
@@ -59,7 +61,8 @@ import { UserPicModule } from './user-pic/user-pic.module';
 		DataTableModule,
 		MenuModule,
 		SharedFormModule,
-		UserPicModule
+		UserPicModule,
+		ConfirmationComponent
 	]
 })
 
