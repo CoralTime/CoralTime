@@ -1,8 +1,6 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
 using CoralTime.DAL.Models;
-using CoralTime.Services;
-using CoralTime.ViewModels.Errors;
 using CoralTime.ViewModels.Member;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CoralTime.Api.v1.Odata.Members
@@ -19,8 +16,12 @@ namespace CoralTime.Api.v1.Odata.Members
     [Route("api/v1/odata/[controller]")]
     public class MembersController : BaseODataController<MembersController, IMemberService>
     {
-        public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper)
-            : base(logger, mapper, service) { }
+        private readonly IAvatarService _avatarService;
+        public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper, IAvatarService avatarService)
+            : base(logger, mapper, service)
+        {
+            _avatarService = avatarService;
+        }
 
         // GET: api/v1/odata/Members
         [HttpGet]
@@ -44,7 +45,9 @@ namespace CoralTime.Api.v1.Odata.Members
             try
             {
                 var value = _service.GetById(id);
-                return Ok(_mapper.Map<Member, MemberView>(value));
+                var memberView = _mapper.Map<Member, MemberView>(value);
+                _avatarService.AddIconUrlinMembeView(memberView);
+                return Ok(memberView);
             }
             catch (Exception e)
             {
@@ -90,7 +93,10 @@ namespace CoralTime.Api.v1.Odata.Members
 
                 var locationUri = $"{Request.Host}/api/v1/odata/Members/{createNewUserResult.Id}";
 
-                return Created(locationUri, _mapper.Map<Member, MemberView>(createNewUserResult));
+                var memberView = _mapper.Map<Member, MemberView>(createNewUserResult);
+                _avatarService.AddIconUrlinMembeView(memberView);
+
+                return Created(locationUri, memberView);
             }
             catch (Exception e)
             {
@@ -118,7 +124,7 @@ namespace CoralTime.Api.v1.Odata.Members
                     var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
                     await _service.SentUpdateAccountEmailAsync(updatedMember, baseUrl);
                 }
-
+                _avatarService.AddIconUrlinMembeView(updatedMember);
                 return Ok(updatedMember);
             }
             catch (Exception e)

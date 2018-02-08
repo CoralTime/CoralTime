@@ -15,8 +15,13 @@ namespace CoralTime.Api.v1
     [Authorize]
     public class ProfileController : BaseController<ProfileController, IProfileService>
     {
-        public ProfileController(IProfileService service, ILogger<ProfileController> logger)
-            : base(logger, service) { }
+        private readonly IAvatarService _avatarService;
+
+        public ProfileController(IProfileService service, ILogger<ProfileController> logger, IAvatarService avatarService)
+            : base(logger, service)
+        {
+            _avatarService = avatarService;
+        }
 
         [HttpGet("Projects")]
         public ActionResult GetMemberProjects()
@@ -72,7 +77,7 @@ namespace CoralTime.Api.v1
             {
                 try
                 {
-                    var result = _service.SetUpdateMemberAvatar(file);
+                    var result = _avatarService.SetUpdateMemberAvatar(file);
                     return Ok(result);
                 }
                 catch (Exception e)
@@ -91,7 +96,7 @@ namespace CoralTime.Api.v1
         {
             try
             {
-                var result = _service.GetMemberAvatar(memberId);
+                var result = _avatarService.GetAvatar(memberId);
                 return Ok(result);
             }
             catch (Exception e)
@@ -107,7 +112,7 @@ namespace CoralTime.Api.v1
         {
             try
             {
-                var result = _service.GetMemberIcon(memberId);
+                var result = _avatarService.GetIcon(memberId);
                 return Ok(result);
             }
             catch (Exception e)

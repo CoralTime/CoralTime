@@ -113,5 +113,18 @@ namespace CoralTime.Common.Constants
         };
 
         #endregion
+
+        #region Avatars and icons
+
+        public static class Folders
+        {
+            public static string IconFolder => "Icons";
+            public static string AvatarFolder => "Avatars";
+            public static string StaticFilesFolder => "StaticFiles";
+        }
+
+        public static string DefaultIconFileName => "userpic.svg"; 
+
+        #endregion
     }
 }

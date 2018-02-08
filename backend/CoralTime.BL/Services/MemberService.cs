@@ -26,13 +26,16 @@ namespace CoralTime.BL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly bool _isDemo;
+        private readonly IAvatarService _avatarService;
 
-        public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper)
+
+        public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper, IAvatarService avatarService)
             : base(uow, mapper)
         {
             _userManager = userManager;
             _configuration = configuration;
             _isDemo = bool.Parse(_configuration["DemoSiteMode"]);
+            _avatarService = avatarService;
         }
 
         public IEnumerable<MemberView> GetAllMembers()
@@ -40,8 +43,11 @@ namespace CoralTime.BL.Services
             var globalActiveProjCount = Uow.ProjectRepository.LinkedCacheGetList().Where(x => !x.IsPrivate && x.IsActive).Select(x => x.Id).ToArray();
 
             var allMembers = GetAllMembersCommon(InpersonatedUserName);
-            var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper));
-
+            var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper)).ToList();
+            foreach (var item in allMembersView)
+            {
+                _avatarService.AddIconUrlinMembeView(item);
+            }
             return allMembersView;
         }
 

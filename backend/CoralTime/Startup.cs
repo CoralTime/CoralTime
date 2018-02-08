@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OData.Edm;
@@ -140,6 +141,12 @@ namespace CoralTime
             // Uses static file for the current path.
             app.UseStaticFiles();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles")),
+                RequestPath = "/StaticFiles"
+            });
+
             app.UseIdentityServer();
 
             // Add middleware exceptions
@@ -202,6 +209,7 @@ namespace CoralTime
             services.AddScoped<IReportsService, ReportsService>();
             services.AddScoped<IReportExportService, ReportsExportService>();
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
+            services.AddScoped<IAvatarService, AvatarService>();
             services.AddScoped<CheckServiceSecureHeaderFilter>();
             services.AddScoped<CheckNotificationSecureHeaderFilter>();
         }

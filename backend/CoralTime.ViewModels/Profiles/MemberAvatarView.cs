@@ -7,5 +7,7 @@
         public string AvatarFileName { get; set; }
 
         public int MemberId { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }
