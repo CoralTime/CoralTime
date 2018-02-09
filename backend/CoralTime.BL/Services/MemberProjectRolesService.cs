@@ -17,11 +17,13 @@ namespace CoralTime.BL.Services
     public class MemberProjectRolesService : BaseService, IMemberProjectRolesService
     {
         private readonly IProjectService _projectService;
+        private readonly IAvatarService _avatarService;
 
-        public MemberProjectRolesService(UnitOfWork uow, IProjectService projectService, IMapper mapper)
+        public MemberProjectRolesService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IAvatarService avatarService)
             : base(uow, mapper)
         {
             _projectService = projectService;
+            _avatarService = avatarService;
         }
 
         public IEnumerable<MemberProjectRoleView> GetAllProjectRoles()
@@ -102,7 +104,10 @@ namespace CoralTime.BL.Services
 
             // Get Global Projects. Add members to Global Projects. Add to result Global Projects.
             resultForMember.AddRange(AddGlobalProjectsRoles(resultForMember).Select(x => x.GetViewWithGlobalProjects(Mapper)));
-
+            foreach (var item in resultForMember)
+            {
+                _avatarService.AddIconUrlInViewModel(item);
+            }
             return resultForMember;
 
             #endregion

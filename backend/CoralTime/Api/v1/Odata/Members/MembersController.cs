@@ -46,7 +46,7 @@ namespace CoralTime.Api.v1.Odata.Members
             {
                 var value = _service.GetById(id);
                 var memberView = _mapper.Map<Member, MemberView>(value);
-                _avatarService.AddIconUrlinMembeView(memberView);
+                _avatarService.AddIconUrlInMemberView(memberView);
                 return Ok(memberView);
             }
             catch (Exception e)
@@ -94,7 +94,7 @@ namespace CoralTime.Api.v1.Odata.Members
                 var locationUri = $"{Request.Host}/api/v1/odata/Members/{createNewUserResult.Id}";
 
                 var memberView = _mapper.Map<Member, MemberView>(createNewUserResult);
-                _avatarService.AddIconUrlinMembeView(memberView);
+                _avatarService.AddIconUrlInMemberView(memberView);
 
                 return Created(locationUri, memberView);
             }
@@ -124,7 +124,7 @@ namespace CoralTime.Api.v1.Odata.Members
                     var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
                     await _service.SentUpdateAccountEmailAsync(updatedMember, baseUrl);
                 }
-                _avatarService.AddIconUrlinMembeView(updatedMember);
+                _avatarService.AddIconUrlInMemberView(updatedMember);
                 return Ok(updatedMember);
             }
             catch (Exception e)
