@@ -4,7 +4,6 @@ using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
 using CoralTime.ViewModels.Profiles;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 namespace CoralTime.BL.Interfaces
@@ -12,12 +11,6 @@ namespace CoralTime.BL.Interfaces
     public interface IProfileService
     {
         List<ProfileProjectView> GetMemberProjects();
-
-        MemberAvatarView GetMemberAvatar(int memberId);
-
-        MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile);
-
-        MemberAvatarView GetMemberIcon(int memberId);
 
         DateConvert[] GetDateFormats();
 

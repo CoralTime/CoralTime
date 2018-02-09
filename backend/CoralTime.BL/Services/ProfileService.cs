@@ -16,9 +16,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using static CoralTime.Common.Constants.Constants;
 
@@ -28,13 +25,15 @@ namespace CoralTime.BL.Services
     {
         private readonly IConfiguration _config;
         private readonly IMemberService _memberService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly bool _isDemo;
 
-        public ProfileService(UnitOfWork uow, IConfiguration config, IMapper mapper, IMemberService memberService) 
+        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService)
             : base(uow, mapper)
         {
             _config = config;
             _memberService = memberService;
+            _httpContextAccessor = httpContextAccessor;
             _isDemo = bool.Parse(_config["DemoSiteMode"]);
         }
 
@@ -42,7 +41,7 @@ namespace CoralTime.BL.Services
         {
             return DateFormats;
         }
-    
+
         public List<ProfileProjectView> GetMemberProjects()
         {
             var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
@@ -59,7 +58,7 @@ namespace CoralTime.BL.Services
 
             var projects = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
                 .Where(r => r.MemberId == member.Id && r.Project.IsActive)
-                .Select( r => r.Project)
+                .Select(r => r.Project)
                 .ToList();
 
             var publicProjects = Uow.ProjectRepository.LinkedCacheGetList()
@@ -113,8 +112,8 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"The project with id {projectId} not found or is not active");
             }
 
-            var userHaveAccess = user.IsAdmin 
-                || !project.IsPrivate 
+            var userHaveAccess = user.IsAdmin
+                || !project.IsPrivate
                 || Uow.MemberProjectRoleRepository.LinkedCacheGetList().Exists(r => r.ProjectId == projectId && r.MemberId == member.Id);
 
             if (!userHaveAccess)
@@ -124,7 +123,7 @@ namespace CoralTime.BL.Services
 
             IEnumerable<Member> projectMembers;
 
-            if(project.IsPrivate)
+            if (project.IsPrivate)
             {
                 projectMembers = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
                         .Where(r => r.ProjectId == projectId && r.Member.User.IsActive)
@@ -141,111 +140,6 @@ namespace CoralTime.BL.Services
                 MemberId = m.Id,
                 MemberName = m.FullName
             }).ToList();
-        }
-
-        public MemberAvatarView GetMemberAvatar(int memberId)
-        {
-            var memberAvatar = GetMemberAvatarWithСhecking(memberId);
-
-            return memberAvatar.GetViewMemberAvatar(Mapper, memberId);
-        }
-        
-        public MemberAvatarView GetMemberIcon(int memberId)
-        {
-            var memberAvatar = GetMemberAvatarWithСhecking(memberId);
-
-            return memberAvatar.GetViewMemberIcon(Mapper, memberId);
-        }
-
-        private MemberAvatar GetMemberAvatarWithСhecking(int memberId)
-        {
-            return Uow.MemberAvatarRepository.LinkedCacheGetList().FirstOrDefault(p => p.MemberId == memberId);
-        }
-
-        private bool CheckFile(string fileName, long fileSize, out string errors)
-        {
-            var isFileNameValid = FileNameChecker.CheckFileName(fileName, _config["FileConstraints:PermittedExtensions"], int.Parse(_config["FileConstraints:MaxLengthFileName"]), out errors);
-
-            var isFileSizeValid = fileSize < long.Parse(_config["FileConstraints:MaxFileSize"]);
-
-            return isFileNameValid && isFileSizeValid;
-        }
-
-        public MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile)
-        {
-            var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
-            if (user == null || !user.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"The user with userName {InpersonatedUserName} not found or is not active");
-            }
-
-            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
-            if (member == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"The member for user with userName {InpersonatedUserName} not found");
-            }
-
-            if (!CheckFile(uploadedFile.FileName, uploadedFile.Length, out var errors))
-            {
-                throw new CoralTimeForbiddenException(errors ?? "File size is greater than 1 Mb");
-            }
-
-            byte[] imageData;
-
-            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
-            {
-                imageData = binaryReader.ReadBytes((int)uploadedFile.Length);
-            }
-
-            var image = Image.FromStream(new MemoryStream(imageData));
-
-            image = image.GetThumbnailImage(40, 40, () => false, IntPtr.Zero);
-
-            byte[] thumbnaiImage;
-
-            using (var memoryStream = new MemoryStream())
-            {
-                image.Save(memoryStream, ImageFormat.Jpeg);
-                thumbnaiImage = memoryStream.ToArray();
-            }
-
-            var isInsertCurrentAvatar = false;
-
-            var memberAvatar = Uow.MemberAvatarRepository.LinkedCacheGetList().FirstOrDefault(p => p.MemberId == member.Id);
-            if (memberAvatar == null)
-            {
-                memberAvatar = new MemberAvatar();
-                isInsertCurrentAvatar = true;
-            }
-
-            memberAvatar.MemberId = member.Id;
-            memberAvatar.AvatarFile = imageData;
-            memberAvatar.AvatarFileName = uploadedFile.FileName;
-            memberAvatar.ThumbnailFile = thumbnaiImage;
-
-            try
-            {
-                if (isInsertCurrentAvatar)
-                {
-                    Uow.MemberAvatarRepository.Insert(memberAvatar);
-                }
-                else
-                {
-                    Uow.MemberAvatarRepository.Update(memberAvatar);
-                }
-
-                Uow.Save();
-                Uow.MemberAvatarRepository.LinkedCacheClear();
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating member avatar", e);
-            }
-
-            var memberAvatarByIdResult = Uow.MemberAvatarRepository.LinkedCacheGetList()
-                .FirstOrDefault(p => p.Id == memberAvatar.Id);
-            
-            return memberAvatarByIdResult.GetViewMemberIcon(Mapper, member.Id);
         }
 
         public MemberView PatchNotifications(MemberNotificationView memberNotificationView)
@@ -298,7 +192,7 @@ namespace CoralTime.BL.Services
 
         public MemberView PatchPersonalInfo(MemberPersonalInfoView memberPreferencesView)
         {
-            if (! EmailChecker.IsValidEmail(memberPreferencesView.Email))
+            if (!EmailChecker.IsValidEmail(memberPreferencesView.Email))
             {
                 throw new CoralTimeDangerException("Invalid email");
             }

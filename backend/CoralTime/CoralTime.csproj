@@ -5,9 +5,12 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Content\PDF\Site.css" />
+    <None Remove="Content\PDF\PDFMarkUpView.cshtml" />
     <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.001" />
     <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.002" />
     <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003" />
+    <None Remove="StaticFiles\Avatars\userpic.svg" />
+    <None Remove="StaticFiles\Icons\userpic.svg" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\PDF\Site.css">
@@ -22,13 +25,18 @@
     <Content Include="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="StaticFiles\Avatars\userpic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StaticFiles\Icons\userpic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Content\PDF\PDFMarkUpView.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
-    <PackageReference Include="Microsoft.NETCore.App" Version="2.0.0" />
     <PackageReference Include="AutoMapper" Version="6.2.2" />
     <PackageReference Include="GeekLearning.Testavior.Configuration" Version="1.3.0" />
     <PackageReference Include="IdentityServer4" Version="2.1.1" />
@@ -51,6 +59,9 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
+  <Target Name="CreateLogsFolder" AfterTargets="AfterPublish">
+    <MakeDir Directories="$(PublishDir)Logs" Condition="!Exists('$(PublishDir)Logs')" />
+  </Target>
   <ItemGroup>
     <ProjectReference Include="..\CoralTime.BL\CoralTime.BL.csproj" />
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />

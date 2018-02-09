@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OData.Edm;
@@ -55,7 +56,7 @@ namespace CoralTime
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add MySQL support (At first create DB on MySQL server.)
             //var sqlConnectionString = (Configuration.GetConnectionString("DefaultConnectionMySQL"));
@@ -112,6 +113,8 @@ namespace CoralTime
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
             });
+
+            return services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -139,6 +142,12 @@ namespace CoralTime
 
             // Uses static file for the current path.
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles")),
+                RequestPath = "/StaticFiles"
+            });
 
             app.UseIdentityServer();
 
@@ -172,7 +181,7 @@ namespace CoralTime
             CombineFileWkhtmltopdf(env);
 
             // Uncomment to Create DB
-            //ApplicationDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
+            AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
         }
 
         private void AddApplicationServices(IServiceCollection services)
@@ -202,6 +211,7 @@ namespace CoralTime
             services.AddScoped<IReportsService, ReportsService>();
             services.AddScoped<IReportExportService, ReportsExportService>();
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
+            services.AddScoped<IAvatarService, AvatarService>();
             services.AddScoped<CheckServiceSecureHeaderFilter>();
             services.AddScoped<CheckNotificationSecureHeaderFilter>();
         }
