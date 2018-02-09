@@ -6,19 +6,19 @@
 
         <div class="ct-page-content">
             <div class="ct-user-pic-container">
-                <ct-user-pic *ngIf="!impersonationId" [userId]='impersonationId ? impersonationId : userId' [fullSize]="true"></ct-user-pic>
+                <ct-user-pic [iconUrl]='avatarUrl' [fullSize]="true"></ct-user-pic>
 
-                <div *ngIf="impersonationName || userModel.fullName" class="ct-user-settings-info">
+                <div *ngIf="impersonationUser?.fullName || userInfo?.fullName" class="ct-user-settings-info">
                     <h3>Name</h3>
-                    <p>{{impersonationId ? impersonationName : userModel.fullName}}</p>
+                    <p>{{impersonationUser?.fullName || userInfo?.fullName}}</p>
                 </div>
-                <div *ngIf="(impersonationId && impersonationUser.email) || userModel.email" class="ct-user-settings-info">
+                <div *ngIf="impersonationUser?.email || userInfo?.email" class="ct-user-settings-info">
                     <h3>Email address</h3>
-                    <p>{{impersonationId ? impersonationUser.email : userModel.email}}</p>
+                    <p>{{impersonationUser?.email || userInfo?.email}}</p>
                 </div>
-                <div *ngIf="(impersonationId && impersonationUser.timeZone) || userModel.timeZone" class="ct-user-settings-info">
+                <div *ngIf="impersonationUser?.timeZone || userInfo?.timeZone" class="ct-user-settings-info">
                     <h3>Your timezone</h3>
-                    <p>{{impersonationId ? impersonationUser.timeZone : userModel.timeZone}}</p>
+                    <p>{{impersonationUser?.timeZone || userInfo?.timeZone}}</p>
                 </div>
 
                 <button [routerLink]="['/profile/settings']" class="ct-button ct-blue-button">Settings</button>
@@ -49,9 +49,9 @@
                         </div>
                         <div class="ct-profile-users-list" [class.ct-profile-members-hidden]="!project.isMemberListShown || !project.memberList.length">
                             <div *ngFor="let member of project.memberList" class="ct-profile-user">
-                                <ct-user-pic [userId]="member.userId"></ct-user-pic>
-                                <p>{{member.fullName}}
-                                    <span *ngIf="member.userId == (impersonationId || userModel.id)">(You)</span></p>
+                                <ct-user-pic [iconUrl]="member.iconUrl"></ct-user-pic>
+                                <p>{{member.memberName}}
+                                    <span *ngIf="member.memberId == (impersonationUser?.id || userInfo?.id)">(You)</span></p>
                             </div>
                         </div>
                     </div>

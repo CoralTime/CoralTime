@@ -60,8 +60,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	userInfo: User;
 	windowWidth: number;
 
-	impersonationName: string = null;
-	impersonationId: number = null;
+	impersonationUser: User;
 
 	private subscription: Subscription;
 	private subscriptionImpersonation: Subscription;
@@ -85,13 +84,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		this.manageItems = FULL_MANAGE_ITEMS;
 
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (this.impersonationService.impersonationMember) {
-				this.impersonationName = this.impersonationService.impersonationUser.fullName;
-				this.impersonationId = this.impersonationService.impersonationId;
-			} else {
-				this.impersonationName = null;
-				this.impersonationId = null;
-			}
+			this.impersonationUser = this.impersonationService.impersonationUser;
 			this.updateManageMenuVisibility();
 		});
 

@@ -4,13 +4,17 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProfileComponent } from './profile.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
 import { ProfileSettingsComponent } from './profile-settings/profile-settings.component';
+import { UserInfoResolve } from '../../core/auth/user-info-resolve.service';
 
 const routes: Routes = [
 	{
 		path: '',
 		component: ProfileComponent,
 		canActivate: [AuthGuard],
-		data: {title: 'Profile'}
+		data: {title: 'Profile'},
+		resolve: {
+			user: UserInfoResolve
+		}
 	},
 	{
 		path: 'settings',
@@ -21,7 +25,8 @@ const routes: Routes = [
 
 @NgModule({
 	imports: [RouterModule.forChild(routes)],
-	exports: [RouterModule]
+	exports: [RouterModule],
+	providers: [UserInfoResolve]
 })
 
 export class ProfileRoutingModule {

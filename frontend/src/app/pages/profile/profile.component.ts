@@ -1,57 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthUser } from '../../core/auth/auth-user';
 import { AuthService } from '../../core/auth/auth.service';
 import { Subscription } from 'rxjs/Subscription';
 import { ImpersonationService } from '../../services/impersonation.service';
-import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
+import { Avatar, UserPicService } from '../../services/user-pic.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'ct-profile',
 	templateUrl: 'profile.component.html'
 })
 
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 	authUser: AuthUser;
-	impersonationName: string = null;
 	impersonationUser: User;
-	impersonationId: number = null;
 	projects: ProfileProjects[];
-	userId: number;
-	userModel: User = new User();
+	userInfo: User = new User();
+	avatarUrl: string;
 
 	private subscriptionImpersonation: Subscription;
 
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
-	            private usersService: UsersService) {
+	            private route: ActivatedRoute,
+	            private userPicService: UserPicService) {
 	}
 
 	ngOnInit() {
 		this.authUser = this.authService.getAuthUser();
-		this.getUserPicture();
-		this.userId = this.impersonationService.impersonationId || this.authUser.id;
 
-		this.usersService.getUserById(this.userId).subscribe((user: User) => {
-			this.userModel = user;
+		this.route.data.forEach((data: { user: User }) => {
+			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
+
+		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
+			this.impersonationUser = this.impersonationService.impersonationUser;
+		});
+
+		this.getUserPicture();
 		this.getProjects();
 	}
 
 	private getUserPicture(): void {
-		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (this.impersonationService.impersonationMember) {
-				this.impersonationUser = this.impersonationService.impersonationUser;
-				this.impersonationName = this.impersonationService.impersonationUser.fullName;
-				this.impersonationId = this.impersonationService.impersonationId;
-			} else {
-				this.impersonationUser = null;
-				this.impersonationName = null;
-				this.impersonationId = null;
-			}
-		});
+		this.userPicService.getUserPicture(this.impersonationUser ? this.impersonationUser.id : this.userInfo.id, true)
+			.subscribe((avatar: Avatar) => {
+				this.avatarUrl = avatar.avatarUrl;
+			});
 	}
 
 	private getProjects(): void {
@@ -66,7 +63,7 @@ export class ProfileComponent implements OnInit {
 
 	private getProjectMembers(projectId: number, index: number): void {
 		this.profileService.getProjectMembers(projectId).subscribe((members: ProfileProjectMember[]) => {
-			this.projects[index].memberList = this.sortList(members, 'fullName');
+			this.projects[index].memberList = this.sortList(members, 'memberName');
 		});
 	}
 
@@ -92,5 +89,9 @@ export class ProfileComponent implements OnInit {
 			this.getProjectMembers(this.projects[index].id, index);
 		}
 		this.projects[index].isMemberListShown = !this.projects[index].isMemberListShown;
+	}
+
+	ngOnDestroy() {
+		this.subscriptionImpersonation.unsubscribe();
 	}
 }

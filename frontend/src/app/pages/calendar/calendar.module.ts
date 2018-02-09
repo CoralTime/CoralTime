@@ -11,6 +11,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { CalendarProjectsService } from './calendar-projects.service';
 import { ConfirmationComponent } from './entry-time/confirmation/confirmation.component';
 import { DragDropModule } from 'primeng/primeng';
+import { Http } from '@angular/http';
+import { CustomHttp } from '../../core/custom-http';
 
 @NgModule({
 	imports: [
@@ -31,6 +33,10 @@ import { DragDropModule } from 'primeng/primeng';
 		ConfirmationComponent
 	],
 	providers: [
+		{
+			provide: Http,
+			useClass: CustomHttp
+		},
 		CalendarService,
 		CalendarProjectsService
 	],

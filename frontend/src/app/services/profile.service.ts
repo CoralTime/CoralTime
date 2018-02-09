@@ -86,15 +86,17 @@ export class ProfileProjects {
 }
 
 export class ProfileProjectMember {
-	fullName: string;
-	userId: number;
+	iconUrl: string;
+	memberId: number;
+	memberName: string;
 
 	constructor(data: any) {
 		if (!data) {
 			return;
 		}
-		this.fullName = data.MemberName;
-		this.userId = data.memberId;
+		this.iconUrl = data.iconUrl;
+		this.memberId = data.memberId;
+		this.memberName = data.memberName;
 	}
 }
 
@@ -135,7 +137,7 @@ export class ProfileService {
 
 	getProjectMembers(projectId: number): Observable<ProfileProjectMember[]> {
 		return this.http.get(this.constantService.profileApi + '/ProjectMembers/' + projectId)
-			.map((res: Response) => res.json().value.map(x => new ProfileProjectMember(x)));
+			.map((res: Response) => res.json().map(x => new ProfileProjectMember(x)));
 	}
 
 	submitNotifications(obj: any, userId: number): Observable<any> {
