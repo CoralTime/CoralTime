@@ -21,7 +21,7 @@ namespace CoralTime.Tests
             var claims = new ClaimsIdentity(new Claim[]
             {
                 new Claim(JwtClaimTypes.Name, "Admin"),
-                new Claim(JwtClaimTypes.Role, Constants.AdminRole),
+                new Claim(JwtClaimTypes.Role, Constants.ApplicationRoleAdmin),
                 new Claim(JwtClaimTypes.Id,"3066"),
             }, "test");
             return claims;

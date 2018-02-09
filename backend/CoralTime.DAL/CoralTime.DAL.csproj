@@ -4,6 +4,18 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20180213100954_Set unique %27Name%27 for Clients, ProjectRoles.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="3.0.0" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.1" />

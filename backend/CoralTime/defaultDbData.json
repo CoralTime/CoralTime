@@ -1,43 +1,18 @@
-{
+﻿{
+  "AddTasks": true,
   "AddAdmins": true,
   "AddMembers": true,
   "AddClients": true,
-  "AddTasks": true,
   "AddProjects": true,
 
-  "Users": {
-    "Admins": [
-      {
-        "UserName": "Admin",
-        "FullName": "Admin",
-        "Password": "password",
-        "Email": "admin@mail.com"
-      }
-    ],
-    "Members": [
-      {
-        "UserName": "User",
-        "FullName": "User",
-        "Password": "password",
-        "Email": "user@mail.com"
-      },
-      {
-        "UserName": "Pm",
-        "FullName": "Pm",
-        "Password": "password",
-        "Email": "pm@mail.com"
-      }
-    ]
-  },
+  "AddXRefProjectsClients": true,
+  "AddXRefMemberProjectRoles": true,
+  "AddXRefTimeEntries": true,
 
-  "Clients": [
-    {
-      "Name": "CoralTeq",
-      "Description": "Test Client",
-      "IsActive": true,
-      "Email": "client@mail.com"
-    }
-  ],
+  "Settings": {
+    "Name": "DefaulProjectRoleId",
+    "Value": ""
+  },
 
   "Tasks": [
     {
@@ -54,22 +29,239 @@
     }
   ],
 
-  "Projects": [
+  "Users": {
+    "Admins": [
+      {
+        "UserName": "Admin",
+        "FullName": "Dean, James",
+        "Password": "password",
+        "Email": "CoralTime.admin@mail.com",
+        "IsActive": "true"
+      }
+    ],
+    "Members": [
+      {
+        "UserName": "user",
+        "FullName": "Doe, Jane",
+        "Password": "password",
+        "Email": "CoralTime.user@mail.com",
+        "IsActive": "true"
+      },
+      {
+        "UserName": "pm",
+        "FullName": "Marx, Karl",
+        "Password": "password",
+        "Email": "CoralTime.pm@mail.com",
+        "IsActive": "true"
+      }
+    ]
+  },
+
+  "Clients": [
     {
-      "Name": "CoralTime",
-      "CreationDate": "2017-12-26 19:13:04.3300000",
-      "LastUpdateDate": "2017-12-26 19:13:04.3300000",
-      "DaysBeforeStopEditTimeEntries": 0,
+      "Name": "LTH Industries, LLC",
+      "Description": "",
       "IsActive": true,
-      "IsPrivate": true,
-      "ClientId": 1
+      "Email": "John.Davis@lthind.com"
+    },
+    {
+      "Name": "Blue Line Corp.",
+      "Description": "",
+      "IsActive": true,
+      "Email": "Jill.Neeman@bluelinecorp.com"
+    },
+    {
+      "Name": "Компания \"Нулевой Цикл\"",
+      "Description": "",
+      "IsActive": true,
+      "Email": "anna@nulevoytzikl.com"
+    },
+    {
+      "Name": "Craftwerk B.V.",
+      "Description": "",
+      "IsActive": true,
+      "Email": "john.mchagan@craftwerkbv.com"
+    },
+    {
+      "Name": "BridgeWest Group",
+      "Description": "",
+      "IsActive": true,
+      "Email": "piotr@bridgewest.com"
+    },
+    {
+      "Name": "CyberDrive Inc.",
+      "Description": "",
+      "IsActive": true,
+      "Email": "lilly.allens@cyberdrive.net"
+    },
+    {
+      "Name": "Crypto Coin Mining Company",
+      "Description": "",
+      "IsActive": true,
+      "Email": "chief.miner@cryptomining.net"
+    },
+    {
+      "Name": "Bear Technology Corporation",
+      "Description": "",
+      "IsActive": true,
+      "Email": "papa.bear@beartech.com"
+    },
+    {
+      "Name": "Cow Says Moo",
+      "Description": "",
+      "IsActive": false,
+      "Email": "cow@cowsaysmoo.org"
+    },
+    {
+      "Name": "Coral Team",
+      "Description": "",
+      "IsActive": true,
+      "Email": "client@coralteam.com"
     }
   ],
 
-  "Settings": [
+  "Projects": [
     {
-      "Name": "DefaulProjectRoleId",
-      "Value": ""
+      "Name": "cyberdrive.net",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 6
+    },
+    {
+      "Name": "AutoMapper",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 7
+    },
+    {
+      "Name": "Holo",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 1
+    },
+    {
+      "Name": "Oomeka",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 3
+    },
+    {
+      "Name": "MiningTown",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 6
+    },
+    {
+      "Name": "LTH ARC",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 4
+    },
+    {
+      "Name": "beartech.com",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 5
+    },
+    {
+      "Name": "Sponsor 2.0",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 0
+    },
+    {
+      "Name": "Sponsor 3.0",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 2
+    },
+    {
+      "Name": "CoralTime",
+      "IsActive": true,
+      "IsPrivate": true,
+      "Color": 5
+    }
+  ],
+
+  "XRefProjectsClient": [
+    {
+      "ProjectName": "cyberdrive.net",
+      "ClientName": "CyberDrive Inc."
+    },
+    {
+      "ProjectName": "AutoMapper",
+      "ClientName": "Blue Line Corp."
+    },
+    {
+      "ProjectName": "Holo",
+      "ClientName": "Craftwerk B.V."
+    },
+    {
+      "ProjectName": "Oomeka",
+      "ClientName": "Craftwerk B.V."
+    },
+    {
+      "ProjectName": "MiningTown",
+      "ClientName": "Crypto Coin Mining Company"
+    },
+    {
+      "ProjectName": "LTH ARC",
+      "ClientName": "LTH Industries, LLC"
+    },
+    {
+      "ProjectName": "beartech.com",
+      "ClientName": "Bear Technology Corporation"
+    },
+    {
+      "ProjectName": "Sponsor 2.0",
+      "ClientName": "BridgeWest Group"
+    },
+    {
+      "ProjectName": "Sponsor 3.0",
+      "ClientName": "Coral Team"
+    },
+    {
+      "ProjectName": "CoralTime",
+      "ClientName": "Coral Team"
+    }
+  ],
+
+  "XRefMemberProjectRoles": [
+    {
+      "UserName": "user",
+      "ProjectName": "AutoMapper",
+      "ProjectRoleName": "team member"
+    },
+    {
+      "UserName": "user",
+      "ProjectName": "CoralTime",
+      "ProjectRoleName": "team member"
+    },
+    {
+      "UserName": "user",
+      "ProjectName": "beartech.com",
+      "ProjectRoleName": "team member"
+    },
+    {
+      "UserName": "pm",
+      "ProjectName": "CoralTime",
+      "ProjectRoleName": "manager"
+    },
+    {
+      "UserName": "pm",
+      "ProjectName": "Holo",
+      "ProjectRoleName": "team member"
+    }
+  ],
+
+  "XRefTimeEntries": [
+    {
+      "UserName": "",
+      "ProjectName": "",
+      "TaskTypeName": "",
+      "Date": "",
+      "Time": "",
+      "PlannedTime": ""
     }
   ]
 }

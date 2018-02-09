@@ -6,15 +6,32 @@ namespace CoralTime.Common.Constants
 {
     public static class Constants
     {
-        public const string AdminRole = "admin";
-        public const string ManagerRole = "manager";
-        public const string UserRole = "user";
-        public const string MemberRole = "team member";
+
+        public const string UserTypeAdmins = "Admins";
+        public const string UserTypeMembers = "Members";
+
+        #region ApplicationRole
+
+        public const string ApplicationRoleAdmin = "admin";
+        public const string ApplicationRoleUser = "user";
+
+        public static readonly IEnumerable<string> ApplicationRoles = new[] {ApplicationRoleAdmin, ApplicationRoleUser};
+
+        #endregion
+
+        #region ProjectRoles
+
+        public const string ProjectRoleManager = "manager";
+        public const string ProjectRoleMember = "team member";
+
+        public static readonly IEnumerable<string> ProjectRoles = new[] {ProjectRoleManager, ProjectRoleMember};
+
+        #endregion
+
         public const string JwtIsManagerClaimType = "isManager";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
         public const int SecondsInThisDay = 86400;
-
 
         public static string EnvName { get; set; }
 
@@ -29,11 +46,6 @@ namespace CoralTime.Common.Constants
             Month = 2,
             Quarter = 3,
             Year = 4
-        }
-
-        public static IEnumerable<string> GetDefaultRoles()
-        {
-            return new[] {AdminRole, UserRole};
         }
 
         public static class WithoutClient
@@ -60,12 +72,12 @@ namespace CoralTime.Common.Constants
 
         public static DateConvert[] DateFormats =
         {
-            new DateConvert {DateFormatId = 0, DateFormat = "DD/MM/YYYY", DateFormatDotNet = "dd/MM/yyyy", DateFormatDotNetShort = "dd/MM"},
-            new DateConvert {DateFormatId = 1, DateFormat = "DD-MM-YYYY", DateFormatDotNet = "dd-MM-yyyy", DateFormatDotNetShort = "dd-MM"},
-            new DateConvert {DateFormatId = 2, DateFormat = "DD.MM.YYYY", DateFormatDotNet = "dd.MM.yyyy", DateFormatDotNetShort = "dd.MM"},
-            new DateConvert {DateFormatId = 3, DateFormat = "MM/DD/YYYY", DateFormatDotNet = "MM/dd/yyyy", DateFormatDotNetShort = "MM/dd"},
-            new DateConvert {DateFormatId = 4, DateFormat = "MM-DD-YYYY", DateFormatDotNet = "MM-dd-yyyy", DateFormatDotNetShort = "MM-dd"},
-            new DateConvert {DateFormatId = 5, DateFormat = "MM.DD.YYYY", DateFormatDotNet = "MM.dd.yyyy", DateFormatDotNetShort = "MM.dd"},
+            new DateConvert { DateFormatId = 0, DateFormat = "DD/MM/YYYY", DateFormatDotNet = "dd/MM/yyyy", DateFormatDotNetShort = "dd/MM" },
+            new DateConvert { DateFormatId = 1, DateFormat = "DD-MM-YYYY", DateFormatDotNet = "dd-MM-yyyy", DateFormatDotNetShort = "dd-MM" },
+            new DateConvert { DateFormatId = 2, DateFormat = "DD.MM.YYYY", DateFormatDotNet = "dd.MM.yyyy", DateFormatDotNetShort = "dd.MM" },
+            new DateConvert { DateFormatId = 3, DateFormat = "MM/DD/YYYY", DateFormatDotNet = "MM/dd/yyyy", DateFormatDotNetShort = "MM/dd" },
+            new DateConvert { DateFormatId = 4, DateFormat = "MM-DD-YYYY", DateFormatDotNet = "MM-dd-yyyy", DateFormatDotNetShort = "MM-dd" },
+            new DateConvert { DateFormatId = 5, DateFormat = "MM.DD.YYYY", DateFormatDotNet = "MM.dd.yyyy", DateFormatDotNetShort = "MM.dd" },
         };
 
         public enum ReportsGroupBy

@@ -28,7 +28,6 @@ namespace CoralTime.BL.Services
         private readonly bool _isDemo;
         private readonly IAvatarService _avatarService;
 
-
         public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper, IAvatarService avatarService)
             : base(uow, mapper)
         {
@@ -48,6 +47,7 @@ namespace CoralTime.BL.Services
             {
                 _avatarService.AddIconUrlInMemberView(item);
             }
+
             return allMembersView;
         }
 
@@ -77,7 +77,7 @@ namespace CoralTime.BL.Services
             
             if (memberView.IsAdmin)
             {
-                var newUserAdmin = new ApplicationUser
+                var applicationUserAdmin = new ApplicationUser
                 {
                     UserName = memberView.UserName,
                     Email = memberView.Email,
@@ -86,11 +86,11 @@ namespace CoralTime.BL.Services
                     IsActive = true
                 };
 
-                return await CreateNewUserCommon(memberView, newUserAdmin, AdminRole);
+                return await CreateNewUserCommon(memberView, applicationUserAdmin, ApplicationRoleAdmin);
             }
             else
             {
-                var newUserMember = new ApplicationUser
+                var applicationUserMember = new ApplicationUser
                 {
                     UserName = memberView.UserName,
                     Email = memberView.Email,
@@ -99,7 +99,7 @@ namespace CoralTime.BL.Services
                     IsActive = true
                 };
 
-                return await CreateNewUserCommon(memberView, newUserMember, UserRole);
+                return await CreateNewUserCommon(memberView, applicationUserMember, ApplicationRoleUser);
             }
         }
 
@@ -158,7 +158,7 @@ namespace CoralTime.BL.Services
                     var updateResult = await _userManager.UpdateAsync(member.User);
                     if (updateResult.Succeeded)
                     {
-                        var startRole = member.User.IsAdmin ? AdminRole : UserRole;
+                        var startRole = member.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
 
                         if (memberId != memberByName.Id)
                         {
@@ -166,7 +166,7 @@ namespace CoralTime.BL.Services
                             member.User.IsAdmin = newIsAdmin;
                         }
 
-                        var finishRole = member.User.IsAdmin ? AdminRole : UserRole;
+                        var finishRole = member.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
 
                         try
                         {
@@ -189,7 +189,7 @@ namespace CoralTime.BL.Services
                     }
                     else
                     {
-                        BLHelpers.CheckMembersErrors(updateResult.Errors.Select(e => new IdentityErrorView
+                        CommonHelpers.CheckMembersErrors(updateResult.Errors.Select(e => new IdentityErrorView
                         {
                             Code = e.Code,
                             Description = e.Description
@@ -261,7 +261,7 @@ namespace CoralTime.BL.Services
 
             if (!userUpdationResult.Succeeded)
             {
-                BLHelpers.CheckMembersErrors(userUpdationResult.Errors.Select(e => new IdentityErrorView
+                CommonHelpers.CheckMembersErrors(userUpdationResult.Errors.Select(e => new IdentityErrorView
                 {
                     Code = e.Code,
                     Description = e.Description
@@ -289,7 +289,7 @@ namespace CoralTime.BL.Services
 
             if (!userResetPassword.Succeeded)
             {
-                BLHelpers.CheckMembersErrors(userResetPassword.Errors.Select(e => new IdentityErrorView
+                CommonHelpers.CheckMembersErrors(userResetPassword.Errors.Select(e => new IdentityErrorView
                 {
                     Code = e.Code,
                     Description = e.Description
@@ -501,7 +501,7 @@ namespace CoralTime.BL.Services
 
                 if (!updateEmailResult.Succeeded)
                 {
-                    BLHelpers.CheckMembersErrors(updateEmailResult.Errors.Select(e => new IdentityErrorView
+                    CommonHelpers.CheckMembersErrors(updateEmailResult.Errors.Select(e => new IdentityErrorView
                     {
                         Code = e.Code,
                         Description = e.Description
@@ -577,14 +577,14 @@ namespace CoralTime.BL.Services
             var removeClaimsForMember = _userManager.RemoveClaimsAsync(memberById.User, memberByNameClaims).GetAwaiter().GetResult();
             if (!removeClaimsForMember.Succeeded)
             {
-                CheckIdentityResultErrors(removeClaimsForMember);
+                CommonHelpers.CheckIdentityResultErrors(removeClaimsForMember);
             }
 
-            var claimsForMemberNew = ClaimsCreator.GetUserClaims(memberById.User.UserName, memberById.FullName, memberById.User.Email, memberById.User.IsAdmin ? AdminRole : UserRole, memberById.Id);
+            var claimsForMemberNew = ClaimsCreator.CreateUserClaims(memberById.User.UserName, memberById.FullName, memberById.User.Email, memberById.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser, memberById.Id);
             var addClaimsForMember = _userManager.AddClaimsAsync(memberById.User, claimsForMemberNew).GetAwaiter().GetResult();
             if (!addClaimsForMember.Succeeded)
             {
-                CheckIdentityResultErrors(addClaimsForMember);
+                CommonHelpers.CheckIdentityResultErrors(addClaimsForMember);
             }
         }
 
@@ -598,27 +598,53 @@ namespace CoralTime.BL.Services
 
         #region Other Methods.
 
-        private async Task<Member> CreateNewUserCommon(MemberView memberView, ApplicationUser newUser, string userRole)
+        private async Task<Member> CreateNewUserCommon(MemberView memberView, ApplicationUser applicationUserNew, string roleUser)
         {
-            var userByName = Uow.UserRepository.LinkedCacheGetByName(memberView.UserName);
-            if (userByName != null)
+            //var userByName = Uow.UserRepository.LinkedCacheGetByName(memberView.UserName);
+            //if (userByName != null)
+            //{
+            //    throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist");
+            //}
+
+            #region Check ApplicationUser, Roles, Claims, Member
+
+            // Check ApplicationUser
+            var isExistApplicationUser = await _userManager.FindByNameAsync(memberView.UserName);
+            if (isExistApplicationUser != null)
             {
                 throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist");
             }
 
-            // Identity #1. Create User in db.AspNetUsers.
-            var userCreationResult = await _userManager.CreateAsync(newUser, memberView.Password);
-            if (!userCreationResult.Succeeded)
+            // Check ApplicationUser Roles
+            var isExistRolesForMember = await _userManager.GetRolesAsync(applicationUserNew).ToAsyncEnumerable().Any(x => x.Contains(roleUser));
+            if (isExistRolesForMember)
             {
-                CheckIdentityResultErrors(userCreationResult);
+                throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist '{roleUser}' role");
             }
 
-            // Identity #2. Create role for user in db.AspNetUserRoles.
-            var memberUser = await _userManager.FindByNameAsync(newUser.UserName);
-            var userCreateRoleResult = await _userManager.AddToRoleAsync(memberUser, UserRole);
+            // Check Member
+            var isExistMember = Uow.MemberRepository.GetQueryByUserName(applicationUserNew.UserName);
+            if (isExistMember != null)
+            {
+                throw new CoralTimeAlreadyExistsException($"Member with userName {memberView.UserName} already exist");
+            }
+
+            #endregion
+
+            // Insert ApplicationUser
+            var userCreationResult = await _userManager.CreateAsync(applicationUserNew, memberView.Password);
+            if (!userCreationResult.Succeeded)
+            {
+                CommonHelpers.CheckIdentityResultErrors(userCreationResult);
+            }
+
+            var applicationUser = await _userManager.FindByNameAsync(applicationUserNew.UserName);
+            
+            // Insert ApplicationUser Roles
+            var userCreateRoleResult = await _userManager.AddToRoleAsync(applicationUser, roleUser);
             if (!userCreateRoleResult.Succeeded)
             {
-                CheckIdentityResultErrors(userCreateRoleResult);
+                CommonHelpers.CheckIdentityResultErrors(userCreateRoleResult);
             }
 
             #region Set UserId to new Member. Save to Db. Get Member from Db with related entity User by UserId.
@@ -627,7 +653,7 @@ namespace CoralTime.BL.Services
             var newMember = Mapper.Map<MemberView, Member>(memberView);
 
             // 2. Assign UserId to Member (After Save, when you try to get entity from Db, before assign UserId to entity then it has Related Entity User).
-            newMember.UserId = memberUser.Id;
+            newMember.UserId = applicationUser.Id;
 
             // 3. Save in Db.
             Uow.MemberRepository.Insert(newMember);
@@ -642,23 +668,14 @@ namespace CoralTime.BL.Services
             #endregion
 
             // Identity #3. Create claims. Add Claims for user in AspNetUserClaims.
-            var claimsUser = ClaimsCreator.GetUserClaims(memberUser.UserName, memberView.FullName, memberView.Email, userRole, memberByName.Id);
-            var claimsUserResult = await _userManager.AddClaimsAsync(memberUser, claimsUser);
+            var claimsUser = ClaimsCreator.CreateUserClaims(applicationUser.UserName, memberView.FullName, memberView.Email, roleUser, memberByName.Id);
+            var claimsUserResult = await _userManager.AddClaimsAsync(applicationUser, claimsUser);
             if (!claimsUserResult.Succeeded)
             {
-                CheckIdentityResultErrors(userCreateRoleResult);
+                CommonHelpers.CheckIdentityResultErrors(userCreateRoleResult);
             }
 
             return memberByName;
-        }
-
-        private static void CheckIdentityResultErrors(IdentityResult userCreateRoleResult)
-        {
-            BLHelpers.CheckMembersErrors(userCreateRoleResult.Errors.Select(e => new IdentityErrorView
-            {
-                Code = e.Code,
-                Description = e.Description
-            }));
         }
 
         private IEnumerable<Member> GetAllMembersCommon(string userName)
@@ -719,6 +736,7 @@ namespace CoralTime.BL.Services
 
             return projects;
         }
+
         #endregion
     }
 }

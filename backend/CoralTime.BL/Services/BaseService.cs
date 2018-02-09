@@ -29,7 +29,5 @@ namespace CoralTime.BL.Services
         {
             Uow.UserRepository.GetRelatedUserByName(userName);
         }
-
-
     }
 }

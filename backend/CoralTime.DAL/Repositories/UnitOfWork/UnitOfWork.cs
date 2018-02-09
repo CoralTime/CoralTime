@@ -62,7 +62,7 @@ namespace CoralTime.DAL.Repositories
                 return currentUserName;
             }
 
-            if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.AdminRole)
+            if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.ApplicationRoleAdmin)
             {
                 throw new CoralTimeForbiddenException($"You can not impersonate user with userName {inpersonatedUserName}");
             }

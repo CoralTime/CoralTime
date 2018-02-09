@@ -54,7 +54,7 @@ namespace CoralTime
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -85,7 +85,7 @@ namespace CoralTime
             });
 
             AddApplicationServices(services);
-
+       
             services.AddMemoryCache();
 
             services.AddAutoMapper();
@@ -113,7 +113,7 @@ namespace CoralTime
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
             });
-
+            
             return services.BuildServiceProvider();
         }
 
@@ -180,7 +180,7 @@ namespace CoralTime
 
             CombineFileWkhtmltopdf(env);
 
-            AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
+            AppDbContext.InitializeFirstTimeDataBaseAsync(app.ApplicationServices, Configuration).Wait();
         }
 
         private void AddApplicationServices(IServiceCollection services)
@@ -199,7 +199,7 @@ namespace CoralTime
 
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IClientService, ClientService>();
-            services.AddScoped<IMemberProjectRolesService, MemberProjectRolesService>();
+            services.AddScoped<IMemberProjectRoleService, MemberProjectRoleService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<INotificationService, NotificationsService>();
             services.AddScoped<IPicturesCacheGuid, PicturesCacheGuidService>();
@@ -211,6 +211,7 @@ namespace CoralTime
             services.AddScoped<IReportExportService, ReportsExportService>();
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
             services.AddScoped<IAvatarService, AvatarService>();
+            services.AddScoped<IRefreshDataBaseService, RefreshDataBaseService>();
             services.AddScoped<CheckServiceSecureHeaderFilter>();
             services.AddScoped<CheckNotificationSecureHeaderFilter>();
         }
@@ -251,22 +252,34 @@ namespace CoralTime
 
         private void SetupIdentity(IServiceCollection services)
         {
+            var isDemo = bool.Parse(Configuration["DemoSiteMode"]);
+
             // Identity options.
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
 
+                if (isDemo)
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                }
+                else
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                }
+
+                options.Password.RequiredLength = 8;
                 options.User.RequireUniqueEmail = true;
             });
 
             var accessTokenLifetime = int.Parse(Configuration["AccessTokenLifetime"]);
             var refreshTokenLifetime = int.Parse(Configuration["RefreshTokenLifetime"]);
-            var isDemo = bool.Parse(Configuration["DemoSiteMode"]);
 
             if (isDemo)
             {

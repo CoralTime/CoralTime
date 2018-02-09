@@ -238,7 +238,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             if (!currentMember.User.IsAdmin && currentMember.User.IsManager)
             {
-                var managerRoleId = Uow.ProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.Name == ManagerRole).Id;
+                var managerRoleId = Uow.ProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.Name == ProjectRoleManager).Id;
 
                 var managerProjectIds = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
                     .Where(r => r.MemberId == currentMember.Id && r.RoleId == managerRoleId)

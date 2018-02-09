@@ -8,302 +8,523 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CoralTime.DAL
 {
     public partial class AppDbContext
     {
-        public static async Task InitializeDatabaseAsync(IServiceProvider serviceProvider)
+        private static IConfiguration Configuration { get; set; }
+
+        private static IServiceProvider ServiceProvider { get; set; }
+
+        private static AppDbContext DbContext { get; set; }
+
+        private static UserManager<ApplicationUser> UserManager { get; set; }
+
+        private static RoleManager<IdentityRole> RoleManager { get; set; }
+
+        private static int ProjectRoleManagerId { get; set; }
+
+        public static async Task InitializeFirstTimeDataBaseAsync(IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            var config = serviceProvider.GetRequiredService<IConfiguration>();
-            using (var db = serviceProvider.GetRequiredService<AppDbContext>())
+            using (DbContext = serviceProvider.GetRequiredService<AppDbContext>())
             {
-                var isExistDataBase = (db.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+                var isExistDataBase = (DbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
 
                 if (!isExistDataBase)
                 {
-                    var sqlDb = db.Database;
+                    await InitializeDataBase(serviceProvider, configuration);
+                }
+            }
+        }
 
-                    if (sqlDb != null)
+        public static async Task InitializeDataBase(IServiceProvider serviceProvider, IConfiguration configuration)
+        {
+            Configuration = configuration;
+            ServiceProvider = serviceProvider;
+            UserManager = ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            RoleManager = ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            var sqlDb = DbContext.Database;
+
+            if (sqlDb != null)
+            {
+                //async method doesn't work for MySQL
+                await DbContext.Database.MigrateAsync();
+
+                await InitializeRoles();
+                await InitializeProjectRoles();
+                await InitializeSettings();
+
+                if (bool.Parse(Configuration["AddTasks"]))
+                {
+                    await InitializeTaskTypes();
+                }
+
+                if (bool.Parse(Configuration["AddAdmins"]))
+                {
+                    await InitializeUsers(Constants.UserTypeAdmins, Constants.ApplicationRoleAdmin);
+                }
+
+                if (bool.Parse(Configuration["AddMembers"]))
+                {
+                    await InitializeUsers(Constants.UserTypeMembers, Constants.ApplicationRoleUser);
+                }
+
+                if (bool.Parse(Configuration["AddClients"]))
+                {
+                    await InitializeClients();
+                }
+
+                if (bool.Parse(Configuration["AddProjects"]))
+                {
+                    await InitializeProjects();
+                }
+
+                if (bool.Parse(Configuration["AddXRefProjectsClients"]))
+                {
+                    await InitializeXRefProjectsClients();
+                }
+
+                if (bool.Parse(Configuration["AddXRefMemberProjectRoles"]))
+                {
+                    await InitializeXRefMemberProjectRoles();
+                }
+
+                if (bool.Parse(Configuration["AddXRefTimeEntries"]))
+                {
+                    await InitializeXRefTimeEntries();
+                }
+            }
+        }
+
+        private static async Task InitializeRoles()
+        {
+            foreach (var aspNetRole in Constants.ApplicationRoles)
+            {
+                var aspNetRoleNew = new IdentityRole(aspNetRole);
+                var aspNetRoleDb = await RoleManager.FindByNameAsync(aspNetRoleNew.Name);
+                if (aspNetRoleDb == null)
+                {
+                    var aspNetRoleCreateResult =  await RoleManager.CreateAsync(aspNetRoleNew);
+                    if (!aspNetRoleCreateResult.Succeeded)
                     {
-                        // async method doesn't work for MySQL
-                        await db.Database.MigrateAsync();
-
-                        await InitializeRoles(serviceProvider);
-                        await InitializeProjectRoles(db);
-                        await InitializeSettings(serviceProvider, db);
-
-                        if (bool.Parse(config["AddTasks"]))
-                        {
-                            await InitializeTaskTypes(serviceProvider, db);
-                        }
-
-                        if (bool.Parse(config["AddAdmins"]))
-                        {
-                            await InitializeAdmins(serviceProvider, db);
-                        }
-
-                        if (bool.Parse(config["AddMembers"]))
-                        {
-                            await InitializeMembers(serviceProvider, db);
-                        }
-
-                        if (bool.Parse(config["AddClients"]))
-                        {
-                            await InitializeClients(serviceProvider, db);
-                        }
-
-                        if (bool.Parse(config["AddProjects"]))
-                        {
-                            await InitializeProjects(serviceProvider, db);
-                        }
+                        continue;
                     }
                 }
             }
         }
 
-        private static async Task InitializeRoles(IServiceProvider provider)
+        private static async Task InitializeProjectRoles()
         {
-            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+            var projectRoleList = new List<ProjectRole>();
 
-            var defaultRoles = Constants.GetDefaultRoles();
-            foreach (var role in defaultRoles)
+            foreach (var projectRole in Constants.ProjectRoles)
             {
-                if (await roleManager.RoleExistsAsync(role))
+                var projectRoleManager = await DbContext.ProjectRoles.FirstOrDefaultAsync(x => x.Name == projectRole);
+                if (projectRoleManager == null)
                 {
-                    continue;
+                    projectRoleList.Add(new ProjectRole {Name = projectRole});
                 }
-
-                var newRole = new IdentityRole(role);
-                await roleManager.CreateAsync(newRole);
             }
+
+            await SaveListOfEntitiesToDbAsync(DbContext.ProjectRoles, projectRoleList);
         }
 
-        private static async Task InitializeProjectRoles(AppDbContext db)
+        private static async Task InitializeSettings()
         {
-            if (!await db.ProjectRoles.AnyAsync())
+            var settings = Configuration.GetSection("Settings").GetChildren();
+
+            var settingsList = new List<Setting>();
+
+            foreach (var setting in settings)
             {
-                var projectManagerRole = new ProjectRole {Name = Constants.ManagerRole};
-                var projectUserRole = new ProjectRole {Name = Constants.MemberRole};
+                var settingName = setting["Name"];
 
-                await db.ProjectRoles.AddAsync(projectManagerRole);
-                await db.ProjectRoles.AddAsync(projectUserRole);
-
-                //db.ProjectRoles.Add(new ProjectRole { Name = Constants.MemberRole });
-                //db.SaveChanges();
-
-                await db.SaveChangesAsync();
-            }
-        }
-
-        private static async Task InitializeSettings(IServiceProvider serviceProvider, AppDbContext db)
-        {
-            if (!await db.Settings.AnyAsync())
-            {
-                var config = serviceProvider.GetRequiredService<IConfiguration>();
-                var settings = config.GetSection("Settings").GetChildren();
-                foreach (var setting in settings)
+                var settingsDb = await DbContext.Settings.FirstOrDefaultAsync(x => x.Name == settingName);
+                if (settingsDb == null)
                 {
+
                     var newSetting = new Setting();
                     if (setting["Name"] == "DefaulProjectRoleId")
                     {
-                        var memberRoleId = (await db.ProjectRoles.FirstAsync(r => r.Name == Constants.MemberRole)).Id;
+                        var projectRoleMemberId = (await DbContext.ProjectRoles.FirstAsync(r => r.Name == Constants.ProjectRoleMember)).Id;
                         newSetting.Name = setting["Name"];
-                        newSetting.Value = memberRoleId.ToString();
+                        newSetting.Value = projectRoleMemberId.ToString();
                     }
                     else
                     {
                         newSetting.Name = setting["Name"];
                         newSetting.Value = setting["Value"];
                     }
-                    await db.Settings.AddAsync(newSetting);
-                }
 
-                await db.SaveChangesAsync();
+                    settingsList.Add(newSetting);
+                }
             }
+
+            await SaveListOfEntitiesToDbAsync(DbContext.Settings, settingsList);
         }
 
-        private static async Task InitializeTaskTypes(IServiceProvider serviceProvider, AppDbContext db)
+        private static async Task InitializeTaskTypes()
         {
-            if (!await db.TaskTypes.AnyAsync())
-            {
-                var config = serviceProvider.GetRequiredService<IConfiguration>();
-                var tasks = config.GetSection("Tasks").GetChildren();
-                foreach (var task in tasks)
-                {
-                    var newTask = new TaskType
-                    {
-                        Name = task["Name"], 
-                        IsActive = bool.Parse(task["IsActive"])
-                    };
+            var tasksList = await CreateListOfEntitiesFromConfigByNameAsync(DbContext.TaskTypes, "Tasks");
 
-                    await db.TaskTypes.AddAsync(newTask);
-                }
-
-                await db.SaveChangesAsync();
-            }
+            await SaveListOfEntitiesToDbAsync(DbContext.TaskTypes, tasksList);
         }
 
-        private static async Task InitializeAdmins(IServiceProvider serviceProvider, AppDbContext db)
+        private static async Task InitializeUsers(string typeUser, string roleUser)
         {
-            var config = serviceProvider.GetRequiredService<IConfiguration>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var users = Configuration.GetSection($"Users:{typeUser}").GetChildren();
 
-            var users = config.GetSection("Users:Admins").GetChildren();
             foreach (var user in users)
             {
+                // Get Values
                 var userName = user["UserName"];
+                var userFullName = user["FullName"];
                 var userPassword = user["Password"];
                 if (string.IsNullOrWhiteSpace(userPassword))
                 {
                     userPassword = "A" + Guid.NewGuid();
                 }
-
                 var userEmail = user["Email"];
-                var userFullName = user["FullName"];
-                var newUser = await userManager.FindByNameAsync(userName);
 
-                if (newUser != null)
-                {
-                    continue;
-                }
+                #region Create ApplicationUser, Roles, Claims, Member
 
-                newUser = new ApplicationUser
+                // Create ApplicationUser
+                var applicationUser = new ApplicationUser
                 {
                     UserName = userName,
                     Email = userEmail,
-                    IsAdmin = true,
+                    IsAdmin = roleUser == Constants.ApplicationRoleAdmin,
                     IsManager = false,
-                    IsActive = true
+                    IsActive = bool.Parse(user["IsActive"])
                 };
 
-                var userCreationResult = await userManager.CreateAsync(newUser, userPassword);
+                // Create Member
+                var member = new Member
+                {
+                    UserId = applicationUser.Id,
+                    FullName = userFullName
+                };
+
+                #endregion
+
+                #region Insert ApplicationUser, Roles, Claims
+
+                // Insert ApplicationUser
+                var userCreationResult = await UserManager.CreateAsync(applicationUser, userPassword);
                 if (!userCreationResult.Succeeded)
                 {
                     continue;
                 }
 
-                var adminUser = await userManager.FindByNameAsync(newUser.UserName);
-                await userManager.AddToRoleAsync(adminUser, Constants.AdminRole);
-
-                var newMember = new Member
-                {
-                    UserId = adminUser.Id,
-                    FullName = userFullName
-                };
-
-                await db.Members.AddAsync(newMember);
-                await db.SaveChangesAsync();
-
-                // Assigns claims.
-                var claims = ClaimsCreator.GetUserClaims(adminUser.UserName, userFullName, userEmail, Constants.AdminRole, newMember.Id);
-                await userManager.AddClaimsAsync(adminUser, claims);
-            }
-        }
-
-        private static async Task InitializeMembers(IServiceProvider serviceProvider, AppDbContext db)
-        {
-            var config = serviceProvider.GetRequiredService<IConfiguration>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-            var users = config.GetSection("Users:Members").GetChildren();
-            foreach (var user in users)
-            {
-                var userName = user["UserName"];
-                var userPass = user["Password"];
-                if (string.IsNullOrWhiteSpace(userPass))
-                {
-                    userPass = "A" + Guid.NewGuid();
-                }
-
-                var userEmail = user["Email"];
-                var userFullName = user["FullName"];
-                var newUser = await userManager.FindByNameAsync(userName);
-
-                if (newUser != null)
+                // Insert ApplicationUser Roles
+                var roleForMemberResult = await UserManager.AddToRoleAsync(applicationUser, roleUser);
+                if (!roleForMemberResult.Succeeded)
                 {
                     continue;
                 }
 
-                newUser = new ApplicationUser
-                {
-                    UserName = userName,
-                    Email = userEmail,
-                    IsAdmin = false,
-                    IsManager = false,
-                    IsActive = true
-                };
+                #endregion
 
-                var userCreationResult = await userManager.CreateAsync(newUser, userPass);
-                if (!userCreationResult.Succeeded)
+                #region Insert Member
+
+                try
                 {
-                    continue;
+                    // Insert Member
+                    await DbContext.Members.AddAsync(member);
+
+                    // Save DbContex
+                    await DbContext.SaveChangesAsync();
+
+                    // Create ApplicationUser claims 
+                    var claims = ClaimsCreator.CreateUserClaims(applicationUser.UserName, userFullName, userEmail, roleUser, member.Id);
+
+                    // Insert ApplicationUser claims 
+                    var applicationUserClaimsResult = await UserManager.AddClaimsAsync(applicationUser, claims);
+                    if (!applicationUserClaimsResult.Succeeded)
+                    {
+                        continue;
+                    }
+
                 }
+                catch (Exception) { }
 
-                var memberUser = await userManager.FindByNameAsync(newUser.UserName);
-                await userManager.AddToRoleAsync(memberUser, Constants.UserRole);
-
-                var newMember = new Member
-                {
-                    UserId = memberUser.Id,
-                    FullName = userFullName
-                };
-
-                await db.Members.AddAsync(newMember);
-                await db.SaveChangesAsync();
-
-                // Assigns claims.
-                var claims = ClaimsCreator.GetUserClaims(memberUser.UserName, userFullName, userEmail, Constants.UserRole, newMember.Id);
-                await userManager.AddClaimsAsync(memberUser, claims);
+                #endregion
             }
         }
 
-        private static async Task InitializeClients(IServiceProvider serviceProvider, AppDbContext db)
+        private static async Task InitializeClients()
         {
-            if (!await db.Clients.AnyAsync())
+            var clientsList = await CreateListOfEntitiesFromConfigByNameAsync(DbContext.Clients, "Clients");
+             
+            await SaveListOfEntitiesToDbAsync(DbContext.Clients, clientsList);
+        }
+
+        private static async Task InitializeProjects()
+        {
+            var projectList = await CreateListOfEntitiesFromConfigByNameAsync(DbContext.Projects, "Projects");
+            
+            await SaveListOfEntitiesToDbAsync(DbContext.Projects, projectList);
+        }
+
+        private static async Task InitializeXRefProjectsClients()
+        {
+            var projectsList = await GetProjectList();
+            var clientsList = await GetClientList();
+
+
+        }
+
+        private static async Task InitializeXRefMemberProjectRoles()
+        {
+            var membersList = await GetMembersList();
+            var projectsList = await GetProjectList();
+            var projectRolesList = await GetProjectRolesList();
+
+            var memberProjectRoleList = new List<MemberProjectRole>();
+            var memberProjectRoles = Configuration.GetSection("MemberProjectRoles").GetChildren();
+            foreach (var memberProjectRole in memberProjectRoles)
             {
-                var config = serviceProvider.GetRequiredService<IConfiguration>();
-                var clients = config.GetSection("Clients").GetChildren();
-                foreach (var client in clients)
+                var mprUser = membersList.FirstOrDefault(x => x.User.UserName == memberProjectRole["UserName"]);
+                var mprProject = projectsList.FirstOrDefault(x => x.Name == memberProjectRole["ProjectName"]);
+                var mprProjectRole = projectRolesList.FirstOrDefault(x => x.Name == memberProjectRole["ProjectRoleName"]);
+
+                if (mprUser != null && mprProject != null && mprProjectRole != null)
                 {
-                    var newClient = new Client
+                    var mpr = new MemberProjectRole
                     {
-                        Name = client["Name"],
-                        Description = client["Description"],
-                        IsActive = bool.Parse(client["IsActive"]),
-                        Email = client["Email"],
+                        MemberId = mprUser.Id,
+                        ProjectId = mprProject.Id,
+                        RoleId = mprProjectRole.Id
                     };
-                    await db.Clients.AddAsync(newClient);
+
+                    memberProjectRoleList.Add(mpr);
+
+                    UpdateIsManagerRoleForMember(ProjectRoleManagerId, memberProjectRoleList, mprUser, mprProjectRole);
                 }
-                await db.SaveChangesAsync();
+            }
+
+            try
+            {
+                await DbContext.MemberProjectRoles.AddRangeAsync(memberProjectRoleList);
+                await DbContext.SaveChangesAsync();
+            }
+
+            catch (Exception e) { }
+        }
+
+        private static async Task InitializeXRefTimeEntries()
+        {
+            var membersList = new List<Member>();
+            var members = Configuration.GetSection($"Users:{Constants.UserTypeMembers}").GetChildren();
+            foreach (var member in members)
+            {
+                var memberUserName = member["UserName"];
+                var getMemberByUserNameAsync = await DbContext.Members.FirstOrDefaultAsync(x => x.User.UserName == memberUserName);
+                if (getMemberByUserNameAsync != null)
+                {
+                    membersList.Add(getMemberByUserNameAsync);
+                }
+            }
+
+            var projectsList = new List<Project>();
+            var projects = Configuration.GetSection("Projects").GetChildren();
+            foreach (var project in projects)
+            {
+                var projectName = project["Name"];
+                var getProjectByNAmeAsync = await DbContext.Projects.FirstOrDefaultAsync(x => x.Name == projectName);
+                if (getProjectByNAmeAsync != null)
+                {
+                    projectsList.Add(getProjectByNAmeAsync);
+                }
+            }
+
+            var tasksList = new List<TaskType>();
+            var tasks = Configuration.GetSection("Tasks").GetChildren();
+            foreach (var task in tasks)
+            {
+                var taskName = task["Name"];
+                var taskDb = await DbContext.TaskTypes.FirstOrDefaultAsync(x => x.Name == taskName);
+                if (taskDb != null)
+                {
+                    tasksList.Add(taskDb);
+                }
+            }
+
+            var timeEntries = Configuration.GetSection("TimeEntries").GetChildren();
+
+        }
+
+        private static async Task<List<TEntity>> CreateListOfEntitiesFromConfigByNameAsync<TEntity>(DbSet<TEntity> dbSet, string section) where TEntity : class, new()
+        {
+            var listOfEntities = new List<TEntity>();
+
+            var propertyNameOfEntity = "Name";
+            var entitiesFromConfig = Configuration.GetSection(section).GetChildren();
+
+            foreach (var entity in entitiesFromConfig)
+            {
+                var entityNameFromConfig = entity["Name"];
+
+                var entityFromDbByName = await dbSet.FirstOrDefaultAsync(x => x.GetType().GetProperty(propertyNameOfEntity).GetValue(x, null).ToString() == entityNameFromConfig);
+
+                if (entityFromDbByName == null)
+                {
+                    listOfEntities.Add(CreateNewEntity<TEntity>(entity));
+                }
+            }
+
+            return listOfEntities;
+        }
+
+        private static TEntity CreateNewEntity<TEntity>(IConfigurationSection entitiesFromConfig) where TEntity : class, new()
+        {
+            switch (new TEntity())
+            {
+                case Project project:
+                {
+                    project = new Project
+                    {
+                        Name = entitiesFromConfig["Name"],
+                        IsActive = bool.Parse(entitiesFromConfig["IsActive"]),
+                        IsPrivate = bool.Parse(entitiesFromConfig["IsPrivate"]),
+                        Color = int.Parse(entitiesFromConfig["Color"])
+                    };
+
+                    return project as TEntity;
+                }
+
+                case Client client:
+                {
+                    client = new Client
+                    {
+                        Name = entitiesFromConfig["Name"],
+                        Description = entitiesFromConfig["Description"],
+                        IsActive = bool.Parse(entitiesFromConfig["IsActive"]),
+                        Email = entitiesFromConfig["Email"],
+                    };
+
+                    return client as TEntity;
+                }
+
+                case TaskType task:
+                {
+                    task = new TaskType
+                    {
+                        Name = entitiesFromConfig["Name"],
+                        IsActive = bool.Parse(entitiesFromConfig["IsActive"])
+                    };
+
+                    return task as TEntity;
+                }
+                default:
+                {
+                    return null;
+                }
             }
         }
 
-        private static async Task InitializeProjects(IServiceProvider serviceProvider, AppDbContext db)
+        private static async Task SaveListOfEntitiesToDbAsync<TEntity>(DbSet<TEntity> dbSet, List<TEntity> listOfEntities) where TEntity : class
         {
-            if (!await db.Projects.AnyAsync())
+            try
             {
-                var config = serviceProvider.GetRequiredService<IConfiguration>();
-                var projects = config.GetSection("Projects").GetChildren();
-                foreach (var project in projects)
+                if (listOfEntities.Count > 0)
                 {
-                    var newProject = new Project
-                    {
-                        Name = project["Name"],
-                        CreationDate = Convert.ToDateTime(project["CreationDate"]),
-                        LastUpdateDate = Convert.ToDateTime(project["LastUpdateDate"]),
-                        DaysBeforeStopEditTimeEntries = int.Parse(project["DaysBeforeStopEditTimeEntries"]),
-                        IsActive = bool.Parse(project["IsActive"]),
-                        IsPrivate = bool.Parse(project["IsPrivate"]),
-                        ClientId = int.Parse(project["ClientId"])
-                    };
-
-                    await db.Projects.AddAsync(newProject);
+                    await dbSet.AddRangeAsync(listOfEntities);
+                    await DbContext.SaveChangesAsync();
                 }
-
-                await db.SaveChangesAsync();
             }
+            catch (Exception)
+            {
+                //todo log
+            }
+        }
+
+        private static async Task<List<Member>> GetMembersList()
+        {
+            var membersList = new List<Member>();
+            var members = Configuration.GetSection($"Users:{Constants.UserTypeMembers}").GetChildren();
+            foreach (var member in members)
+            {
+                var memberUserName = member["UserName"];
+                var getMemberByUserNameAsync =
+                    await DbContext.Members.FirstOrDefaultAsync(x => x.User.UserName == memberUserName);
+                if (getMemberByUserNameAsync != null)
+                {
+                    membersList.Add(getMemberByUserNameAsync);
+                }
+            }
+
+            return membersList;
+        }
+
+        private static async Task<List<Project>> GetProjectList()
+        {
+            var projectsList = new List<Project>();
+            var projects = Configuration.GetSection("Projects").GetChildren();
+            foreach (var project in projects)
+            {
+                var projectName = project["Name"];
+                var getProjectByNAmeAsync = await DbContext.Projects.FirstOrDefaultAsync(x => x.Name == projectName);
+                if (getProjectByNAmeAsync != null)
+                {
+                    projectsList.Add(getProjectByNAmeAsync);
+                }
+            }
+
+            return projectsList;
+        }
+
+        private static async Task<List<Client>> GetClientList()
+        {
+            var clientsList = new List<Client>();
+            var clients = Configuration.GetSection("Clients").GetChildren();
+            foreach (var project in clients)
+            {
+                var clientName = project["Name"];
+                var getClientByNameAsync = await DbContext.Clients.FirstOrDefaultAsync(x => x.Name == clientName);
+                if (getClientByNameAsync != null)
+                {
+                    clientsList.Add(getClientByNameAsync);
+                }
+            }
+
+            return clientsList;
+        }
+
+        private static async Task<List<ProjectRole>> GetProjectRolesList()
+        {
+            var projectRolesList = new List<ProjectRole>();
+            foreach (var projectRole in Constants.ProjectRoles)
+            {
+                var projectRoleByNameAsync = await DbContext.ProjectRoles.FirstOrDefaultAsync(x => x.Name == projectRole);
+                if (projectRoleByNameAsync != null)
+                {
+                    projectRolesList.Add(projectRoleByNameAsync);
+
+                    if (projectRoleByNameAsync.Name == Constants.ProjectRoleManager)
+                    {
+                        ProjectRoleManagerId = projectRoleByNameAsync.Id;
+                    }
+                }
+            }
+
+            return projectRolesList;
+        }
+
+        private static void UpdateIsManagerRoleForMember(int projectRoleManagerId, List<MemberProjectRole> memberProjectRoleList, Member mprUser, ProjectRole mprProjectRole)
+        {
+            var checkManagerRoleFromDb = memberProjectRoleList.Exists(x => x.MemberId == mprUser.Id && x.RoleId == projectRoleManagerId);
+            var checkManagerRoleFromConfig = mprProjectRole.Name == Constants.ProjectRoleManager;
+
+            mprUser.User.IsManager = checkManagerRoleFromDb || checkManagerRoleFromConfig;
+
+            DbContext.Members.Update(mprUser);
         }
     }
 }
