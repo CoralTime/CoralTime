@@ -5,6 +5,7 @@ export class User {
 	defaultTaskId: number;
 	email: string;
 	fullName: string;
+	iconUrl: string;
 	id: number;
 	isActive: boolean;
 	isAdmin: boolean;
@@ -28,6 +29,7 @@ export class User {
 			this.defaultTaskId = data.defaultTaskId;
 			this.email = data.email;
 			this.fullName = data.fullName;
+			this.iconUrl = data.iconUrl;
 			this.id = data.id;
 			this.isAdmin = data.isAdmin;
 			this.isActive = data.isActive;

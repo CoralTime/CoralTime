@@ -94,7 +94,7 @@
                           styleClass="ct-user-info-col" [style]="{'width':'330px'}">
                     <ng-template let-col let-user="rowData" pTemplate="body">
                          <span class="ct-grid-userpic">
-                            <ct-user-pic [userId]="user.id"></ct-user-pic>
+                            <ct-user-pic [iconUrl]="user.iconUrl"></ct-user-pic>
                         </span>
                         <span class="ct-grid-link-text">
                             {{user.fullName}}

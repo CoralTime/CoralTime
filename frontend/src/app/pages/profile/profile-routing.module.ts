@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { ProfileComponent } from './profile.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
 import { ProfileSettingsComponent } from './profile-settings/profile-settings.component';
-import { UserPicGuideResolveService } from '../../shared/user-pic/user-pic-guide-resolve.service';
 
 const routes: Routes = [
 	{
@@ -16,17 +15,13 @@ const routes: Routes = [
 	{
 		path: 'settings',
 		component: ProfileSettingsComponent,
-		canActivate: [AuthGuard],
-		resolve: {
-			userPicGuide: UserPicGuideResolveService
-		}
+		canActivate: [AuthGuard]
 	}
 ];
 
 @NgModule({
 	imports: [RouterModule.forChild(routes)],
-	exports: [RouterModule],
-	providers: [UserPicGuideResolveService]
+	exports: [RouterModule]
 })
 
 export class ProfileRoutingModule {

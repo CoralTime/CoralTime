@@ -18,7 +18,7 @@ import { DatepickerModule } from './form/datepicker/datepicker.module';
 import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
 import { element } from 'protractor';
-import { UserPicModule } from './user-pic/user-pic.module';
+import { UserPicComponent } from './user-pic/user-pic.component';
 
 @NgModule({
 	imports: [
@@ -34,12 +34,12 @@ import { UserPicModule } from './user-pic/user-pic.module';
 		DatepickerModule,
 		DataTableModule,
 		MenuModule,
-		SharedFormModule,
-		UserPicModule
+		SharedFormModule
 	],
 	declarations: [
 		ReadMoreComponent,
-		LoadingBarComponent
+		LoadingBarComponent,
+		UserPicComponent
 	],
 	exports: [
 		CommonModule,
@@ -59,7 +59,7 @@ import { UserPicModule } from './user-pic/user-pic.module';
 		DataTableModule,
 		MenuModule,
 		SharedFormModule,
-		UserPicModule
+		UserPicComponent
 	]
 })
 
