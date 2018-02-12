@@ -46,7 +46,7 @@ namespace CoralTime.BL.Services
             var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper)).ToList();
             foreach (var item in allMembersView)
             {
-                _avatarService.AddIconUrlinMembeView(item);
+                _avatarService.AddIconUrlInMemberView(item);
             }
             return allMembersView;
         }

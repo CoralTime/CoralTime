@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using CoralTime.ViewModels.Projects;
 using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.Interfaces;
 
 namespace CoralTime.ViewModels.MemberProjectRoles
 {
-    public class MemberProjectRoleView
+    public class MemberProjectRoleView : IAvatarViewModel
     {
         [Key]
         public int Id { get; set; }
@@ -31,6 +32,8 @@ namespace CoralTime.ViewModels.MemberProjectRoles
         public bool IsProjectActive { get; set; }
 
         public bool IsProjectPrivate { get; set; }
+
+        public string IconUrl { get; set; }
 
         public IEnumerable<MemberView> Members { get; set; }
 

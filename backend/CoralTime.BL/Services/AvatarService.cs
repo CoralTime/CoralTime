@@ -5,6 +5,7 @@ using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
+using CoralTime.ViewModels.Interfaces;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
@@ -31,9 +32,14 @@ namespace CoralTime.BL.Services
             _isDemo = bool.Parse(_config["DemoSiteMode"]);
         }
 
-        public void AddIconUrlinMembeView(MemberView memberView)
+        public void AddIconUrlInMemberView(MemberView memberView)
         {
             memberView.IconUrl = GetIconUrl(memberView.Id);
+        }
+
+        public void AddIconUrlInViewModel(IAvatarViewModel memberView)
+        {
+            memberView.IconUrl = GetIconUrl(memberView.MemberId);
         }
 
         public MemberAvatarView GetAvatar(int memberId)

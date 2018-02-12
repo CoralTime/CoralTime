@@ -27,14 +27,16 @@ namespace CoralTime.BL.Services
         private readonly IMemberService _memberService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly bool _isDemo;
+        private readonly IAvatarService _avatarService;
 
-        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService)
+        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IAvatarService avatarService)
             : base(uow, mapper)
         {
             _config = config;
             _memberService = memberService;
             _httpContextAccessor = httpContextAccessor;
             _isDemo = bool.Parse(_config["DemoSiteMode"]);
+            _avatarService = avatarService;
         }
 
         public DateConvert[] GetDateFormats()
@@ -135,11 +137,18 @@ namespace CoralTime.BL.Services
                         .Where(m => m.User.IsActive);
             }
 
-            return projectMembers.Select(m => new ProfileProjectMemberView
+            var list = projectMembers.Select(m => new ProfileProjectMemberView
             {
                 MemberId = m.Id,
                 MemberName = m.FullName
             }).ToList();
+
+            foreach (var item in list)
+            {
+                _avatarService.AddIconUrlInViewModel(item);
+            }
+
+            return list;
         }
 
         public MemberView PatchNotifications(MemberNotificationView memberNotificationView)

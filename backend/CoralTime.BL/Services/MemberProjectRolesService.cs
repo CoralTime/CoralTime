@@ -17,11 +17,13 @@ namespace CoralTime.BL.Services
     public class MemberProjectRolesService : BaseService, IMemberProjectRolesService
     {
         private readonly IProjectService _projectService;
+        private readonly IAvatarService _avatarService;
 
-        public MemberProjectRolesService(UnitOfWork uow, IProjectService projectService, IMapper mapper)
+        public MemberProjectRolesService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IAvatarService avatarService)
             : base(uow, mapper)
         {
             _projectService = projectService;
+            _avatarService = avatarService;
         }
 
         public IEnumerable<MemberProjectRoleView> GetAllProjectRoles()
@@ -53,6 +55,7 @@ namespace CoralTime.BL.Services
                 var addGlobalProjectsRolesView = addGlobalProjectsRoles.Select(x => x.GetViewWithGlobalProjects(Mapper));
                 memberProjectRoleView.AddRange(addGlobalProjectsRolesView);
 
+                AddIconUrl(memberProjectRoleView);
                 return memberProjectRoleView;
             }
 
@@ -88,6 +91,7 @@ namespace CoralTime.BL.Services
                 var addGlobalProjectsRoles = AddGlobalProjectsRoles(memberProjectRoleView).Select(x => x.GetViewWithGlobalProjects(Mapper));
                 memberProjectRoleView.AddRange(addGlobalProjectsRoles);
 
+                AddIconUrl(memberProjectRoleView);
                 return memberProjectRoleView;
             }
 
@@ -103,9 +107,23 @@ namespace CoralTime.BL.Services
             // Get Global Projects. Add members to Global Projects. Add to result Global Projects.
             resultForMember.AddRange(AddGlobalProjectsRoles(resultForMember).Select(x => x.GetViewWithGlobalProjects(Mapper)));
 
+            AddIconUrl(resultForMember);
             return resultForMember;
 
             #endregion
+        }
+
+        private void AddIconUrl(IEnumerable<MemberProjectRoleView> list)
+        {
+            foreach (var item in list)
+            {
+                AddIconUrl(item);
+            }
+        }
+
+        private void AddIconUrl(MemberProjectRoleView item)
+        {
+            _avatarService.AddIconUrlInViewModel(item);
         }
 
         private List<MemberProjectRole> AddGlobalProjectsRoles(List<MemberProjectRoleView> memberProjRole)
@@ -162,6 +180,7 @@ namespace CoralTime.BL.Services
             }
 
             var memberProjRoleView = memberProjRole.GetView(Mapper);
+            AddIconUrl(memberProjRoleView);
             return memberProjRoleView;
         }
 
@@ -238,7 +257,10 @@ namespace CoralTime.BL.Services
                 UpdateIsManager(memberProjectRoleView.MemberId);
 
                 var memberProjectRoleByIdResult = Uow.MemberProjectRoleRepository.LinkedCacheGetById(memberProjectRole.Id);
-                return memberProjectRoleByIdResult.GetView(Mapper);
+                
+                var model = memberProjectRoleByIdResult.GetView(Mapper);
+                AddIconUrl(model);
+                return model;
             }
 
             throw new CoralTimeForbiddenException($"Member with id = {currentMember.Id} is not allowed to create MemberProjectRole on project with id = {memberProjectRoleView.ProjectId} and role with id = {memberProjectRoleView.RoleId}");
@@ -286,7 +308,10 @@ namespace CoralTime.BL.Services
                 UpdateIsManager(memberProjectRoleById.MemberId);
 
                 var memberProjectRoleByIdResult = Uow.MemberProjectRoleRepository.LinkedCacheGetById((int)projectRole.Id);
-                return memberProjectRoleByIdResult.GetView(Mapper);
+
+                var model = memberProjectRoleByIdResult.GetView(Mapper);
+                AddIconUrl(model);
+                return model;
             }
 
             throw new CoralTimeForbiddenException($"Member with id = {memberByUserName.Id} is not allowed to update projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
@@ -325,7 +350,9 @@ namespace CoralTime.BL.Services
 
                 var memberProjectRoleByIdResult = Uow.MemberProjectRoleRepository.LinkedCacheGetById(projectRole.Id);
 
-                return memberProjectRoleByIdResult.GetViewWithGlobalProjects(Mapper);
+                var model = memberProjectRoleByIdResult.GetViewWithGlobalProjects(Mapper);
+                AddIconUrl(model);
+                return model;
             }
 
             throw new CoralTimeForbiddenException($"Member with id = {memberByUserName.Id} is not allowed to patch projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");

@@ -1,4 +1,5 @@
-﻿using CoralTime.ViewModels.Member;
+﻿using CoralTime.ViewModels.Interfaces;
+using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 
@@ -11,6 +12,7 @@ namespace CoralTime.BL.Interfaces
         MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile);
         MemberAvatarView GetAvatar(int memberId);
         MemberAvatarView GetIcon(int memberId);
-        void AddIconUrlinMembeView(MemberView memberView);
+        void AddIconUrlInMemberView(MemberView memberView);
+        void AddIconUrlInViewModel(IAvatarViewModel memberView);
     }
 }
