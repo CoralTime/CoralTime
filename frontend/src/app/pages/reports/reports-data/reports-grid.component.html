@@ -2,13 +2,13 @@
     <div *ngIf="groupById == 1 && gridData.items.length">
         Project: <span>{{gridData?.projectName}}</span>
     </div>
-    <div *ngIf="groupById == 2 && gridData.items.length">
+    <div *ngIf="groupById == 2 && gridData?.items.length">
         User: <span>{{gridData?.memberName}}</span>
     </div>
-    <div *ngIf="groupById == 3 && gridData.items.length">
+    <div *ngIf="groupById == 3 && gridData?.items.length">
         Date: <span>{{formatDate(gridData?.date)}}</span>
     </div>
-    <div *ngIf="groupById == 4 && gridData.items.length">
+    <div *ngIf="groupById == 4 && gridData?.items.length">
         <label *ngIf="gridData.clientId !== 0">Client: </label><span>{{gridData?.clientName}}</span>
     </div>
 </div>
@@ -61,7 +61,7 @@
     </p-column>
 </p-dataTable>
 
-<div class="ct-grid-container ct-total-time-container" *ngIf="groupById != 0 && gridData.items.length > 0">
+<div class="ct-grid-container ct-total-time-container" *ngIf="groupById != 0 && gridData?.items.length > 0">
     <label>
         Total for
         <span>{{gridData?.projectName || gridData?.memberName || formatDate(gridData?.date) || gridData?.clientName}}</span>

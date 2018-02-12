@@ -35,7 +35,7 @@
                                          (closed)="toggleRangeDatepicker()"></ct-range-datepicker>
                     <div class="ct-btn-block">
                         <div class="ct-export-as">
-                            <span class="ct-export-button" (click)="menu.toggleMenu()"   title="Export reports"></span>
+                            <span class="ct-export-button" (click)="menu.toggleMenu()" title="Export reports"></span>
                             <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu">
                                 <ct-menu-item>
                                     <a md-ripple (click)="exportAs(0)">Export as Excel</a>
@@ -49,18 +49,18 @@
                             </ct-menu>
                         </div>
                         <span class="ct-print-button" (click)="checkDataAndPrintPage()" title="Print page"></span>
-                        <span class="ct-send-button" (click)="openSendReportsDialog()"  title="Send reports"></span>
+                        <span class="ct-send-button" (click)="openSendReportsDialog()" title="Send reports"></span>
                     </div>
                     <div class="ct-columns-settings ct-btn-block">
-                        <ct-multiselect class="ct-columns-multiselect ct-columns-button"  title="Columns settings"
-                                [styleClass]="'ct-reports-settings-multiselect'"
-                                [(ngModel)]="reportFilters.showColumnIds"
-                                (onSubmitAction)="submitSettings(reportFilters.showColumnIds)"
-                                [showSubmitButton]="true"
-                                [showActionsPanel]="false"
-                                [showFilterSearch]="false"
-                                [appendTo]="'body'"
-                                [options]="showColumnItems">
+                        <ct-multiselect class="ct-columns-multiselect ct-columns-button" title="Columns settings"
+                                        [styleClass]="'ct-reports-settings-multiselect'"
+                                        [(ngModel)]="reportFilters.showColumnIds"
+                                        (onSubmitAction)="submitSettings(reportFilters.showColumnIds)"
+                                        [showSubmitButton]="true"
+                                        [showActionsPanel]="false"
+                                        [showFilterSearch]="false"
+                                        [appendTo]="'body'"
+                                        [options]="showColumnItems">
                         </ct-multiselect>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                                [options]="groupByItems">
                     </ct-select>
                 </div>
-                <span class="ct-close" (click)="resetFilters()"   title="Reset filters">Reset</span>
+                <span class="ct-close" (click)="resetFilters()" title="Reset filters">Reset</span>
             </div>
         </div>
 
@@ -128,11 +128,12 @@
             Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}
         </div>
         <div class="ct-reports-data" #scrollContainer>
-            <ct-reports-grid *ngFor="let gridData of pagedGridData"
+            <ct-reports-grid *ngFor="let grid of gridData"
                              class="ct-reports-grid"
+                             [gridData]="grid.gridData"
                              [groupById]="groupModel?.id"
-                             [showColumnIds]="showColumnIds"
-                             [gridData]="gridData"></ct-reports-grid>
+                             [rowsNumber]="grid.rows"
+                             [showColumnIds]="showColumnIds"></ct-reports-grid>
 
             <div *ngIf="reportsGridData?.reportsGridView.length == 0" class="ct-nodata">
                 Sorry, you don't have any reports at this time period.

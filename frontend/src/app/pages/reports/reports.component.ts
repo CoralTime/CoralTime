@@ -4,7 +4,7 @@ import {
 	GroupByItem, ClientDetail, ReportFilters, ReportGridView
 } from '../../services/reposts.service';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
-import { ArrayUtils, ObjectUtils } from '../../core/object-utils';
+import { ArrayUtils } from '../../core/object-utils';
 import { AuthService } from '../../core/auth/auth.service';
 import { DateUtils } from '../../models/calendar';
 import { DatePeriod, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
@@ -17,6 +17,7 @@ import { ImpersonationService } from '../../services/impersonation.service';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 import { LoadingIndicatorService } from '../../core/loading-indicator.service';
 import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
+import { ReportGridData } from './reports-data/reports-grid.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -33,8 +34,7 @@ export class ReportsComponent implements OnInit {
 	reportFilters: ReportFilters;
 
 	isGridLoading: boolean = false;
-	gridNumber: number = 0;
-	pagedGridData: ReportGridView[] = [];
+	gridData: ReportGridData[] = [];
 
 	clientItems: CustomSelectItem[] = [];
 	clients: ClientDetail[] = [];
@@ -164,7 +164,7 @@ export class ReportsComponent implements OnInit {
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
 				this.reportsGridData = res;
-				this.pagedGridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, [], 0);
+				this.gridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, []);
 			},
 			() => {
 				this.notificationService.danger('Error loading reports grid.');
@@ -183,28 +183,45 @@ export class ReportsComponent implements OnInit {
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
 	}
 
-	private getNextGridDataPage(gridData: ReportGridView[], currentGridData: ReportGridView[], gridNumber: number): ReportGridView[] {
-		if (gridNumber >= gridData.length) {
-			return currentGridData;
+	private isAllGridRowsShown(): boolean {
+		let gridData = this.reportsGridData.reportsGridView;
+		return this.gridData.length >= gridData.length
+			&& this.gridData[this.gridData.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
+	}
+
+	private getNextGridDataPage(gridData: ReportGridView[], gridDataToShow: ReportGridData[]): ReportGridData[] {
+		if (this.isAllGridRowsShown()) {
+			return;
 		}
 
-		let rowsNumber: number = -this.getRowsNumberFromGrid([currentGridData[currentGridData.length - 1]]);
-		currentGridData.splice(currentGridData.length - 1, 1);
+		let gridNumber = Math.max(gridDataToShow.length - 1, 0);
+		let rowsInGrid = gridDataToShow[gridNumber] ? gridDataToShow[gridNumber].rows : 0;
+		let rowsLoaded: number = 0;
 
-		while (gridNumber < gridData.length && rowsNumber + gridData[gridNumber].items.length < ROWS_TOTAL_NUMBER) {
-			currentGridData.push(gridData[gridNumber]);
-			rowsNumber += gridData[gridNumber].items.length;
+		if (gridDataToShow[gridNumber] && rowsInGrid < gridData[gridNumber].items.length) {
+			gridDataToShow[gridNumber].rows = Math.min(gridData[gridNumber].items.length, rowsInGrid + ROWS_TOTAL_NUMBER);
+			rowsLoaded += gridDataToShow[gridNumber].rows - rowsInGrid;
 			gridNumber++;
 		}
 
-		if (gridNumber + 1 < gridData.length) {
-			let last = ObjectUtils.deepCopy(gridData[gridNumber]);
-			last.items = last.items.splice(0, ROWS_TOTAL_NUMBER - rowsNumber);
-			currentGridData.push(last);
+
+		while (gridNumber < gridData.length && rowsLoaded + gridData[gridNumber].items.length < ROWS_TOTAL_NUMBER) {
+			gridDataToShow.push({
+				gridData: gridData[gridNumber],
+				rows: gridData[gridNumber].items.length
+			});
+			rowsLoaded += gridDataToShow[gridNumber].rows;
+			gridNumber++;
 		}
 
-		this.gridNumber = gridNumber;
-		return currentGridData;
+		if (gridNumber + 1 <= gridData.length) {
+			gridDataToShow.push({
+				gridData: gridData[gridNumber],
+				rows: ROWS_TOTAL_NUMBER - rowsLoaded
+			});
+		}
+
+		return gridDataToShow;
 	}
 
 	private getRowsNumberFromGrid(gridData: ReportGridView[]): number {
@@ -220,15 +237,27 @@ export class ReportsComponent implements OnInit {
 		return rowsNumber;
 	}
 
+	private showAllReportsGrid(gridData: ReportGridView[]): ReportGridData[] {
+		let gridDataToShow = [];
+		gridData.forEach((grid: ReportGridView) => {
+			gridDataToShow.push({
+				gridData: grid,
+				rows: grid.items.length
+			});
+		});
+
+		return gridDataToShow;
+	}
+
 	@HostListener('window:scroll')
 	onWindowScroll(): void {
-		if (!this.isGridLoading && this.gridNumber < this.pagedGridData.length
+		if (!this.isGridLoading && !this.isAllGridRowsShown()
 			&& window.scrollY > this.scrollContainer.nativeElement.offsetHeight - window.innerHeight - 20) {
 			this.isGridLoading = true;
 			this.loadingIndicatorService.start();
 
 			setTimeout(() => {
-				this.pagedGridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, this.pagedGridData, this.gridNumber);
+				this.getNextGridDataPage(this.reportsGridData.reportsGridView, this.gridData);
 				this.loadingIndicatorService.complete();
 				this.isGridLoading = false;
 			}, 0);
@@ -418,8 +447,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private printPage(): void {
-		this.pagedGridData = this.reportsGridData.reportsGridView;
-		this.gridNumber = this.pagedGridData.length;
+		this.gridData = this.showAllReportsGrid(this.reportsGridData.reportsGridView);
 		setTimeout(() => window.print(), 0);
 	}
 
