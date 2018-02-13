@@ -13,8 +13,8 @@ export interface ReportDropdowns {
 
 export class ReportFilters {
 	clientIds: number[];
-	dateFrom: Date | string;
-	dateTo: Date | string;
+	dateFrom: string;
+	dateTo: string;
 	groupById: number;
 	memberIds: number[];
 	projectIds: number[];

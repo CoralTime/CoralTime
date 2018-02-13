@@ -111,47 +111,6 @@ namespace CoralTime.BL.Services
             #endregion
         }
 
-        public TimeEntryView Patch(TimeEntryTime timeEntryTime, string userName)
-        {
-            var timeEntryById = GetRelatedTimeEntryById(timeEntryTime.Id);
-
-            var timeEntryView = new TimeEntryView
-            {
-                ProjectId = timeEntryById.ProjectId,
-                MemberId = timeEntryById.MemberId,
-                TaskTypesId = timeEntryById.TaskTypesId,
-                Date = timeEntryById.Date
-            };
-
-            // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, userName, out var relatedMemberByName, out var relatedProjectById);
-
-            // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
-            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
-
-            // Check correct timing values from TimeEntryView.
-            CheckCorrectTimingValues(timeEntryTime.TimeFrom, timeEntryTime.TimeTo, timeEntryTime.Time);
-
-            // Update values for TimeEntryTime.
-            UpdateValuesForTimeEntryTime(timeEntryById, timeEntryTime);
-
-            #region Update and Save entity to DB.
-
-            try
-            {
-                Uow.TimeEntryRepository.Update(timeEntryById);
-                Uow.Save();
-
-                return timeEntryById.GetViewTimeEntry(userName, Mapper);
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating TimeEntry", e);
-            }
-
-            #endregion
-        }
-
         public void Delete(int timeEntryId, string userName)
         {
             var timeEntryById = GetRelatedTimeEntryById(timeEntryId);
@@ -425,14 +384,6 @@ namespace CoralTime.BL.Services
             timeEntry.IsFromToShow = timeEntryView.IsFromToShow;
 
             #endregion
-        }
-
-        private static void UpdateValuesForTimeEntryTime(TimeEntry timeEntry, TimeEntryTime timeEntryTime)
-        {
-            timeEntry.TimeFrom = timeEntryTime.TimeFrom ?? 0;
-            timeEntry.TimeTo = timeEntryTime.TimeTo ?? 0;
-            timeEntry.Time = timeEntryTime.Time;
-            timeEntry.TimeTimerStart = timeEntryTime.TimeTimerStart;
         }
 
         #endregion

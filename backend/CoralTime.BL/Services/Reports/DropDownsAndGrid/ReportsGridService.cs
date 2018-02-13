@@ -150,9 +150,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
 
             var timeEntriesGroupByClients = timeEntriesForGrouping
-                .GroupBy(i => i.Project.Client)
+                .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key ?? CreateWithOutClientInstance(), key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
 
@@ -272,8 +272,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var withoutClient = new Client
             {
                 Id = WithoutClient.Id,
+                Name = WithoutClient.Name,
                 Creator = getAdminUserById,
-                LastEditor = getAdminUserById
+                LastEditor = getAdminUserById,
+                CreationDate = DateTime.Now,
+                CreatorId = getAdminUserById.Id,
+                LastEditorUserId = getAdminUserById.Id,
+                LastUpdateDate = DateTime.Now,
             };
 
             return withoutClient;

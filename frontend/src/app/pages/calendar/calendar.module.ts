@@ -9,7 +9,7 @@ import { CalendarDayComponent } from './calendar-views/calendar-day/calendar-day
 import { EntryTimeModule } from './entry-time/entry-time.module';
 import { SharedModule } from '../../shared/shared.module';
 import { CalendarProjectsService } from './calendar-projects.service';
-import { ConfirmationComponent } from './entry-time/confirmation/confirmation.component';
+import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
 import { DragDropModule } from 'primeng/primeng';
 
 @NgModule({
@@ -24,8 +24,7 @@ import { DragDropModule } from 'primeng/primeng';
 		CalendarDayComponent,
 		CalendarTaskComponent,
 		CalendarDailyViewComponent,
-		CalendarWeeklyViewComponent,
-		ConfirmationComponent
+		CalendarWeeklyViewComponent
 	],
 	entryComponents: [
 		ConfirmationComponent

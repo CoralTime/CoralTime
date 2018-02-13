@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import {
 	ReportsService, ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters
+	GroupByItem, ClientDetail, ReportFilters, ReportGridView
 } from '../../services/reposts.service';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
 import { ArrayUtils } from '../../core/object-utils';
@@ -15,8 +15,13 @@ import { ReportsSendComponent, SendReportsFormModel } from './reports-send/repor
 import { NotificationService } from '../../core/notification.service';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
+import { LoadingIndicatorService } from '../../core/loading-indicator.service';
+import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
+import { ReportGridData } from './reports-data/reports-grid.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+
+const ROWS_TOTAL_NUMBER = 50;
 
 @Component({
 	selector: 'ct-reports',
@@ -27,6 +32,9 @@ export class ReportsComponent implements OnInit {
 	reportDropdowns: ReportDropdowns;
 	reportsGridData: ReportGrid;
 	reportFilters: ReportFilters;
+
+	isGridLoading: boolean = false;
+	gridData: ReportGridData[] = [];
 
 	clientItems: CustomSelectItem[] = [];
 	clients: ClientDetail[] = [];
@@ -65,12 +73,16 @@ export class ReportsComponent implements OnInit {
 	oldDateString: string;
 	userInfo: User;
 
+	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
+
+	private reportsConfirmationRef: MdDialogRef<ConfirmationComponent>;
 	private reportsQueryRef: MdDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MdDialogRef<ReportsSendComponent>;
 
 	constructor(public dialog: MdDialog,
 	            private authService: AuthService,
 	            private impersonationService: ImpersonationService,
+	            private loadingIndicatorService: LoadingIndicatorService,
 	            private notificationService: NotificationService,
 	            private rangeDatepickerService: RangeDatepickerService,
 	            private reportsService: ReportsService,
@@ -134,6 +146,8 @@ export class ReportsComponent implements OnInit {
 		];
 	}
 
+	// GRID DISPLAYING
+
 	getReportGrid(isCustomQuery?: boolean): void {
 		this.reportFilters.dateFrom = this.convertMomentToString(this.datePeriod.dateFrom);
 		this.reportFilters.dateTo = this.convertMomentToString(this.datePeriod.dateTo)
@@ -150,10 +164,10 @@ export class ReportsComponent implements OnInit {
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
 				this.reportsGridData = res;
+				this.gridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, []);
 			},
 			() => {
 				this.notificationService.danger('Error loading reports grid.');
-				this.datePeriod = new DatePeriod(null);
 			});
 	}
 
@@ -167,6 +181,87 @@ export class ReportsComponent implements OnInit {
 		}
 
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
+	}
+
+	private isAllGridRowsShown(): boolean {
+		let gridData = this.reportsGridData.reportsGridView;
+		return this.gridData.length >= gridData.length
+			&& this.gridData[this.gridData.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
+	}
+
+	private getNextGridDataPage(gridData: ReportGridView[], gridDataToShow: ReportGridData[]): ReportGridData[] {
+		if (this.isAllGridRowsShown()) {
+			return;
+		}
+
+		let gridNumber = Math.max(gridDataToShow.length - 1, 0);
+		let rowsInGrid = gridDataToShow[gridNumber] ? gridDataToShow[gridNumber].rows : 0;
+		let rowsLoaded: number = 0;
+
+		if (gridDataToShow[gridNumber] && rowsInGrid < gridData[gridNumber].items.length) {
+			gridDataToShow[gridNumber].rows = Math.min(gridData[gridNumber].items.length, rowsInGrid + ROWS_TOTAL_NUMBER);
+			rowsLoaded += gridDataToShow[gridNumber].rows - rowsInGrid;
+			gridNumber++;
+		}
+
+
+		while (gridNumber < gridData.length && rowsLoaded + gridData[gridNumber].items.length < ROWS_TOTAL_NUMBER) {
+			gridDataToShow.push({
+				gridData: gridData[gridNumber],
+				rows: gridData[gridNumber].items.length
+			});
+			rowsLoaded += gridDataToShow[gridNumber].rows;
+			gridNumber++;
+		}
+
+		if (gridNumber + 1 <= gridData.length) {
+			gridDataToShow.push({
+				gridData: gridData[gridNumber],
+				rows: ROWS_TOTAL_NUMBER - rowsLoaded
+			});
+		}
+
+		return gridDataToShow;
+	}
+
+	private getRowsNumberFromGrid(gridData: ReportGridView[]): number {
+		if (!gridData[0]) {
+			return 0;
+		}
+
+		let rowsNumber: number = 0;
+		gridData.forEach((grid: ReportGridView) => {
+			rowsNumber += grid.items.length;
+		});
+
+		return rowsNumber;
+	}
+
+	private showAllReportsGrid(gridData: ReportGridView[]): ReportGridData[] {
+		let gridDataToShow = [];
+		gridData.forEach((grid: ReportGridView) => {
+			gridDataToShow.push({
+				gridData: grid,
+				rows: grid.items.length
+			});
+		});
+
+		return gridDataToShow;
+	}
+
+	@HostListener('window:scroll')
+	onWindowScroll(): void {
+		if (!this.isGridLoading && !this.isAllGridRowsShown()
+			&& window.scrollY > this.scrollContainer.nativeElement.offsetHeight - window.innerHeight - 20) {
+			this.isGridLoading = true;
+			this.loadingIndicatorService.start();
+
+			setTimeout(() => {
+				this.getNextGridDataPage(this.reportsGridData.reportsGridView, this.gridData);
+				this.loadingIndicatorService.complete();
+				this.isGridLoading = false;
+			}, 0);
+		}
 	}
 
 	// QUERY ACTIONS
@@ -291,6 +386,11 @@ export class ReportsComponent implements OnInit {
 	// SEND REPORTS
 
 	openSendReportsDialog(): void {
+		if (this.reportsGridData.grandActualTime === 0) {
+			this.notificationService.danger('There is no data to export.');
+			return;
+		}
+
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
 			dateFormatId: this.dateFormatId,
@@ -320,7 +420,43 @@ export class ReportsComponent implements OnInit {
 
 	// GENERAL
 
+	checkDataAndPrintPage(): void {
+		if (this.reportsGridData.grandActualTime === 0) {
+			this.notificationService.danger('There is no data to print.');
+			return;
+		}
+
+		if (this.getRowsNumberFromGrid(this.reportsGridData.reportsGridView) > 300) {
+			this.openConfirmationDialog();
+		} else {
+			this.printPage();
+		}
+	}
+
+	private openConfirmationDialog(): void {
+		this.reportsConfirmationRef = this.dialog.open(ConfirmationComponent);
+		this.reportsConfirmationRef.componentInstance.message = 'Too much data can lead to display problems. Would you like to continue?';
+
+		this.reportsConfirmationRef.componentInstance.onSubmit.subscribe((confirm: boolean) => {
+			if (confirm) {
+				this.printPage();
+			}
+
+			this.reportsConfirmationRef.close();
+		});
+	}
+
+	private printPage(): void {
+		this.gridData = this.showAllReportsGrid(this.reportsGridData.reportsGridView);
+		setTimeout(() => window.print(), 0);
+	}
+
 	exportAs(fileTypeId: number): void {
+		if (this.reportsGridData.grandActualTime === 0) {
+			this.notificationService.danger('There is no data to export.');
+			return;
+		}
+
 		let filters = {
 			dateFormatId: this.userInfo.dateFormatId,
 			fileTypeId: fileTypeId,
@@ -332,10 +468,6 @@ export class ReportsComponent implements OnInit {
 
 	formatDate(utcDate: Moment): string {
 		return this.dateFormat ? utcDate.format(this.dateFormat) : utcDate.toDate().toLocaleDateString();
-	}
-
-	printPage(): void {
-		window.print();
 	}
 
 	resetFilters(): void {

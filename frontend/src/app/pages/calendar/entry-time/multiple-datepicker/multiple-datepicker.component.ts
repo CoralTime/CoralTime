@@ -15,15 +15,15 @@ export class MultipleDatepickerComponent {
 	@Input() plannedTime: Time;
 	@Input() timeEntry: TimeEntry;
 
-	@Output() onSubmit: EventEmitter<Date[]> = new EventEmitter();
+	@Output() onSubmit: EventEmitter<string[]> = new EventEmitter();
 
-	dateList: Date[];
+	dateList: string[];
 	isCalendarShown: boolean = true;
 
 	dateOnChange(date: Moment[]): void {
 		this.dateList = [];
 		date.forEach((m: Moment) => {
-			this.dateList.push(DateUtils.convertMomentToUTC(m));
+			this.dateList.push(DateUtils.formatDateToString(m));
 		});
 	}
 
