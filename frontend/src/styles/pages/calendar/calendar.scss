@@ -183,6 +183,7 @@ $calendarPhoneWidth: 809px;
         background-color: #f1f1f1;
         cursor: pointer;
         opacity: 0;
+        z-index: 1;
       }
 
       .ct-calendar-task:hover .ct-menu-open-link, .ct-menu-open-link.ct-menu-opened {
