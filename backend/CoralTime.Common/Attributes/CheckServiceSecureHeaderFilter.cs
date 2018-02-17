@@ -11,7 +11,7 @@ namespace CoralTime.Common.Attributes
 
         protected override string GetSecureHeaderName()
         {
-            return SecureHeaderServiceName;
+            return HeaderSecureServiceName;
         }
 
         protected override string GetSecureHeaderValue()

@@ -8,6 +8,7 @@ using System.Linq;
 using CoralTime.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using CoralTime.Common.Constants;
+using Microsoft.Extensions.Primitives;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -52,47 +53,40 @@ namespace CoralTime.DAL.Repositories
 
         private string GetUserNameWithImpersonation(IHttpContextAccessor httpContextAccessor)
         {
-            var isImpersonatedUser = httpContextAccessor?.HttpContext?.Request?.Headers?.TryGetValue(Constants.ImpersonatedUserNameHeader, out var inpersonatedUserName)?? false;
-
-            var currentUserClaims = httpContextAccessor?.HttpContext?.User?.Claims;
-
-            if (!isImpersonatedUser)
+            if (HasAuthorizationHeader(httpContextAccessor))
             {
-                var currentUserName = currentUserClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name).Value;
-                return currentUserName;
+                var currentUserClaims = httpContextAccessor?.HttpContext?.User?.Claims;
+
+                if (HasImpersonationHeader(httpContextAccessor, out var headerImpersonatedUserName))
+                {
+                    if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.ApplicationRoleAdmin)
+                    {
+                        throw new CoralTimeForbiddenException($"You can not impersonate user with userName {headerImpersonatedUserName}");
+                    }
+
+                    return headerImpersonatedUserName;
+                }
+
+                var headerAuthorizationUserName = currentUserClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name).Value;
+                return headerAuthorizationUserName;
             }
 
-            if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.ApplicationRoleAdmin)
-            {
-                throw new CoralTimeForbiddenException($"You can not impersonate user with userName {inpersonatedUserName}");
-            }
-
-            return inpersonatedUserName.ToString();
+            return string.Empty;
         }
 
-        //public int Save<T>()
-        //{
-        //    return _context.SaveChanges();
-        //}
+        private static bool HasAuthorizationHeader(IHttpContextAccessor httpContextAccessor)
+        {
+            return GetHeaderValue(httpContextAccessor, Constants.HeaderAuthorizationName, out var headerAuthorizationValue);
+        }
 
-        //private bool _disposed;
+        private static bool HasImpersonationHeader(IHttpContextAccessor httpContextAccessor, out StringValues headerImpersonatedUserValue)
+        {
+            return GetHeaderValue(httpContextAccessor, Constants.ImpersonatedUserNameHeader, out headerImpersonatedUserValue);
+        }
 
-        //protected virtual void Dispose(bool disposing)
-        //{
-        //    if (!_disposed)
-        //    {
-        //        if (disposing)
-        //        {
-        //            _context.Dispose();
-        //        }
-        //    }
-        //    _disposed = true;
-        //}
-
-        //public void Dispose()
-        //{
-        //    Dispose(true);
-        //    GC.SuppressFinalize(this);
-        //}
+        private static bool GetHeaderValue(IHttpContextAccessor httpContextAccessor, string headerName, out StringValues headerValue)
+        {
+            return httpContextAccessor?.HttpContext?.Request?.Headers?.TryGetValue(headerName, out headerValue) ?? false;
+        }
     }
 }
