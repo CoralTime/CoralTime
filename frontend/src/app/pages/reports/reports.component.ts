@@ -183,14 +183,14 @@ export class ReportsComponent implements OnInit {
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
 	}
 
-	private isAllGridRowsShown(): boolean {
+	private isAllGridRowsShown(gridDataShown: ReportGridData[]): boolean {
 		let gridData = this.reportsGridData.reportsGridView;
-		return this.gridData.length === gridData.length
-			&& this.gridData[this.gridData.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
+		return gridDataShown.length === gridData.length
+			&& gridDataShown[gridDataShown.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
 	}
 
 	private getNextGridDataPage(gridData: ReportGridView[], gridDataToShow: ReportGridData[]): ReportGridData[] {
-		if (this.isAllGridRowsShown()) {
+		if (this.isAllGridRowsShown(gridDataToShow)) {
 			return gridDataToShow;
 		}
 
@@ -253,7 +253,7 @@ export class ReportsComponent implements OnInit {
 
 	@HostListener('window:scroll')
 	onWindowScroll(): void {
-		if (!this.isGridLoading && !this.isAllGridRowsShown()
+		if (!this.isGridLoading && !this.isAllGridRowsShown(this.gridData)
 			&& window.scrollY > this.scrollContainer.nativeElement.offsetHeight - window.innerHeight - 20) {
 			this.isGridLoading = true;
 			this.loadingIndicatorService.start();
