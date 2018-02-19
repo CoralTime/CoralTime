@@ -185,26 +185,27 @@ export class ReportsComponent implements OnInit {
 
 	private isAllGridRowsShown(): boolean {
 		let gridData = this.reportsGridData.reportsGridView;
-		return this.gridData.length >= gridData.length
+		return this.gridData.length === gridData.length
 			&& this.gridData[this.gridData.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
 	}
 
 	private getNextGridDataPage(gridData: ReportGridView[], gridDataToShow: ReportGridData[]): ReportGridData[] {
 		if (this.isAllGridRowsShown()) {
-			return;
+			return gridDataToShow;
 		}
 
-		let gridNumber = Math.max(gridDataToShow.length - 1, 0);
+		let gridNumber = gridDataToShow.length - 1;
 		let rowsInGrid = gridDataToShow[gridNumber] ? gridDataToShow[gridNumber].rows : 0;
 		let rowsLoaded: number = 0;
 
+		// when some rows in last grid already loaded
 		if (gridDataToShow[gridNumber] && rowsInGrid < gridData[gridNumber].items.length) {
 			gridDataToShow[gridNumber].rows = Math.min(gridData[gridNumber].items.length, rowsInGrid + ROWS_TOTAL_NUMBER);
 			rowsLoaded += gridDataToShow[gridNumber].rows - rowsInGrid;
-			gridNumber++;
 		}
+		gridNumber++;
 
-
+		// when full grid can be loaded
 		while (gridNumber < gridData.length && rowsLoaded + gridData[gridNumber].items.length < ROWS_TOTAL_NUMBER) {
 			gridDataToShow.push({
 				gridData: gridData[gridNumber],
@@ -214,6 +215,7 @@ export class ReportsComponent implements OnInit {
 			gridNumber++;
 		}
 
+		// load the rest rows of last grid
 		if (gridNumber + 1 <= gridData.length) {
 			gridDataToShow.push({
 				gridData: gridData[gridNumber],
