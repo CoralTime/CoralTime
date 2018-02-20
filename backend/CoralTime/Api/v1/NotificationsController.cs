@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
-    [ServiceFilter(typeof(CheckNotificationSecureHeaderFilter))]
+    [ServiceFilter(typeof(CheckSecureHeaderNotificationFilter))]
     public class NotificationsController : BaseController<NotificationsController, INotificationService>
     {
         public NotificationsController(INotificationService service, ILogger<NotificationsController> logger)

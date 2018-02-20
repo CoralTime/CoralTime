@@ -35,9 +35,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 return reportsGridTimeEntry;
             }
 
-            var timeEntriesGroupByNone = timeEntriesForGrouping
+            var timeEntriesGroupByNone = timeEntriesForGrouping.ToList()
                 .GroupBy(x => x.Id)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
 
@@ -63,10 +63,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 return reportsGridProjects;
             }
 
-            var timeEntriesGroupByProjects = timeEntriesForGrouping
+            var timeEntriesGroupByProjects = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Project)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
 
@@ -92,10 +92,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 return reportsGridUsers;
             }
 
-            var timeEntriesGroupByUsers = timeEntriesForGrouping
+            var timeEntriesGroupByUsers = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Member)
                 .OrderBy(x => x.Key.FullName)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
 
@@ -121,9 +121,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 return reportsGridDates;
             }
 
-            var timeEntriesGroupByDate = timeEntriesForGrouping
+            var timeEntriesGroupByDate = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Date)
-                .ToDictionary(key => key.Key, key => key.Select(value => value));
+                .ToDictionary(key => key.Key, key => key.AsEnumerable());
 
             var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
 
@@ -149,10 +149,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 return reportsGridClients;
             }
 
-            var timeEntriesGroupByClients = timeEntriesForGrouping
+            var timeEntriesGroupByClients = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
 

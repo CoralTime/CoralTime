@@ -76,7 +76,7 @@ namespace CoralTime.DAL.Repositories
 
         private static bool HasAuthorizationHeader(IHttpContextAccessor httpContextAccessor)
         {
-            return GetHeaderValue(httpContextAccessor, Constants.HeaderAuthorizationName, out var headerAuthorizationValue);
+            return GetHeaderValue(httpContextAccessor, Constants.HeaderNameAuthorization, out var headerAuthorizationValue);
         }
 
         private static bool HasImpersonationHeader(IHttpContextAccessor httpContextAccessor, out StringValues headerImpersonatedUserValue)

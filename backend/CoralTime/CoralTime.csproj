@@ -16,6 +16,7 @@
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <Compile Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <Compile Remove="Configs\**" />
@@ -28,6 +29,7 @@
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <Content Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <Content Remove="Configs\**" />
@@ -40,6 +42,7 @@
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <EmbeddedResource Remove="Configs\**" />
@@ -52,6 +55,7 @@
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <None Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <None Remove="Configs\**" />

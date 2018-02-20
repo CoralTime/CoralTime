@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
-    [ServiceFilter(typeof(CheckServiceSecureHeaderFilter))]
+    [ServiceFilter(typeof(CheckSecureHeaderServiceFilter))]
     public class ServiceController : BaseController<ServiceController, IMemberService>
     {
         private readonly IMemberProjectRoleService _roleService;

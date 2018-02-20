@@ -212,8 +212,8 @@ namespace CoralTime
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
             services.AddScoped<IAvatarService, AvatarService>();
             services.AddScoped<IRefreshDataBaseService, RefreshDataBaseService>();
-            services.AddScoped<CheckServiceSecureHeaderFilter>();
-            services.AddScoped<CheckNotificationSecureHeaderFilter>();
+            services.AddScoped<CheckSecureHeaderServiceFilter>();
+            services.AddScoped<CheckSecureHeaderNotificationFilter>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)

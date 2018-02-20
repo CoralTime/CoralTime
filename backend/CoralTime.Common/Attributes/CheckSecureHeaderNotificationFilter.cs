@@ -3,20 +3,19 @@ using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.Common.Attributes
 {
-    public class CheckServiceSecureHeaderFilter : BaseCheckSecureHeaderFilter
+    public class CheckSecureHeaderNotificationFilter : BaseCheckSecureHeaderFilter
     {
-        public CheckServiceSecureHeaderFilter(IConfiguration config) : base(config)
-        {
-        }
+        public CheckSecureHeaderNotificationFilter(IConfiguration config) 
+            : base(config) { }
 
         protected override string GetSecureHeaderName()
         {
-            return HeaderSecureServiceName;
+            return SecureHeaderNameNotification; 
         }
 
         protected override string GetSecureHeaderValue()
         {
-            return _config["ServiceSecureHeaderValue"];
+            return _config[SecureHeaderValueNotification];
         }
     }
 }
