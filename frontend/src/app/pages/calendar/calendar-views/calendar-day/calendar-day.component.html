@@ -2,7 +2,7 @@
      class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter">
     <div class="ct-calendar-day-title" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
         <div class="ct-calendar-date">
-            {{dayInfo.date.getDate()}}
+            {{getDateNumber(dayInfo.date)}}
             <span>{{getDateString(dayInfo.date)}}</span>
         </div>
 

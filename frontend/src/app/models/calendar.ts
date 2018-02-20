@@ -2,7 +2,7 @@ import * as moment from 'moment';
 import Moment = moment.Moment;
 
 export class CalendarDay {
-	date: Date;
+	date: string;
 	timeEntries: TimeEntry[];
 	plannedTime: number;
 	trackedTime: number;
@@ -20,7 +20,7 @@ export class CalendarDay {
 
 export class TimeEntry {
 	color: number;
-	date: Date;
+	date: string;
 	description: string;
 	id: number;
 	isFromToShow: boolean;
@@ -65,12 +65,17 @@ export class TimeEntry {
 }
 
 export class DateUtils {
-	static isToday(date: Date): boolean {
-		return (new Date()).toDateString() === date.toDateString();
+	static isToday(date: Date | string): boolean {
+		return moment().format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD');
 	}
 
-	static getSecondsFromStartDay(): number {
+	static getSecondsFromStartDay(isUTC?: boolean): number {
 		let d = new Date();
+
+		if (isUTC) {
+			return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds() + d.getTimezoneOffset() * 60;
+		}
+
 		return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
 	}
 
@@ -81,5 +86,17 @@ export class DateUtils {
 
 	static convertMomentToUTCMoment(m: Moment): Moment {
 		return moment(this.convertMomentToUTC(m));
+	}
+
+	static formatDateToString(d: any): string {
+		return moment(d).format('YYYY-MM-DD');
+	}
+
+	static formatStringToDate(d: string): Date {
+		return moment(d).toDate();
+	}
+
+	static reformatDate(d: string, format: string): string {
+		return moment(d, format).format('YYYY-MM-DD');
 	}
 }

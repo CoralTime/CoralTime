@@ -22,7 +22,7 @@ namespace CoralTime.Api.v1.Reports.Export
         {
             try
             {
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGridData.CurrentQuery.GroupById)
                 {
                     case (int) ReportsGroupBy.Project:
                     {

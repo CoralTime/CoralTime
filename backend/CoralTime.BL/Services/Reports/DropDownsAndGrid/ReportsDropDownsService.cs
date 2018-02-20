@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var reportDropDowns = new ReportsDropDownsView
             {
                 Values = CreateDropDownValues(memberByUserName),
-                CurrentQuery = CreateDropDownValuesSaved(memberByUserName.Id)
+                CurrentQuery = CreateDropDownCurrentQuery(memberByUserName.Id)
             };
 
             return reportDropDowns;
@@ -189,24 +189,24 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return dropDownValues;
         }
 
-        private ReportsSettingsView CreateDropDownValuesSaved(int memberId)
+        private ReportsSettingsView CreateDropDownCurrentQuery(int memberId)
         {
             var reportsSettings = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(memberId).FirstOrDefault(x => x.IsCurrentQuery);
 
-            var dropDownsValuesSavedList = CreateReportsSettingsEntity(reportsSettings);
+            var dropDownsCurrentQueryList = CreateReportsSettingsEntity(reportsSettings);
 
-            return dropDownsValuesSavedList;
+            return dropDownsCurrentQueryList;
         }
 
         private ReportsSettingsView CreateReportsSettingsEntity(ReportsSettings defaultReportSettings)
         {
-            var dropDownsDefaultValuesSaved = new ReportsSettingsView();
+            var dropDownsQuery = new ReportsSettingsView();
 
             // Group By Date as default.
-            dropDownsDefaultValuesSaved.GroupById = defaultReportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
+            dropDownsQuery.GroupById = defaultReportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
 
             // Show all columns as default.
-            dropDownsDefaultValuesSaved.ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
+            dropDownsQuery.ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
                 ? new[]
                 {
                     (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
@@ -218,17 +218,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             if (defaultReportSettings != null)
             {
-                dropDownsDefaultValuesSaved.DateFrom = defaultReportSettings.DateFrom;
-                dropDownsDefaultValuesSaved.DateTo = defaultReportSettings.DateTo;
+                dropDownsQuery.DateFrom = defaultReportSettings.DateFrom;
+                dropDownsQuery.DateTo = defaultReportSettings.DateTo;
 
-                dropDownsDefaultValuesSaved.ClientIds = ConvertStringToArrayOfNullableInts(defaultReportSettings.FilterClientIds);
-                dropDownsDefaultValuesSaved.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
-                dropDownsDefaultValuesSaved.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
-                dropDownsDefaultValuesSaved.QueryName = defaultReportSettings.QueryName;
-                dropDownsDefaultValuesSaved.QueryId = defaultReportSettings.Id;
+                dropDownsQuery.ClientIds = ConvertStringToArrayOfNullableInts(defaultReportSettings.FilterClientIds);
+                dropDownsQuery.ProjectIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterProjectIds);
+                dropDownsQuery.MemberIds = ConvertStringToArrayOfInts(defaultReportSettings.FilterMemberIds);
+                dropDownsQuery.QueryName = defaultReportSettings.QueryName;
+                dropDownsQuery.QueryId = defaultReportSettings.Id;
             }
 
-            return dropDownsDefaultValuesSaved;
+            return dropDownsQuery;
         }
 
         private static int[] ConvertStringToArrayOfInts(string sourceString)

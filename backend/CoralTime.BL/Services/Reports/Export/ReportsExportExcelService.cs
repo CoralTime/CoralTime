@@ -857,7 +857,7 @@ namespace CoralTime.BL.Services.Reports.Export
                         if (prop.PropertyType == typeof(DateTime))
                         {
                             var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
-                            value = DateTime.Parse(value).ToString(dateFormat);
+                            value = DateTime.Parse(value).ToString(dateFormat, CultureInfo.InvariantCulture);
                         }
 
                         if (prop.Name == InternalProperties.ActualTime.ToString()

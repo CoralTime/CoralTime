@@ -22,37 +22,37 @@ namespace CoralTime.Api.v1.Reports.Export
         {
             try
             {
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGridData.CurrentQuery.GroupById)
                 {
-                    case (int)ReportsGroupBy.Project:
-                        {
+                    case (int) ReportsGroupBy.Project:
+                    {
                             await _service.ExportEmailGroupByProjects(reportsGridData);
-                            break;
-                        }
+                        break;
+                    }
 
-                    case (int)ReportsGroupBy.User:
-                        {
+                    case (int) ReportsGroupBy.User:
+                    {
                             await _service.ExportEmailGroupByUsers(reportsGridData);
-                            break;
-                        }
+                        break;
+                    }
 
-                    case (int)ReportsGroupBy.Date:
-                        {
+                    case (int) ReportsGroupBy.Date:
+                    {
                             await _service.ExportEmailGroupByDates(reportsGridData);
-                            break;
-                        }
+                        break;
+                    }
 
-                    case (int)ReportsGroupBy.Client:
-                        {
+                    case (int) ReportsGroupBy.Client:
+                    {
                             await _service.ExportEmailGroupByClients(reportsGridData);
-                            break;
-                        }
+                        break;
+                    }
 
                     default:
-                        {
+                    {
                             await _service.ExportEmailGroupByNone(reportsGridData);
-                            break;
-                        }
+                        break;
+                    }
                 }
 
                 return Ok();
