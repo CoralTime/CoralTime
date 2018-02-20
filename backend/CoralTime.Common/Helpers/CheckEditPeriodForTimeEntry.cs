@@ -5,7 +5,7 @@ namespace CoralTime.Common.Helpers
 {
     public partial class CommonHelpers
     {
-        public static bool IsTimeEntryLocked( DateTime timeEntryDateEditing, int daysAfterLock, LockTimePeriod lockPeriod)
+        public static bool IsTimeEntryLocked(DateTime timeEntryDateEditing, int daysAfterLock, LockTimePeriod lockPeriod)
         {
             var today = DateTime.Today;
 

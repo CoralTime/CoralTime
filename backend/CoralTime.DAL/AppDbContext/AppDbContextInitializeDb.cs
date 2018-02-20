@@ -277,102 +277,106 @@ namespace CoralTime.DAL
             var projectsList = await GetProjectList();
             var clientsList = await GetClientList();
 
+            var projectsWithClientsList = new List<Project>();
+            var projectsWithClients = Configuration.GetSection("XRefProjectsClient").GetChildren();
+            foreach (var projectWithClient in projectsWithClients)
+            {
+                var projectByName = projectsList.FirstOrDefault(x => x.Name == projectWithClient["ProjectName"]);
+                var clientByName = clientsList.FirstOrDefault(x => x.Name == projectWithClient["ClientName"]);
 
+                if (projectByName != null && clientByName != null)
+                {
+                    projectByName.ClientId = clientByName.Id;
+
+                    projectsWithClientsList.Add(projectByName);
+                }
+            }
+
+            await UpdateListOfEntitiesToDbAsync(DbContext.Projects, projectsWithClientsList);
         }
 
         private static async Task InitializeXRefMemberProjectRoles()
         {
-            var membersList = await GetMembersList();
+            var allMembersList = await GetAllMembersList();
+
             var projectsList = await GetProjectList();
             var projectRolesList = await GetProjectRolesList();
 
             var memberProjectRoleList = new List<MemberProjectRole>();
-            var memberProjectRoles = Configuration.GetSection("MemberProjectRoles").GetChildren();
+            var memberProjectRoles = Configuration.GetSection("XRefMemberProjectRoles").GetChildren();
             foreach (var memberProjectRole in memberProjectRoles)
             {
-                var mprUser = membersList.FirstOrDefault(x => x.User.UserName == memberProjectRole["UserName"]);
-                var mprProject = projectsList.FirstOrDefault(x => x.Name == memberProjectRole["ProjectName"]);
-                var mprProjectRole = projectRolesList.FirstOrDefault(x => x.Name == memberProjectRole["ProjectRoleName"]);
+                var mprUserByName = allMembersList.FirstOrDefault(x => x.User.UserName == memberProjectRole["UserName"]);
+                var mprProjectByName = projectsList.FirstOrDefault(x => x.Name == memberProjectRole["ProjectName"]);
+                var mprProjectRoleByName = projectRolesList.FirstOrDefault(x => x.Name == memberProjectRole["ProjectRoleName"]);
 
-                if (mprUser != null && mprProject != null && mprProjectRole != null)
+                if (mprUserByName != null && mprProjectByName != null && mprProjectRoleByName != null)
                 {
                     var mpr = new MemberProjectRole
                     {
-                        MemberId = mprUser.Id,
-                        ProjectId = mprProject.Id,
-                        RoleId = mprProjectRole.Id
+                        MemberId = mprUserByName.Id,
+                        ProjectId = mprProjectByName.Id,
+                        RoleId = mprProjectRoleByName.Id
                     };
 
                     memberProjectRoleList.Add(mpr);
 
-                    UpdateIsManagerRoleForMember(ProjectRoleManagerId, memberProjectRoleList, mprUser, mprProjectRole);
+                    UpdateIsManagerRoleForMember(ProjectRoleManagerId, memberProjectRoleList, mprUserByName, mprProjectRoleByName);
                 }
             }
 
-            try
-            {
-                await DbContext.MemberProjectRoles.AddRangeAsync(memberProjectRoleList);
-                await DbContext.SaveChangesAsync();
-            }
-
-            catch (Exception e) { }
+            await SaveListOfEntitiesToDbAsync(DbContext.MemberProjectRoles, memberProjectRoleList);
         }
 
         private static async Task InitializeXRefTimeEntries()
         {
-            var membersList = new List<Member>();
-            var members = Configuration.GetSection($"Users:{Constants.UserTypeMembers}").GetChildren();
-            foreach (var member in members)
+            var allMembersList = await GetAllMembersList();
+            var projectsList = await GetProjectList();
+            var tasksList = await GetTaskTypesList();
+            var memberProjectRolesList = await GetMemberProjectRoleList();
+
+            var timeEntryList = new List<TimeEntry>();
+            var timeEntries = Configuration.GetSection("XRefTimeEntries").GetChildren();
+            foreach (var timeEntry in timeEntries)
             {
-                var memberUserName = member["UserName"];
-                var getMemberByUserNameAsync = await DbContext.Members.FirstOrDefaultAsync(x => x.User.UserName == memberUserName);
-                if (getMemberByUserNameAsync != null)
+                var timeEntryMemberByName = allMembersList.FirstOrDefault(x => x.User.UserName == timeEntry["UserName"]);
+                var timeEntryProjectByName = projectsList.FirstOrDefault(x => x.Name == timeEntry["ProjectName"]);
+                var timeEntryTaskByName = tasksList.FirstOrDefault(x => x.Name == timeEntry["TaskTypeName"]);
+                var timeEntryDate = CreateTimeEntryDate(int.Parse(timeEntry["DayNumberOfWeek"]));
+
+                if (timeEntryMemberByName != null && timeEntryProjectByName != null && timeEntryTaskByName != null
+                    && CanMemberCreateTimeEntry(memberProjectRolesList, timeEntryMemberByName)
+                    && timeEntryDate != null)
                 {
-                    membersList.Add(getMemberByUserNameAsync);
+                    var newTimeEntry = new TimeEntry
+                    {
+                        MemberId = timeEntryMemberByName.Id,
+                        ProjectId = timeEntryProjectByName.Id,
+                        TaskTypesId = timeEntryTaskByName.Id,
+                        Date = (DateTime) timeEntryDate,
+                        Time = int.Parse(timeEntry["Time"]),
+                        PlannedTime = int.Parse(timeEntry["PlannedTime"]),
+                        Description = timeEntry["Description"]
+                    };
+
+                    timeEntryList.Add(newTimeEntry);
                 }
+
+                await SaveListOfEntitiesToDbAsync(DbContext.TimeEntries, timeEntryList);
             }
-
-            var projectsList = new List<Project>();
-            var projects = Configuration.GetSection("Projects").GetChildren();
-            foreach (var project in projects)
-            {
-                var projectName = project["Name"];
-                var getProjectByNAmeAsync = await DbContext.Projects.FirstOrDefaultAsync(x => x.Name == projectName);
-                if (getProjectByNAmeAsync != null)
-                {
-                    projectsList.Add(getProjectByNAmeAsync);
-                }
-            }
-
-            var tasksList = new List<TaskType>();
-            var tasks = Configuration.GetSection("Tasks").GetChildren();
-            foreach (var task in tasks)
-            {
-                var taskName = task["Name"];
-                var taskDb = await DbContext.TaskTypes.FirstOrDefaultAsync(x => x.Name == taskName);
-                if (taskDb != null)
-                {
-                    tasksList.Add(taskDb);
-                }
-            }
-
-            var timeEntries = Configuration.GetSection("TimeEntries").GetChildren();
-
         }
 
-        private static async Task<List<TEntity>> CreateListOfEntitiesFromConfigByNameAsync<TEntity>(DbSet<TEntity> dbSet, string section) where TEntity : class, new()
+        #region Initialize single entities by Name from config.
+
+        private static async Task<List<TEntity>> CreateListOfEntitiesFromConfigByNameAsync<TEntity>(DbSet<TEntity> dbSet, string section) where TEntity : class, IInitializeByName, new()
         {
             var listOfEntities = new List<TEntity>();
 
-            var propertyNameOfEntity = "Name";
             var entitiesFromConfig = Configuration.GetSection(section).GetChildren();
 
             foreach (var entity in entitiesFromConfig)
             {
-                var entityNameFromConfig = entity["Name"];
-
-                var entityFromDbByName = await dbSet.FirstOrDefaultAsync(x => x.GetType().GetProperty(propertyNameOfEntity).GetValue(x, null).ToString() == entityNameFromConfig);
-
+                var entityFromDbByName = await dbSet.FirstOrDefaultAsync(x => x.Name == entity["Name"]);
                 if (entityFromDbByName == null)
                 {
                     listOfEntities.Add(CreateNewEntity<TEntity>(entity));
@@ -445,15 +449,43 @@ namespace CoralTime.DAL
             }
         }
 
-        private static async Task<List<Member>> GetMembersList()
+        private static async Task UpdateListOfEntitiesToDbAsync<TEntity>(DbSet<TEntity> dbSet, List<TEntity> listOfEntities) where TEntity : class
+        {
+            try
+            {
+                if (listOfEntities.Count > 0)
+                {
+                    dbSet.UpdateRange(listOfEntities);
+                    await DbContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                //todo log
+            }
+        }
+
+        #endregion
+
+        #region Get initialized list of entities methods
+
+        private static async Task<List<Member>> GetAllMembersList()
+        {
+            var allMembersList = new List<Member>();
+
+            allMembersList.AddRange(await GetUsersList(Constants.UserTypeAdmins));
+            allMembersList.AddRange(await GetUsersList(Constants.UserTypeMembers));
+
+            return allMembersList;
+        }
+
+        private static async Task<List<Member>> GetUsersList(string userType)
         {
             var membersList = new List<Member>();
-            var members = Configuration.GetSection($"Users:{Constants.UserTypeMembers}").GetChildren();
+            var members = Configuration.GetSection($"Users:{userType}").GetChildren();
             foreach (var member in members)
             {
-                var memberUserName = member["UserName"];
-                var getMemberByUserNameAsync =
-                    await DbContext.Members.FirstOrDefaultAsync(x => x.User.UserName == memberUserName);
+                var getMemberByUserNameAsync = await DbContext.Members.FirstOrDefaultAsync(x => x.User.UserName == member["UserName"]);
                 if (getMemberByUserNameAsync != null)
                 {
                     membersList.Add(getMemberByUserNameAsync);
@@ -469,8 +501,7 @@ namespace CoralTime.DAL
             var projects = Configuration.GetSection("Projects").GetChildren();
             foreach (var project in projects)
             {
-                var projectName = project["Name"];
-                var getProjectByNAmeAsync = await DbContext.Projects.FirstOrDefaultAsync(x => x.Name == projectName);
+                var getProjectByNAmeAsync = await DbContext.Projects.FirstOrDefaultAsync(x => x.Name == project["Name"]);
                 if (getProjectByNAmeAsync != null)
                 {
                     projectsList.Add(getProjectByNAmeAsync);
@@ -484,10 +515,9 @@ namespace CoralTime.DAL
         {
             var clientsList = new List<Client>();
             var clients = Configuration.GetSection("Clients").GetChildren();
-            foreach (var project in clients)
+            foreach (var client in clients)
             {
-                var clientName = project["Name"];
-                var getClientByNameAsync = await DbContext.Clients.FirstOrDefaultAsync(x => x.Name == clientName);
+                var getClientByNameAsync = await DbContext.Clients.FirstOrDefaultAsync(x => x.Name == client["Name"]);
                 if (getClientByNameAsync != null)
                 {
                     clientsList.Add(getClientByNameAsync);
@@ -517,6 +547,46 @@ namespace CoralTime.DAL
             return projectRolesList;
         }
 
+        private static async Task<List<TaskType>> GetTaskTypesList()
+        {
+            var tasksList = new List<TaskType>();
+            var tasks = Configuration.GetSection("Tasks").GetChildren();
+            foreach (var task in tasks)
+            {
+                var taskDb = await DbContext.TaskTypes.FirstOrDefaultAsync(x => x.Name == task["Name"]);
+                if (taskDb != null)
+                {
+                    tasksList.Add(taskDb);
+                }
+            }
+
+            return tasksList;
+        }
+
+        private static async Task<List<MemberProjectRole>> GetMemberProjectRoleList()
+        {
+            var memberProjectRolesList = new List<MemberProjectRole>();
+            var memberProjectRoles = Configuration.GetSection("XRefMemberProjectRoles").GetChildren();
+            foreach (var memberProjectRole in memberProjectRoles)
+            {
+                var mprDb = await DbContext.MemberProjectRoles.FirstOrDefaultAsync(x =>
+                    x.Member.User.UserName == memberProjectRole["UserName"] &&
+                    x.Project.Name == memberProjectRole["ProjectName"] &&
+                    x.Role.Name == memberProjectRole["ProjectRoleName"]);
+
+                if(mprDb != null)
+                {
+                    memberProjectRolesList.Add(mprDb);
+                }
+            }
+
+            return memberProjectRolesList;
+        }
+
+        #endregion
+
+        #region Additional methods 
+
         private static void UpdateIsManagerRoleForMember(int projectRoleManagerId, List<MemberProjectRole> memberProjectRoleList, Member mprUser, ProjectRole mprProjectRole)
         {
             var checkManagerRoleFromDb = memberProjectRoleList.Exists(x => x.MemberId == mprUser.Id && x.RoleId == projectRoleManagerId);
@@ -526,5 +596,33 @@ namespace CoralTime.DAL
 
             DbContext.Members.Update(mprUser);
         }
+
+        private static bool CanMemberCreateTimeEntry(List<MemberProjectRole> memberProjectRolesList, Member memberByName)
+        {
+            var isMemberAssignAtProject = memberProjectRolesList.Exists(x => x.MemberId == memberByName.Id);
+
+            return memberByName.User.IsAdmin || isMemberAssignAtProject;
+        }
+
+        private static DateTime? CreateTimeEntryDate(int timeEntryDAyOfWeek)
+        {
+            DateTime? timeEntryDate = null;
+
+            if (0 <= timeEntryDAyOfWeek && timeEntryDAyOfWeek < 7)
+            {
+                timeEntryDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, ConvertNumberOfDayToDayOfThisWeek(timeEntryDAyOfWeek));
+            }
+
+            return timeEntryDate;
+        }
+
+        private static int ConvertNumberOfDayToDayOfThisWeek(int timeEntryDayNumberOfWeek)
+        {
+            CommonHelpers.SetRangeOfWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, DateTime.Today);
+            var dayOfThisWeek = weekByTodayFirstDate.AddDays(timeEntryDayNumberOfWeek).Day;
+            return dayOfThisWeek;
+        }
+
+        #endregion
     }
 }

@@ -8,7 +8,7 @@
   "AddXRefProjectsClients": true,
   "AddXRefMemberProjectRoles": true,
   "AddXRefTimeEntries": true,
-
+  
   "Settings": {
     "Name": "DefaulProjectRoleId",
     "Value": ""
@@ -26,13 +26,17 @@
     {
       "Name": "Design",
       "IsActive": true
+    },
+    {
+      "Name": "Testing",
+      "IsActive": true
     }
   ],
 
   "Users": {
     "Admins": [
       {
-        "UserName": "Admin",
+        "UserName": "admin",
         "FullName": "Dean, James",
         "Password": "password",
         "Email": "CoralTime.admin@mail.com",
@@ -256,12 +260,13 @@
 
   "XRefTimeEntries": [
     {
-      "UserName": "",
-      "ProjectName": "",
-      "TaskTypeName": "",
-      "Date": "",
-      "Time": "",
-      "PlannedTime": ""
+      "UserName": "admin",
+      "ProjectName": "CoralTime",
+      "TaskTypeName": "Testing",
+      "DayNumberOfWeek": "1",
+      "Time": "3600",
+      "PlannedTime": "0",
+      "Description": "Filling in test data for the demo site'"
     }
   ]
 }
