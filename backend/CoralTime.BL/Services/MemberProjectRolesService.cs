@@ -200,6 +200,10 @@ namespace CoralTime.BL.Services
             }
 
             var membersNotAssigtProjectView = membersNotAssignProjectByProjId.Select(x => x.GetView(Mapper));
+            foreach (var item in membersNotAssigtProjectView)
+            {
+                _avatarService.AddIconUrlInMemberView(item);
+            }
             return membersNotAssigtProjectView;
         }
 

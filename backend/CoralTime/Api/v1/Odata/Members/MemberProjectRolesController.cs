@@ -63,7 +63,7 @@ namespace CoralTime.Api.v1.Odata.Members
         // GET api/v1/odata/MemberProjectRoles(2)/projects
         [ODataRoute("MemberProjectRoles({id})/projects")]
         [HttpGet("{id}/projects")]
-        public IActionResult GetNotAssignMembersAtProjByMemberId(int id)
+        public IActionResult GetNotAssignMembersAtProjByMemberId([FromODataUri] int id)
         {
             try
             {
@@ -93,8 +93,9 @@ namespace CoralTime.Api.v1.Odata.Members
         }
 
         // PUT: api/v1/odata/MemberProjectRoles(2)
+        [ODataRoute("MemberProjectRoles({id})")]
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]dynamic projectRole)
+        public IActionResult Update([FromODataUri] int id, [FromBody]dynamic projectRole)
         {
             projectRole.Id = id;
             try
