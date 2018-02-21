@@ -111,6 +111,10 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	onResize(): void {
+		this.windowWidth = window.innerWidth;
+	}
+
 	updateManageMenuVisibility(): void {
 		this.manageItems = FULL_MANAGE_ITEMS;
 
@@ -158,9 +162,5 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this.subscriptionUserInfo.unsubscribe();
 		this.subscriptionImpersonation.unsubscribe();
-	}
-
-	private onResize(): void {
-		this.windowWidth = window.innerWidth;
 	}
 }
