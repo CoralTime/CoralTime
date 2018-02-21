@@ -199,7 +199,7 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"MemberProjectRole with ProjectId = {projectId} not found.");
             }
 
-            var membersNotAssigtProjectView = membersNotAssignProjectByProjId.Select(x => x.GetView(Mapper));
+            var membersNotAssigtProjectView = membersNotAssignProjectByProjId.Select(x => x.GetView(Mapper)).ToList();
             foreach (var item in membersNotAssigtProjectView)
             {
                 _avatarService.AddIconUrlInMemberView(item);
