@@ -189,7 +189,7 @@ namespace CoralTime.BL.Services
                     }
                     else
                     {
-                        CommonHelpers.CheckMembersErrors(updateResult.Errors.Select(e => new IdentityErrorView
+                        CheckMembersErrors(updateResult.Errors.Select(e => new IdentityErrorView
                         {
                             Code = e.Code,
                             Description = e.Description
@@ -261,7 +261,7 @@ namespace CoralTime.BL.Services
 
             if (!userUpdationResult.Succeeded)
             {
-                CommonHelpers.CheckMembersErrors(userUpdationResult.Errors.Select(e => new IdentityErrorView
+                CheckMembersErrors(userUpdationResult.Errors.Select(e => new IdentityErrorView
                 {
                     Code = e.Code,
                     Description = e.Description
@@ -289,7 +289,7 @@ namespace CoralTime.BL.Services
 
             if (!userResetPassword.Succeeded)
             {
-                CommonHelpers.CheckMembersErrors(userResetPassword.Errors.Select(e => new IdentityErrorView
+                CheckMembersErrors(userResetPassword.Errors.Select(e => new IdentityErrorView
                 {
                     Code = e.Code,
                     Description = e.Description
@@ -501,7 +501,7 @@ namespace CoralTime.BL.Services
 
                 if (!updateEmailResult.Succeeded)
                 {
-                    CommonHelpers.CheckMembersErrors(updateEmailResult.Errors.Select(e => new IdentityErrorView
+                    CheckMembersErrors(updateEmailResult.Errors.Select(e => new IdentityErrorView
                     {
                         Code = e.Code,
                         Description = e.Description
@@ -577,14 +577,14 @@ namespace CoralTime.BL.Services
             var removeClaimsForMember = _userManager.RemoveClaimsAsync(memberById.User, memberByNameClaims).GetAwaiter().GetResult();
             if (!removeClaimsForMember.Succeeded)
             {
-                CommonHelpers.CheckIdentityResultErrors(removeClaimsForMember);
+                CheckIdentityResultErrors(removeClaimsForMember);
             }
 
             var claimsForMemberNew = ClaimsCreator.CreateUserClaims(memberById.User.UserName, memberById.FullName, memberById.User.Email, memberById.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser, memberById.Id);
             var addClaimsForMember = _userManager.AddClaimsAsync(memberById.User, claimsForMemberNew).GetAwaiter().GetResult();
             if (!addClaimsForMember.Succeeded)
             {
-                CommonHelpers.CheckIdentityResultErrors(addClaimsForMember);
+                CheckIdentityResultErrors(addClaimsForMember);
             }
         }
 
@@ -635,7 +635,7 @@ namespace CoralTime.BL.Services
             var userCreationResult = await _userManager.CreateAsync(applicationUserNew, memberView.Password);
             if (!userCreationResult.Succeeded)
             {
-                CommonHelpers.CheckIdentityResultErrors(userCreationResult);
+                CheckIdentityResultErrors(userCreationResult);
             }
 
             var applicationUser = await _userManager.FindByNameAsync(applicationUserNew.UserName);
@@ -644,7 +644,7 @@ namespace CoralTime.BL.Services
             var userCreateRoleResult = await _userManager.AddToRoleAsync(applicationUser, roleUser);
             if (!userCreateRoleResult.Succeeded)
             {
-                CommonHelpers.CheckIdentityResultErrors(userCreateRoleResult);
+                CheckIdentityResultErrors(userCreateRoleResult);
             }
 
             #region Set UserId to new Member. Save to Db. Get Member from Db with related entity User by UserId.
@@ -672,10 +672,70 @@ namespace CoralTime.BL.Services
             var claimsUserResult = await _userManager.AddClaimsAsync(applicationUser, claimsUser);
             if (!claimsUserResult.Succeeded)
             {
-                CommonHelpers.CheckIdentityResultErrors(userCreateRoleResult);
+                CheckIdentityResultErrors(userCreateRoleResult);
             }
 
             return memberByName;
+        }
+
+        private void CheckIdentityResultErrors(IdentityResult userCreateRoleResult)
+        {
+            CheckMembersErrors(userCreateRoleResult.Errors.Select(e => new IdentityErrorView
+            {
+                Code = e.Code,
+                Description = e.Description
+            }));
+        }
+
+        private void CheckMembersErrors(IEnumerable<IdentityErrorView> result)
+        {
+            var passwordErrors = new List<ErrorView>();
+            var otherException = new List<ErrorView>();
+
+            foreach (var error in result)
+            {
+                if (error.Code.Contains("Password"))
+                {
+                    passwordErrors.Add(new ErrorView
+                    {
+                        Source = "Password",
+                        Title = StringHandler.SeparateStringByUpperCase(error.Code),
+                        Details = error.Description
+                    });
+                }
+                else if (error.Code.Contains("UserName"))
+                {
+                    otherException.Add(new ErrorView
+                    {
+                        Source = "UserName",
+                        Title = StringHandler.SeparateStringByUpperCase(error.Code),
+                        Details = error.Description
+                    });
+                }
+                else
+                {
+                    otherException.Add(new ErrorView
+                    {
+                        Source = "Other",
+                        Title = StringHandler.SeparateStringByUpperCase(error.Code),
+                        Details = error.Description
+                    });
+                }
+            }
+            if (passwordErrors.Count > 0)
+            {
+                throw new CoralTimeIncorrectPasswordException
+                {
+                    errors = passwordErrors
+                };
+            }
+            if (otherException.Count > 0)
+            {
+                throw new CoralTimeSafeEntityException
+                {
+                    errors = otherException
+                };
+            }
         }
 
         private IEnumerable<Member> GetAllMembersCommon(string userName)
