@@ -62,7 +62,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
 	impersonationUser: User;
 
-	private subscription: Subscription;
+	private subscriptionUserInfo: Subscription;
 	private subscriptionImpersonation: Subscription;
 
 	constructor(private authService: AuthService,
@@ -74,22 +74,18 @@ export class NavigationComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.authUser = this.authService.getAuthUser();
-		this.updateUserName();
+
+		this.getUserInfo();
+		this.onResize();
 		this.updateManageMenuVisibility();
 
-		this.subscription = this.authService.onChange.subscribe(() => {
-			this.authUser = this.authService.getAuthUser();
-			this.updateManageMenuVisibility();
+		this.subscriptionUserInfo = this.userInfoService.onChange.subscribe((userInfo: User) => {
+			this.userInfo = userInfo;
 		});
-		this.manageItems = FULL_MANAGE_ITEMS;
-
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
 			this.impersonationUser = this.impersonationService.impersonationUser;
 			this.updateManageMenuVisibility();
 		});
-
-		this.impersonationService.getStorage();
-		this.onResize();
 
 		this.items = [
 			{
@@ -109,12 +105,18 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		return this.windowWidth <= 700;
 	}
 
+	getUserInfo(): void {
+		this.userInfoService.getUserInfo(this.authUser.id).then((userInfo: User) => {
+			this.userInfo =  userInfo;
+		});
+	}
+
 	updateManageMenuVisibility(): void {
 		this.manageItems = FULL_MANAGE_ITEMS;
 
 		if (this.impersonationService.impersonationMember) {
-			let isManager = this.impersonationService.impersonationUser.isManager;
-			let isAdmin = this.impersonationService.impersonationUser.isAdmin;
+			let isManager = this.impersonationUser.isManager;
+			let isAdmin = this.impersonationUser.isAdmin;
 			this.showManageMenu = isManager || isAdmin;
 			this.authService.isUserAdminOrManager = true;
 
@@ -138,16 +140,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	updateUserName(): void {
-		this.userInfoService.getUserInfo(this.authUser.id).then((userInfo: User) => {
-			this.userInfo = userInfo;
-		});
-
-		this.userInfoService.onChange.subscribe((userInfo: User) => {
-			this.userInfo = userInfo;
-		});
-	}
-
 	toggleManageMenu(manageMenu: MenuComponent): void {
 		manageMenu.toggleMenu();
 		this.isManageMenuOpen = !this.isManageMenuOpen;
@@ -158,17 +150,17 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		this.isProfileNavMenuOpen = !this.isProfileNavMenuOpen;
 	}
 
-	ngOnDestroy() {
-		this.subscription.unsubscribe();
-		this.subscriptionImpersonation.unsubscribe();
-	}
-
 	signOut(): void {
 		this.auth.url = 'calendar';
 		this.authService.logout();
 	}
 
-	onResize(): void {
+	ngOnDestroy() {
+		this.subscriptionUserInfo.unsubscribe();
+		this.subscriptionImpersonation.unsubscribe();
+	}
+
+	private onResize(): void {
 		this.windowWidth = window.innerWidth;
 	}
 }

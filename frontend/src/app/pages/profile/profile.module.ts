@@ -11,7 +11,6 @@ import { ImageCropperModule } from 'ng2-img-cropper';
 import { FileUploadModule } from 'ng2-file-upload';
 import { Http } from '@angular/http';
 import { CustomHttp } from '../../core/custom-http';
-import { UserPicService } from '../../services/user-pic.service';
 
 @NgModule({
 	imports: [
@@ -27,18 +26,16 @@ import { UserPicService } from '../../services/user-pic.service';
 		ProfilePhotoComponent
 	],
 	providers: [
-		ProfileService,
-		EnterEmailService,
 		{
 			provide: Http,
 			useClass: CustomHttp
 		},
-		UserPicService
+		ProfileService,
+		EnterEmailService
 	],
 	entryComponents: [
 		ProfilePhotoComponent
 	]
-
 })
 
 export class ProfileModule {

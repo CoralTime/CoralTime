@@ -89,7 +89,7 @@ export class ODataQuery<T> extends ODataOperation<T> {
 
     private capitalizeFirstLetter(string): string {
         return string;
-		//return string.charAt(0).toUpperCase() + string.slice(1);
+		// return string.charAt(0).toUpperCase() + string.slice(1);
 	}
 
 	getQueryParams(): URLSearchParams {

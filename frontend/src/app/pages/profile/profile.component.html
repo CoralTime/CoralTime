@@ -12,10 +12,12 @@
                     <h3>Name</h3>
                     <p>{{impersonationUser?.fullName || userInfo?.fullName}}</p>
                 </div>
+
                 <div *ngIf="impersonationUser?.email || userInfo?.email" class="ct-user-settings-info">
                     <h3>Email address</h3>
                     <p>{{impersonationUser?.email || userInfo?.email}}</p>
                 </div>
+
                 <div *ngIf="impersonationUser?.timeZone || userInfo?.timeZone" class="ct-user-settings-info">
                     <h3>Your timezone</h3>
                     <p>{{impersonationUser?.timeZone || userInfo?.timeZone}}</p>
@@ -33,12 +35,14 @@
 
                 <div *ngFor="let project of projects; let i = index" class="ct-profile-project">
                     <span class="ct-color-{{project.color}}"></span>
+
                     <p class="ct-profile-project-name">{{project.name}}
                         <span>
                             {{project.isPrimary ? ' (Default)' : ''}}
                             {{project.isPrivate ? '' : ' (Public)'}}
                         </span>
                     </p>
+
                     <p *ngIf="project.managersNames.length">{{setManagersString(project.managersNames)}}</p>
                     <p *ngIf="project.isPrivate">{{setMemberCountString(project.memberCount)}}</p>
 
@@ -47,11 +51,13 @@
                             <span class="ct-link-text">{{project.isMemberListShown ? 'Hide' : 'View'}} Team Members</span>
                             <i *ngIf="project.isMemberListShown && !project.memberList.length" class="fa fa-circle-o-notch fa-spin"></i>
                         </div>
+
                         <div class="ct-profile-users-list" [class.ct-profile-members-hidden]="!project.isMemberListShown || !project.memberList.length">
                             <div *ngFor="let member of project.memberList" class="ct-profile-user">
                                 <ct-user-pic [iconUrl]="member.iconUrl"></ct-user-pic>
                                 <p>{{member.memberName}}
-                                    <span *ngIf="member.memberId == (impersonationUser?.id || userInfo?.id)">(You)</span></p>
+                                    <span *ngIf="member.memberId == (impersonationUser?.id || userInfo?.id)">(You)</span>
+                                </p>
                             </div>
                         </div>
                     </div>

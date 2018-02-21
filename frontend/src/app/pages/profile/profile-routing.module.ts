@@ -19,7 +19,10 @@ const routes: Routes = [
 	{
 		path: 'settings',
 		component: ProfileSettingsComponent,
-		canActivate: [AuthGuard]
+		canActivate: [AuthGuard],
+		resolve: {
+			user: UserInfoResolve
+		}
 	}
 ];
 

@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ImpersonationService } from '../../../services/impersonation.service';
-import { Subscription } from 'rxjs/Subscription';
-import { AuthUser } from '../../../core/auth/auth-user';
-import { AuthService } from '../../../core/auth/auth.service';
 import { UsersService } from '../../../services/users.service';
 import { User } from '../../../models/user';
 import { Project } from '../../../models/project';
@@ -10,12 +7,7 @@ import { Task } from '../../../models/task';
 import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
 import {
-	DateFormat,
-	NOT_FULL_WEEK_DAYS,
-	ProfileService,
-	TimeFormat,
-	TimeZone,
-	WeekDay
+	DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, TimeZone, WeekDay
 } from '../../../services/profile.service';
 import { EnterEmailService } from '../../forgot-password/enter-email/enter-email.service';
 import { ArrayUtils } from '../../../core/object-utils';
@@ -25,6 +17,8 @@ import { MdDialog, MdDialogRef } from '@angular/material';
 import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 import { SelectComponent } from '../../../shared/form/select/select.component';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
+import { ActivatedRoute } from '@angular/router';
+import { Avatar, UserPicService } from '../../../services/user-pic.service';
 
 const STANDART_TIME_ARRAY = [
 	'0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
@@ -45,14 +39,12 @@ const TWELVE_CLOCK_TIME_ARRAY = [
 })
 
 export class ProfileSettingsComponent implements OnInit {
-	authUser: AuthUser;
+	avatarUrl: string;
 	isFormShownArray: boolean[] = [true, true, true];
-	impersonationName: string = null;
-	impersonationId: number = null;
 	resetPasswordMessage: string;
 	showWrongEmailMessage: boolean = false;
-	userId: number;
 
+	userInfo: User;
 	userModel: User = new User();
 
 	dateFormats: DateFormat[];
@@ -75,27 +67,29 @@ export class ProfileSettingsComponent implements OnInit {
 	weekStartDayModel: string;
 
 	private dialogRef: MdDialogRef<ProfilePhotoComponent>;
-	private subscriptionImpersonation: Subscription;
 
 	constructor(private dialog: MdDialog,
-	            private authService: AuthService,
 	            private enterEmailService: EnterEmailService,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private projectsService: ProjectsService,
 	            private profileService: ProfileService,
+	            private route: ActivatedRoute,
 	            private tasksService: TasksService,
 	            private userInfoService: UserInfoService,
+	            private userPicService: UserPicService,
 	            private usersService: UsersService) {
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
+		this.route.data.forEach((data: { user: User }) => {
+			this.userInfo = this.impersonationService.impersonationUser || data.user;
+		});
+
 		this.getUserPicture();
 		this.timeZones = this.profileService.getTimeZones();
-		this.userId = this.impersonationService.impersonationId || this.authUser.id;
 
-		this.usersService.getUserById(this.userId).subscribe((user: User) => {
+		this.usersService.getUserById(this.userInfo.id).subscribe((user: User) => {
 			this.userModel = user;
 
 			this.timeFormatModel = user.timeFormat ? new TimeFormat(user.timeFormat) : this.timeFormats[1];
@@ -107,12 +101,34 @@ export class ProfileSettingsComponent implements OnInit {
 			this.setSendEmailTimeData(user.timeFormat);
 			this.setSendEmailWeekDaysArray(this.userModel.weekStart);
 		});
+
+		this.userPicService.onUserPicChange.subscribe((avatarUrl: string) => {
+			this.avatarUrl = avatarUrl;
+		});
 	}
 
 	// GENERAL
 
 	openPhotoDialog(): void {
 		this.dialogRef = this.dialog.open(ProfilePhotoComponent);
+
+		this.dialogRef.componentInstance.onSubmit.subscribe((avatarUrl: string) => {
+			this.dialogRef.close();
+			this.onSubmitPhotoDialog(avatarUrl);
+		});
+	}
+
+	onSubmitPhotoDialog(avatarUrl: string): void {
+		let iconObject = {
+			iconUrl: avatarUrl.replace('Avatars', 'Icons')
+		};
+
+		if (this.impersonationService.impersonationId) {
+			let impersonateUser = Object.assign(this.impersonationService.impersonationUser, iconObject);
+			this.impersonationService.setStorage(impersonateUser);
+		} else {
+			this.userInfoService.setUserInfo(iconObject);
+		}
 	}
 
 	toggleForm(formIndex: number): void {
@@ -253,15 +269,10 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	private getUserPicture(): void {
-		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (this.impersonationService.impersonationMember) {
-				this.impersonationName = this.impersonationService.impersonationUser.fullName;
-				this.impersonationId = this.impersonationService.impersonationId;
-			} else {
-				this.impersonationName = null;
-				this.impersonationId = null;
-			}
-		});
+		this.userPicService.loadUserPicture(this.userInfo.id, true)
+			.subscribe((avatar: Avatar) => {
+				this.avatarUrl = avatar.avatarUrl;
+			});
 	}
 
 	private getProjects(): void {

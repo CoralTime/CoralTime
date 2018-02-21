@@ -5,12 +5,16 @@ import { Injectable } from '@angular/core';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { User } from '../models/user';
 import { Project } from '../models/project';
+import { Http } from '@angular/http';
+import { ConstantService } from '../core/constant.service';
 
 @Injectable()
 export class UsersService {
 	readonly odata: ODataService<User>;
 
-	constructor(private odataFactory: ODataServiceFactory) {
+	constructor(private constantService: ConstantService,
+	            private http: Http,
+	            private odataFactory: ODataServiceFactory) {
 		this.odata = this.odataFactory.CreateService<User>('Members');
 	}
 
@@ -145,17 +149,8 @@ export class UsersService {
 	}
 
 	getUserById(id: number): Observable<User> {
-		let query = this.odata
-			.Query()
-			.Top(1);
-
-		query.Filter('id eq ' + id);
-
-		return query.Exec()
-			.flatMap(result => {
-				let user = result[0] ? new User(result[0]) : null;
-				return Observable.of(user);
-			});
+		return this.http.get(this.constantService.apiBaseUrl + '/odata/Members(' + id + ')')
+			.map(res => new User(res.json()));
 	}
 
 	getUserProjectsWithCount(event, filterStr = '', memberId: number): Observable<PagedResult<UserProject>> {

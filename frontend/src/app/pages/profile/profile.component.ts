@@ -1,7 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AuthUser } from '../../core/auth/auth-user';
-import { AuthService } from '../../core/auth/auth.service';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, OnInit } from '@angular/core';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { User } from '../../models/user';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
@@ -13,31 +10,21 @@ import { ActivatedRoute } from '@angular/router';
 	templateUrl: 'profile.component.html'
 })
 
-export class ProfileComponent implements OnInit, OnDestroy {
-	authUser: AuthUser;
+export class ProfileComponent implements OnInit {
+	avatarUrl: string;
 	impersonationUser: User;
 	projects: ProfileProjects[];
 	userInfo: User = new User();
-	avatarUrl: string;
 
-	private subscriptionImpersonation: Subscription;
-
-	constructor(private authService: AuthService,
-	            private impersonationService: ImpersonationService,
+	constructor(private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
 	            private route: ActivatedRoute,
 	            private userPicService: UserPicService) {
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
-
 		this.route.data.forEach((data: { user: User }) => {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
-		});
-
-		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			this.impersonationUser = this.impersonationService.impersonationUser;
 		});
 
 		this.getUserPicture();
@@ -45,7 +32,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 	}
 
 	private getUserPicture(): void {
-		this.userPicService.getUserPicture(this.impersonationUser ? this.impersonationUser.id : this.userInfo.id, true)
+		this.userPicService.loadUserPicture(this.userInfo.id, true)
 			.subscribe((avatar: Avatar) => {
 				this.avatarUrl = avatar.avatarUrl;
 			});
@@ -89,9 +76,5 @@ export class ProfileComponent implements OnInit, OnDestroy {
 			this.getProjectMembers(this.projects[index].id, index);
 		}
 		this.projects[index].isMemberListShown = !this.projects[index].isMemberListShown;
-	}
-
-	ngOnDestroy() {
-		this.subscriptionImpersonation.unsubscribe();
 	}
 }
