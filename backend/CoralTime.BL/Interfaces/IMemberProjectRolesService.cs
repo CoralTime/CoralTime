@@ -6,7 +6,7 @@ using CoralTime.ViewModels.Member;
 
 namespace CoralTime.BL.Interfaces
 {
-    public interface IMemberProjectRolesService
+    public interface IMemberProjectRoleService
     {
         IEnumerable<ProjectRoleView> GetProjectRoles();
 

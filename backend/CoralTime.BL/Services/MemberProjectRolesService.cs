@@ -14,12 +14,12 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class MemberProjectRolesService : BaseService, IMemberProjectRolesService
+    public class MemberProjectRoleService : BaseService, IMemberProjectRoleService
     {
         private readonly IProjectService _projectService;
         private readonly IAvatarService _avatarService;
 
-        public MemberProjectRolesService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IAvatarService avatarService)
+        public MemberProjectRoleService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IAvatarService avatarService)
             : base(uow, mapper)
         {
             _projectService = projectService;

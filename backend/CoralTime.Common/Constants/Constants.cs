@@ -6,21 +6,44 @@ namespace CoralTime.Common.Constants
 {
     public static class Constants
     {
-        public const string AdminRole = "admin";
-        public const string ManagerRole = "manager";
-        public const string UserRole = "user";
-        public const string MemberRole = "team member";
+
+        public const string UserTypeAdmins = "Admins";
+        public const string UserTypeMembers = "Members";
+
+        #region ApplicationRole
+
+        public const string ApplicationRoleAdmin = "admin";
+        public const string ApplicationRoleUser = "user";
+
+        public static readonly IEnumerable<string> ApplicationRoles = new[] {ApplicationRoleAdmin, ApplicationRoleUser};
+
+        #endregion
+
+        #region ProjectRoles
+
+        public const string ProjectRoleManager = "manager";
+        public const string ProjectRoleMember = "team member";
+
+        public static readonly IEnumerable<string> ProjectRoles = new[] {ProjectRoleManager, ProjectRoleMember};
+
+        #endregion
+
         public const string JwtIsManagerClaimType = "isManager";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
+        public const string HeaderNameAuthorization = "Authorization";
+
+        public const string SecureHeaderNameNotification = "SecureHeaderNameNotification";
+        public const string SecureHeaderNameService = "SecureHeaderNameService";
+
+        public const string SecureHeaderValueNotification = "SecureHeaderValueNotification";
+        public const string SecureHeaderValueService = "SecureHeaderValueService";
+
         public const int SecondsInThisDay = 86400;
 
-
         public static string EnvName { get; set; }
-
-        public const string SecureHeaderNotificationName = "SecureHeaderNotification";
-
-        public const string SecureHeaderServiceName = "SecureHeaderService";
+        
+        public const string CoralTime = "CoralTime";
 
         public enum LockTimePeriod
         {
@@ -29,11 +52,6 @@ namespace CoralTime.Common.Constants
             Month = 2,
             Quarter = 3,
             Year = 4
-        }
-
-        public static IEnumerable<string> GetDefaultRoles()
-        {
-            return new[] {AdminRole, UserRole};
         }
 
         public static class WithoutClient
@@ -63,9 +81,27 @@ namespace CoralTime.Common.Constants
             new DateConvert {DateFormatId = 0, DateFormat = "DD/MM/YYYY", DateFormatDotNet = "dd/MM/yyyy", DateFormatDotNetShort = "dd/MM"},
             new DateConvert {DateFormatId = 1, DateFormat = "DD-MM-YYYY", DateFormatDotNet = "dd-MM-yyyy", DateFormatDotNetShort = "dd-MM"},
             new DateConvert {DateFormatId = 2, DateFormat = "DD.MM.YYYY", DateFormatDotNet = "dd.MM.yyyy", DateFormatDotNetShort = "dd.MM"},
+
             new DateConvert {DateFormatId = 3, DateFormat = "MM/DD/YYYY", DateFormatDotNet = "MM/dd/yyyy", DateFormatDotNetShort = "MM/dd"},
             new DateConvert {DateFormatId = 4, DateFormat = "MM-DD-YYYY", DateFormatDotNet = "MM-dd-yyyy", DateFormatDotNetShort = "MM-dd"},
             new DateConvert {DateFormatId = 5, DateFormat = "MM.DD.YYYY", DateFormatDotNet = "MM.dd.yyyy", DateFormatDotNetShort = "MM.dd"},
+
+            new DateConvert {DateFormatId = 6, DateFormat = "D/M/YY", DateFormatDotNet = "d/M/yy", DateFormatDotNetShort = "d/M"},
+            new DateConvert {DateFormatId = 7, DateFormat = "D-M-YY", DateFormatDotNet = "d-M-yy", DateFormatDotNetShort = "d-M"},
+            new DateConvert {DateFormatId = 8, DateFormat = "D.M.YY", DateFormatDotNet = "d.M.yy", DateFormatDotNetShort = "d.M"},
+
+            new DateConvert {DateFormatId = 9, DateFormat = "M/D/YY", DateFormatDotNet = "M/d/yy", DateFormatDotNetShort = "M/d"},
+            new DateConvert {DateFormatId = 10, DateFormat = "M-D-YY", DateFormatDotNet = "M-d-yy", DateFormatDotNetShort = "M-d"},
+            new DateConvert {DateFormatId = 11, DateFormat = "M.D.YY", DateFormatDotNet = "M.d.yy", DateFormatDotNetShort = "M.d"},
+
+            new DateConvert {DateFormatId = 12, DateFormat = "D/M/YYYY", DateFormatDotNet = "d/M/yyyy", DateFormatDotNetShort = "d/M"},
+            new DateConvert {DateFormatId = 13, DateFormat = "D-M-YYYY", DateFormatDotNet = "d-M-yyyy", DateFormatDotNetShort = "d-M"},
+            new DateConvert {DateFormatId = 14, DateFormat = "D.M.YYYY", DateFormatDotNet = "d.M.yyyy", DateFormatDotNetShort = "d.M"},
+                                            
+            new DateConvert {DateFormatId = 15, DateFormat = "M/D/YYYY", DateFormatDotNet = "M/d/yyyy", DateFormatDotNetShort = "M/d"},
+            new DateConvert {DateFormatId = 16, DateFormat = "M-D-YYYY", DateFormatDotNet = "M-d-yyyy", DateFormatDotNetShort = "M-d"},
+            new DateConvert {DateFormatId = 17, DateFormat = "M.D.YYYY", DateFormatDotNet = "M.d.yyyy", DateFormatDotNetShort = "M.d"},
+
         };
 
         public enum ReportsGroupBy

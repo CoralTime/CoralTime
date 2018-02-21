@@ -22,32 +22,32 @@ namespace CoralTime.Api.v1.Reports.Export
         {
             try
             {
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGridData.CurrentQuery.GroupById)
                 {
-                    case (int)ReportsGroupBy.Project:
-                        {
-                            return await _service.ExportFileGroupByProjectsAsync(reportsGridData, HttpContext);
-                        }
+                    case (int) ReportsGroupBy.Project:
+                    {
+                        return await _service.ExportFileGroupByProjectsAsync(reportsGridData, HttpContext);
+                    }
 
-                    case (int)ReportsGroupBy.User:
-                        {
-                            return await _service.ExportFileGroupByUsersAsync(reportsGridData, HttpContext);
-                        }
+                    case (int) ReportsGroupBy.User:
+                    {
+                        return await _service.ExportFileGroupByUsersAsync(reportsGridData, HttpContext);
+                    }
 
-                    case (int)ReportsGroupBy.Date:
-                        {
-                            return await _service.ExportFileGroupByDatesAsync(reportsGridData, HttpContext);
-                        }
+                    case (int) ReportsGroupBy.Date:
+                    {
+                        return await _service.ExportFileGroupByDatesAsync(reportsGridData, HttpContext);
+                    }
 
-                    case (int)ReportsGroupBy.Client:
-                        {
-                            return await _service.ExportFileGroupByClientsAsync(reportsGridData, HttpContext);
-                        }
+                    case (int) ReportsGroupBy.Client:
+                    {
+                        return await _service.ExportFileGroupByClientsAsync(reportsGridData, HttpContext);
+                    }
 
                     default:
-                        {
-                            return await _service.ExportFileGroupByNoneAsync(reportsGridData, HttpContext);
-                        }
+                    {
+                        return await _service.ExportFileGroupByNoneAsync(reportsGridData, HttpContext);
+                    }
                 }
             }
             catch (InvalidOperationException invalidOperationException)

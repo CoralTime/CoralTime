@@ -17,8 +17,6 @@ import { ImpersonationService } from '../../../../services/impersonation.service
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../../models/user';
 import { SelectItem } from 'primeng/primeng';
-import { isString } from 'util';
-import * as moment from 'moment';
 
 export class Time {
 	hours: string;
@@ -57,7 +55,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	plannedTime: string;
 	projectList: Project[];
 	projectModel: Project;
-	selectedDate: Date;
 	taskList: Task[];
 	taskModel: Task;
 	ticks: number;
@@ -108,11 +105,10 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.fillFromToForm();
 		}
 
-		this.selectedDate = this.currentTimeEntry.date;
 		this.loadProjects();
 
-		if (this.currentTimeEntry.timeTimerStart > 0) {
-			this.startTimer(DateUtils.getSecondsFromStartDay() - this.currentTimeEntry.timeTimerStart);
+		if (this.timeEntry.timeTimerStart && this.timeEntry.timeTimerStart !== -1) {
+			this.startTimer(DateUtils.getSecondsFromStartDay(true) - this.currentTimeEntry.timeTimerStart);
 		}
 
 		this.getFormHeight();
@@ -163,7 +159,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	isToday(): boolean {
-		return DateUtils.isToday(new Date(this.timeEntry.date));
+		return DateUtils.isToday(this.timeEntry.date);
 	}
 
 	startTimer(timeTimerStart?: number): void {
@@ -187,7 +183,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 		this.calendarService.isTimerActivated = true;
 		if (!this.currentTimeEntry.id) {
-			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
+			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 			this.currentTimeEntry.isFromToShow = false;
 			this.submit();
 			return;
@@ -222,18 +218,17 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		if (!this.isTimerShown) {
 			this.currentTimeEntry.isFromToShow = false;
 			this.currentTimeEntry.timeFrom = null;
-			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
+			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 			this.currentTimeEntry.timeTo = null;
 		} else {
 			this.currentTimeEntry.isFromToShow = true;
 			this.currentTimeEntry.time = this.ticks;
-			this.currentTimeEntry.timeFrom = DateUtils.getSecondsFromStartDay() - this.ticks;
+			this.currentTimeEntry.timeFrom = Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0);
 			this.currentTimeEntry.timeTimerStart = -1;
 			this.currentTimeEntry.timeTo = this.currentTimeEntry.timeFrom + this.ticks;
 			this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
 		}
 
-		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
 		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
 			.toPromise().then(
 				() => {
@@ -272,7 +267,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.setActualTime();
 		this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
 	}
-	
+
 	private isFromToFormValueValid(): boolean {
 		return this.convertFormValueToSeconds(this.timeTo) > this.convertFormValueToSeconds(this.timeFrom);
 	}
@@ -319,7 +314,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		let submitObservable: Observable<any>;
 		let isNewTimeEntry: boolean;
 
-		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
 		this.currentTimeEntry.isFromToShow = this.currentTimeEntry.isFromToShow && this.isFromToFormValueValid();
 		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.getAuthUser().id;
 
@@ -428,7 +422,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.currentTimeEntry.projectName = this.projectList[0].name;
 				this.currentTimeEntry.projectId = this.projectList[0].id;
 				this.currentTimeEntry.color = this.projectList[0].color;
-				this.loadTasks(this.timeEntry.projectId);
+				this.loadTasks(this.currentTimeEntry.projectId);
 			}
 
 			if (this.projectModel) {
@@ -436,7 +430,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.timeEntry.projectName = this.projectModel.name;
 				this.timeEntry.color = this.projectModel.color;
 			} else {
-				this.loadTasks(this.timeEntry.projectId);
+				this.loadTasks(this.currentTimeEntry.projectId);
 			}
 		});
 	}
@@ -528,7 +522,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		return projectList;
 	}
 
-	private setDayInfo(date?: Date): void {
+	private setDayInfo(date?: string): void {
 		this.dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
 		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'time');
 		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'plannedTime');

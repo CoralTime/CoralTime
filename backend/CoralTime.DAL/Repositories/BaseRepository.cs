@@ -143,7 +143,7 @@ namespace CoralTime.DAL.Repositories
         #endregion
 
         #region CRUD.
-
+        
         public virtual T GetById(object id)
         {
             return _dbSet.Find(id);

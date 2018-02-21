@@ -7,8 +7,12 @@ namespace CoralTime.Common.Attributes
     public abstract class BaseCheckSecureHeaderFilter : ActionFilterAttribute
     {
         protected readonly IConfiguration _config;
+        
+        protected abstract string GetSecureHeaderName();
 
-        public BaseCheckSecureHeaderFilter(IConfiguration config)
+        protected abstract string GetSecureHeaderValue();
+
+        protected BaseCheckSecureHeaderFilter(IConfiguration config)
         {
             _config = config;
         }
@@ -21,9 +25,5 @@ namespace CoralTime.Common.Attributes
                 context.Result = new UnauthorizedResult();
             }
         }
-
-        protected abstract string GetSecureHeaderName();
-
-        protected abstract string GetSecureHeaderValue();
     }
 }

@@ -2,8 +2,69 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
+    <Version>2.0.0</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <Compile Remove="ConfigsNetCore2.0\HelperFunctions\**" />
+    <Compile Remove="Configs\**" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <Content Remove="ConfigsNetCore2.0\HelperFunctions\**" />
+    <Content Remove="Configs\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\HelperFunctions\**" />
+    <EmbeddedResource Remove="Configs\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <None Remove="ConfigsNetCore2.0\HelperFunctions\**" />
+    <None Remove="Configs\**" />
+    <None Remove="wwwroot\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="ConfigsNetCore2.0\coraltime_azure.publishsettings" />
+    <None Remove="ConfigsNetCore2.0\info about configs.txt" />
+    <None Remove="ConfigsNetCore2.0\Your local changes to the following files would be overwritten by checkout.bmp" />
     <None Remove="Content\PDF\Site.css" />
     <None Remove="Content\PDF\PDFMarkUpView.cshtml" />
     <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.001" />
@@ -11,6 +72,7 @@
     <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003" />
     <None Remove="StaticFiles\Avatars\userpic.svg" />
     <None Remove="StaticFiles\Icons\userpic.svg" />
+    <None Remove="tempkey.rsa" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\PDF\Site.css">
@@ -55,9 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
   </ItemGroup>
   <Target Name="CreateLogsFolder" AfterTargets="AfterPublish">
     <MakeDir Directories="$(PublishDir)Logs" Condition="!Exists('$(PublishDir)Logs')" />

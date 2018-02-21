@@ -27,7 +27,7 @@ export class TextareaChange {
 export class TextareaComponent implements ControlValueAccessor {
 	@Input() name: string;
 	@Input() maxlength: number;
-	@Input() placeholder: string;
+	@Input() placeholder: string = '';
 	@Input() canResize: boolean = false;
 	@Output() change: EventEmitter<TextareaChange> = new EventEmitter<TextareaChange>();
 	modelValue: any;

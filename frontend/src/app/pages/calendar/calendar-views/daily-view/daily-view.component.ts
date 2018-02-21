@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
-import { TimeEntry, CalendarDay } from '../../../../models/calendar';
+import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
 import { Project } from '../../../../models/project';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CalendarService } from '../../../../services/calendar.service';
-import * as moment from 'moment';
 
 @Component({
 	templateUrl: 'daily-view.component.html',
@@ -14,12 +13,12 @@ import * as moment from 'moment';
 export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	@HostBinding('class.ct-calendar-daily-view') addClass: boolean = true;
 
-	timeEntries: TimeEntry[];
+	date: string;
 	dayInfo: CalendarDay;
+	projectIds: number[];
 	projects: Project[] = [];
 	projectTimeEntries: TimeEntry[] = [];
-	projectIds: number[];
-	date: Date;
+	timeEntries: TimeEntry[];
 
 	private timeEntriesSubscription: Subscription;
 
@@ -29,17 +28,17 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
 			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
-			this.date = params['date'] ? moment.utc(params['date'], 'MM-DD-YYYY').toDate() : (new Date());
+			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 			this.setDate();
-			this.getTimeEntries(this.date, this.projectIds);
+			this.getTimeEntries(this.projectIds);
 		});
 		this.timeEntriesSubscription = this.calendarService.timeEntriesUpdated
 			.subscribe(() => {
-				this.getTimeEntries(this.date, this.projectIds);
+				this.getTimeEntries(this.projectIds);
 			});
 	}
 
-	getTimeEntries(startDate: Date, projectIds?: number[]) {
+	getTimeEntries(projectIds?: number[]) {
 		this.calendarService.getTimeEntries(this.date)
 			.subscribe((res) => {
 				this.timeEntries = res;

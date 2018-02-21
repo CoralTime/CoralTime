@@ -229,9 +229,10 @@ export class ProfileSettingsComponent implements OnInit {
 		let preferencesObject = {
 			defaultProjectId: this.userModel.defaultProjectId,
 			defaultTaskId: this.userModel.defaultTaskId,
-			timeZone: this.userModel.timeZone,
+			dateFormat: this.userModel.dateFormat,
 			dateFormatId: this.userModel.dateFormatId,
 			timeFormat: this.userModel.timeFormat,
+			timeZone: this.userModel.timeZone,
 			weekStart: this.userModel.weekStart
 		};
 

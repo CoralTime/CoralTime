@@ -16,13 +16,13 @@ export class CalendarDayComponent implements OnInit {
 	@Input() dayInfo: CalendarDay;
 	@ViewChild('entryForm') entryForm: EntryTimeComponent;
 
-	newTimeEntry: TimeEntry;
-	isEntryFormOpened: boolean = false;
-	draggedTimeEntry: TimeEntry;
-	isDragEnter: boolean;
-	fakeCalendarTaskHeight: number;
 	canChangeDragEnter: boolean = true;
 	changeDragEnterTimeout: any;
+	draggedTimeEntry: TimeEntry;
+	isEntryFormOpened: boolean = false;
+	isDragEnter: boolean;
+	fakeCalendarTaskHeight: number;
+	newTimeEntry: TimeEntry;
 
 	@ViewChild('calendarTask', {read: ElementRef}) calendarTask: ElementRef;
 
@@ -31,24 +31,23 @@ export class CalendarDayComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		if (this.isToday(new Date(this.dayInfo.date))) {
-			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) => timeEntry.timeTimerStart > 0);
+		if (this.isToday(this.dayInfo.date)) {
+			this.calendarService.isTimerActivated =
+				!!this.dayInfo.timeEntries.find((timeEntry) => timeEntry.timeTimerStart && timeEntry.timeTimerStart !== -1);
 		}
 	}
 
-	setTimeString(s: number): string {
-		let m = Math.floor(s / 60);
-		let h = Math.floor(m / 60);
-		m = m - h * 60;
-		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
-	}
-
-	getDateString(date: Date): string {
-		return moment(date).format('dddd') + (this.isToday(date) ? ' (Today)' : '');
-	}
-
-	isToday(date: Date): boolean {
-		return (new Date()).toDateString() === date.toDateString();
+	addNewTimeEntry(currentDate: string): void {
+		let newTimeEntry = {
+			date: currentDate,
+			projectName: 'Select Project',
+			taskName: 'Select Task'
+		};
+		this.newTimeEntry = new TimeEntry(newTimeEntry);
+		this.isEntryFormOpened = true;
+		setTimeout(() => {
+			this.entryForm.toggleEntryTimeForm();
+		}, 0);
 	}
 
 	calcTime(type: string): string {
@@ -63,22 +62,18 @@ export class CalendarDayComponent implements OnInit {
 		return this.setTimeString(time);
 	}
 
-	addNewTimeEntry(currentDate: Date): void {
-		let newTimeEntry = {
-			date: currentDate,
-			projectName: 'Select Project',
-			taskName: 'Select Task'
-		};
-		this.newTimeEntry = new TimeEntry(newTimeEntry);
-		this.isEntryFormOpened = true;
-		setTimeout(() => {
-			this.entryForm.toggleEntryTimeForm();
-		}, 0);
+	private setTimeString(s: number): string {
+		let m = Math.floor(s / 60);
+		let h = Math.floor(m / 60);
+		m = m - h * 60;
+		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
 	deleteTimeEntry(): void {
 		this.isEntryFormOpened = false;
 	}
+
+	// DRAG ACTIONS
 
 	dragStart(timeEntry: TimeEntry, target: HTMLElement): void {
 		if (this.isTimeEntryFormOpened()) {
@@ -100,14 +95,14 @@ export class CalendarDayComponent implements OnInit {
 	drop(): void {
 		let submitObservable: Observable<any>;
 		if (this.draggedTimeEntry) {
-			if (new Date(this.draggedTimeEntry.date).toDateString() === this.dayInfo.date.toDateString()) {
+			if (DateUtils.formatDateToString(this.draggedTimeEntry.date) === this.dayInfo.date) {
 				return;
 			}
 			if (!this.isNewTrackedTimeValid(this.dayInfo.date, this.draggedTimeEntry.time)) {
 				this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 				return;
 			}
-			this.draggedTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.dayInfo.date));
+			this.draggedTimeEntry.date = this.dayInfo.date;
 			this.draggedTimeEntry.timeTimerStart = -1;
 
 			if (this.isAltPressed()) {
@@ -154,8 +149,22 @@ export class CalendarDayComponent implements OnInit {
 		return this.calendarService.dragEffect;
 	}
 
+	// GENERAL
+
+	getDateNumber(date: string): number {
+		return DateUtils.formatStringToDate(date).getDate();
+	}
+
+	getDateString(date: string): string {
+		return moment(date).format('dddd') + (this.isToday(date) ? ' (Today)' : '');
+	}
+
 	isAltPressed(): boolean {
 		return this.calendarService.isAltPressed;
+	}
+
+	isToday(date: string): boolean {
+		return DateUtils.isToday(date);
 	}
 
 	isTimeEntryFormOpened(): boolean {
@@ -171,7 +180,7 @@ export class CalendarDayComponent implements OnInit {
 		}, 200);
 	}
 
-	private isNewTrackedTimeValid(newDate: Date, time: number): boolean {
+	private isNewTrackedTimeValid(newDate: string, time: number): boolean {
 		let dayInfo = this.calendarService.getDayInfoByDate(newDate);
 		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'time');
 		return totalTrackedTimeForDay + time <= MAX_TIMER_VALUE;

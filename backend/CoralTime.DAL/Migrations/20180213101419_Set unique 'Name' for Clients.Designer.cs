@@ -12,9 +12,10 @@ using System;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180213101419_Set unique 'Name' for Clients")]
+    partial class SetuniqueNameforClients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -406,7 +407,7 @@ namespace CoralTime.DAL.Migrations
                     b.Property<DateTime>("Date");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(500);
 
                     b.Property<bool>("IsFromToShow");
 

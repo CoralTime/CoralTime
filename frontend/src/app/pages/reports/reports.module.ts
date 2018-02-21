@@ -14,6 +14,7 @@ import { ReportsSendFormComponent } from './reports-send/form/reports-send-form.
 import { EmailsEqualValidatorDirective } from './reports-send/form/emails-equal-validator.directive';
 import { EmailInvalidValidatorDirective } from './reports-send/form/email-invalid-validator.directive';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
+import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
 
 @NgModule({
 	imports: [
@@ -32,7 +33,8 @@ import { ReportsQueryFormComponent } from './reports-query-form/reports-query-fo
 	],
 	entryComponents: [
 		ReportsSendComponent,
-		ReportsQueryFormComponent
+		ReportsQueryFormComponent,
+		ConfirmationComponent
 	],
 	providers: [
 		{

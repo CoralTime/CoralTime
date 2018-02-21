@@ -44,7 +44,7 @@ namespace CoralTime.DAL.Models
 
         #endregion
 
-        [MaxLength(500)]
+        [MaxLength(1000)]
         public string Description { get; set; }
 
         public bool IsFromToShow { get; set; }

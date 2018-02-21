@@ -22,37 +22,37 @@ namespace CoralTime.Api.v1.Reports.Export
         {
             try
             {
-                switch (reportsGridData.ValuesSaved.GroupById)
+                switch (reportsGridData.CurrentQuery.GroupById)
                 {
-                    case (int)ReportsGroupBy.Project:
-                        {
-                            await _service.ExportEmailGroupByProjects(reportsGridData);
-                            break;
-                        }
+                    case (int) ReportsGroupBy.Project:
+                    {
+                        await _service.ExportEmailGroupByProjects(reportsGridData);
+                        break;
+                    }
 
-                    case (int)ReportsGroupBy.User:
-                        {
-                            await _service.ExportEmailGroupByUsers(reportsGridData);
-                            break;
-                        }
+                    case (int) ReportsGroupBy.User:
+                    {
+                        await _service.ExportEmailGroupByUsers(reportsGridData);
+                        break;
+                    }
 
-                    case (int)ReportsGroupBy.Date:
-                        {
-                            await _service.ExportEmailGroupByDates(reportsGridData);
-                            break;
-                        }
+                    case (int) ReportsGroupBy.Date:
+                    {
+                        await _service.ExportEmailGroupByDates(reportsGridData);
+                        break;
+                    }
 
-                    case (int)ReportsGroupBy.Client:
-                        {
-                            await _service.ExportEmailGroupByClients(reportsGridData);
-                            break;
-                        }
+                    case (int) ReportsGroupBy.Client:
+                    {
+                        await _service.ExportEmailGroupByClients(reportsGridData);
+                        break;
+                    }
 
                     default:
-                        {
-                            await _service.ExportEmailGroupByNone(reportsGridData);
-                            break;
-                        }
+                    {
+                        await _service.ExportEmailGroupByNone(reportsGridData);
+                        break;
+                    }
                 }
 
                 return Ok();

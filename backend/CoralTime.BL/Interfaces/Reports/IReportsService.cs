@@ -7,9 +7,11 @@ namespace CoralTime.BL.Interfaces.Reports
 {
     public interface IReportsService
     {
-        DateTime DateFrom { get; set; }
+        DateTime DateFrom { get; }
 
-        DateTime DateTo { get; set; }
+        DateTime DateTo { get; }
+
+        string SingleFilteredProjectName { get; }
 
         ReportsDropDownsView ReportsDropDowns();
 

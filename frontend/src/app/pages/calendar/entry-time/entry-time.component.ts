@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { TimeEntry } from '../../../models/calendar';
 import { MdDialog, MdDialogRef } from '@angular/material';
-import { ConfirmationComponent } from './confirmation/confirmation.component';
+import { ConfirmationComponent } from '../../../shared/confirmation/confirmation.component';
 import { CalendarService } from '../../../services/calendar.service';
 
 @Component({
@@ -77,6 +77,8 @@ export class EntryTimeComponent implements OnDestroy {
 
 	openConfirmationDialog(): void {
 		this.dialogRef = this.dialog.open(ConfirmationComponent);
+		this.dialogRef.componentInstance.message = 'You have modified this work item. Close and lose changes?';
+
 		this.dialogRef.componentInstance.onSubmit.subscribe((confirm: boolean) => {
 			if (confirm) {
 				this.closeTimeEntryForm();
