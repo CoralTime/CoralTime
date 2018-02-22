@@ -34,21 +34,22 @@ import { UserPicService } from '../services/user-pic.service';
 			useClass: CustomHttp
 		},
 		{
-			provide: ODataConfiguration,
-			useFactory: ODataConfig.ODataConfigFactory
-		},
-		{
 			provide: ErrorHandler,
 			useClass: CustomErrorHandler
 		},
-		ODataServiceFactory,
+		{
+			provide: ODataConfiguration,
+			useFactory: ODataConfig.ODataConfigFactory
+		},
+		AclService,
 		AuthService,
 		AuthGuard,
-		NotAuthGuard,
 		ConstantService,
-		NotificationService,
+		CustomHttp,
 		LoadingIndicatorService,
-		AclService,
+		NotAuthGuard,
+		NotificationService,
+		ODataServiceFactory,
 		UserInfoService,
 		UserPicService
 	]

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { User } from '../../models/user';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
-import { Avatar, UserPicService } from '../../services/user-pic.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -18,8 +17,7 @@ export class ProfileComponent implements OnInit {
 
 	constructor(private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
-	            private route: ActivatedRoute,
-	            private userPicService: UserPicService) {
+	            private route: ActivatedRoute) {
 	}
 
 	ngOnInit() {
@@ -27,15 +25,8 @@ export class ProfileComponent implements OnInit {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
 
-		this.getUserPicture();
+		this.avatarUrl = this.userInfo.iconUrl.replace('Icons', 'Avatars');
 		this.getProjects();
-	}
-
-	private getUserPicture(): void {
-		this.userPicService.loadUserPicture(this.userInfo.id, true)
-			.subscribe((avatar: Avatar) => {
-				this.avatarUrl = avatar.avatarUrl;
-			});
 	}
 
 	private getProjects(): void {

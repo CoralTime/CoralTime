@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReportsComponent } from './reports.component';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { ReportsService } from '../../services/reposts.service';
-import { BrowserXhr, Http } from '@angular/http';
+import { BrowserXhr } from '@angular/http';
 import { ReportsGridComponent } from './reports-data/reports-grid.component';
 import { RangeDatepickerComponent } from './range-datepicker/range-datepicker.component';
 import { CalendarService } from '../../services/calendar.service';
@@ -15,7 +15,6 @@ import { EmailsEqualValidatorDirective } from './reports-send/form/emails-equal-
 import { EmailInvalidValidatorDirective } from './reports-send/form/email-invalid-validator.directive';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
-import { CustomHttp } from '../../core/custom-http';
 
 @NgModule({
 	imports: [
@@ -41,10 +40,6 @@ import { CustomHttp } from '../../core/custom-http';
 		{
 			provide: BrowserXhr,
 			useClass: CustomBrowserXhr
-		},
-		{
-			provide: Http,
-			useClass: CustomHttp
 		},
 		CalendarService,
 		RangeDatepickerService,
