@@ -108,7 +108,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.loadProjects();
 
 		if (this.timeEntry.timeTimerStart && this.timeEntry.timeTimerStart !== -1) {
-			this.startTimer(DateUtils.getSecondsFromStartDay(true) - this.currentTimeEntry.timeTimerStart);
+			this.startTimer();
 		}
 
 		this.getFormHeight();
@@ -162,12 +162,12 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		return DateUtils.isToday(this.timeEntry.date);
 	}
 
-	startTimer(timeTimerStart?: number): void {
+	startTimer(): void {
 		this.isTimerShown = true;
-		timeTimerStart = timeTimerStart ? timeTimerStart + this.currentTimeEntry.time : this.currentTimeEntry.time;
+
 		let timer = Observable.timer(0, 1000);
 		this.timerSubscription = timer.subscribe(() => {
-			this.ticks = timeTimerStart++;
+			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.currentTimeEntry.timeTimerStart + this.currentTimeEntry.time;
 			this.timerValue = this.convertSecondsToTimeFormat(this.ticks);
 		});
 	}
