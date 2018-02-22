@@ -14,11 +14,18 @@ namespace CoralTime.Api.v1
     {
         private readonly IMemberProjectRoleService _roleService;
         private readonly IRefreshDataBaseService _refreshDataBaseService;
+        private readonly IAvatarService _avatarService;
 
-        public ServiceController(IMemberService service, IMemberProjectRoleService roleService, IRefreshDataBaseService refreshDataBaseService, ILogger<ServiceController> logger) : base(logger, service)
+        public ServiceController(
+            IMemberService service, 
+            IMemberProjectRoleService roleService, 
+            IRefreshDataBaseService refreshDataBaseService, 
+            IAvatarService avatarService,
+            ILogger<ServiceController> logger) : base(logger, service)
         {
             _roleService = roleService;
             _refreshDataBaseService = refreshDataBaseService;
+            _avatarService = avatarService;
         }
 
         // GET api/v1/Service/UpdateManagerRoles
@@ -71,6 +78,23 @@ namespace CoralTime.Api.v1
                 _logger.LogWarning($"RefreshDataBase method {e}");
                 var errors = ExceptionsChecker.CheckMembersException(e);
                 return BadRequest(errors);
+            }
+        }
+
+        // GET api/v1/Service/UpdateIconFilesCache
+        [HttpGet]
+        [Route("UpdateIconFilesCache")]
+        public ActionResult UpdateIconFilesCache()
+        {
+            try
+            {
+                _avatarService.SaveAllIconsAndAvatarsInStaticFiles();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"SaveAllIconsAndAvatarsInStaticFiles method {e}");
+                return BadRequest(e.Message);
             }
         }
     }

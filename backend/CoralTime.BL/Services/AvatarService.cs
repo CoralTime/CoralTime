@@ -167,8 +167,14 @@ namespace CoralTime.BL.Services
         {
             var iconPath = Path.Combine(GetIconsPath(), fileName);
             var avatarPath = Path.Combine(GetAvatarsPath(), fileName);
-            File.WriteAllBytes(iconPath, iconFile);
-            File.WriteAllBytes(avatarPath, avatarFile);
+            if (!File.Exists(iconPath))
+            {
+                File.WriteAllBytes(iconPath, iconFile);
+            }
+            if (!File.Exists(avatarPath))
+            {
+                File.WriteAllBytes(avatarPath, avatarFile);
+            }            
         }
 
         private string GetAvatarsPath()
@@ -214,6 +220,16 @@ namespace CoralTime.BL.Services
                 MemberId = memberId,
                 AvatarUrl = url
             };
+        }
+
+        public void SaveAllIconsAndAvatarsInStaticFiles()
+        {
+            var avatars = Uow.MemberAvatarRepository.GetQueryAsNoTraking().Where(x=> true).ToArray();
+
+            foreach (var avatar in avatars)
+            {
+                SaveAvatarToFileSystem(avatar);
+            }
         }
     }
 }

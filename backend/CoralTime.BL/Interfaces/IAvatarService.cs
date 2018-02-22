@@ -14,5 +14,6 @@ namespace CoralTime.BL.Interfaces
         MemberAvatarView GetIcon(int memberId);
         void AddIconUrlInMemberView(MemberView memberView);
         void AddIconUrlInViewModel(IAvatarViewModel memberView);
+        void SaveAllIconsAndAvatarsInStaticFiles();
     }
 }
