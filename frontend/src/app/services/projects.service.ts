@@ -1,17 +1,16 @@
 import { ODataConfiguration } from './odata/config';
-import { Http } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Project } from '../models/project';
+import { CustomHttp } from '../core/custom-http';
 
 @Injectable()
 export class ProjectsService {
 	readonly odata: ODataService<Project>;
 
-	constructor(private odataFactory: ODataServiceFactory,
-	            private http: Http,
+	constructor(private http: CustomHttp,
+	            private odataFactory: ODataServiceFactory,
 	            private odataConfig: ODataConfiguration) {
 		this.odata = this.odataFactory.CreateService<Project>('Projects');
 	}

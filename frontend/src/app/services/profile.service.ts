@@ -121,13 +121,6 @@ export class ProfileService {
 		return timeZones;
 	}
 
-	upload(fileToUpload: File): Observable<any> {
-		let input = new FormData();
-		input.append('file', fileToUpload, fileToUpload.name);
-
-		return this.http.put('/api/v1/Profile', input);
-	}
-
 	getProjects(): Observable<ProfileProjects[]> {
 		return this.http.get(this.constantService.profileApi + '/Projects')
 			.map((res: Response) => {
@@ -154,5 +147,12 @@ export class ProfileService {
 	submitPersonalInfo(obj: any, userId: number): Observable<any> {
 		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/PersonalInfo', obj)
 			.map((res: Response) => res.json());
+	}
+
+	upload(fileToUpload: File): Observable<any> {
+		let input = new FormData();
+		input.append('file', fileToUpload, fileToUpload.name);
+
+		return this.http.put('/api/v1/Profile', input);
 	}
 }

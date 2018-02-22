@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Client } from '../models/client';
 
@@ -92,8 +91,7 @@ export class ClientsService {
 
 		return query.Exec()
 			.flatMap(result => {
-				let client = result[0] ? new Client(result[0]) : null;
-				return Observable.of(client);
+				return Observable.of(new Client(result[0]));
 			});
 	}
 }

@@ -23,28 +23,28 @@ export class ODataQuery<T> extends ODataOperation<T> {
 		super(_typeName, config, http);
 	}
 
+	GetProperty(property: string): any {
+		this._property = property;
+		return this;
+	}
+
 	Filter(filter: string): ODataQuery<T> {
 		this._filter = filter;
 		return this;
-	};
+	}
 
-	Top(top: number): ODataQuery<T> {
-		this._top = top;
+	OrderBy(orderBy: string): ODataQuery<T> {
+		this._orderBy = orderBy;
 		return this;
-	};
+	}
 
 	Skip(skip: number): ODataQuery<T> {
 		this._skip = skip;
 		return this;
 	}
 
-	OrderBy(orderBy: string): ODataQuery<T> {
-		this._orderBy = this.capitalizeFirstLetter(orderBy);
-		return this;
-	}
-
-	GetProperty(property: string): any {
-		this._property = property;
+	Top(top: number): ODataQuery<T> {
+		this._top = top;
 		return this;
 	}
 
@@ -87,13 +87,9 @@ export class ODataQuery<T> extends ODataOperation<T> {
 		return this.config.baseUrl + '/' + this._typeName + this._property + '()';
 	}
 
-    private capitalizeFirstLetter(string): string {
-        return string;
-		// return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-
 	getQueryParams(): URLSearchParams {
 		let params = super.getParams();
+
 		if (this._filter) {
 			params.set(this.config.keys.filter, this._filter);
 		}
@@ -106,6 +102,7 @@ export class ODataQuery<T> extends ODataOperation<T> {
 		if (this._orderBy) {
 			params.set(this.config.keys.orderBy, this._orderBy);
 		}
+
 		return params;
 	}
 
