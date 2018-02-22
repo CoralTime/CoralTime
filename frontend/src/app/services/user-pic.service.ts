@@ -1,7 +1,8 @@
-import { Http, Response } from '@angular/http';
+import { Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { EventEmitter, Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
+import { CustomHttp } from '../core/custom-http';
 
 export interface Avatar {
 	avatarFileName: string;
@@ -13,7 +14,7 @@ export interface Avatar {
 export class UserPicService {
 	onUserPicChange: EventEmitter<string> = new EventEmitter<string>();
 
-	constructor(private http: Http,
+	constructor(private http: CustomHttp,
 	            private constantService: ConstantService) {
 	}
 

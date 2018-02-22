@@ -83,7 +83,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
 			this.userInfo = userInfo;
 		});
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			this.impersonationUser = this.impersonationService.impersonationUser;
 			this.updateManageMenuVisibility();
 		});
 
@@ -116,9 +115,10 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	}
 
 	updateManageMenuVisibility(): void {
+		this.impersonationUser = this.impersonationService.impersonationUser;
 		this.manageItems = FULL_MANAGE_ITEMS;
 
-		if (this.impersonationService.impersonationMember) {
+		if (this.impersonationUser) {
 			let isManager = this.impersonationUser.isManager;
 			let isAdmin = this.impersonationUser.isAdmin;
 			this.showManageMenu = isManager || isAdmin;

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ImpersonationService } from '../../../services/impersonation.service';
-import { UsersService } from '../../../services/users.service';
 import { User } from '../../../models/user';
 import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
@@ -18,7 +17,6 @@ import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 import { SelectComponent } from '../../../shared/form/select/select.component';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ActivatedRoute } from '@angular/router';
-import { Avatar, UserPicService } from '../../../services/user-pic.service';
 
 const STANDART_TIME_ARRAY = [
 	'0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
@@ -39,24 +37,22 @@ const TWELVE_CLOCK_TIME_ARRAY = [
 })
 
 export class ProfileSettingsComponent implements OnInit {
-	avatarUrl: string;
-	isFormShownArray: boolean[] = [true, true, true];
-	resetPasswordMessage: string;
-	showWrongEmailMessage: boolean = false;
-
-	userInfo: User;
 	userModel: User = new User();
 
+	avatarUrl: string;
 	dateFormats: DateFormat[];
 	dateFormatModel: DateFormat;
 	emailPattern = EMAIL_PATTERN;
 	isEmailChanged: boolean;
+	isFormShownArray: boolean[] = [true, true, true];
 	projects: Project[];
 	projectModel: Project;
+	resetPasswordMessage: string;
 	sendEmailDaysArray: WeekDay[];
 	sendEmailDays: boolean[] = [];
 	sendEmailTimeModel: string;
 	sendEmailTimeArray: string[];
+	showWrongEmailMessage: boolean = false;
 	tasks: Task[];
 	taskModel: Task;
 	timeFormats: TimeFormat[] = [new TimeFormat(12), new TimeFormat(24)];
@@ -76,35 +72,24 @@ export class ProfileSettingsComponent implements OnInit {
 	            private profileService: ProfileService,
 	            private route: ActivatedRoute,
 	            private tasksService: TasksService,
-	            private userInfoService: UserInfoService,
-	            private userPicService: UserPicService,
-	            private usersService: UsersService) {
+	            private userInfoService: UserInfoService) {
 	}
 
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {
-			this.userInfo = this.impersonationService.impersonationUser || data.user;
+			this.userModel = new User(this.impersonationService.impersonationUser || data.user);
 		});
 
-		this.getUserPicture();
+		this.avatarUrl = this.userModel.iconUrl.replace('Icons', 'Avatars');
 		this.timeZones = this.profileService.getTimeZones();
+		this.timeFormatModel = this.userModel.timeFormat ? new TimeFormat(this.userModel.timeFormat) : this.timeFormats[1];
+		this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name === this.userModel.timeZone);
+		this.weekStartDayModel = this.weekStartDays[this.userModel.weekStart];
 
-		this.usersService.getUserById(this.userInfo.id).subscribe((user: User) => {
-			this.userModel = user;
-
-			this.timeFormatModel = user.timeFormat ? new TimeFormat(user.timeFormat) : this.timeFormats[1];
-			this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name === user.timeZone);
-			this.weekStartDayModel = this.weekStartDays[user.weekStart];
-
-			this.getDateFormats();
-			this.getProjects();
-			this.setSendEmailTimeData(user.timeFormat);
-			this.setSendEmailWeekDaysArray(this.userModel.weekStart);
-		});
-
-		this.userPicService.onUserPicChange.subscribe((avatarUrl: string) => {
-			this.avatarUrl = avatarUrl;
-		});
+		this.getDateFormats();
+		this.getProjects();
+		this.setSendEmailTimeData(this.userModel.timeFormat);
+		this.setSendEmailWeekDaysArray(this.userModel.weekStart);
 	}
 
 	// GENERAL
@@ -119,6 +104,7 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	onSubmitPhotoDialog(avatarUrl: string): void {
+		this.avatarUrl = avatarUrl;
 		let iconObject = {
 			iconUrl: avatarUrl.replace('Avatars', 'Icons')
 		};
@@ -217,9 +203,9 @@ export class ProfileSettingsComponent implements OnInit {
 		};
 
 		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
-			.subscribe((userModel: any) => {
+			.subscribe((userModel: User) => {
 					this.isEmailChanged = false;
-					this.userModel.email = userModel.Email;
+					this.userModel.email = userModel.email;
 
 					if (this.impersonationService.impersonationId) {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, personalInfoObject);
@@ -266,13 +252,6 @@ export class ProfileSettingsComponent implements OnInit {
 				error => {
 					this.notificationService.danger('Error changing profile settings.');
 				});
-	}
-
-	private getUserPicture(): void {
-		this.userPicService.loadUserPicture(this.userInfo.id, true)
-			.subscribe((avatar: Avatar) => {
-				this.avatarUrl = avatar.avatarUrl;
-			});
 	}
 
 	private getProjects(): void {

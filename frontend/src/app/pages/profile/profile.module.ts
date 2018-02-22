@@ -9,8 +9,6 @@ import { EnterEmailService } from '../forgot-password/enter-email/enter-email.se
 import { ProfilePhotoComponent } from './profile-settings/profile-photo/profile-photo.component';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { FileUploadModule } from 'ng2-file-upload';
-import { Http } from '@angular/http';
-import { CustomHttp } from '../../core/custom-http';
 
 @NgModule({
 	imports: [
@@ -26,10 +24,6 @@ import { CustomHttp } from '../../core/custom-http';
 		ProfilePhotoComponent
 	],
 	providers: [
-		{
-			provide: Http,
-			useClass: CustomHttp
-		},
 		ProfileService,
 		EnterEmailService
 	],

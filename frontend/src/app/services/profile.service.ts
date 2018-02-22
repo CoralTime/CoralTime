@@ -1,4 +1,5 @@
-import { Http, Response } from '@angular/http';
+import { Response } from '@angular/http';
+import { CustomHttp } from '../core/custom-http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
@@ -102,7 +103,7 @@ export class ProfileProjectMember {
 
 @Injectable()
 export class ProfileService {
-	constructor(private http: Http,
+	constructor(private http: CustomHttp,
 	            private constantService: ConstantService) {
 	}
 
@@ -118,13 +119,6 @@ export class ProfileService {
 		}
 
 		return timeZones;
-	}
-
-	upload(fileToUpload: File): Observable<any> {
-		let input = new FormData();
-		input.append('file', fileToUpload, fileToUpload.name);
-
-		return this.http.put('/api/v1/Profile', input);
 	}
 
 	getProjects(): Observable<ProfileProjects[]> {
@@ -153,5 +147,12 @@ export class ProfileService {
 	submitPersonalInfo(obj: any, userId: number): Observable<any> {
 		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/PersonalInfo', obj)
 			.map((res: Response) => res.json());
+	}
+
+	upload(fileToUpload: File): Observable<any> {
+		let input = new FormData();
+		input.append('file', fileToUpload, fileToUpload.name);
+
+		return this.http.put('/api/v1/Profile', input);
 	}
 }
