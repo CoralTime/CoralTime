@@ -15,6 +15,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CoralTime.BL.Services
 {
@@ -23,6 +25,7 @@ namespace CoralTime.BL.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
         private readonly bool _isDemo;
+        private MD5 hasher;
 
         public AvatarService(UnitOfWork uow, IMapper mapper, IConfiguration config, IHttpContextAccessor httpContextAccessor)
             : base(uow, mapper)
@@ -30,6 +33,7 @@ namespace CoralTime.BL.Services
             _config = config;
             _httpContextAccessor = httpContextAccessor;
             _isDemo = bool.Parse(_config["DemoSiteMode"]);
+            hasher = MD5.Create();
         }
 
         public void AddIconUrlInMemberView(MemberView memberView)
@@ -44,33 +48,65 @@ namespace CoralTime.BL.Services
 
         public MemberAvatarView GetAvatar(int memberId)
         {
-            return CreateAvaterMemberAvatarView(GetFileNameByMemberId(memberId), memberId);
+            var urlData = GetFileNameByMemberId(memberId);
+            return CreateAvaterMemberAvatarView(urlData.fileName, memberId);
         }
 
         public MemberAvatarView GetIcon(int memberId)
         {
             var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
-            return CreateIconMemberAvatarView(GetFileNameByMemberId(memberId), memberId);
+            var urlData = GetFileNameByMemberId(memberId);
+            return CreateIconMemberAvatarView(urlData.fileName, memberId);
         }
 
         public string GetAvatarUrl(int memberId)
         {
-            return GetAvatarUrl(GetFileNameByMemberId(memberId));
+            var (fileName, isDefault) = GetFileNameByMemberId(memberId);
+            var url = GetAvatarUrl(fileName);
+            var gravatarUrl = GetGravatarUrl(memberId, url, isDefault, isAvatar: true);
+            return gravatarUrl;
         }
 
         public string GetIconUrl(int memberId)
         {
-            return GetIconUrl(GetFileNameByMemberId(memberId));
+            var (fileName, isDefault) = GetFileNameByMemberId(memberId);
+            var url = GetIconUrl(fileName);
+            var gravatarUrl = GetGravatarUrl(memberId, url, isDefault);
+            return gravatarUrl;
         }
 
-        private string GetFileNameByMemberId(int memberId)
+        private (string fileName, bool isDefault) GetFileNameByMemberId(int memberId)
         {
             var fileName = Uow.MemberAvatarRepository.LinkedCacheGetList().FirstOrDefault(p => p.MemberId == memberId)?.AvatarFileName;
+            var isDefault = false;
             if (string.IsNullOrEmpty(fileName))
             {
                 fileName = Constants.DefaultIconFileName;
+                isDefault = true;
             }
-            return fileName;
+            return (fileName, isDefault);
+        }
+
+        private string GetGravatarUrl(int memberId, string url, bool isDefault, bool isAvatar = false)
+        {
+            if (isDefault)
+            {
+                var email = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
+                if (email != null)
+                {
+                    var data = hasher.ComputeHash(Encoding.Default.GetBytes(email));
+                    var sb = new StringBuilder();
+
+                    foreach (byte d in data)
+                        sb.Append(d.ToString("x2"));
+
+                    var hash = sb.ToString();
+                    var size = (isAvatar) ? "?s=200" : "?s=40";
+                    var gravatarUrl = $"http://www.gravatar.com/avatar/{ hash }?d={ "wavatar" }&{ size }";
+                    return gravatarUrl;
+                }
+            }
+            return url;
         }
 
         private bool CheckFile(string fileName, long fileSize, out string errors)
