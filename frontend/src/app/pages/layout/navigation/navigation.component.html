@@ -48,10 +48,10 @@
             <div class="ct-profile-block">
                 <div class="ct-nav-droplink">
                     <div class="ct-nav-username">
-                        <a title="View Profile" [routerLink]="['/profile']">{{impersonationName || userInfo?.fullName}}</a>
+                        <a title="View Profile" [routerLink]="['/profile']">{{impersonationUser?.fullName || userInfo?.fullName}}</a>
                     </div>
                     <a [routerLink]="['/profile']" title="View Profile" class="ct-userpic">
-                        <ct-user-pic [userId]='impersonationId || authUser.id'></ct-user-pic>
+                        <ct-user-pic [iconUrl]='impersonationUser?.iconUrl || userInfo?.iconUrl'></ct-user-pic>
                     </a>
                     <i class="fa" [ngClass]="isProfileNavMenuOpen ? 'fa-caret-up' : 'fa-caret-down'"
                        (click)="toggleProfileNavMenu(profileNavMenu)"></i>

@@ -8,7 +8,7 @@ namespace CoralTime.BL.Interfaces
 {
     public interface IMemberService
     {
-        IEnumerable<MemberView> GetAllMembers(string userName);
+        IEnumerable<MemberView> GetAllMembers();
 
         Member GetById(int id);
 
@@ -16,7 +16,7 @@ namespace CoralTime.BL.Interfaces
 
         Task<Member> CreateNewUser(MemberView member);
 
-        Task<MemberView> Update(string userName, MemberView memberView);
+        Task<MemberView> Update(MemberView memberView);
 
         #region Password.
 
@@ -51,8 +51,6 @@ namespace CoralTime.BL.Interfaces
         #endregion
 
         #region Other Methods.
-
-        IEnumerable<Member> GetAllMembersCommon(string userName);
 
         IEnumerable<Project> GetProjects(int memberId);
 

@@ -213,7 +213,7 @@ namespace CoralTime.BL.Services
 
             // Not All or Any
             var membersIdsWithoutAllTimeEntriesInNotificationPeriod = project.MemberProjectRoles
-                .Where(mpr => membersIdsWithAllTimeEntriesInNotificationPeriod.All(m2 => m2.Id != mpr.Member.Id))
+                .Where(mpr => membersIdsWithAllTimeEntriesInNotificationPeriod.Any(m2 => m2.Id != mpr.Member.Id))
                 .Select(x => x.Member)
                 .Where(member => member.SendEmailTime == currentHour);
 
@@ -270,7 +270,6 @@ namespace CoralTime.BL.Services
                     var dayOrDays = project.NotificationDay == 1 ? "day" : "days";
 
                     var linkToCreateTEntry = $"https://time.coral.team:1593/calendar/week;date={NotificationPeriodFirstDay.Month}-{NotificationPeriodFirstDay.Day}-{NotificationPeriodFirstDay.Year}";
-                    var linkCallBackMain = "https://time.coral.team:1593/";
 
                     var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(memberNotifRange.Member.DateFormatId);
                     //var dateRangeShort = $"{NotificationPeriodFirstDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)} - {NotificationPeriodLastDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)}";

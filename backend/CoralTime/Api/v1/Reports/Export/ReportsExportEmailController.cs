@@ -1,6 +1,5 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.Emails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,44 +22,41 @@ namespace CoralTime.Api.v1.Reports.Export
         {
             try
             {
-                var userName = this.GetUserNameWithImpersonation();
-
                 switch (reportsGridData.CurrentQuery.GroupById)
                 {
                     case (int) ReportsGroupBy.Project:
                     {
-                        await _service.ExportEmailGroupByProjects(userName, reportsGridData);
+                        await _service.ExportEmailGroupByProjects(reportsGridData);
                         break;
                     }
 
                     case (int) ReportsGroupBy.User:
                     {
-                        await _service.ExportEmailGroupByUsers(userName, reportsGridData);
+                        await _service.ExportEmailGroupByUsers(reportsGridData);
                         break;
                     }
 
                     case (int) ReportsGroupBy.Date:
                     {
-                        await _service.ExportEmailGroupByDates(userName, reportsGridData);
+                        await _service.ExportEmailGroupByDates(reportsGridData);
                         break;
                     }
 
                     case (int) ReportsGroupBy.Client:
                     {
-                        await _service.ExportEmailGroupByClients(userName, reportsGridData);
+                        await _service.ExportEmailGroupByClients(reportsGridData);
                         break;
                     }
 
                     default:
                     {
-                        await _service.ExportEmailGroupByNone(userName, reportsGridData);
+                        await _service.ExportEmailGroupByNone(reportsGridData);
                         break;
                     }
                 }
 
                 return Ok();
             }
-
             catch (Exception e)
             {
                 _logger.LogWarning($"ReportsExportEmail method with parameters ({reportsGridData});\n {e}");

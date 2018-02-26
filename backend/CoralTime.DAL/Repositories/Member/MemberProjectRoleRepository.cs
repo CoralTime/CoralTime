@@ -18,7 +18,7 @@ namespace CoralTime.DAL.Repositories
 
         public int GetManagerRoleId()
         {
-            return _context.ProjectRoles.FirstOrDefault(r => r.Name.Equals(Constants.ManagerRole)).Id;
+            return _context.ProjectRoles.FirstOrDefault(r => r.Name.Equals(Constants.ProjectRoleManager)).Id;
         }
 
         public override MemberProjectRole LinkedCacheGetById(int Id)

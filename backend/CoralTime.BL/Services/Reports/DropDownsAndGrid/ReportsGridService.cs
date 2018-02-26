@@ -16,7 +16,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
     {
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
 
-        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, ReportsGridView reportsGridData)
+        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData)
         {
             var reportsGridTimeEntry = new ReportsGrandGridTimeEntryView
             {
@@ -29,22 +29,22 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             };
 
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(userName, reportsGridData);
+            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
             if (!timeEntriesForGrouping.Any())
             {
                 return reportsGridTimeEntry;
             }
 
-            var timeEntriesGroupByNone = timeEntriesForGrouping
+            var timeEntriesGroupByNone = timeEntriesForGrouping.ToList()
                 .GroupBy(x => x.Id)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, ReportsGridView reportsGridData)
+        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData)
         {
             var reportsGridProjects = new ReportsGrandGridProjectsView
             {
@@ -57,23 +57,23 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             };
 
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(userName, reportsGridData);
+            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
             if (!timeEntriesForGrouping.Any())
             {
                 return reportsGridProjects;
             }
 
-            var timeEntriesGroupByProjects = timeEntriesForGrouping
+            var timeEntriesGroupByProjects = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Project)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, ReportsGridView reportsGridData)
+        public ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData)
         {
             var reportsGridUsers = new ReportsGrandGridMembersView
             {
@@ -86,23 +86,23 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             };
 
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(userName, reportsGridData);
+            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
             if (!timeEntriesForGrouping.Any())
             {
                 return reportsGridUsers;
             }
 
-            var timeEntriesGroupByUsers = timeEntriesForGrouping
+            var timeEntriesGroupByUsers = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Member)
                 .OrderBy(x => x.Key.FullName)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, ReportsGridView reportsGridData)
+        public ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData)
         {
             var reportsGridDates = new ReportsGrandGridDatesView
             {
@@ -115,22 +115,22 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             };
 
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(userName, reportsGridData);
+            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
             if (!timeEntriesForGrouping.Any())
             {
                 return reportsGridDates;
             }
 
-            var timeEntriesGroupByDate = timeEntriesForGrouping
+            var timeEntriesGroupByDate = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Date)
-                .ToDictionary(key => key.Key, key => key.Select(value => value));
+                .ToDictionary(key => key.Key, key => key.AsEnumerable());
 
             var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridClients ReportsGridGroupByClients(string userName, ReportsGridView reportsGridData)
+        public ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData)
         {
             var reportsGridClients = new ReportsGrandGridClients
             {
@@ -143,16 +143,16 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             };
 
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(userName, reportsGridData);
+            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
             if (!timeEntriesForGrouping.Any())
             {
                 return reportsGridClients;
             }
 
-            var timeEntriesGroupByClients = timeEntriesForGrouping
+            var timeEntriesGroupByClients = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
                 .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.Select(value => value).OrderBy(value => value.Date).AsEnumerable());
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
 
@@ -163,18 +163,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients. (Common methods)
 
-        private IQueryable<TimeEntry> GetTimeEntriesForGrouping(string userName, ReportsGridView reportsGridData)
+        private IQueryable<TimeEntry> GetTimeEntriesForGrouping(ReportsGridView reportsGridData)
         {
-            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
 
             if (currentMember == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {userName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} not found.");
             }
 
             if (!currentMember.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {userName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} is not active.");
             }
 
             CommonHelpers.SetRangeOfWeekByDate(out var weekStart, out var weekEnd, DateTime.Now);
@@ -249,7 +249,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             if (!currentMember.User.IsAdmin && currentMember.User.IsManager)
             {
-                var managerRoleId = Uow.ProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.Name == ManagerRole).Id;
+                var managerRoleId = Uow.ProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.Name == ProjectRoleManager).Id;
 
                 var managerProjectIds = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
                     .Where(r => r.MemberId == currentMember.Id && r.RoleId == managerRoleId)

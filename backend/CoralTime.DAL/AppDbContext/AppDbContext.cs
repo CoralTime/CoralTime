@@ -3,7 +3,6 @@ using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.Threading.Tasks;
 
 namespace CoralTime.DAL
@@ -67,6 +66,9 @@ namespace CoralTime.DAL
             builder.Entity<Models.Client>()
                 .HasMany(p => p.Projects)
                 .WithOne(p => p.Client).IsRequired(false);
+
+            builder.Entity<Models.Client>()
+                .HasIndex(p => p.Name).IsUnique();
 
             builder.Entity<TaskType>()
                 .HasOne(p => p.Project);

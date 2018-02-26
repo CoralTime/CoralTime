@@ -14,21 +14,23 @@ using System.Linq;
 
 namespace CoralTime.BL.Services
 {
-    public class MemberProjectRolesService : BaseService, IMemberProjectRolesService
+    public class MemberProjectRoleService : BaseService, IMemberProjectRoleService
     {
         private readonly IProjectService _projectService;
+        private readonly IAvatarService _avatarService;
 
-        public MemberProjectRolesService(UnitOfWork uow, IProjectService projectService, IMapper mapper)
+        public MemberProjectRoleService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IAvatarService avatarService)
             : base(uow, mapper)
         {
             _projectService = projectService;
+            _avatarService = avatarService;
         }
 
-        public IEnumerable<MemberProjectRoleView> GetAllProjectRoles(string userName)
+        public IEnumerable<MemberProjectRoleView> GetAllProjectRoles()
         {
             var memberProjectRoleView = new List<MemberProjectRoleView>();
 
-            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
 
             // Get MemberProjectRoles from DB.
             var allMemberProjectRoles = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -53,6 +55,7 @@ namespace CoralTime.BL.Services
                 var addGlobalProjectsRolesView = addGlobalProjectsRoles.Select(x => x.GetViewWithGlobalProjects(Mapper));
                 memberProjectRoleView.AddRange(addGlobalProjectsRolesView);
 
+                AddIconUrl(memberProjectRoleView);
                 return memberProjectRoleView;
             }
 
@@ -88,6 +91,7 @@ namespace CoralTime.BL.Services
                 var addGlobalProjectsRoles = AddGlobalProjectsRoles(memberProjectRoleView).Select(x => x.GetViewWithGlobalProjects(Mapper));
                 memberProjectRoleView.AddRange(addGlobalProjectsRoles);
 
+                AddIconUrl(memberProjectRoleView);
                 return memberProjectRoleView;
             }
 
@@ -103,9 +107,23 @@ namespace CoralTime.BL.Services
             // Get Global Projects. Add members to Global Projects. Add to result Global Projects.
             resultForMember.AddRange(AddGlobalProjectsRoles(resultForMember).Select(x => x.GetViewWithGlobalProjects(Mapper)));
 
+            AddIconUrl(resultForMember);
             return resultForMember;
 
             #endregion
+        }
+
+        private void AddIconUrl(IEnumerable<MemberProjectRoleView> list)
+        {
+            foreach (var item in list)
+            {
+                AddIconUrl(item);
+            }
+        }
+
+        private void AddIconUrl(MemberProjectRoleView item)
+        {
+            _avatarService.AddIconUrlInViewModel(item);
         }
 
         private List<MemberProjectRole> AddGlobalProjectsRoles(List<MemberProjectRoleView> memberProjRole)
@@ -162,6 +180,7 @@ namespace CoralTime.BL.Services
             }
 
             var memberProjRoleView = memberProjRole.GetView(Mapper);
+            AddIconUrl(memberProjRoleView);
             return memberProjRoleView;
         }
 
@@ -180,7 +199,11 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"MemberProjectRole with ProjectId = {projectId} not found.");
             }
 
-            var membersNotAssigtProjectView = membersNotAssignProjectByProjId.Select(x => x.GetView(Mapper));
+            var membersNotAssigtProjectView = membersNotAssignProjectByProjId.Select(x => x.GetView(Mapper)).ToList();
+            foreach (var item in membersNotAssigtProjectView)
+            {
+                _avatarService.AddIconUrlInMemberView(item);
+            }
             return membersNotAssigtProjectView;
         }
 
@@ -198,17 +221,17 @@ namespace CoralTime.BL.Services
             return memberProjRoleView;
         }
 
-        public MemberProjectRoleView Create(string userName, MemberProjectRoleView memberProjectRoleView)
+        public MemberProjectRoleView Create(MemberProjectRoleView memberProjectRoleView)
         {
-            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
             if (currentMember == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {InpersonatedUserName} not found.");
             }
 
             if (!currentMember.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {InpersonatedUserName} is not active.");
             }
 
             var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -238,23 +261,26 @@ namespace CoralTime.BL.Services
                 UpdateIsManager(memberProjectRoleView.MemberId);
 
                 var memberProjectRoleByIdResult = Uow.MemberProjectRoleRepository.LinkedCacheGetById(memberProjectRole.Id);
-                return memberProjectRoleByIdResult.GetView(Mapper);
+                
+                var model = memberProjectRoleByIdResult.GetView(Mapper);
+                AddIconUrl(model);
+                return model;
             }
 
             throw new CoralTimeForbiddenException($"Member with id = {currentMember.Id} is not allowed to create MemberProjectRole on project with id = {memberProjectRoleView.ProjectId} and role with id = {memberProjectRoleView.RoleId}");
         }
 
-        public MemberProjectRoleView Update(string userName, dynamic projectRole)
+        public MemberProjectRoleView Update(dynamic projectRole)
         {
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
             if (memberByUserName == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {userName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} not found.");
             }
 
             if (!memberByUserName.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {userName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} is not active.");
             }
 
             var memberProjectRoleById = Uow.MemberProjectRoleRepository.GetById((int)projectRole.Id);
@@ -286,23 +312,26 @@ namespace CoralTime.BL.Services
                 UpdateIsManager(memberProjectRoleById.MemberId);
 
                 var memberProjectRoleByIdResult = Uow.MemberProjectRoleRepository.LinkedCacheGetById((int)projectRole.Id);
-                return memberProjectRoleByIdResult.GetView(Mapper);
+
+                var model = memberProjectRoleByIdResult.GetView(Mapper);
+                AddIconUrl(model);
+                return model;
             }
 
             throw new CoralTimeForbiddenException($"Member with id = {memberByUserName.Id} is not allowed to update projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
         }
 
-        public MemberProjectRoleView Patch(string userName, MemberProjectRoleView projectRole)
+        public MemberProjectRoleView Patch(MemberProjectRoleView projectRole)
         {
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
             if (memberByUserName == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {userName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} not found.");
             }
 
             if (!memberByUserName.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {userName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} is not active.");
             }
 
             var memberProjectRoleById = Uow.MemberProjectRoleRepository.GetById(projectRole.Id);
@@ -325,18 +354,20 @@ namespace CoralTime.BL.Services
 
                 var memberProjectRoleByIdResult = Uow.MemberProjectRoleRepository.LinkedCacheGetById(projectRole.Id);
 
-                return memberProjectRoleByIdResult.GetViewWithGlobalProjects(Mapper);
+                var model = memberProjectRoleByIdResult.GetViewWithGlobalProjects(Mapper);
+                AddIconUrl(model);
+                return model;
             }
 
             throw new CoralTimeForbiddenException($"Member with id = {memberByUserName.Id} is not allowed to patch projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
         }
 
-        public void Delete(string userName, int id)
+        public void Delete(int id)
         {
-            var member = Uow.MemberRepository.LinkedCacheGetByName(userName);
+            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
             if (member == null || !member.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found or is not active");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {InpersonatedUserName} not found or is not active");
             }
 
             var projectRole = Uow.MemberProjectRoleRepository.GetById(id);
@@ -364,9 +395,9 @@ namespace CoralTime.BL.Services
             }
         }
 
-        public IEnumerable<ProjectView> GetAllProjectsByManager(string userName)
+        public IEnumerable<ProjectView> GetAllProjectsByManager()
         {
-            return _projectService.TimeTrackerAllProjects(userName);
+            return _projectService.TimeTrackerAllProjects();
         }
 
         public bool FixAllManagerRoles()

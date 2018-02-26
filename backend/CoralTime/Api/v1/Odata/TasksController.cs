@@ -1,15 +1,13 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Middlewares;
 using CoralTime.DAL.Models;
 using CoralTime.Services;
-using CoralTime.ViewModels.Errors;
 using CoralTime.ViewModels.Tasks;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +15,8 @@ using System.Linq;
 namespace CoralTime.Api.v1.Odata
 {
     [Route("api/v1/odata/[controller]")]
-    [EnableQuery]
     [Authorize]
-    public class TasksController :  BaseController<TasksController, ITasksService>
+    public class TasksController : BaseODataController<TasksController, ITasksService>
     {
         public TasksController(ITasksService service, IMapper mapper, ILogger<TasksController> logger)
             : base(logger, mapper, service) { }
@@ -32,8 +29,9 @@ namespace CoralTime.Api.v1.Odata
         }
 
         // GET api/v1/odata/Tasks(2)
+        [ODataRoute("Tasks({id})")]
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById([FromODataUri]int id)
         {
             try
             {
@@ -42,9 +40,7 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetById method with parameters ({id});\n {e}");
-                var errors = ExceptionsChecker.CheckTasksException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
@@ -53,16 +49,13 @@ namespace CoralTime.Api.v1.Odata
         public IActionResult Create([FromBody]TaskView taskTypeData)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new List<ErrorView>{new ErrorView
-                {
-                    Source = "Other",
-                    Title = "",
-                    Details = "ModelState is invalid."
-                } });
+            {
+                return SendInvalidModelResponse();
+            }
 
             try
             {
-                var result = _service.Create(taskTypeData, this.GetUserName());
+                var result = _service.Create(taskTypeData);
 
                 var locationUri = $"{Request.Host}/api/v1/odata/Tasks({result.Id})";
 
@@ -70,84 +63,69 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Create method with parameters ({JsonConvert.SerializeObject(taskTypeData)});\n {e}");
-                var errors = ExceptionsChecker.CheckTasksException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // PUT api/v1/odata/Tasks(1)
+        [ODataRoute("Tasks({id})")]
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] dynamic taskTypeData)
+        public IActionResult Update([FromODataUri] int id, [FromBody] dynamic taskTypeData)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new List<ErrorView>{new ErrorView
-                {
-                    Source = "Other",
-                    Title = "",
-                    Details = "ModelState is invalid."
-                } });
+            {
+                return SendInvalidModelResponse();
+            }
 
             taskTypeData.Id = id;
             try
             {
-                var result = _service.Update(taskTypeData, this.GetUserName());
+                var result = _service.Update(taskTypeData);
                 return new ObjectResult(_mapper.Map<TaskType, TaskView>(result));
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Update methodwith parameters ({id}, {taskTypeData});\n {e}");
-                var errors = ExceptionsChecker.CheckTasksException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // PATCH api/v1/odata/Tasks(1)
+        [ODataRoute("Tasks({id})")]
         [HttpPatch("{id}")]
-        public IActionResult Patch(int id, [FromBody] dynamic taskTypeData)
+        public IActionResult Patch([FromODataUri] int id, [FromBody] dynamic taskTypeData)
         {
             if (!ModelState.IsValid)
-                return BadRequest(new List<ErrorView>{new ErrorView
-                {
-                    Source = "Other",
-                    Title = "",
-                    Details = "ModelState is invalid."
-                } });
+            {
+                return SendInvalidModelResponse();
+            }
 
             taskTypeData.Id = id;
             try
             {
-                var userName = this.GetUserName();
-
-                var result = _service.Patch(taskTypeData, userName);
+                var result = _service.Patch(taskTypeData);
                 return new ObjectResult(_mapper.Map<TaskType, TaskView>(result));
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Patch method with parameters ({id}, {taskTypeData});\n {e}");
-                var errors = ExceptionsChecker.CheckTasksException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
-        
         }
 
         //DELETE :api/v1/odata/Tasks(1)
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "admin")]
+        [ODataRoute("Tasks({id})")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromODataUri] int id)
         {
             try
             {
                 var result = _service.Delete(id);
-                return Ok();
+                return new ObjectResult(null);
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Delete method with parameters ({id});\n {e}");
-                var errors = ExceptionsChecker.CheckTasksException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
     }
-
- }
+}

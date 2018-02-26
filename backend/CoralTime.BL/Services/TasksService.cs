@@ -34,14 +34,14 @@ namespace CoralTime.BL.Services
             return result;
         }
 
-        public TaskType Create(TaskView taskTypeData, string userName)
+        public TaskType Create(TaskView taskTypeData)
         {
             if (!IsNameUnique(taskTypeData.Name, taskTypeData.ProjectId))
             {
                 throw new CoralTimeAlreadyExistsException($"Task with name {taskTypeData.Name} already exist");
             }
 
-            var user = Uow.UserRepository.LinkedCacheGetByName(userName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(CurrentUserName);
 
             if (taskTypeData.ProjectId != null && !user.IsAdmin)
             {
@@ -52,11 +52,11 @@ namespace CoralTime.BL.Services
                     throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeData.ProjectId} not found");
                 }
 
-                var member = Uow.MemberRepository.LinkedCacheGetByName(userName);
+                var member = Uow.MemberRepository.LinkedCacheGetByName(CurrentUserName);
 
                 if (member == null)
                 {
-                    throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found");
+                    throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found");
                 }
 
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
@@ -88,7 +88,7 @@ namespace CoralTime.BL.Services
             return result;
         }
 
-        public TaskType Update(dynamic taskTypeData, string userName)
+        public TaskType Update(dynamic taskTypeData)
         {
             var timeEntryType = Uow.TaskTypeRepository.GetById((int)taskTypeData.Id);
             if (timeEntryType == null)
@@ -105,7 +105,7 @@ namespace CoralTime.BL.Services
 
             #endregion We shouldn't change projectId for Tasks
 
-            var user = Uow.UserRepository.LinkedCacheGetByName(userName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(CurrentUserName);
 
             if (taskTypeData["projectId"] != null && !user.IsAdmin)
             {
@@ -116,11 +116,11 @@ namespace CoralTime.BL.Services
                     throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeData.ProjectId} not found");
                 }
 
-                var member = Uow.MemberRepository.LinkedCacheGetByName(userName);
+                var member = Uow.MemberRepository.LinkedCacheGetByName(CurrentUserName);
 
                 if (member == null)
                 {
-                    throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found");
+                    throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found");
                 }
 
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
@@ -162,7 +162,7 @@ namespace CoralTime.BL.Services
             return result;
         }
 
-        public TaskType Patch(dynamic taskTypeData, string userName)
+        public TaskType Patch(dynamic taskTypeData)
         {
             var timeEntryType = Uow.TaskTypeRepository.GetById((int)taskTypeData.Id);
             if (timeEntryType == null)
@@ -179,7 +179,7 @@ namespace CoralTime.BL.Services
 
             #endregion We shouldn't change projectId for Tasks
 
-            var user = Uow.UserRepository.LinkedCacheGetByName(userName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(CurrentUserName);
 
             if (taskTypeData.ProjectId != null && !user.IsAdmin)
             {
@@ -190,11 +190,11 @@ namespace CoralTime.BL.Services
                     throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeData.ProjectId} not found");
                 }
 
-                var member = Uow.MemberRepository.LinkedCacheGetByName(userName);
+                var member = Uow.MemberRepository.LinkedCacheGetByName(CurrentUserName);
 
                 if (member == null)
                 {
-                    throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found");
+                    throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found");
                 }
 
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();

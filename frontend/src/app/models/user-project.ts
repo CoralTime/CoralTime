@@ -1,6 +1,7 @@
 import { ProjectRole } from './project-role';
 
 export class UserProject {
+	iconUrl: string;
 	id: number;
 	isMemberActive: boolean;
 	isProjectActive: boolean;
@@ -11,12 +12,13 @@ export class UserProject {
 	memberUserName: string;
 	projectId: number;
 	projectName: string;
-	roleName: string;
 	roleId: number;
+	roleName: string;
 	role: ProjectRole;
 
 	constructor(data = null) {
 		if (data) {
+			this.iconUrl = data.iconUrl;
 			this.id = data.id;
 			this.isMemberActive = data.isMemberActive;
 			this.isProjectActive = data.isProjectActive;
@@ -27,8 +29,8 @@ export class UserProject {
 			this.memberUserName = data.memberUserName;
 			this.projectId = data.projectId;
 			this.projectName = data.projectName;
-			this.roleName = data.roleName;
 			this.roleId = data.roleId;
+			this.roleName = data.roleName;
 			this.role = {id: data.roleId, name: data.roleName};
 		}
 	}

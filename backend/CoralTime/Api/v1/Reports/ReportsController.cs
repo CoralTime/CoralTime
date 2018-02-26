@@ -1,7 +1,6 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +26,7 @@ namespace CoralTime.Api.v1.Reports
         {
             try
             {
-                return new JsonResult(_service.ReportsDropDowns(this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.ReportsDropDowns());
             }
             catch (Exception e)
             {
@@ -47,31 +46,29 @@ namespace CoralTime.Api.v1.Reports
 
             try
             {
-                var userName = this.GetUserNameWithImpersonation();
-
-                _reportsSettingsService.SaveCurrentQuery(reportsGridView.CurrentQuery, userName);
+                _reportsSettingsService.SaveCurrentQuery(reportsGridView.CurrentQuery);
 
                 // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
                 switch (reportsGridView.CurrentQuery.GroupById)
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridView));
+                        return new JsonResult(_service.ReportsGridGroupByProjects(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridView));
+                        return new JsonResult(_service.ReportsGridGroupByUsers(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridView));
+                        return new JsonResult(_service.ReportsGridGroupByDates(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Client:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridView));
+                        return new JsonResult(_service.ReportsGridGroupByClients(reportsGridView));
                     }
 
                     default:

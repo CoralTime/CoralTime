@@ -1,11 +1,11 @@
-import { Observable } from 'rxjs/Observable';//custom code line
-import { SlimScrollDirective } from 'ng2-slimscroll/src/directives/slimscroll.directive';//custom code line
-import { SlimScrollModule } from 'ng2-slimscroll';//custom code line
+import { Observable } from 'rxjs/Observable'; // custom code line
+import { SlimScrollDirective } from 'ng2-slimscroll/src/directives/slimscroll.directive'; // custom code line
+import { SlimScrollModule } from 'ng2-slimscroll'; // custom code line
 
 /**
  * This file is copy of PrimeNg DataTable component(https://github.com/primefaces/primeng/blob/4.0.0/components/datatable/datatable.ts).
  * All modifications in templates marked with comments <!--change start--><!-- change end -->.
- * All madifications in code marked with comments //custom code line
+ * All madifications in code marked with comments // custom code line
  */
 import {
 	NgModule,
@@ -247,14 +247,19 @@ export class TableBody {
 	templateUrl: 'scrollable-view.html'
 })
 export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestroy {
-	@ViewChild('slimScroll') slimScroll: SlimScrollDirective; //custom code line
+	@ViewChild('slimScroll') slimScroll: SlimScrollDirective; // custom code line
 
 	constructor(@Inject(forwardRef(() => DataTable)) public dt: DataTable, public domHandler: DomHandler, public el: ElementRef, public renderer: Renderer) {
+		/**
+		 * custom code block start
+		 */
 		setTimeout(() => {
 			this.slimScroll.scrollContent = this.scrollContent.bind(this);
 			this.slimScroll.getBarHeight = this.getBarHeight.bind(this);
 		}, 0);
-
+		/**
+		 * custom code block end
+		 */
 	}
 
 	@Input("pScrollableView") columns: Column[];
@@ -312,8 +317,8 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 	@Output() onEndScroll: EventEmitter<any> = new EventEmitter();
 	@Output() loadMoreContent: EventEmitter<any> = new EventEmitter();
 
-	public contentHeight: number;
-	needCheckContentHeight: boolean = true;
+	public contentHeight: number; // custom code line
+	needCheckContentHeight: boolean = true; // custom code line
 
 	ngAfterViewInit() {
 		this.initScrolling();
@@ -333,6 +338,9 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 		 */
 	}
 
+	/**
+	 * custom code block start
+	 */
 	getBarHeight(): void {
 		let that = this.slimScroll;
 		const barHeight = Math.max((that.el.offsetHeight / that.el.scrollHeight) * that.el.offsetHeight, 30) + 'px';
@@ -380,6 +388,10 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 			this.checkContentHeight();
 		}
 	}
+
+	/**
+	 * custom code block end
+	 */
 
 	checkContentHeight(): void {
 		let wrapperHeight = this.slimScroll.el.offsetHeight;
@@ -546,7 +558,7 @@ export class DataTable
 		OnDestroy
 		,
 		BlockableUI {
-	@Input() resizeObservable: Observable<any>; //custom code line
+	@Input() resizeObservable: Observable<any>; // custom code line
 
 	@Input() paginator: boolean;
 
@@ -708,13 +720,19 @@ export class DataTable
 
 	@ContentChild(FooterColumnGroup) footerColumnGroup: FooterColumnGroup;
 
-	@Output() onEndScrollEvent: EventEmitter<any> = new EventEmitter();  //custom code line
+	@Output() onEndScrollEvent: EventEmitter<any> = new EventEmitter();  // custom code line
 
-	@Output() onMoreContent: EventEmitter<any> = new EventEmitter();  //custom code line
+	@Output() onMoreContent: EventEmitter<any> = new EventEmitter();  // custom code line
 
+	/**
+	 * custom code block start
+	 */
 	loadMoreContent() {
 		this.onMoreContent.emit({});
 	}
+	/**
+	 * custom code block end
+	 */
 
 	public _value: any[];
 

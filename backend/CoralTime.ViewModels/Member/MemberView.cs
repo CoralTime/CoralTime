@@ -9,7 +9,7 @@ namespace CoralTime.ViewModels.Member
 {
     public class MemberView : IMemberPersonalInfoView, IMemberNotificationView, IMemberPreferencesView
     {
-        [Key]
+        [Key]        
         public int Id { get; set; }
 
         public string FullName { get; set; }
@@ -20,7 +20,7 @@ namespace CoralTime.ViewModels.Member
 
         public string TimeZone { get; set; }
 
-        public byte[] Avatar { get; set; }
+        public string IconUrl { get; set; }
 
         public int WeekStart { get; set; }
 

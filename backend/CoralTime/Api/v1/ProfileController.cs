@@ -1,6 +1,5 @@
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
@@ -16,15 +15,20 @@ namespace CoralTime.Api.v1
     [Authorize]
     public class ProfileController : BaseController<ProfileController, IProfileService>
     {
-        public ProfileController(IProfileService service, ILogger<ProfileController> logger)
-            : base(logger, service) { }
+        private readonly IAvatarService _avatarService;
+
+        public ProfileController(IProfileService service, ILogger<ProfileController> logger, IAvatarService avatarService)
+            : base(logger, service)
+        {
+            _avatarService = avatarService;
+        }
 
         [HttpGet("Projects")]
         public ActionResult GetMemberProjects()
         {
             try
             {
-                return new JsonResult(_service.GetMemberProjects(this.GetUserNameWithImpersonation()));
+                return new JsonResult(_service.GetMemberProjects());
             }
             catch (Exception e)
             {
@@ -55,7 +59,7 @@ namespace CoralTime.Api.v1
         {
             try
             {
-                var result = _service.GetProjectMembers(projectId, this.GetUserNameWithImpersonation());
+                var result = _service.GetProjectMembers(projectId);
                 return Ok(result);
             }
             catch (Exception e)
@@ -73,7 +77,7 @@ namespace CoralTime.Api.v1
             {
                 try
                 {
-                    var result = _service.SetUpdateMemberAvatar(file, this.GetUserNameWithImpersonation());
+                    var result = _avatarService.SetUpdateMemberAvatar(file);
                     return Ok(result);
                 }
                 catch (Exception e)
@@ -87,13 +91,12 @@ namespace CoralTime.Api.v1
             return BadRequest("File is empty");
         }
 
-
         [HttpGet("Avatar/{memberId}")]
         public IActionResult GetMemberAvatar(int memberId)
         {
             try
             {
-                var result = _service.GetMemberAvatar(this.GetUserNameWithImpersonation(), memberId);
+                var result = _avatarService.GetAvatar(memberId);
                 return Ok(result);
             }
             catch (Exception e)
@@ -109,7 +112,7 @@ namespace CoralTime.Api.v1
         {
             try
             {
-                var result = _service.GetMemberIcon(this.GetUserNameWithImpersonation(), memberId);
+                var result = _avatarService.GetIcon(memberId);
                 return Ok(result);
             }
             catch (Exception e)
@@ -128,7 +131,7 @@ namespace CoralTime.Api.v1
 
             try
             {
-                return Ok(_service.PatchNotifications(this.GetUserNameWithImpersonation(), memberNotificationView));
+                return Ok(_service.PatchNotifications(memberNotificationView));
             }
             catch (Exception e)
             {
@@ -146,7 +149,7 @@ namespace CoralTime.Api.v1
 
             try
             {
-                return Ok(_service.PatchPreferences(this.GetUserNameWithImpersonation(), memberPreferencesView));
+                return Ok(_service.PatchPreferences(memberPreferencesView));
             }
             catch (Exception e)
             {
@@ -164,7 +167,7 @@ namespace CoralTime.Api.v1
 
             try
             {
-                var waitResult = _service.PatchPersonalInfo(this.GetUserNameWithImpersonation(), memberPersonalInfoView);
+                var waitResult = _service.PatchPersonalInfo(memberPersonalInfoView);
                 return Ok(waitResult);
             }
             catch (Exception e)

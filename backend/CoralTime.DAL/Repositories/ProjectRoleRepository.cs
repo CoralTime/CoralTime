@@ -12,17 +12,17 @@ namespace CoralTime.DAL.Repositories
 
         public int GetManagerRoleId()
         {
-            return LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ManagerRole).Id;
+            return LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleManager).Id;
         }
 
         public int GetMemberRoleId()
         {
-            return LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.MemberRole).Id;
+            return LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleMember).Id;
         }
 
         public ProjectRole GetMemberRole()
         {
-            var memberRole = LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.MemberRole);
+            var memberRole = LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleMember);
             return memberRole;
         }
     }

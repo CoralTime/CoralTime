@@ -76,7 +76,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.isUserManagerOnProject = this.timeEntry.isUserManagerOnProject;
 
 		if (this.timeEntry.timeTimerStart && this.timeEntry.timeTimerStart !== -1) {
-			this.startTimer(DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeTimerStart);
+			this.startTimer();
 		}
 
 		this.checkTimeEntryStatus();
@@ -221,13 +221,12 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.isTimerShown ? this.autoStopTimer() : this.startTimer();
 	}
 
-	startTimer(timeTimerStart?: number): void {
+	startTimer(): void {
 		this.isTimerShown = true;
-		timeTimerStart = timeTimerStart ? timeTimerStart + this.timeEntry.time : this.timeEntry.time;
 		let timer = Observable.timer(0, 1000);
 
 		this.timerSubscription = timer.subscribe(() => {
-			this.ticks = timeTimerStart++;
+			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeTimerStart + this.timeEntry.time;
 			this.timerValue = this.setTimeString(this.ticks);
 			this.checkTimer();
 		});

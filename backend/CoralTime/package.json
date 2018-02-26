@@ -6,5 +6,5 @@
         "1_Npm_Install": "cd ../../frontend & npm install",
         "2_Build_FrontEnd_Developing": "cd ../../frontend & npm run build",
         "3_Build_FrontEnd_Production": "cd ../../frontend & npm run production"
-    }, "-vs-binding":{"Clean":["NpmBuild"]}
+    }
 }

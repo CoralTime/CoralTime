@@ -5,7 +5,7 @@ using CoralTime.Common.Constants;
 
 namespace CoralTime.DAL.Models
 {
-    public class Project : LogChanges
+    public class Project : LogChanges, IInitializeByName
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

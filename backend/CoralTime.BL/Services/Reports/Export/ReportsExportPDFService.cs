@@ -13,7 +13,7 @@ namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        private byte[] CreateFilePDF<T>(IReportsGrandGridView<T> groupedList)
+        private async System.Threading.Tasks.Task<byte[]> CreateFilePDFAsync<T>(IReportsGrandGridView<T> groupedList)
         {
             if (!RunSetCommonValuesForExport)
             {
@@ -46,8 +46,12 @@ namespace CoralTime.BL.Services.Reports.Export
 
                 #region Parse view.
 
-                var engineRazorLight = EngineFactory.CreatePhysical(pathContentPDF);
-                var htmlFromParsedViewRazorLight = engineRazorLight.Parse(fileNamePDFMarkUpView, pdfModel);
+                var engine = new RazorLightEngineBuilder()
+                              .UseFilesystemProject(pathContentPDF)
+                              .UseMemoryCachingProvider()
+                              .Build();
+
+                var htmlFromParsedViewRazorLight = await engine.CompileRenderAsync(fileNamePDFMarkUpView, pdfModel);
 
                 var settings = new ConversionSettings(
                     pageSize: PageSize.A4,

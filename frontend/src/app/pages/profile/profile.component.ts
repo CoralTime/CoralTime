@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthUser } from '../../core/auth/auth-user';
-import { AuthService } from '../../core/auth/auth.service';
-import { Subscription } from 'rxjs/Subscription';
 import { ImpersonationService } from '../../services/impersonation.service';
-import { UsersService } from '../../services/users.service';
 import { User } from '../../models/user';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'ct-profile',
@@ -13,45 +10,23 @@ import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../ser
 })
 
 export class ProfileComponent implements OnInit {
-	authUser: AuthUser;
-	impersonationName: string = null;
+	avatarUrl: string;
 	impersonationUser: User;
-	impersonationId: number = null;
 	projects: ProfileProjects[];
-	userId: number;
-	userModel: User = new User();
+	userInfo: User = new User();
 
-	private subscriptionImpersonation: Subscription;
-
-	constructor(private authService: AuthService,
-	            private impersonationService: ImpersonationService,
+	constructor(private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
-	            private usersService: UsersService) {
+	            private route: ActivatedRoute) {
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
-		this.getUserPicture();
-		this.userId = this.impersonationService.impersonationId || this.authUser.id;
-
-		this.usersService.getUserById(this.userId).subscribe((user: User) => {
-			this.userModel = user;
+		this.route.data.forEach((data: { user: User }) => {
+			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
+
+		this.avatarUrl = this.userInfo.iconUrl.replace('Icons', 'Avatars');
 		this.getProjects();
-	}
-
-	private getUserPicture(): void {
-		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (this.impersonationService.impersonationMember) {
-				this.impersonationUser = this.impersonationService.impersonationUser;
-				this.impersonationName = this.impersonationService.impersonationUser.fullName;
-				this.impersonationId = this.impersonationService.impersonationId;
-			} else {
-				this.impersonationUser = null;
-				this.impersonationName = null;
-				this.impersonationId = null;
-			}
-		});
 	}
 
 	private getProjects(): void {
@@ -66,7 +41,7 @@ export class ProfileComponent implements OnInit {
 
 	private getProjectMembers(projectId: number, index: number): void {
 		this.profileService.getProjectMembers(projectId).subscribe((members: ProfileProjectMember[]) => {
-			this.projects[index].memberList = this.sortList(members, 'fullName');
+			this.projects[index].memberList = this.sortList(members, 'memberName');
 		});
 	}
 

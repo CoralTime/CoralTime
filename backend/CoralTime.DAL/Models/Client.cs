@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models
 {
-    public class Client : LogChanges
+    public class Client : LogChanges, IInitializeByName
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

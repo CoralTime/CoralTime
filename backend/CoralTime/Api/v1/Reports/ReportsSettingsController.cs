@@ -18,7 +18,7 @@ namespace CoralTime.Api.v1.Reports
         [Route("CustomQuery")]
         public IActionResult SaveCustomQuery([FromBody] ReportsGridView reportsGridView)
         {
-            _service.SaveCustomQuery(reportsGridView.CurrentQuery, this.GetUserNameWithImpersonation());
+            _service.SaveCustomQuery(reportsGridView.CurrentQuery);
 
             return Ok();
         }
@@ -26,7 +26,7 @@ namespace CoralTime.Api.v1.Reports
         [HttpDelete("CustomQuery/{id}")]
         public IActionResult DeleteCustomQuery(int id)
         {
-            _service.DeleteCustomQuery(id, this.GetUserNameWithImpersonation());
+            _service.DeleteCustomQuery(id);
 
             return Ok();
         }

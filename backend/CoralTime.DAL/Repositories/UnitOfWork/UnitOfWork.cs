@@ -7,6 +7,8 @@ using System;
 using System.Linq;
 using CoralTime.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using CoralTime.Common.Constants;
+using Microsoft.Extensions.Primitives;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -15,16 +17,18 @@ namespace CoralTime.DAL.Repositories
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext _context;
         private readonly IMemoryCache _memoryCache;
+        public readonly string CurrentUserName;
+        public readonly string InpersonatedUserName;
         private readonly string _userId;
-
-        //  private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public UnitOfWork(UserManager<ApplicationUser> userManager, AppDbContext context, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _context = context;
             _memoryCache = memoryCache;
-            _userId = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject)?.Value;
+            CurrentUserName = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
+            InpersonatedUserName = GetUserNameWithImpersonation(httpContextAccessor);
+            _userId = httpContextAccessor?.HttpContext?.User.Claims?.FirstOrDefault(c=> c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
         }
 
         public int Save()
@@ -47,29 +51,42 @@ namespace CoralTime.DAL.Repositories
             }
         }
 
-        //public int Save<T>()
-        //{
-        //    return _context.SaveChanges();
-        //}
+        private string GetUserNameWithImpersonation(IHttpContextAccessor httpContextAccessor)
+        {
+            if (HasAuthorizationHeader(httpContextAccessor))
+            {
+                var currentUserClaims = httpContextAccessor?.HttpContext?.User?.Claims;
 
-        //private bool _disposed;
+                if (HasImpersonationHeader(httpContextAccessor, out var headerImpersonatedUserName))
+                {
+                    if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.ApplicationRoleAdmin)
+                    {
+                        throw new CoralTimeForbiddenException($"You can not impersonate user with userName {headerImpersonatedUserName}");
+                    }
 
-        //protected virtual void Dispose(bool disposing)
-        //{
-        //    if (!_disposed)
-        //    {
-        //        if (disposing)
-        //        {
-        //            _context.Dispose();
-        //        }
-        //    }
-        //    _disposed = true;
-        //}
+                    return headerImpersonatedUserName;
+                }
 
-        //public void Dispose()
-        //{
-        //    Dispose(true);
-        //    GC.SuppressFinalize(this);
-        //}
+                var headerAuthorizationUserName = currentUserClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name).Value;
+                return headerAuthorizationUserName;
+            }
+
+            return string.Empty;
+        }
+
+        private static bool HasAuthorizationHeader(IHttpContextAccessor httpContextAccessor)
+        {
+            return GetHeaderValue(httpContextAccessor, Constants.HeaderNameAuthorization, out var headerAuthorizationValue);
+        }
+
+        private static bool HasImpersonationHeader(IHttpContextAccessor httpContextAccessor, out StringValues headerImpersonatedUserValue)
+        {
+            return GetHeaderValue(httpContextAccessor, Constants.ImpersonatedUserNameHeader, out headerImpersonatedUserValue);
+        }
+
+        private static bool GetHeaderValue(IHttpContextAccessor httpContextAccessor, string headerName, out StringValues headerValue)
+        {
+            return httpContextAccessor?.HttpContext?.Request?.Headers?.TryGetValue(headerName, out headerValue) ?? false;
+        }
     }
 }

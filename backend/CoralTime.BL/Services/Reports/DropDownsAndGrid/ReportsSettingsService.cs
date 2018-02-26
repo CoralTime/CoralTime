@@ -14,10 +14,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         public ReportsSettingsService(UnitOfWork uow, IMapper mapper) 
             : base(uow, mapper) { }
 
-        public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView, string userName)
+        public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView)
         {
-            Uow.UserRepository.GetRelatedUserByName(userName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
+            Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
+            var memberId = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName).Id;
 
             if (IsDefaultQuery(reportsSettingsView.QueryName))
             {
@@ -51,10 +51,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             queryFromReportsSettings.IsCurrentQuery = true;
         }
 
-        public void SaveCustomQuery(ReportsSettingsView reportsSettingsView, string userName)
+        public void SaveCustomQuery(ReportsSettingsView reportsSettingsView)
         {
-            Uow.UserRepository.GetRelatedUserByName(userName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
+            Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
+            var memberId = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName).Id;
 
             if (!IsDefaultQuery(reportsSettingsView.QueryName))
             {
@@ -62,10 +62,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        public void DeleteCustomQuery(int id, string userName)
+        public void DeleteCustomQuery(int id)
         {
-            Uow.UserRepository.GetRelatedUserByName(userName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(userName).Id;
+            Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
+            var memberId = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName).Id;
 
             var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberidQueryId(memberId: memberId, queryId: id);
 

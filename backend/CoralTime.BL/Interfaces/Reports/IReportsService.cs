@@ -13,16 +13,16 @@ namespace CoralTime.BL.Interfaces.Reports
 
         string SingleFilteredProjectName { get; }
 
-        ReportsDropDownsView ReportsDropDowns(string userName);
+        ReportsDropDownsView ReportsDropDowns();
 
-        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(string userName, ReportsGridView reportsGridData);
+        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData);
 
-        ReportsGrandGridProjectsView ReportsGridGroupByProjects(string userName, ReportsGridView reportsGridData);
+        ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData);
 
-        ReportsGrandGridMembersView ReportsGridGroupByUsers(string userName, ReportsGridView reportsGridData);
+        ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData);
 
-        ReportsGrandGridDatesView ReportsGridGroupByDates(string userName, ReportsGridView reportsGridData);
+        ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData);
 
-        ReportsGrandGridClients ReportsGridGroupByClients(string userName, ReportsGridView reportsGridData);
+        ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData);
     }
 }

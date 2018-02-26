@@ -1,4 +1,5 @@
-import { Http, Response, URLSearchParams } from '@angular/http';
+import { Response, URLSearchParams } from '@angular/http';
+import { CustomHttp } from '../core/custom-http';
 import { Observable } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 import { TimeEntry, CalendarDay, DateUtils } from '../models/calendar';
@@ -20,7 +21,7 @@ export class CalendarService {
 	calendar: CalendarDay[] = [];
 
 	constructor(private constantService: ConstantService,
-	            private http: Http) {
+	            private http: CustomHttp) {
 	}
 
 	getTimeEntries(dateFrom: string, dif?: number): Observable<TimeEntry[]> {

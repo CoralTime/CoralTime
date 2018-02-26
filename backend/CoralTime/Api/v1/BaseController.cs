@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoralTime.Api.v1
 {
-    public class BaseController<T, S> : Controller where T : class
+    public abstract class BaseController<T, S> : Controller where T : class
     {
         protected readonly ILogger<T> _logger;
         protected readonly IMapper _mapper;

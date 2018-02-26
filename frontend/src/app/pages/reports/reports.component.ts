@@ -240,6 +240,10 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private showAllReportsGrid(gridData: ReportGridView[]): ReportGridData[] {
+		if (this.isAllGridRowsShown(this.gridData)) {
+			return this.gridData;
+		}
+
 		let gridDataToShow = [];
 		gridData.forEach((grid: ReportGridView) => {
 			gridDataToShow.push({
@@ -450,7 +454,7 @@ export class ReportsComponent implements OnInit {
 
 	private printPage(): void {
 		this.gridData = this.showAllReportsGrid(this.reportsGridData.reportsGridView);
-		setTimeout(() => window.print(), 0);
+		setTimeout(() => window.print(), 300);
 	}
 
 	exportAs(fileTypeId: number): void {
