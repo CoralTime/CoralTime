@@ -46,7 +46,7 @@ namespace CoralTime.Api.v1.Reports.Export
 
                     default:
                     {
-                        return await _service.ExportFileGroupByNoneAsync(reportsGridData, HttpContext);
+                        return BadRequest();
                     }
                 }
             }

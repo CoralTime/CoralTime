@@ -176,14 +176,6 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. 
 
-        public async Task<FileResult> ExportFileGroupByNoneAsync(ReportsGridView reportsGridData, HttpContext httpContext)
-        {
-            var groupByNone = _reportService.ReportsGridGroupByNone(reportsGridData);
-            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByNone);
-
-            return result;
-        }
-
         public async Task<FileResult> ExportFileGroupByProjectsAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByProjects = _reportService.ReportsGridGroupByProjects(reportsGridData);

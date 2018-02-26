@@ -50,8 +50,7 @@ namespace CoralTime.Api.v1.Reports.Export
 
                     default:
                     {
-                        await _service.ExportEmailGroupByNone(reportsGridData);
-                        break;
+                        return BadRequest();
                     }
                 }
 
