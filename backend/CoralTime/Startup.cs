@@ -258,7 +258,6 @@ namespace CoralTime
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
-
                 if (isDemo)
                 {
                     options.Password.RequireDigit = false;
