@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -57,6 +58,8 @@ namespace CoralTime.BL.Services.Reports.Export
         #endregion
 
         #region Properties. 
+
+        private bool RunSetCommonValuesForExport { get; set; }
 
         private string FileName { get; set; } = Constants.CoralTime;
 
@@ -223,10 +226,101 @@ namespace CoralTime.BL.Services.Reports.Export
         private async Task<FileStreamResult> GetExportFileWithGroupingAsync<T>(ReportsGridView reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
         {
             var fileByte = await CreateReportFileByteUpdateFileNameContentTypeAsync(reportsGridData, groupingList);
-
             var fileStreamResult = SaveFileToFileStreamResult(httpContext, fileByte);
 
             return fileStreamResult;
+        }
+
+        private DataSet ConvertListToDataSet<T>(IReportsGrandGridView<T> groupingList)
+        {
+            var dataSet = new DataSet(GetValueForCellPeriodDate());
+
+            foreach (var reportsGridView in groupingList.ReportsGridView)
+            {
+                var datatable = new DataTable();
+
+                foreach (var propGroupByAndTotalTime in PropsGroupByAndTotalTimes)
+                {
+                    var propType = propGroupByAndTotalTime.PropertyType;
+
+                    if (!propType.GetTypeInfo().IsGenericType && IsGroupByThisProperty(propGroupByAndTotalTime.Name))
+                    {
+                        var valueSingleFromProp = GetValueSingleFromProp(propGroupByAndTotalTime, reportsGridView);
+                        var tableNameFromGroupByHeader = CreateTableNameFromGroupByHeader(valueSingleFromProp, propGroupByAndTotalTime);
+
+                        datatable.TableName = tableNameFromGroupByHeader;
+                    }
+                    else if (propType.GetTypeInfo().IsGenericType)
+                    {
+                        if (propType == typeof(IEnumerable<ReportsGridItemsView>))
+                        {
+                            // Row Entity Header Names.
+                            CreateRowOfEntityHeaderNames(datatable);
+
+                            // Rows Entity Header Values.
+                            var valueListFromProp = GetValueListFromProp(propGroupByAndTotalTime, reportsGridView);
+                            CreateRowsEntityValues(datatable, valueListFromProp);
+                        }
+                    }
+                }
+
+                dataSet.Tables.Add(datatable);
+            }
+
+            return dataSet;
+        }
+
+        private void CreateRowOfEntityHeaderNames(DataTable datatable)
+        {
+            var nestedEntityHeaders = RenameNestedEntityHeaders(PropsEntityHeadersAndRows);
+
+            foreach (var nestedEntityHeader in nestedEntityHeaders)
+            {
+                datatable.Columns.Add(new DataColumn(nestedEntityHeader));
+            }
+        }
+
+        private async Task<byte[]> CreateReportFileByteUpdateFileNameContentTypeAsync<T>(ReportsGridView reportsGridData, IReportsGrandGridView<T> groupingList)
+        {
+            SetCommonValuesForExport<T>(reportsGridData);
+
+            var dataSet = ConvertListToDataSet(groupingList);
+
+            var file = new byte[0];
+
+            UpdateFileName();
+
+            switch (reportsGridData.FileTypeId ?? 0)
+            {
+                case (int) FileType.Excel:
+                {
+                    FileName = FileName + ExtensionXLSX;
+                    file = CreateFileExcel(dataSet);
+                    ContentType = ContentTypeXLSX;
+
+                    break;
+                }
+
+                case (int) FileType.CSV:
+                {
+                    FileName = FileName + ExtensionCSV;
+                    //file = CreateFileCSV(dataSet);
+                    ContentType = ContentTypeCSV;
+
+                    break;
+                }
+
+                case (int) FileType.PDF:
+                {
+                    FileName = FileName + ExtensionPDF;
+                    //file = await CreateFilePDFAsync(dataSet);
+                    ContentType = ContentTypePDF;
+
+                    break;
+                }
+            }
+
+            return file;
         }
 
         private FileStreamResult SaveFileToFileStreamResult(HttpContext httpContext, byte[] fileByte)
@@ -241,55 +335,14 @@ namespace CoralTime.BL.Services.Reports.Export
             return fileStreamResult;
         }
 
-        private async Task<byte[]> CreateReportFileByteUpdateFileNameContentTypeAsync<T>(ReportsGridView reportsGridData, IReportsGrandGridView<T> groupingList)
-        {
-            SetCommonValuesForExport<T>(reportsGridData);
-
-            var file = new byte[0];
-
-            UpdateFileName();
-
-            switch (reportsGridData.FileTypeId ?? 0)
-            {
-                case (int) FileType.Excel:
-                {
-                    FileName = FileName + ExtensionXLSX;
-                    file = CreateFileExcel(groupingList);
-                    ContentType = ContentTypeXLSX;
-
-                    break;
-                }
-
-                case (int) FileType.CSV:
-                {
-                    FileName = FileName + ExtensionCSV;
-                    file = CreateFileCSV(groupingList);
-                    ContentType = ContentTypeCSV;
-
-                    break;
-                }
-
-                case (int) FileType.PDF:
-                {
-                    FileName = FileName + ExtensionPDF;
-                    file = await CreateFilePDFAsync(groupingList);
-                    ContentType = ContentTypePDF;
-
-                    break;
-                }
-            }
-
-            return file;
-        }
-
         private void UpdateFileName()
         {
-            if(!string.IsNullOrEmpty(_reportService.SingleFilteredProjectName))
+            if (!string.IsNullOrEmpty(_reportService.SingleFilteredProjectName))
             {
                 FileName = FileName + " " + _reportService.SingleFilteredProjectName + " " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
             }
             else
-        {
+            {
                 FileName = FileName + " Reports " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
             }
         }
@@ -298,8 +351,6 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             return CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedMonthName(date.Month) + " " + date.Day;
         }
-
-        private bool RunSetCommonValuesForExport { get; set; }
 
         private void SetCommonValuesForExport<T>(ReportsGridView reportsGridData)
         {
@@ -336,7 +387,7 @@ namespace CoralTime.BL.Services.Reports.Export
             4. Rename some properties.
         */
 
-        private bool IsPropByDefaultGrouping(string propName)
+        private bool IsGroupByThisProperty(string propName)
         {
             var result = propName == InternalProperties.ProjectName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Project
                          || propName == InternalProperties.MemberName.ToString() && GroupById == (int) Constants.ReportsGroupBy.User
@@ -423,7 +474,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
             foreach (var prop in props)
             {
-                if (IsPropByDefaultGrouping(prop.Name))
+                if (IsGroupByThisProperty(prop.Name))
                 {
                     continue;
                 }
@@ -589,7 +640,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
             foreach (var prop in props)
             {
-                if (IsPropByDefaultGrouping(prop.Name))
+                if (IsGroupByThisProperty(prop.Name))
                 {
                     continue;
                 }
@@ -754,7 +805,6 @@ namespace CoralTime.BL.Services.Reports.Export
         private string GetValueForCellPeriodDate()
         {
             var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
-            //value = DateTime.Parse(value).ToString(dateFormat, );
             var valueForPeriodCell = "Period: " + DateFrom.ToString(dateFormat, CultureInfo.InvariantCulture) + " - " + DateTo.ToString(dateFormat, CultureInfo.InvariantCulture);
             return valueForPeriodCell;
         }

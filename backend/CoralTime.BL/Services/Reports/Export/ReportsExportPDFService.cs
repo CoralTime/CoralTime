@@ -13,66 +13,66 @@ namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        private async System.Threading.Tasks.Task<byte[]> CreateFilePDFAsync<T>(IReportsGrandGridView<T> groupedList)
-        {
-            if (!RunSetCommonValuesForExport)
-            {
-                throw new InvalidOperationException("You forgot run SetCommonValuesForExport() for set common values.");
-            }
+        //private async System.Threading.Tasks.Task<byte[]> CreateFilePDFAsync<T>(IReportsGrandGridView<T> groupedList)
+        //{
+        //    if (!RunSetCommonValuesForExport)
+        //    {
+        //        throw new InvalidOperationException("You forgot run SetCommonValuesForExport() for set common values.");
+        //    }
 
-            var pdfBytesResult = new byte[0];
+        //    var pdfBytesResult = new byte[0];
 
-            #region Set root paths and give names for files.
+        //    #region Set root paths and give names for files.
 
-            var fileNameWkhtmltopdf = "wkhtmltopdf.exe";
-            var fileNamePDFMarkUpView = "PDFMarkUpView.cshtml";
+        //    var fileNameWkhtmltopdf = "wkhtmltopdf.exe";
+        //    var fileNamePDFMarkUpView = "PDFMarkUpView.cshtml";
 
-            var contentRootPath = _environment.ContentRootPath;
+        //    var contentRootPath = _environment.ContentRootPath;
 
-            var pathContentPDF = $"{contentRootPath}\\Content\\PDF";
-            var pathContentPDFCssStyle = $"{pathContentPDF}\\Site.css";
-            var pathContentPDFWkhtmltopdf = $"{pathContentPDF}\\{fileNameWkhtmltopdf}";
+        //    var pathContentPDF = $"{contentRootPath}\\Content\\PDF";
+        //    var pathContentPDFCssStyle = $"{pathContentPDF}\\Site.css";
+        //    var pathContentPDFWkhtmltopdf = $"{pathContentPDF}\\{fileNameWkhtmltopdf}";
 
-            var pathFileInfo = new FileInfo(pathContentPDFWkhtmltopdf);
+        //    var pathFileInfo = new FileInfo(pathContentPDFWkhtmltopdf);
 
-            #endregion
+        //    #endregion
 
-            if (File.Exists(pathContentPDFWkhtmltopdf))
-            {
-                var pdfModel = new ReportsPDFCommonView(pathContentPDFCssStyle, GroupById, GetPeriodPDFCell())
-                {
-                    PDFGrandModel = CreateReportsGrandGridModel(groupedList)
-                };
+        //    if (File.Exists(pathContentPDFWkhtmltopdf))
+        //    {
+        //        var pdfModel = new ReportsPDFCommonView(pathContentPDFCssStyle, GroupById, GetPeriodPDFCell())
+        //        {
+        //            PDFGrandModel = CreateReportsGrandGridModel(groupedList)
+        //        };
 
-                #region Parse view.
+        //        #region Parse view.
 
-                var engine = new RazorLightEngineBuilder()
-                              .UseFilesystemProject(pathContentPDF)
-                              .UseMemoryCachingProvider()
-                              .Build();
+        //        var engine = new RazorLightEngineBuilder()
+        //                      .UseFilesystemProject(pathContentPDF)
+        //                      .UseMemoryCachingProvider()
+        //                      .Build();
 
-                var htmlFromParsedViewRazorLight = await engine.CompileRenderAsync(fileNamePDFMarkUpView, pdfModel);
+        //        var htmlFromParsedViewRazorLight = await engine.CompileRenderAsync(fileNamePDFMarkUpView, pdfModel);
 
-                var settings = new ConversionSettings(
-                    pageSize: PageSize.A4,
-                    orientation: PageOrientation.Landscape,
-                    margins: new WkWrap.Core.PageMargins(5, 10, 5, 10),
-                    grayscale: false,
-                    lowQuality: false,
-                    quiet: false,
-                    enableJavaScript: true,
-                    javaScriptDelay: null,
-                    enableExternalLinks: true,
-                    enableImages: true,
-                    executionTimeout: null);
+        //        var settings = new ConversionSettings(
+        //            pageSize: PageSize.A4,
+        //            orientation: PageOrientation.Landscape,
+        //            margins: new WkWrap.Core.PageMargins(5, 10, 5, 10),
+        //            grayscale: false,
+        //            lowQuality: false,
+        //            quiet: false,
+        //            enableJavaScript: true,
+        //            javaScriptDelay: null,
+        //            enableExternalLinks: true,
+        //            enableImages: true,
+        //            executionTimeout: null);
 
-                pdfBytesResult = new HtmlToPdfConverter(pathFileInfo).ConvertToPdf(htmlFromParsedViewRazorLight, Encoding.UTF8, settings);
+        //        pdfBytesResult = new HtmlToPdfConverter(pathFileInfo).ConvertToPdf(htmlFromParsedViewRazorLight, Encoding.UTF8, settings);
 
-                #endregion
-            }
+        //        #endregion
+        //    }
 
-            return pdfBytesResult;
-        }
+        //    return pdfBytesResult;
+        //}
 
         private ReportsPDFGrandGridView CreateReportsGrandGridModel<T>(IReportsGrandGridView<T> groupedList)
         {
@@ -153,7 +153,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
                 foreach (var prop in PropsEntityHeadersAndRows)
                 {
-                    if (!IsPropByDefaultGrouping(prop.Name))
+                    if (!IsGroupByThisProperty(prop.Name))
                     {
                         var entityRowCell = CreateCell<ReportsGridItemsView, ReportsPDFEntityRowsView>(prop, entityRow);
                         entityRowsLocal.Add(entityRowCell);
