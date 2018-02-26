@@ -8,12 +8,6 @@ namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        public async Task ExportEmailGroupByNone(ReportsExportEmailView emailData)
-        {
-            var groupByNone = _reportService.ReportsGridGroupByNone(emailData);
-            await SendReportWithGroupingAsync(emailData, groupByNone);
-        }
-
         public async Task ExportEmailGroupByProjects(ReportsExportEmailView emailData)
         {
             var groupByProjects = _reportService.ReportsGridGroupByProjects(emailData);

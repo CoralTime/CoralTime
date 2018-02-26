@@ -9,8 +9,6 @@ namespace CoralTime.DAL
 {
     public partial class AppDbContext : IdentityDbContext<ApplicationUser>, IPersistedGrantDbContext
     {
-        public AppDbContext() { }
-
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 

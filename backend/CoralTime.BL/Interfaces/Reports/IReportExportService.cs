@@ -17,7 +17,7 @@ namespace CoralTime.BL.Interfaces.Reports
 
         Task<FileResult> ExportFileGroupByClientsAsync(ReportsGridView reportsGridData, HttpContext httpContext);
 
-        // Sent reports as email.
+        // Sent reports as Export file: Excel, CSV, PDF by email. Filtration By / Grouping By: Projects, Users, Dates, Clients.
         Task ExportEmailGroupByProjects(ReportsExportEmailView emailData);
 
         Task ExportEmailGroupByUsers(ReportsExportEmailView emailData);
