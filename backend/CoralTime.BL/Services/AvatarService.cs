@@ -1,4 +1,11 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using AutoMapper;
 using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
@@ -10,13 +17,6 @@ using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace CoralTime.BL.Services
 {
@@ -24,16 +24,12 @@ namespace CoralTime.BL.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _config;
-        private readonly bool _isDemo;
-        private MD5 hasher;
 
         public AvatarService(UnitOfWork uow, IMapper mapper, IConfiguration config, IHttpContextAccessor httpContextAccessor)
             : base(uow, mapper)
         {
             _config = config;
             _httpContextAccessor = httpContextAccessor;
-            _isDemo = bool.Parse(_config["DemoSiteMode"]);
-            hasher = MD5.Create();
         }
 
         public void AddIconUrlInMemberView(MemberView memberView)
@@ -54,7 +50,6 @@ namespace CoralTime.BL.Services
 
         public MemberAvatarView GetIcon(int memberId)
         {
-            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
             var urlData = GetFileNameByMemberId(memberId);
             return CreateIconMemberAvatarView(urlData.fileName, memberId);
         }
@@ -84,6 +79,7 @@ namespace CoralTime.BL.Services
                 fileName = Constants.DefaultIconFileName;
                 isDefault = true;
             }
+
             return (fileName, isDefault);
         }
 
@@ -94,15 +90,9 @@ namespace CoralTime.BL.Services
                 var email = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
                 if (email != null)
                 {
-                    var data = hasher.ComputeHash(Encoding.Default.GetBytes(email));
-                    var sb = new StringBuilder();
+                    string hash = GetMD5(email);
+                    var gravatarUrl = $"http://www.gravatar.com/avatar/{ hash }?s={(isAvatar ? "200" : "40") }";
 
-                    foreach (byte d in data)
-                        sb.Append(d.ToString("x2"));
-
-                    var hash = sb.ToString();
-                    var size = (isAvatar) ? "?s=200" : "?s=40";
-                    var gravatarUrl = $"http://www.gravatar.com/avatar/{ hash }?d={ "wavatar" }&{ size }";
                     return gravatarUrl;
                 }
             }
@@ -164,7 +154,8 @@ namespace CoralTime.BL.Services
                 memberAvatar = new MemberAvatar();
                 isInsertCurrentAvatar = true;
             }
-            var newAvatarFileName = $"{(Guid.NewGuid().ToString().Replace("-", string.Empty))}{Path.GetExtension(uploadedFile.FileName)}";
+
+            var newAvatarFileName = Guid.NewGuid().ToString("N") + Path.GetExtension(uploadedFile.FileName);
             memberAvatar.MemberId = member.Id;
             memberAvatar.AvatarFile = imageData;
             memberAvatar.AvatarFileName = newAvatarFileName;
@@ -203,14 +194,16 @@ namespace CoralTime.BL.Services
         {
             var iconPath = Path.Combine(GetIconsPath(), fileName);
             var avatarPath = Path.Combine(GetAvatarsPath(), fileName);
+
             if (!File.Exists(iconPath))
             {
                 File.WriteAllBytes(iconPath, iconFile);
             }
+
             if (!File.Exists(avatarPath))
             {
                 File.WriteAllBytes(avatarPath, avatarFile);
-            }            
+            }
         }
 
         private string GetAvatarsPath()
@@ -260,12 +253,30 @@ namespace CoralTime.BL.Services
 
         public void SaveAllIconsAndAvatarsInStaticFiles()
         {
-            var avatars = Uow.MemberAvatarRepository.GetQueryAsNoTraking().Where(x=> true).ToArray();
+            var avatars = Uow.MemberAvatarRepository.GetQueryAsNoTraking().Where(x => true).ToArray();
 
             foreach (var avatar in avatars)
             {
                 SaveAvatarToFileSystem(avatar);
             }
+        }
+
+        private static string GetMD5(string email)
+        {
+            byte[] data;
+            using (var hasher = MD5.Create())
+            {
+                data = hasher.ComputeHash(Encoding.Default.GetBytes(email));
+            }
+
+            var sb = new StringBuilder();
+
+            foreach (var d in data)
+            {
+                sb.Append(d.ToString("x2"));
+            }
+
+            return sb.ToString();
         }
     }
 }
