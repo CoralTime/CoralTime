@@ -15,14 +15,14 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns();
 
-        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData);
+        ReportsTotalGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData);
 
-        ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData);
+        ReportsTotalGridProjectsView GetGroupingReportsGridByProjects(ReportsGridView reportsGridData);
 
-        ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData);
+        ReportsTotalGridMembersView GetGroupingReportsGridByUsers(ReportsGridView reportsGridData);
 
-        ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData);
+        ReportsTotalGridByDatesView GetGroupingReportsGridByDates(ReportsGridView reportsGridData);
 
-        ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData);
+        ReportsTotalGridClients GetGroupingReportsGridByClients(ReportsGridView reportsGridData);
     }
 }

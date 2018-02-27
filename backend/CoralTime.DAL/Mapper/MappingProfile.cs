@@ -67,8 +67,8 @@ namespace CoralTime.DAL.Mapper
                 .ForMember(x => x.TaskName, x => x.MapFrom(m => m.TaskType.Name))
                 .ForMember(x => x.TimeFrom, x => x.MapFrom(m => m.TimeFrom))
                 .ForMember(x => x.TimeTo, x => x.MapFrom(m => m.TimeTo))
-                .ForMember(x => x.ActualTime, x => x.MapFrom(m => m.Time))
-                .ForMember(x => x.EstimatedTime, x => x.MapFrom(m => m.PlannedTime));
+                .ForMember(x => x.TimeActual, x => x.MapFrom(m => m.Time))
+                .ForMember(x => x.TimeEstimated, x => x.MapFrom(m => m.PlannedTime));
 
             CreateMap<SettingsView, Setting>();
             CreateMap<Setting, SettingsView>();

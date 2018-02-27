@@ -10,31 +10,31 @@ namespace CoralTime.BL.Services.Reports.Export
     {
         public async Task ExportEmailGroupByProjects(ReportsExportEmailView emailData)
         {
-            var groupByProjects = _reportService.ReportsGridGroupByProjects(emailData);
+            var groupByProjects = _reportService.GetGroupingReportsGridByProjects(emailData);
             await SendReportWithGroupingAsync(emailData, groupByProjects);
         }
 
         public async Task ExportEmailGroupByUsers(ReportsExportEmailView emailData)
         {
-            var groupByUsers = _reportService.ReportsGridGroupByUsers(emailData);
+            var groupByUsers = _reportService.GetGroupingReportsGridByUsers(emailData);
             await SendReportWithGroupingAsync(emailData, groupByUsers);
         }
 
         public async Task ExportEmailGroupByDates(ReportsExportEmailView emailData)
         {
-            var groupByDates = _reportService.ReportsGridGroupByDates(emailData);
+            var groupByDates = _reportService.GetGroupingReportsGridByDates(emailData);
             await SendReportWithGroupingAsync(emailData, groupByDates);
         }
 
         public async Task ExportEmailGroupByClients(ReportsExportEmailView emailData)
         {
-            var groupByClients = _reportService.ReportsGridGroupByClients(emailData);
+            var groupByClients = _reportService.GetGroupingReportsGridByClients(emailData);
             await SendReportWithGroupingAsync(emailData, groupByClients);
         }
 
-        private async Task SendReportWithGroupingAsync<T>(ReportsExportEmailView emailData, IReportsGrandGridView<T> groupedList)
+        private async Task SendReportWithGroupingAsync<T>(ReportsExportEmailView emailData, IReportsTotalGridView<T> groupedList)
         {
-            var fileByte = await CreateReportFileByteUpdateFileNameContentTypeAsync(emailData, groupedList);
+            var fileByte = await CreateReportsFileOfBytesAsync(emailData, groupedList);
 
             #region Create and send message with file Attachment.
 

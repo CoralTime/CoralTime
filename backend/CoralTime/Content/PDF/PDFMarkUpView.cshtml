@@ -2,7 +2,7 @@
 @using CoralTime.Common.Constants @*todo @Constants.ReportsGroupBy.Clients.ToString()*@
 @using RazorLight
 
-@model CoralTime.ViewModels.Reports.PDF.ReportsPDFCommonView
+@model CoralTime.ViewModels.Reports.PDF.ReportsExportView
 
 <!DOCTYPE html>
 <html>
@@ -20,7 +20,7 @@
                 </td>
                 @if (Model.GroupById != (int)Constants.ReportsGroupBy.None)
                 {
-                    foreach (var grandHeader in Model.PDFGrandModel.GrandHeaders)
+                    foreach (var grandHeader in Model.ReportsTotalView.TotalHeaders)
                     {
                         <td style="text-align: right;">
                             <span>@grandHeader.NameDisplay</span>
@@ -31,24 +31,24 @@
             </tr>
         </table>
     </div>
-    @foreach (var entity in Model.PDFGrandModel.Entities)
+    @foreach (var entity in Model.ReportsTotalView.Entities)
     {
         <div class="divIncludeTable">
             <table class="tableEntityHeaders">
                 <thead>
                     <tr class="rowCommonEntityHeaders containerFlex">
-                        @foreach (var entityHeader in entity.TotalHeaders)
+                        @foreach (var entityHeader in entity.TotalForHeaders)
                         {
-                            if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString() || entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
+                            if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForActualTime.ToString() || entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForEstimatedTime.ToString())
                             {
-                                if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString())
+                                if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForActualTime.ToString())
                                 {
                                     <td class="columnCommonEntityHeaders childFlexRight2">
                                         <span>@entityHeader.NameDisplay</span>
                                         <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
                                     </td>
                                 }
-                                else if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
+                                else if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForEstimatedTime.ToString())
                                 {
                                     <td class="columnCommonEntityHeaders childFlexRight2">
                                         <span>@entityHeader.NameDisplay</span>

@@ -7,98 +7,99 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using WkWrap.Core;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        //private async System.Threading.Tasks.Task<byte[]> CreateFilePDFAsync<T>(IReportsGrandGridView<T> groupedList)
-        //{
-        //    if (!RunSetCommonValuesForExport)
-        //    {
-        //        throw new InvalidOperationException("You forgot run SetCommonValuesForExport() for set common values.");
-        //    }
-
-        //    var pdfBytesResult = new byte[0];
-
-        //    #region Set root paths and give names for files.
-
-        //    var fileNameWkhtmltopdf = "wkhtmltopdf.exe";
-        //    var fileNamePDFMarkUpView = "PDFMarkUpView.cshtml";
-
-        //    var contentRootPath = _environment.ContentRootPath;
-
-        //    var pathContentPDF = $"{contentRootPath}\\Content\\PDF";
-        //    var pathContentPDFCssStyle = $"{pathContentPDF}\\Site.css";
-        //    var pathContentPDFWkhtmltopdf = $"{pathContentPDF}\\{fileNameWkhtmltopdf}";
-
-        //    var pathFileInfo = new FileInfo(pathContentPDFWkhtmltopdf);
-
-        //    #endregion
-
-        //    if (File.Exists(pathContentPDFWkhtmltopdf))
-        //    {
-        //        var pdfModel = new ReportsPDFCommonView(pathContentPDFCssStyle, GroupById, GetPeriodPDFCell())
-        //        {
-        //            PDFGrandModel = CreateReportsGrandGridModel(groupedList)
-        //        };
-
-        //        #region Parse view.
-
-        //        var engine = new RazorLightEngineBuilder()
-        //                      .UseFilesystemProject(pathContentPDF)
-        //                      .UseMemoryCachingProvider()
-        //                      .Build();
-
-        //        var htmlFromParsedViewRazorLight = await engine.CompileRenderAsync(fileNamePDFMarkUpView, pdfModel);
-
-        //        var settings = new ConversionSettings(
-        //            pageSize: PageSize.A4,
-        //            orientation: PageOrientation.Landscape,
-        //            margins: new WkWrap.Core.PageMargins(5, 10, 5, 10),
-        //            grayscale: false,
-        //            lowQuality: false,
-        //            quiet: false,
-        //            enableJavaScript: true,
-        //            javaScriptDelay: null,
-        //            enableExternalLinks: true,
-        //            enableImages: true,
-        //            executionTimeout: null);
-
-        //        pdfBytesResult = new HtmlToPdfConverter(pathFileInfo).ConvertToPdf(htmlFromParsedViewRazorLight, Encoding.UTF8, settings);
-
-        //        #endregion
-        //    }
-
-        //    return pdfBytesResult;
-        //}
-
-        private ReportsPDFGrandGridView CreateReportsGrandGridModel<T>(IReportsGrandGridView<T> groupedList)
+        private async Task<byte[]> CreateFilePDFAsync<T>(IReportsTotalGridView<T> groupedList)
         {
-            var pdfGrandModel = new ReportsPDFGrandGridView();
-
-            // Grand headers.
-            foreach (var propGrand in PropsEntitiesTotalHeaders)
+            if (!RunSetCommonValuesForExport)
             {
-                if (!propGrand.PropertyType.GetTypeInfo().IsGenericType)
+                throw new InvalidOperationException("You forgot run SetCommonValuesForExport() for set common values.");
+            }
+
+            var pdfBytesResult = new byte[0];
+
+            #region Set root paths and give names for files.
+
+            var fileNameWkhtmltopdf = "wkhtmltopdf.exe";
+            var fileNamePDFMarkUpView = "PDFMarkUpView.cshtml";
+
+            var contentRootPath = _environment.ContentRootPath;
+
+            var pathContentPDF = $"{contentRootPath}\\Content\\PDF";
+            var pathContentPDFCssStyle = $"{pathContentPDF}\\Site.css";
+            var pathContentPDFWkhtmltopdf = $"{pathContentPDF}\\{fileNameWkhtmltopdf}";
+
+            var pathFileInfo = new FileInfo(pathContentPDFWkhtmltopdf);
+
+            #endregion
+
+            if (File.Exists(pathContentPDFWkhtmltopdf))
+            {
+                var reportsExportView = new ReportsExportView(pathContentPDFCssStyle, GroupById, GetPeriodPDFCell())
                 {
-                    var grandHeader = CreateGrandHeader(propGrand, groupedList);
-                    pdfGrandModel.GrandHeaders.Add(grandHeader);
+                    ReportsTotalView = CreateReportsExportView(groupedList)
+                };
+
+                #region Parse view.
+
+                var engine = new RazorLightEngineBuilder()
+                              .UseFilesystemProject(pathContentPDF)
+                              .UseMemoryCachingProvider()
+                              .Build();
+
+                var htmlFromParsedViewRazorLight = await engine.CompileRenderAsync(fileNamePDFMarkUpView, reportsExportView);
+
+                var settings = new ConversionSettings(
+                    pageSize: PageSize.A4,
+                    orientation: PageOrientation.Landscape,
+                    margins: new WkWrap.Core.PageMargins(5, 10, 5, 10),
+                    grayscale: false,
+                    lowQuality: false,
+                    quiet: false,
+                    enableJavaScript: true,
+                    javaScriptDelay: null,
+                    enableExternalLinks: true,
+                    enableImages: true,
+                    executionTimeout: null);
+
+                pdfBytesResult = new HtmlToPdfConverter(pathFileInfo).ConvertToPdf(htmlFromParsedViewRazorLight, Encoding.UTF8, settings);
+
+                #endregion
+            }
+
+            return pdfBytesResult;
+        }
+
+        private ReportsTotalView CreateReportsExportView<T>(IReportsTotalGridView<T> groupedList)
+        {
+            var totalModel = new ReportsTotalView();
+
+            // Total headers.
+            foreach (var propTotal in PropsEntitiesTotalHeaders)
+            {
+                if (!propTotal.PropertyType.GetTypeInfo().IsGenericType)
+                {
+                    var totalHeader = CreateTotalHeader(propTotal, groupedList);
+                    totalModel.TotalHeaders.Add(totalHeader);
                 }
             }
 
             foreach (var entity in groupedList.ReportsGridView.ToList())
             {
-                var entityLocal = new ReportsPDFEntityView();
+                var entityLocal = new ReportsEntityView();
 
                 foreach (var entityHeader in PropsGroupByAndTotalTimes)
                 {
                     if (!entityHeader.PropertyType.GetTypeInfo().IsGenericType)
                     {
-                        // Total headers.
-                        var totalHeader = CreateTotalHeader(entityHeader, entity);
-                        entityLocal.TotalHeaders.Add(totalHeader);
+                        // Total header.
+                        var totalHeader = CreateTotalForHeade(entityHeader, entity);
+                        entityLocal.TotalForHeaders.Add(totalHeader);
                     }
                     else if (entityHeader.PropertyType == typeof(IEnumerable<ReportsGridItemsView>))
                     {
@@ -112,50 +113,50 @@ namespace CoralTime.BL.Services.Reports.Export
                     }
                 }
 
-                pdfGrandModel.Entities.Add(entityLocal);
+                totalModel.Entities.Add(entityLocal);
             }
 
-            return pdfGrandModel;
+            return totalModel;
         }
 
-        private ReportsPDFGrandHeaders CreateGrandHeader<T>(PropertyInfo prop, T entity)
+        private ReportsTotalHeadersView CreateTotalHeader<T>(PropertyInfo prop, T entity)
         {
-            var grandEntityHeadersModel = CreateCell<T, ReportsPDFGrandHeaders>(prop, entity);
+            var grandEntityHeadersModel = CreateCell<T, ReportsTotalHeadersView>(prop, entity);
             return grandEntityHeadersModel;
         }
 
-        private ReportsPDFTotalHeadersView CreateTotalHeader<T>(PropertyInfo prop, T entity)
+        private ReportsTotalForHeadersView CreateTotalForHeade<T>(PropertyInfo prop, T entity)
         {
-            var entityHeaderCell = CreateCell<T, ReportsPDFTotalHeadersView>(prop, entity);
+            var entityHeaderCell = CreateCell<T, ReportsTotalForHeadersView>(prop, entity);
             return entityHeaderCell;
         }
 
-        private List<ReportsPDFEntityHeadersView> CreateEntityHeaders()
+        private List<ReportsEntityHeadersView> CreateEntityHeaders()
         {
-            var entitiesHeaders = new List<ReportsPDFEntityHeadersView>();
+            var entitiesHeaders = new List<ReportsEntityHeadersView>();
             
             foreach (var availableProp in ExludePropByDefaultGrouping(PropsEntityHeadersAndRows))
             {
-                var entityHeaderCell = CreateCell<object, ReportsPDFEntityHeadersView>(availableProp, null);
+                var entityHeaderCell = CreateCell<object, ReportsEntityHeadersView>(availableProp, null);
                 entitiesHeaders.Add(entityHeaderCell);
             }
 
             return entitiesHeaders;
         }
 
-        private List<List<ReportsPDFEntityRowsView>> CreateEntityRows<T>(PropertyInfo entityHeader, T entity)
+        private List<List<ReportsEntityRowsView>> CreateEntityRows<T>(PropertyInfo entityHeader, T entity)
         {
-            var entitiesRowsList = new List<List<ReportsPDFEntityRowsView>>();
+            var entitiesRowsList = new List<List<ReportsEntityRowsView>>();
 
             foreach (var entityRow in GetValueListFromProp(entityHeader, entity))
             {
-                var entityRowsLocal = new List<ReportsPDFEntityRowsView>();
+                var entityRowsLocal = new List<ReportsEntityRowsView>();
 
                 foreach (var prop in PropsEntityHeadersAndRows)
                 {
                     if (!IsGroupByThisProperty(prop.Name))
                     {
-                        var entityRowCell = CreateCell<ReportsGridItemsView, ReportsPDFEntityRowsView>(prop, entityRow);
+                        var entityRowCell = CreateCell<ReportsGridItemsView, ReportsEntityRowsView>(prop, entityRow);
                         entityRowsLocal.Add(entityRowCell);
                     }
                 }

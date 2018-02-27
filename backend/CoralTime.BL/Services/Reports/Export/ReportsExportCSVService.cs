@@ -1,8 +1,5 @@
-﻿using System;
-using CoralTime.ViewModels.Reports;
+﻿using CoralTime.ViewModels.Reports;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 
 namespace CoralTime.BL.Services.Reports.Export
 {

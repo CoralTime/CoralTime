@@ -1,17 +1,14 @@
 ﻿using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
 using CoralTime.ViewModels.Reports;
-using NPOI.HSSF.Util;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
-using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace CoralTime.BL.Services.Reports.Export
@@ -677,10 +674,10 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private string UpdateTimeFormatForValue(PropertyInfo prop, string value)
         {
-            if (prop.Name == ExternalProperties.GrandActualTime.ToString()
-                || prop.Name == ExternalProperties.GrandEstimatedTime.ToString()
-                || prop.Name == ExternalProperties.TotalActualTime.ToString() 
+            if (prop.Name == ExternalProperties.TotalActualTime.ToString()
                 || prop.Name == ExternalProperties.TotalEstimatedTime.ToString()
+                || prop.Name == ExternalProperties.TotalForActualTime.ToString() 
+                || prop.Name == ExternalProperties.TotalForEstimatedTime.ToString()
                 || prop.Name == InternalProperties.ActualTime.ToString()
                 || prop.Name == InternalProperties.EstimatedTime.ToString()
                 || prop.Name == InternalProperties.TimeFrom.ToString()

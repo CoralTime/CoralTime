@@ -8,24 +8,24 @@ namespace CoralTime.DAL.ConvertersOfViewModels
 {
     public static partial class ConvertersOfViewModels
     {
-        private static void SetReportsGridItemViewValues<T>(KeyValuePair<T, IEnumerable<TimeEntry>> timeEntries, IReportsGridTotalItemsView reportGridView, IMapper _mapper)
+        private static void SetReportsExportTotalForAndItemsValues<T>(KeyValuePair<T, IEnumerable<TimeEntry>> timeEntries, IReportsTotalForGridItemsView exportTotalForItemsView, IMapper _mapper)
         {
-            CalculateTotalEstimatedActualTime(out var totalActualTime, out var totalEstimatedTime, timeEntries.Value);
+            CalculateTotalForValues(out var totalForActualTime, out var totalForEstimatedTime, timeEntries.Value);
 
-            reportGridView.TotalActualTime = totalActualTime;
-            reportGridView.TotalEstimatedTime = totalEstimatedTime;
-            reportGridView.Items = timeEntries.Value.Select(x => x.GetViewReportsGridItem(_mapper));
+            exportTotalForItemsView.TotalForActualTime = totalForActualTime;
+            exportTotalForItemsView.TotalForEstimatedTime = totalForEstimatedTime;
+            exportTotalForItemsView.Items = timeEntries.Value.Select(x => x.GetViewReportsGridItem(_mapper));
         }
 
-        private static void CalculateTotalEstimatedActualTime(out int totalActualTime, out int totalEstimatedTime, IEnumerable<TimeEntry> timeEntries)
+        private static void CalculateTotalForValues(out int totalForActualTime, out int totalForEstimatedTime, IEnumerable<TimeEntry> timeEntries)
         {
-            totalActualTime = 0;
-            totalEstimatedTime = 0;
+            totalForActualTime = 0;
+            totalForEstimatedTime = 0;
 
-            foreach (var item in timeEntries)
+            foreach (var timeEntry in timeEntries)
             {
-                totalActualTime += item.Time;
-                totalEstimatedTime += item.PlannedTime;
+                totalForActualTime += timeEntry.Time;
+                totalForEstimatedTime += timeEntry.PlannedTime;
             }
         }
     }

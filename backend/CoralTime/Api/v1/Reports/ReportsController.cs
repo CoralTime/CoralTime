@@ -53,22 +53,22 @@ namespace CoralTime.Api.v1.Reports
                 {
                     case (int) Constants.ReportsGroupBy.Project:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(reportsGridView));
+                        return new JsonResult(_service.GetGroupingReportsGridByProjects(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(reportsGridView));
+                        return new JsonResult(_service.GetGroupingReportsGridByUsers(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByDates(reportsGridView));
+                        return new JsonResult(_service.GetGroupingReportsGridByDates(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Client:
                     {
-                        return new JsonResult(_service.ReportsGridGroupByClients(reportsGridView));
+                        return new JsonResult(_service.GetGroupingReportsGridByClients(reportsGridView));
                     }
 
                     default:

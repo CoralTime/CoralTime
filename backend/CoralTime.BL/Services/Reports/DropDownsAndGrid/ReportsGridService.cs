@@ -16,13 +16,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
     {
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
 
-        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData)
+        public ReportsTotalGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData)
         {
-            var reportsGridTimeEntry = new ReportsGrandGridTimeEntryView
+            var reportsGridTimeEntry = new ReportsTotalGridTimeEntryView
             {
-                ReportsGridView = new List<ReportGridTimeEntryView>
+                ReportsGridView = new List<ReportTotalForGridTimeEntryView>
                 {
-                    new ReportGridTimeEntryView
+                    new ReportTotalForGridTimeEntryView
                     {
                         Items = new List<ReportsGridItemsView>()
                     }
@@ -39,18 +39,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .GroupBy(x => x.Id)
                 .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
-            var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
+            var result = reportsGridTimeEntry.GetViewReportsTotalGridTimeEntries(timeEntriesGroupByNone, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData)
+        public ReportsTotalGridProjectsView GetGroupingReportsGridByProjects(ReportsGridView reportsGridData)
         {
-            var reportsGridProjects = new ReportsGrandGridProjectsView
+            var reportsTotalGridProjectsView = new ReportsTotalGridProjectsView
             {
-                ReportsGridView = new List<ReportGridProjectView>
+                ReportsGridView = new List<ReportTotalForGridProjectView>
                 {
-                    new ReportGridProjectView
+                    new ReportTotalForGridProjectView
                     {
                         Items = new List<ReportsGridItemsView>()
                     }
@@ -60,7 +60,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
             if (!timeEntriesForGrouping.Any())
             {
-                return reportsGridProjects;
+                return reportsTotalGridProjectsView;
             }
 
             var timeEntriesGroupByProjects = timeEntriesForGrouping.ToList()
@@ -68,18 +68,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .OrderBy(x => x.Key.Name)
                 .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
-            var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
+            var result = reportsTotalGridProjectsView.GetViewReportsTotalGridProjects(timeEntriesGroupByProjects, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData)
+        public ReportsTotalGridMembersView GetGroupingReportsGridByUsers(ReportsGridView reportsGridData)
         {
-            var reportsGridUsers = new ReportsGrandGridMembersView
+            var reportsGridUsers = new ReportsTotalGridMembersView
             {
-                ReportsGridView = new List<ReportGridMemberView>
+                ReportsGridView = new List<ReportTotalForGridMemberView>
                 {
-                    new ReportGridMemberView
+                    new ReportTotalForGridMemberView
                     {
                         Items = new List<ReportsGridItemsView>()
                     }
@@ -97,18 +97,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .OrderBy(x => x.Key.FullName)
                 .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
-            var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
+            var result = reportsGridUsers.GetViewReportsTotalGridUsers(timeEntriesGroupByUsers, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData)
+        public ReportsTotalGridByDatesView GetGroupingReportsGridByDates(ReportsGridView reportsGridData)
         {
-            var reportsGridDates = new ReportsGrandGridDatesView
+            var reportsGridDates = new ReportsTotalGridByDatesView
             {
-                ReportsGridView = new List<ReportGridDateView>
+                ReportsGridView = new List<ReportTotalForGridDateView>
                 {
-                    new ReportGridDateView
+                    new ReportTotalForGridDateView
                     {
                         Items = new List<ReportsGridItemsView>()
                     }
@@ -125,18 +125,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .GroupBy(i => i.Date)
                 .ToDictionary(key => key.Key, key => key.AsEnumerable());
 
-            var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
+            var result = reportsGridDates.GetViewReportsTotalGridDatess(timeEntriesGroupByDate, Mapper);
 
             return result;
         }
 
-        public ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData)
+        public ReportsTotalGridClients GetGroupingReportsGridByClients(ReportsGridView reportsGridData)
         {
-            var reportsGridClients = new ReportsGrandGridClients
+            var reportsGridClients = new ReportsTotalGridClients
             {
-                ReportsGridView = new List<ReportGridClientView>
+                ReportsGridView = new List<ReportsTotalForGridClientView>
                 {
-                    new ReportGridClientView
+                    new ReportsTotalForGridClientView
                     {
                         Items = new List<ReportsGridItemsView>()
                     }
@@ -154,7 +154,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .OrderBy(x => x.Key.Name)
                 .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
-            var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
+            var result = reportsGridClients.GetViewReportsTotalGridClients(timeEntriesGroupByClients, Mapper);
 
             return result;
         }
