@@ -18,7 +18,7 @@ namespace CoralTime.DAL.Repositories
         private readonly IMemoryCache _memoryCache;
         protected readonly ICacheManager CacheManager;
         private static readonly object LockObject = new object();
-        private readonly string _userId;
+        protected readonly string _userId;
 
         protected BaseRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
         {
@@ -143,7 +143,7 @@ namespace CoralTime.DAL.Repositories
         #endregion
 
         #region CRUD.
-
+        
         public virtual T GetById(object id)
         {
             return _dbSet.Find(id);
@@ -259,6 +259,5 @@ namespace CoralTime.DAL.Repositories
             _db.Dispose();
             _db = null;
         }
-
     }
 }

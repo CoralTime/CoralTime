@@ -1,34 +1,44 @@
-using AutoMapper;
+﻿using AutoMapper;
 using CoralTime.BL.Interfaces;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.BL.Services;
 using CoralTime.BL.Services.Reports.DropDownsAndGrid;
 using CoralTime.BL.Services.Reports.Export;
+using CoralTime.Common.Attributes;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Middlewares;
 using CoralTime.DAL;
 using CoralTime.DAL.Helpers;
 using CoralTime.DAL.Models;
-using CoralTime.DAL.OData;
 using CoralTime.DAL.Repositories;
-using CoralTime.Serialization;
 using CoralTime.Services;
-//using MySQL.Data.Entity.Extensions; for MySQL
-using GeekLearning.Testavior.Configuration.Startup;
+using CoralTime.ViewModels.Clients;
+using CoralTime.ViewModels.Errors;
+using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.MemberProjectRoles;
+using CoralTime.ViewModels.ProjectRole;
+using CoralTime.ViewModels.Projects;
+using CoralTime.ViewModels.Settings;
+using CoralTime.ViewModels.Tasks;
 using IdentityServer4.EntityFramework.Interfaces;
 using IdentityServer4.Stores;
 using IdentityServer4.Validation;
+using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.OData.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
+using Microsoft.OData.Edm;
 using NLog.Extensions.Logging;
 using NLog.Web;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -39,36 +49,14 @@ namespace CoralTime
 {
     public class Startup
     {
-        private IStartupConfigurationService externalStartupConfiguration;
-
-        public Startup(IHostingEnvironment environment, IStartupConfigurationService externalStartupConfiguration)
+        public Startup(IConfiguration configuration)
         {
-            this.externalStartupConfiguration = externalStartupConfiguration;
-            this.externalStartupConfiguration.ConfigureEnvironment(environment);
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(environment.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
-                .AddJsonFile("defaultDbData.json", optional: true);
-            if (environment.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                // builder.AddUserSecrets();
-            }
-
-            builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
-
-            Constants.EnvName = environment.EnvironmentName;
-
-            CombineFileWkhtmltopdf(environment);
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        private IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             // Add MySQL support (At first create DB on MySQL server.)
             //var sqlConnectionString = (Configuration.GetConnectionString("DefaultConnectionMySQL"));
@@ -76,6 +64,13 @@ namespace CoralTime
             //    options.UseMySQL(
             //        sqlConnectionString,
             //        b => b.MigrationsAssembly("CoralTime")));
+
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddCors(options =>
             {
@@ -90,41 +85,48 @@ namespace CoralTime
             });
 
             AddApplicationServices(services);
-
-            services.AddMvc();
-
+       
             services.AddMemoryCache();
 
             services.AddAutoMapper();
 
-            // Add OData. Comment this string for update swagger.json.
-            services.AddOData<IOdataService>();
+            services.AddMvc();
 
-            services.ConfigureODataSerializerProvider<ODataSerializerProvider>();
+            // Add OData
+            services.AddOData();
+
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            });
 
             SetupIdentity(services);
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "CoralTime", Version = "v1" });
+                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
             });
-
-            this.externalStartupConfiguration.ConfigureServices(services, Configuration);
+            
+            return services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            this.externalStartupConfiguration.Configure(app, env, loggerFactory, Configuration);
-
-//#if DEBUG
+#if DEBUG
             loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
-//#endif
+#endif
+
             //add NLog to ASP.NET Core
             loggerFactory.AddNLog();
-            //add NLog.Web
-            app.AddNLogWeb();
+
             // Configure NLog
             env.ConfigureNLog("nlog.config");
 
@@ -134,108 +136,51 @@ namespace CoralTime
                 app.UseDatabaseErrorPage();
             }
 
-            //app.UseStatusCodePagesWithReExecute("/");
             SetupAngularRouting(app);
 
-            app.UseCors("AllowAllOrigins");
-
-            // IdentityServer4.AccessTokenValidation: authentication middleware for the API.
-            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
-            {
-                Authority = Configuration["Authority"],
-
-                AllowedScopes = { "WebAPI" },
-
-                RequireHttpsMetadata = false
-            });
-
-            // Add middleware exceptions
-            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
-
-            // Add OData
-            app.UseOData("api/v1/odata");
-
-            // Microsoft.AspNetCore.StaticFiles: API for starting the application from wwwroot.
-            // Uses default files as index.html.
             app.UseDefaultFiles();
 
             // Uses static file for the current path.
             app.UseStaticFiles();
 
-            app.UseMvc();
-
-            app.UseIdentity();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles")),
+                RequestPath = "/StaticFiles"
+            });
 
             app.UseIdentityServer();
+
+            // Add middleware exceptions
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+
+            // Add OData
+            var edmModel = SetupODataEntities(app.ApplicationServices);
+
+            app.UseMvc();
+
+            app.UseMvc(routeBuilder =>
+            {
+                routeBuilder.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
+                routeBuilder.MapODataServiceRoute("ODataRoute", "api/v1/odata", edmModel);
+                routeBuilder.EnableDependencyInjection();
+            });
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/api/v1/swagger", "CoralTime V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CoralTime V1");
             });
 
-            // Uncomment to Create DB
-            //AppDbContext.InitializeDatabaseAsync(app.ApplicationServices).Wait();
-        }
+            Constants.EnvName = env.EnvironmentName;
 
-        private void SetupIdentity(IServiceCollection services)
-        {
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+            CombineFileWkhtmltopdf(env);
 
-            // Identity options.
-            services.Configure<IdentityOptions>(options =>
-            {
-                // Password settings.
-                options.Password.RequireDigit = false;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequireLowercase = false;
-
-                options.User.RequireUniqueEmail = true;
-            });
-
-            services.AddAuthorization(options =>
-            {
-                Config.CreateAuthorizatoinOptions(options);
-            });
-
-            var accessTokenLifetime = int.Parse(Configuration["AccessTokenLifetime"]);
-            var refreshTokenLifetime = int.Parse(Configuration["RefreshTokenLifetime"]);
-            var isDemo = bool.Parse(Configuration["DemoSiteMode"]);
-            
-            if (isDemo)
-            {
-                services
-                    .AddIdentityServer()
-                    .AddTemporarySigningCredential()
-                    .AddDeveloperSigningCredential()
-                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                    .AddInMemoryApiResources(Config.GetApiResources())
-                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
-                    .AddAspNetIdentity<ApplicationUser>()
-                    .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
-                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
-            }
-            else
-            {
-                var cert = new X509Certificate2("coraltime.pfx", "", X509KeyStorageFlags.MachineKeySet);
-
-                services
-                    .AddIdentityServer()
-                    .AddDeveloperSigningCredential()
-                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                    .AddInMemoryApiResources(Config.GetApiResources())
-                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
-                    .AddAspNetIdentity<ApplicationUser>()
-                    .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
-                    .AddSigningCredential(cert)
-                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
-            }
+            AppDbContext.InitializeFirstTimeDataBaseAsync(app.ApplicationServices, Configuration).Wait();
         }
 
         private void AddApplicationServices(IServiceCollection services)
@@ -249,12 +194,12 @@ namespace CoralTime
 
             services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
             services.AddTransient<IdentityServer4.Services.IProfileService, IdentityWithAdditionalClaimsProfileService>();
-            services.AddTransient<IExtensionGrantValidator, AzureGrant> ();
+            services.AddTransient<IExtensionGrantValidator, AzureGrant>();
             services.AddTransient<IPersistedGrantStore, PersistedGrantStore>();
 
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<IClientService, ClientService>();
-            services.AddScoped<IMemberProjectRolesService, MemberProjectRolesService>();
+            services.AddScoped<IMemberProjectRoleService, MemberProjectRoleService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<INotificationService, NotificationsService>();
             services.AddScoped<IPicturesCacheGuid, PicturesCacheGuidService>();
@@ -265,6 +210,10 @@ namespace CoralTime
             services.AddScoped<IReportsService, ReportsService>();
             services.AddScoped<IReportExportService, ReportsExportService>();
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
+            services.AddScoped<IAvatarService, AvatarService>();
+            services.AddScoped<IRefreshDataBaseService, RefreshDataBaseService>();
+            services.AddScoped<CheckSecureHeaderServiceFilter>();
+            services.AddScoped<CheckSecureHeaderNotificationFilter>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)
@@ -301,6 +250,97 @@ namespace CoralTime
             });
         }
 
+        private void SetupIdentity(IServiceCollection services)
+        {
+            var isDemo = bool.Parse(Configuration["DemoSiteMode"]);
+
+            // Identity options.
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                if (isDemo)
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                }
+                else
+                {
+                    options.Password.RequireDigit = true;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                }
+
+                options.Password.RequiredLength = 8;
+                options.User.RequireUniqueEmail = true;
+            });
+
+            var accessTokenLifetime = int.Parse(Configuration["AccessTokenLifetime"]);
+            var refreshTokenLifetime = int.Parse(Configuration["RefreshTokenLifetime"]);
+
+            if (isDemo)
+            {
+                services.AddIdentityServer()
+                    .AddDeveloperSigningCredential()
+                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                    .AddInMemoryApiResources(Config.GetApiResources())
+                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
+                    .AddAspNetIdentity<ApplicationUser>()
+                    .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
+                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+            }
+            else
+            {
+                var cert = new X509Certificate2("coraltime.pfx", "", X509KeyStorageFlags.MachineKeySet);
+
+                services.AddIdentityServer()
+                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                    .AddInMemoryApiResources(Config.GetApiResources())
+                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
+                    .AddAspNetIdentity<ApplicationUser>()
+                    .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
+                    .AddSigningCredential(cert).AddAppAuthRedirectUriValidator()
+                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+            }
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Bearer";
+                options.DefaultChallengeScheme = "Bearer";
+                options.DefaultForbidScheme = "Identity.Application";
+            }).AddJwtBearer(options =>
+                {
+                    // name of the API resource
+                    options.Audience = "WebAPI";
+                    options.Authority = Configuration["Authority"];
+                    options.RequireHttpsMetadata = false;
+                });
+
+            services.AddAuthorization(options =>
+            {
+                Config.CreateAuthorizatoinOptions(options);
+            });
+        }
+
+        private static IEdmModel SetupODataEntities(IServiceProvider serviceProvider)
+        {
+            var builder = new ODataConventionModelBuilder(serviceProvider);
+            builder.EntitySet<ClientView>("Clients");
+            builder.EntitySet<ProjectView>("Projects");
+            builder.EntitySet<MemberView>("Members");
+            builder.EntitySet<MemberProjectRoleView>("MemberProjectRoles");
+            builder.EntitySet<ProjectRoleView>("ProjectRoles");
+            builder.EntitySet<TaskView>("Tasks");
+            builder.EntitySet<ErrorView>("Errors");
+            builder.EntitySet<SettingsView>("Settings");
+            builder.EntitySet<ManagerProjectsView>("ManagerProjects");
+            builder.EntitySet<ProjectNameView>("ProjectsNames");
+            builder.EnableLowerCamelCase();
+            return builder.GetEdmModel();
+        }
+
         private void CombineFileWkhtmltopdf(IHostingEnvironment environment)
         {
             var fileNameWkhtmltopdf = "wkhtmltopdf.exe";
@@ -315,9 +355,11 @@ namespace CoralTime
                 var filePattern = "*.0**";
                 var destFile = $"\"../{fileNameWkhtmltopdf}\"";
 
-                var cmd = new ProcessStartInfo("cmd.exe", $@"/c copy /y /b {filePattern} {destFile}");
-                cmd.WorkingDirectory = pathContentPDFSplitFile;
-                cmd.UseShellExecute = false;
+                var cmd = new ProcessStartInfo("cmd.exe", $@"/c copy /y /b {filePattern} {destFile}")
+                {
+                    WorkingDirectory = pathContentPDFSplitFile,
+                    UseShellExecute = false
+                };
                 Process.Start(cmd);
             }
         }

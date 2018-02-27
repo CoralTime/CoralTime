@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { UsersComponent } from './users.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
-import { UserPicGuideResolveService } from '../../shared/user-pic/user-pic-guide-resolve.service';
 
 const routes: Routes = [
 	{
@@ -13,17 +12,13 @@ const routes: Routes = [
 		data: {
 			title: 'Users',
 			role: 'roleViewMember'
-		},
-		resolve: {
-			userPicGuide: UserPicGuideResolveService
 		}
 	}
 ];
 
 @NgModule({
 	imports: [RouterModule.forChild(routes)],
-	exports: [RouterModule],
-	providers: [UserPicGuideResolveService]
+	exports: [RouterModule]
 })
 
 export class UsersRoutingModule {

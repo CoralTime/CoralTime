@@ -1,4 +1,5 @@
-import { Http, Response } from '@angular/http';
+import { Response } from '@angular/http';
+import { CustomHttp } from '../core/custom-http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
@@ -86,21 +87,23 @@ export class ProfileProjects {
 }
 
 export class ProfileProjectMember {
-	fullName: string;
-	userId: number;
+	iconUrl: string;
+	memberId: number;
+	memberName: string;
 
 	constructor(data: any) {
 		if (!data) {
 			return;
 		}
-		this.fullName = data.MemberName;
-		this.userId = data.MemberId;
+		this.iconUrl = data.iconUrl;
+		this.memberId = data.memberId;
+		this.memberName = data.memberName;
 	}
 }
 
 @Injectable()
 export class ProfileService {
-	constructor(private http: Http,
+	constructor(private http: CustomHttp,
 	            private constantService: ConstantService) {
 	}
 
@@ -118,13 +121,6 @@ export class ProfileService {
 		return timeZones;
 	}
 
-	upload(fileToUpload: File): Observable<any> {
-		let input = new FormData();
-		input.append('file', fileToUpload, fileToUpload.name);
-
-		return this.http.put('/api/v1/Profile', input);
-	}
-
 	getProjects(): Observable<ProfileProjects[]> {
 		return this.http.get(this.constantService.profileApi + '/Projects')
 			.map((res: Response) => {
@@ -135,7 +131,7 @@ export class ProfileService {
 
 	getProjectMembers(projectId: number): Observable<ProfileProjectMember[]> {
 		return this.http.get(this.constantService.profileApi + '/ProjectMembers/' + projectId)
-			.map((res: Response) => res.json().value.map(x => new ProfileProjectMember(x)));
+			.map((res: Response) => res.json().map(x => new ProfileProjectMember(x)));
 	}
 
 	submitNotifications(obj: any, userId: number): Observable<any> {
@@ -151,5 +147,12 @@ export class ProfileService {
 	submitPersonalInfo(obj: any, userId: number): Observable<any> {
 		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/PersonalInfo', obj)
 			.map((res: Response) => res.json());
+	}
+
+	upload(fileToUpload: File): Observable<any> {
+		let input = new FormData();
+		input.append('file', fileToUpload, fileToUpload.name);
+
+		return this.http.put('/api/v1/Profile', input);
 	}
 }

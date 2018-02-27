@@ -1,43 +1,39 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.MemberProjectRoles;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 
 namespace CoralTime.Api.v1.Odata.Members
 {
     [Route("api/v1/odata/[controller]")]
-    [EnableQuery]
     [Authorize]
-    public class MemberProjectRolesController : BaseController<MemberProjectRolesController, IMemberProjectRolesService>
+    public class MemberProjectRolesController : BaseODataController<MemberProjectRolesController, IMemberProjectRoleService>
     {
-        public MemberProjectRolesController(IMemberProjectRolesService service, ILogger<MemberProjectRolesController> logger)
+        public MemberProjectRolesController(IMemberProjectRoleService service, ILogger<MemberProjectRolesController> logger)
             : base(logger, service) { }
 
         // GET: api/v1/odata/MemberProjectRoles
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult Get()
         {
             try
             {
-                return Ok(_service.GetAllProjectRoles(this.GetUserNameWithImpersonation()));
+                return Ok(_service.GetAllProjectRoles());
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetAll method;\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // GET api/v1/odata/MemberProjectRoles(2)
+        [ODataRoute("MemberProjectRoles({id})")]
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetById([FromODataUri]int id)
         {
             try
             {
@@ -45,39 +41,37 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetById method with parameter ({id});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
-        [HttpGet("{id}/Members")]
-        public ActionResult GetNotAssignMembersAtProjByProjectId(int projectId)
+        // GET api/v1/odata/MemberProjectRoles(2)/members
+        [ODataRoute("MemberProjectRoles({id})/members")]
+        [HttpGet("{id}/members")]
+        public IActionResult GetNotAssignMembersAtProjByProjectId([FromODataUri] int id)
         {
             try
             {
-                return Ok(_service.GetNotAssignMembersAtProjByProjectId(projectId));
+                return Ok(_service.GetNotAssignMembersAtProjByProjectId(id));
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetNotAssignMembersByProjectId method with parameter ({projectId});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
-        [HttpGet("{id}/Projects")]
-        public IActionResult GetNotAssignMembersAtProjByMemberId(int memberId)
+        // GET api/v1/odata/MemberProjectRoles(2)/projects
+        [ODataRoute("MemberProjectRoles({id})/projects")]
+        [HttpGet("{id}/projects")]
+        public IActionResult GetNotAssignMembersAtProjByMemberId([FromODataUri] int id)
         {
             try
             {
-                return Ok(_service.GetNotAssignMembersAtProjByMemberId(memberId));
+                return Ok(_service.GetNotAssignMembersAtProjByMemberId(id));
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"GetNotAssignMembersByMemberId method with parameter ({memberId});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
@@ -87,72 +81,67 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                var value = _service.Create(this.GetUserNameWithImpersonation(), projectRole);
+                var value = _service.Create(projectRole);
                 var locationUri = $"{Request.Host}/api/v1/odata/MemberProjectRoles({value.Id})";
 
                 return Created(locationUri, value);
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Create method with parameter ({JsonConvert.SerializeObject(projectRole)});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // PUT: api/v1/odata/MemberProjectRoles(2)
+        [ODataRoute("MemberProjectRoles({id})")]
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody]dynamic projectRole)
+        public IActionResult Update([FromODataUri] int id, [FromBody]dynamic projectRole)
         {
             projectRole.Id = id;
             try
             {
-                var value = _service.Update(this.GetUserNameWithImpersonation(), projectRole);
+                var value = _service.Update(projectRole);
 
                 return new ObjectResult(value);
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Update method with parameters ({id}, {projectRole});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         // PATCH: api/v1/odata/MemberProjectRoles(2)
+        [ODataRoute("MemberProjectRoles({id})")]
         [HttpPatch("{id}")]
-        public IActionResult Patch(int id, [FromBody]MemberProjectRoleView projectRole)
+        public IActionResult Patch([FromODataUri] int id, [FromBody] MemberProjectRoleView projectRole)
         {
             projectRole.Id = id;
 
             try
             {
-                var value = _service.Patch(this.GetUserNameWithImpersonation(), projectRole);
+                var value = _service.Patch(projectRole);
                 return new ObjectResult(value);
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Patch method with parameters ({id}, {projectRole});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
 
         //DELETE :api/v1/odata/MemberProjectRoles(1)
+        [ODataRoute("MemberProjectRoles({id})")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromODataUri] int id)
         {
             try
             {
-                _service.Delete(this.GetUserNameWithImpersonation(), id);
+                _service.Delete(id);
 
-                return Ok();
+                return new ObjectResult(null);
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Delete method with parameter ({id});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
     }

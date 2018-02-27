@@ -23,7 +23,7 @@ namespace CoralTime.DAL.ConvertersOfViewModels
             {
                 tEntry.IsUserManagerOnProject = timeEntry.Project.MemberProjectRoles == null
                     ? false
-                    : timeEntry.Project.MemberProjectRoles.Any(r => r.Member?.User.UserName == userName && r.Role?.Name == Constants.ManagerRole);
+                    : timeEntry.Project.MemberProjectRoles.Any(r => r.Member?.User.UserName == userName && r.Role?.Name == Constants.ProjectRoleManager);
             }
 
             return tEntry;

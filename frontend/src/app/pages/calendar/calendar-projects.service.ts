@@ -53,7 +53,7 @@ export class CalendarProjectsService {
 		query.OrderBy('name asc');
 
 		if (showOnlyActive) {
-			filters.push('IsActive eq true');
+			filters.push('isActive eq true');
 		}
 
 		query.Filter(filters.join(' and '));

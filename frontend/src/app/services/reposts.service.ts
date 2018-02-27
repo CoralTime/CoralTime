@@ -1,4 +1,5 @@
-import { Http, RequestOptions, Response, ResponseContentType } from '@angular/http';
+import { RequestOptions, Response, ResponseContentType } from '@angular/http';
+import { CustomHttp } from '../core/custom-http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
@@ -115,7 +116,7 @@ export interface GroupByItem {
 @Injectable()
 export class ReportsService {
 	constructor(private constantService: ConstantService,
-	            private http: Http) {
+	            private http: CustomHttp) {
 	}
 
 	createQuery(obj: any): Observable<Response> {

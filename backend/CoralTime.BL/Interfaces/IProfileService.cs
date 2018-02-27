@@ -4,29 +4,22 @@ using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
 using CoralTime.ViewModels.Profiles;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 namespace CoralTime.BL.Interfaces
 {
     public interface IProfileService
     {
-        List<ProfileProjectView> GetMemberProjects(string userName);
-
-        MemberAvatarView GetMemberAvatar(string userName, int memberId);
-
-        MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile, string userName);
-
-        MemberAvatarView GetMemberIcon(string userName, int memberId);
+        List<ProfileProjectView> GetMemberProjects();
 
         DateConvert[] GetDateFormats();
 
-        List<ProfileProjectMemberView> GetProjectMembers(int projectId, string userName);
+        List<ProfileProjectMemberView> GetProjectMembers(int projectId);
 
-        MemberView PatchNotifications(string userName, MemberNotificationView memberNotificationView);
+        MemberView PatchNotifications(MemberNotificationView memberNotificationView);
 
-        MemberView PatchPreferences(string userName, MemberPreferencesView memberPreferencesView);
+        MemberView PatchPreferences(MemberPreferencesView memberPreferencesView);
 
-        MemberView PatchPersonalInfo(string userName, MemberPersonalInfoView memberPreferencesView);
+        MemberView PatchPersonalInfo(MemberPersonalInfoView memberPreferencesView);
     }
 }

@@ -6,14 +6,14 @@ namespace CoralTime.BL.Interfaces
 {
     public interface ITimeEntryService
     {
-        IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTimeOffset dateSart, DateTimeOffset dateEnd);
+        IEnumerable<TimeEntryView> GetAllTimeEntries(DateTimeOffset dateSart, DateTimeOffset dateEnd);
 
-        TimeEntryView GetById(int id, string userName);
+        TimeEntryView GetById(int id);
 
-        TimeEntryView Create(TimeEntryView timeEntryData, string userName);
+        TimeEntryView Create(TimeEntryView timeEntryData);
 
-        TimeEntryView Update(TimeEntryView timeEntryData, string userName);
+        TimeEntryView Update(TimeEntryView timeEntryData);
 
-        void Delete(int timeEntryId, string userName);
+        void Delete(int timeEntryId);
     }
 }

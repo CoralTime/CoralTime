@@ -1,30 +1,80 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1.2</TargetFramework>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>CoralTime</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <PackageId>CoralTime</PackageId>
-    <UserSecretsId>aspnet-CoralTime-45158b1c-cc9b-441c-b4b7-24f4596c9f60</UserSecretsId>
-    <RuntimeIdentifiers>win10-x64;win7-x64</RuntimeIdentifiers>
-    <RuntimeFrameworkVersion>1.1.2</RuntimeFrameworkVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
-    <ApplicationIcon></ApplicationIcon>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
+    <Version>2.0.0</Version>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseAzure|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <Compile Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <Compile Remove="Configs\**" />
     <Compile Remove="wwwroot\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <Content Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <Content Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <Content Remove="Configs\**" />
     <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <EmbeddedResource Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <EmbeddedResource Remove="Configs\**" />
     <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionDefault\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionDev\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionLocal\**" />
+    <None Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
+    <None Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <None Remove="Configs\**" />
     <None Remove="wwwroot\**" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="node_modules" />
+    <None Remove="ConfigsNetCore2.0\coraltime_azure.publishsettings" />
+    <None Remove="ConfigsNetCore2.0\info about configs.txt" />
+    <None Remove="ConfigsNetCore2.0\Your local changes to the following files would be overwritten by checkout.bmp" />
+    <None Remove="Content\PDF\Site.css" />
+    <None Remove="Content\PDF\PDFMarkUpView.cshtml" />
+    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.001" />
+    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.002" />
+    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003" />
+    <None Remove="StaticFiles\Avatars\userpic.svg" />
+    <None Remove="StaticFiles\Icons\userpic.svg" />
     <None Remove="tempkey.rsa" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Content\PDF\Site.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -37,73 +87,44 @@
     <Content Include="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="StaticFiles\Avatars\userpic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StaticFiles\Icons\userpic.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Content\PDF\PDFMarkUpView.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="nlog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-   <None Update="nlog.config">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-    <None Update="appsettings.Production.json">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="6.1.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="2.0.1" />
-    <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
-    <PackageReference Include="GeekLearning.Testavior.Configuration" Version="0.7.1" />
-    <PackageReference Include="IdentityServer4" Version="1.5.2" />
-    <PackageReference Include="IdentityServer4.EntityFramework" Version="1.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Design" Version="1.1.2">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="1.1.2" />
-    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="1.0.1" />
-    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="1.2.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.2" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="1.1.1" />
-    <PackageReference Include="NETCore.MailKit" Version="1.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta5" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.1" />
-    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="2.3.7" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="GeekLearning.Testavior.Configuration" Version="1.3.0" />
+    <PackageReference Include="IdentityServer4" Version="2.1.1" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.3.0" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.0.0-beta1" />
+    <PackageReference Include="NETCore.MailKit" Version="2.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-rc6" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.0-rc2" />
     <PackageReference Include="SapientGuardian.EntityFrameworkCore.MySql" Version="7.1.23" />
-    <PackageReference Include="Microsoft.AspNetCore.OData" Version="1.0.0-rtm-00015" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
-    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.1" />
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
   </ItemGroup>
+  <Target Name="CreateLogsFolder" AfterTargets="AfterPublish">
+    <MakeDir Directories="$(PublishDir)Logs" Condition="!Exists('$(PublishDir)Logs')" />
+  </Target>
   <ItemGroup>
-    <ProjectReference Include="..\CoralTime.DAL\CoralTime.DAL.csproj" />
-    <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
     <ProjectReference Include="..\CoralTime.BL\CoralTime.BL.csproj" />
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />
+    <ProjectReference Include="..\CoralTime.DAL\CoralTime.DAL.csproj" />
+    <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
   </ItemGroup>
 </Project>

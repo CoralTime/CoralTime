@@ -1,17 +1,16 @@
 import { ODataConfiguration } from './odata/config';
-import { Http } from '@angular/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Project } from '../models/project';
+import { CustomHttp } from '../core/custom-http';
 
 @Injectable()
 export class ProjectsService {
 	readonly odata: ODataService<Project>;
 
-	constructor(private odataFactory: ODataServiceFactory,
-	            private http: Http,
+	constructor(private http: CustomHttp,
+	            private odataFactory: ODataServiceFactory,
 	            private odataConfig: ODataConfiguration) {
 		this.odata = this.odataFactory.CreateService<Project>('Projects');
 	}
@@ -30,10 +29,10 @@ export class ProjectsService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -48,7 +47,7 @@ export class ProjectsService {
 			.Query();
 
 		query.OrderBy('name asc');
-		filters.push('IsActive eq true');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.Exec().map(res => res.map((x: any) => new Project(x)));
@@ -66,7 +65,7 @@ export class ProjectsService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Name) eq \'' + name + '\'');
+		query.Filter('tolower(name) eq \'' + name + '\'');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -94,10 +93,10 @@ export class ProjectsService {
 			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -123,13 +122,13 @@ export class ProjectsService {
 			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('ClientId eq ' + clientId);
+		filters.push('clientId eq ' + clientId);
 
 		if (isActive) {
-			filters.push('IsActive eq ' + isActive);
+			filters.push('isActive eq ' + isActive);
 		}
 		query.Filter(filters.join(' and '));
 

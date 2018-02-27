@@ -1,11 +1,11 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.Api.v1.Reports.Export
@@ -15,40 +15,38 @@ namespace CoralTime.Api.v1.Reports.Export
     public class ReportsExportFileController : BaseController<ReportsExportFileController, IReportExportService>
     {
         public ReportsExportFileController(IReportExportService service, ILogger<ReportsExportFileController> logger)
-            : base (logger, service) { }
+            : base(logger, service) { }
 
         [HttpPost]
-        public IActionResult ReportsExportFile([FromBody]ReportsGridView reportsGridData)
+        public async Task<IActionResult> ReportsExportFileAsync([FromBody]ReportsGridView reportsGridData)
         {
             try
             {
-                var userName = this.GetUserNameWithImpersonation();
-
                 switch (reportsGridData.CurrentQuery.GroupById)
                 {
                     case (int) ReportsGroupBy.Project:
                     {
-                        return _service.ExportFileGroupByProjects(userName, reportsGridData, HttpContext);
+                        return await _service.ExportFileGroupByProjectsAsync(reportsGridData, HttpContext);
                     }
 
                     case (int) ReportsGroupBy.User:
                     {
-                        return _service.ExportFileGroupByUsers(userName, reportsGridData, HttpContext);
+                        return await _service.ExportFileGroupByUsersAsync(reportsGridData, HttpContext);
                     }
 
                     case (int) ReportsGroupBy.Date:
                     {
-                        return _service.ExportFileGroupByDates(userName, reportsGridData, HttpContext);
+                        return await _service.ExportFileGroupByDatesAsync(reportsGridData, HttpContext);
                     }
 
                     case (int) ReportsGroupBy.Client:
                     {
-                        return _service.ExportFileGroupByClients(userName, reportsGridData, HttpContext);
+                        return await _service.ExportFileGroupByClientsAsync(reportsGridData, HttpContext);
                     }
 
                     default:
                     {
-                        return _service.ExportFileGroupByNone(userName, reportsGridData, HttpContext);
+                        return BadRequest();
                     }
                 }
             }

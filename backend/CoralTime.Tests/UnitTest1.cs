@@ -1,4 +1,4 @@
-using CoralTime.DAL.Models;
+﻿using CoralTime.DAL.Models;
 using GeekLearning.Testavior.Environment;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -35,7 +35,7 @@ namespace CoralTime.Tests
             // Test result content
             var result = (JObject)JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result);
             var membersList = JsonConvert.DeserializeObject<List<Member>>(result["value"].ToString());
-            
+
             Assert.AreNotEqual(membersList.Count, 0);
         }
     }

@@ -20,30 +20,30 @@ namespace CoralTime.BL.Services
         public TimeEntryService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
-        public IEnumerable<TimeEntryView> GetAllTimeEntries(string userName, DateTimeOffset dateStart, DateTimeOffset dateEnd)
+        public IEnumerable<TimeEntryView> GetAllTimeEntries(DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
-            var relatedMemberByName = GetRelatedMemberByUserName(userName);
+            var relatedMemberByName = GetRelatedMemberByUserName(InpersonatedUserName);
 
             var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQueryWithIncludes()
                 .Where(tEntry => tEntry.MemberId == relatedMemberByName.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
                 .ToList();
 
-            return timeEntriesByMemberIdAndDates.Select(x => x.GetViewTimeEntry(userName, Mapper));
+            return timeEntriesByMemberIdAndDates.Select(x => x.GetViewTimeEntry(InpersonatedUserName, Mapper));
         }
 
-        public TimeEntryView GetById(int id, string userName)
+        public TimeEntryView GetById(int id)
         {
             var timeEntryById = GetRelatedTimeEntryById(id);
 
-            return timeEntryById.GetViewTimeEntry(userName, Mapper);
+            return timeEntryById.GetViewTimeEntry(InpersonatedUserName, Mapper);
         }
 
-        public TimeEntryView Create(TimeEntryView timeEntryView, string userName)
+        public TimeEntryView Create(TimeEntryView timeEntryView)
         {
             var timeEntry = new TimeEntry();
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntry, userName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntry, InpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
@@ -65,7 +65,7 @@ namespace CoralTime.BL.Services
                 Uow.Save();
 
                 var timeEntryWithUpdateRelatedEntities = Uow.TimeEntryRepository.LinkedCacheGetById(timeEntry.Id);
-                return timeEntryWithUpdateRelatedEntities.GetViewTimeEntry(userName, Mapper);
+                return timeEntryWithUpdateRelatedEntities.GetViewTimeEntry(InpersonatedUserName, Mapper);
             }
             catch (Exception e)
             {
@@ -75,12 +75,12 @@ namespace CoralTime.BL.Services
             #endregion
         }
 
-        public TimeEntryView Update(TimeEntryView timeEntryView, string userName)
+        public TimeEntryView Update(TimeEntryView timeEntryView)
         {
             var timeEntryById = GetRelatedTimeEntryById(timeEntryView.Id);
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, userName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntryById, InpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
@@ -101,7 +101,7 @@ namespace CoralTime.BL.Services
                 Uow.TimeEntryRepository.Update(timeEntryById);
                 Uow.Save();
 
-                return timeEntryById.GetViewTimeEntry(userName, Mapper);
+                return timeEntryById.GetViewTimeEntry(InpersonatedUserName, Mapper);
             }
             catch (Exception e)
             {
@@ -111,7 +111,7 @@ namespace CoralTime.BL.Services
             #endregion
         }
 
-        public void Delete(int timeEntryId, string userName)
+        public void Delete(int timeEntryId)
         {
             var timeEntryById = GetRelatedTimeEntryById(timeEntryId);
 
@@ -124,7 +124,7 @@ namespace CoralTime.BL.Services
             };
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, userName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntryById, InpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
@@ -301,7 +301,6 @@ namespace CoralTime.BL.Services
                 totalTimeForDay = totalTimeForDay + newTime;
             }
 
-            //TODO return !(timeEntry.Time/3600 >= 24) && !(Math.Abs(timeEntry.TimeTo - timeEntry.TimeFrom) >= TimeSpan.FromDays(1).TotalSeconds);
             if (totalTimeForDay > Constants.SecondsInThisDay)
             {
                 throw new CoralTimeDangerException($"Total work time on the date {timeEntryView.Date} is greater than 24 hours");

@@ -1,16 +1,15 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Helpers;
+using CoralTime.Common.Attributes;
 using CoralTime.ViewModels.Errors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using CoralTime.Common.Constants;
 
 namespace CoralTime.Api.v1
 {
     [Route("api/v1/[controller]")]
-    [CheckSecureHeader(Constants.SecureHeaderNotification)]
+    [ServiceFilter(typeof(CheckSecureHeaderNotificationFilter))]
     public class NotificationsController : BaseController<NotificationsController, INotificationService>
     {
         public NotificationsController(INotificationService service, ILogger<NotificationsController> logger)
@@ -44,7 +43,7 @@ namespace CoralTime.Api.v1
             catch (Exception e)
             {
                 _logger.LogWarning($"CheckAsync method {e}");
-                return BadRequest(new ErrorView {Source = "Other", Title = string.Empty, Details = e.Message});
+                return BadRequest(new ErrorView { Source = "Other", Title = string.Empty, Details = e.Message });
             }
         }
     }

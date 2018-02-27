@@ -6,23 +6,44 @@ namespace CoralTime.Common.Constants
 {
     public static class Constants
     {
-        public const string AdminRole = "admin";
-        public const string ManagerRole = "manager";
-        public const string UserRole = "user";
-        public const string MemberRole = "team member";
+
+        public const string UserTypeAdmins = "Admins";
+        public const string UserTypeMembers = "Members";
+
+        #region ApplicationRole
+
+        public const string ApplicationRoleAdmin = "admin";
+        public const string ApplicationRoleUser = "user";
+
+        public static readonly IEnumerable<string> ApplicationRoles = new[] {ApplicationRoleAdmin, ApplicationRoleUser};
+
+        #endregion
+
+        #region ProjectRoles
+
+        public const string ProjectRoleManager = "manager";
+        public const string ProjectRoleMember = "team member";
+
+        public static readonly IEnumerable<string> ProjectRoles = new[] {ProjectRoleManager, ProjectRoleMember};
+
+        #endregion
+
         public const string JwtIsManagerClaimType = "isManager";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
+        public const string HeaderNameAuthorization = "Authorization";
+
+        public const string SecureHeaderNameNotification = "SecureHeaderNameNotification";
+        public const string SecureHeaderNameService = "SecureHeaderNameService";
+
+        public const string SecureHeaderValueNotification = "SecureHeaderValueNotification";
+        public const string SecureHeaderValueService = "SecureHeaderValueService";
+
         public const int SecondsInThisDay = 86400;
 
-
         public static string EnvName { get; set; }
-
+        
         public const string CoralTime = "CoralTime";
-
-        public const string SecureHeaderNotification = "SecureHeaderNotification";
-
-        public const string SecureHeaderService = "SecureHeaderService";
 
         public enum LockTimePeriod
         {
@@ -31,11 +52,6 @@ namespace CoralTime.Common.Constants
             Month = 2,
             Quarter = 3,
             Year = 4
-        }
-
-        public static IEnumerable<string> GetDefaultRoles()
-        {
-            return new[] {AdminRole, UserRole};
         }
 
         public static class WithoutClient
@@ -131,6 +147,19 @@ namespace CoralTime.Common.Constants
             new DaysOfWeekAdaptive { Id = 5, ValueForBinary = (short) DaysOfWeekForBinaryMask.Friday, DayOfWeek =  DayOfWeek.Friday},
             new DaysOfWeekAdaptive { Id = 6, ValueForBinary = (short) DaysOfWeekForBinaryMask.Saturday, DayOfWeek =  DayOfWeek.Saturday},
         };
+
+        #endregion
+
+        #region Avatars and icons
+
+        public static class Folders
+        {
+            public static string IconFolder => "Icons";
+            public static string AvatarFolder => "Avatars";
+            public static string StaticFilesFolder => "StaticFiles";
+        }
+
+        public static string DefaultIconFileName => "userpic.svg"; 
 
         #endregion
     }

@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Client } from '../models/client';
 
@@ -18,7 +17,7 @@ export class ClientsService {
 			.Query();
 
 		query.OrderBy('name asc');
-		filters.push('IsActive eq true');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.Exec().map(res => res.map((x: any) => new Client(x)));
@@ -38,10 +37,10 @@ export class ClientsService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -66,10 +65,10 @@ export class ClientsService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
@@ -88,12 +87,11 @@ export class ClientsService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Name) eq \'' + name + '\'');
+		query.Filter('tolower(name) eq \'' + name + '\'');
 
 		return query.Exec()
 			.flatMap(result => {
-				let client = result[0] ? new Client(result[0]) : null;
-				return Observable.of(client);
+				return Observable.of(new Client(result[0]));
 			});
 	}
 }
