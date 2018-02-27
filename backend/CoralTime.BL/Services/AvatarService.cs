@@ -42,31 +42,21 @@ namespace CoralTime.BL.Services
             memberView.IconUrl = GetIconUrl(memberView.MemberId);
         }
 
-        public MemberAvatarView GetAvatar(int memberId)
-        {
-            var urlData = GetFileNameByMemberId(memberId);
-            return CreateAvaterMemberAvatarView(urlData.fileName, memberId);
-        }
-
-        public MemberAvatarView GetIcon(int memberId)
-        {
-            var urlData = GetFileNameByMemberId(memberId);
-            return CreateIconMemberAvatarView(urlData.fileName, memberId);
-        }
-
         public string GetAvatarUrl(int memberId)
         {
             var (fileName, isDefault) = GetFileNameByMemberId(memberId);
-            var url = GetAvatarUrl(fileName);
-            var gravatarUrl = GetGravatarUrl(memberId, url, isDefault, isAvatar: true);
+            var avatarUrl = GetAvatarUrl(fileName);
+            var gravatarUrl = GetGravatarUrl(memberId, avatarUrl, isDefault, isAvatar: true);
+
             return gravatarUrl;
         }
 
         public string GetIconUrl(int memberId)
         {
             var (fileName, isDefault) = GetFileNameByMemberId(memberId);
-            var url = GetIconUrl(fileName);
-            var gravatarUrl = GetGravatarUrl(memberId, url, isDefault);
+            var iconUrl = GetIconUrl(fileName);
+            var gravatarUrl = GetGravatarUrl(memberId, iconUrl, isDefault);
+
             return gravatarUrl;
         }
 
@@ -83,6 +73,16 @@ namespace CoralTime.BL.Services
             return (fileName, isDefault);
         }
 
+        private string GetAvatarUrl(string fileName)
+        {
+            return $"{GetStaticFileUrl()}/{Constants.Folders.AvatarFolder}/{fileName}";
+        }
+
+        private string GetIconUrl(string fileName)
+        {
+            return $"{GetStaticFileUrl()}/{Constants.Folders.IconFolder}/{fileName}";
+        }
+
         private string GetGravatarUrl(int memberId, string url, bool isDefault, bool isAvatar = false)
         {
             if (isDefault)
@@ -90,12 +90,10 @@ namespace CoralTime.BL.Services
                 var email = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
                 if (email != null)
                 {
-                    string hash = GetMD5(email);
-                    var gravatarUrl = $"http://www.gravatar.com/avatar/{ hash }?s={(isAvatar ? "200" : "40") }";
-
-                    return gravatarUrl;
+                    url = $"http://www.gravatar.com/avatar/{ GetMD5(email) }?d={ "wavatar" }&s={ (isAvatar ? "200" : "40")}";
                 }
             }
+
             return url;
         }
 
@@ -214,16 +212,6 @@ namespace CoralTime.BL.Services
         private string GetIconsPath()
         {
             return $"{Path.Combine(Directory.GetCurrentDirectory(), Constants.Folders.StaticFilesFolder, Constants.Folders.IconFolder)}";
-        }
-
-        private string GetAvatarUrl(string fileName)
-        {
-            return $"{GetStaticFileUrl()}/{Constants.Folders.AvatarFolder}/{fileName}";
-        }
-
-        private string GetIconUrl(string fileName)
-        {
-            return $"{GetStaticFileUrl()}/{Constants.Folders.IconFolder}/{fileName}";
         }
 
         private string GetStaticFileUrl()

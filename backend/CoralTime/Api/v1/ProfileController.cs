@@ -91,38 +91,6 @@ namespace CoralTime.Api.v1
             return BadRequest("File is empty");
         }
 
-        [HttpGet("Avatar/{memberId}")]
-        public IActionResult GetMemberAvatar(int memberId)
-        {
-            try
-            {
-                var result = _avatarService.GetAvatar(memberId);
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"GetMemberAvatar method with parameters ({memberId});\n {e}");
-                var errors = ExceptionsChecker.CheckProfileException(e);
-                return BadRequest(errors);
-            }
-        }
-
-        [HttpGet("Icon/{memberId}")]
-        public IActionResult GetMemberIcon(int memberId)
-        {
-            try
-            {
-                var result = _avatarService.GetIcon(memberId);
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"GetMemberIcon method with parameters ({memberId});\n {e}");
-                var errors = ExceptionsChecker.CheckProfileException(e);
-                return BadRequest(errors);
-            }
-        }
-
         // PATCH: api/v1/Profile/Member(3066)/Notifications
         [HttpPatch("Member({id})/Notifications")]
         public IActionResult Patch(int id, [FromBody]MemberNotificationView memberNotificationView)

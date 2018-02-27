@@ -202,7 +202,6 @@ namespace CoralTime
             services.AddScoped<IMemberProjectRoleService, MemberProjectRoleService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<INotificationService, NotificationsService>();
-            services.AddScoped<IPicturesCacheGuid, PicturesCacheGuidService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ITasksService, TasksService>();
