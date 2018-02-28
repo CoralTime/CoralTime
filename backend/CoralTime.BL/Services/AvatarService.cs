@@ -103,13 +103,9 @@ namespace CoralTime.BL.Services
 
         public MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile)
         {
-            var user = Uow.UserRepository.GetRelatedUserByName(Uow.InpersonatedUserName);
-            var member = Uow.MemberRepository.GetQueryByUserId(user.Id);
+            var member = Uow.GetMemberByUserIdImpersonated();
 
-            if (!CheckFile(uploadedFile.FileName, uploadedFile.Length, out var errors))
-            {
-                throw new CoralTimeForbiddenException(errors ?? "File size is greater than 1 Mb");
-            }
+            CheckFileSize(uploadedFile.FileName, uploadedFile.Length);
 
             byte[] byteArrayImage = CreateByteArrayFromUploadedImageFile(uploadedFile);
             byte[] byteArrayImageThumbnail = CreateByteArrayFromImageThumbnail(byteArrayImage);
@@ -126,13 +122,11 @@ namespace CoralTime.BL.Services
             if (memberAvatar == null)
             {
                 memberAvatar.CreateModelForInsert(memberAvatarPropertiesView);
-
                 Uow.MemberAvatarRepository.Insert(memberAvatar);
             }
             else
             {
                 memberAvatar.CreateModelForUpdate(memberAvatarPropertiesView);
-
                 Uow.MemberAvatarRepository.Update(memberAvatar);
             }
 
@@ -144,13 +138,16 @@ namespace CoralTime.BL.Services
             return CreateAvatarMemberAvatarView(memberAvatar.AvatarFileName, member.Id);
         }
 
-        private bool CheckFile(string fileName, long fileSize, out string errors)
+        private void CheckFileSize(string fileName, long fileSize)
         {
             var isFileNameValid = FileNameChecker.CheckFileName(fileName, _config["FileConstraints:PermittedExtensions"], int.Parse(_config["FileConstraints:MaxLengthFileName"]), out errors);
 
             var isFileSizeValid = fileSize < long.Parse(_config["FileConstraints:MaxFileSize"]);
 
-            return isFileNameValid && isFileSizeValid;
+            if (!(isFileNameValid && isFileSizeValid))
+            {
+                throw new CoralTimeForbiddenException("File size is greater than 1 Mb or FileName is Invalid");
+            }
         }
 
         private static byte[] CreateByteArrayFromImageThumbnail(byte[] arrayOfBytesFromImage)
