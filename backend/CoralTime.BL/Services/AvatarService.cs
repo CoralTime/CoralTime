@@ -1,22 +1,22 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels.Interfaces;
-using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using CoralTime.DAL.ConvertersOfModels;
+using CoralTime.ViewModels;
 
 namespace CoralTime.BL.Services
 {
@@ -32,69 +32,116 @@ namespace CoralTime.BL.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public void AddIconUrlInMemberView(MemberView memberView)
+        public string GetUrlAvatar(int memberId)
         {
-            memberView.IconUrl = GetIconUrl(memberView.Id);
+            return GetUrlImage(memberId, Constants.ImageTypeAvatar);
         }
 
-        public void AddIconUrlInViewModel(IAvatarViewModel memberView)
+        public string GetUrlIcon(int memberId)
         {
-            memberView.IconUrl = GetIconUrl(memberView.MemberId);
+            return GetUrlImage(memberId, Constants.ImageTypeIcon);
         }
 
-        public string GetAvatarUrl(int memberId)
+        private string GetUrlImage(int memberId, string imageType)
         {
-            var (fileName, isDefault) = GetFileNameByMemberId(memberId);
-            var avatarUrl = GetAvatarUrl(fileName);
-            var gravatarUrl = GetGravatarUrl(memberId, avatarUrl, isDefault, isAvatar: true);
+            var imageFileName = GetImageFileNameByMemberId(memberId);
 
-            return gravatarUrl;
-        }
+            string imagePath = null;
 
-        public string GetIconUrl(int memberId)
-        {
-            var (fileName, isDefault) = GetFileNameByMemberId(memberId);
-            var iconUrl = GetIconUrl(fileName);
-            var gravatarUrl = GetGravatarUrl(memberId, iconUrl, isDefault);
-
-            return gravatarUrl;
-        }
-
-        private (string fileName, bool isDefault) GetFileNameByMemberId(int memberId)
-        {
-            var fileName = Uow.MemberAvatarRepository.LinkedCacheGetList().FirstOrDefault(p => p.MemberId == memberId)?.AvatarFileName;
-            var isDefault = false;
-            if (string.IsNullOrEmpty(fileName))
+            // Try to get Gravatar url if user don't have custom Image
+            if (imageFileName == Constants.DefaultIconFileName)
             {
-                fileName = Constants.DefaultIconFileName;
-                isDefault = true;
-            }
-
-            return (fileName, isDefault);
-        }
-
-        private string GetAvatarUrl(string fileName)
-        {
-            return $"{GetStaticFileUrl()}/{Constants.Folders.AvatarFolder}/{fileName}";
-        }
-
-        private string GetIconUrl(string fileName)
-        {
-            return $"{GetStaticFileUrl()}/{Constants.Folders.IconFolder}/{fileName}";
-        }
-
-        private string GetGravatarUrl(int memberId, string url, bool isDefault, bool isAvatar = false)
-        {
-            if (isDefault)
-            {
-                var email = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
-                if (email != null)
+                var memberEmail = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
+                if (memberEmail != null)
                 {
-                    url = $"http://www.gravatar.com/avatar/{ GetMD5(email) }?d={ "wavatar" }&s={ (isAvatar ? "200" : "40")}";
+                    imagePath = GetUrlImageByGravatarService(memberEmail, imageType);
+                }
+            }
+            else
+            {
+                if (imageType == Constants.ImageTypeAvatar)
+                {
+                    imagePath = $"{GetStaticFileUrl()}/{Constants.Folders.AvatarFolder}/{imageFileName}";
+                }
+
+                if (imageType == Constants.ImageTypeIcon)
+                {
+                    imagePath = $"{GetStaticFileUrl()}/{Constants.Folders.IconFolder}/{imageFileName}";
                 }
             }
 
-            return url;
+            return imagePath;
+        }
+
+        private string GetImageFileNameByMemberId(int memberId)
+        {
+            var imageFileName = Uow.MemberAvatarRepository.LinkedCacheGetByMemberId(memberId)?.AvatarFileName;
+
+            imageFileName = string.IsNullOrEmpty(imageFileName)
+                ? Constants.DefaultIconFileName
+                : imageFileName;
+
+            return imageFileName;
+        }
+
+        private string GetUrlImageByGravatarService(string memberEmail, string imageType)
+        {
+            var imageSize = string.Empty;
+
+            if (imageType == Constants.ImageTypeAvatar)
+            {
+                imageSize = "200";
+            }
+
+            if (imageType == Constants.ImageTypeIcon)
+            {
+                imageSize = "40";
+            }
+
+            return $"http://www.gravatar.com/avatar/{GetMD5(memberEmail)}?d={"wavatar"}&s={imageSize}";
+        }
+
+        public MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile)
+        {
+            var user = Uow.UserRepository.GetRelatedUserByName(Uow.InpersonatedUserName);
+            var member = Uow.MemberRepository.GetQueryByUserId(user.Id);
+
+            if (!CheckFile(uploadedFile.FileName, uploadedFile.Length, out var errors))
+            {
+                throw new CoralTimeForbiddenException(errors ?? "File size is greater than 1 Mb");
+            }
+
+            byte[] byteArrayImage = CreateByteArrayFromUploadedImageFile(uploadedFile);
+            byte[] byteArrayImageThumbnail = CreateByteArrayFromImageThumbnail(byteArrayImage);
+
+            var memberAvatarPropertiesView = new MemberAvatarPropertiesView
+            {
+                MemberId = member.Id,
+                AvatarFile = byteArrayImage,
+                AvatarFileName = Guid.NewGuid().ToString("N") + Path.GetExtension(uploadedFile.FileName),
+                ThumbnailFile = byteArrayImageThumbnail
+            };
+
+            var memberAvatar = Uow.MemberAvatarRepository.LinkedCacheGetByMemberId(member.Id);
+            if (memberAvatar == null)
+            {
+                memberAvatar.CreateModelForInsert(memberAvatarPropertiesView);
+
+                Uow.MemberAvatarRepository.Insert(memberAvatar);
+            }
+            else
+            {
+                memberAvatar.CreateModelForUpdate(memberAvatarPropertiesView);
+
+                Uow.MemberAvatarRepository.Update(memberAvatar);
+            }
+
+            Uow.Save();
+            Uow.MemberAvatarRepository.LinkedCacheClear();
+
+            SaveMemberAvatarToFileSystem(memberAvatar);
+
+            return CreateAvatarMemberAvatarView(memberAvatar.AvatarFileName, member.Id);
         }
 
         private bool CheckFile(string fileName, long fileSize, out string errors)
@@ -106,102 +153,36 @@ namespace CoralTime.BL.Services
             return isFileNameValid && isFileSizeValid;
         }
 
-        public MemberAvatarView SetUpdateMemberAvatar(IFormFile uploadedFile)
+        private static byte[] CreateByteArrayFromImageThumbnail(byte[] arrayOfBytesFromImage)
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
-            if (user == null || !user.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"The user with userName {InpersonatedUserName} not found or is not active");
-            }
-
-            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
-            if (member == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"The member for user with userName {InpersonatedUserName} not found");
-            }
-
-            if (!CheckFile(uploadedFile.FileName, uploadedFile.Length, out var errors))
-            {
-                throw new CoralTimeForbiddenException(errors ?? "File size is greater than 1 Mb");
-            }
-
-            byte[] imageData;
-
-            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
-            {
-                imageData = binaryReader.ReadBytes((int)uploadedFile.Length);
-            }
-
-            var image = Image.FromStream(new MemoryStream(imageData));
-
-            image = image.GetThumbnailImage(40, 40, () => false, IntPtr.Zero);
-
-            byte[] thumbnaiImage;
+            byte[] arrayOfBytesFromImageThumbnail;
 
             using (var memoryStream = new MemoryStream())
             {
-                image.Save(memoryStream, ImageFormat.Jpeg);
-                thumbnaiImage = memoryStream.ToArray();
+                ResizeImage(arrayOfBytesFromImage).Save(memoryStream, ImageFormat.Jpeg);
+                arrayOfBytesFromImageThumbnail = memoryStream.ToArray();
             }
 
-            var isInsertCurrentAvatar = false;
-
-            var memberAvatar = Uow.MemberAvatarRepository.GetQueryWithoutIncludes().FirstOrDefault(p => p.MemberId == member.Id);
-            if (memberAvatar == null)
-            {
-                memberAvatar = new MemberAvatar();
-                isInsertCurrentAvatar = true;
-            }
-
-            var newAvatarFileName = Guid.NewGuid().ToString("N") + Path.GetExtension(uploadedFile.FileName);
-            memberAvatar.MemberId = member.Id;
-            memberAvatar.AvatarFile = imageData;
-            memberAvatar.AvatarFileName = newAvatarFileName;
-            memberAvatar.ThumbnailFile = thumbnaiImage;
-
-            try
-            {
-                if (isInsertCurrentAvatar)
-                {
-                    Uow.MemberAvatarRepository.Insert(memberAvatar);
-                }
-                else
-                {
-                    Uow.MemberAvatarRepository.Update(memberAvatar);
-                }
-
-                Uow.Save();
-                Uow.MemberAvatarRepository.LinkedCacheClear();
-
-                SaveAvatarToFileSystem(memberAvatar);
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating member avatar", e);
-            }
-
-            return CreateAvaterMemberAvatarView(memberAvatar.AvatarFileName, member.Id);
+            return arrayOfBytesFromImageThumbnail;
         }
 
-        private void SaveAvatarToFileSystem(MemberAvatar avatar)
+        private static byte[] CreateByteArrayFromUploadedImageFile(IFormFile uploadedFile)
         {
-            SaveAvatarToFileSystem(avatar.AvatarFileName, iconFile: avatar.ThumbnailFile, avatarFile: avatar.AvatarFile);
+            byte[] byteArrayOfImageFile;
+            using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
+            {
+                byteArrayOfImageFile = binaryReader.ReadBytes((int) uploadedFile.Length);
+            }
+
+            return byteArrayOfImageFile;
         }
 
-        private void SaveAvatarToFileSystem(string fileName, byte[] iconFile, byte[] avatarFile)
+        private static Image ResizeImage(byte[] byteArrayOfImageFile)
         {
-            var iconPath = Path.Combine(GetIconsPath(), fileName);
-            var avatarPath = Path.Combine(GetAvatarsPath(), fileName);
+            var imageResize = Image.FromStream(new MemoryStream(byteArrayOfImageFile));
 
-            if (!File.Exists(iconPath))
-            {
-                File.WriteAllBytes(iconPath, iconFile);
-            }
-
-            if (!File.Exists(avatarPath))
-            {
-                File.WriteAllBytes(avatarPath, avatarFile);
-            }
+            imageResize = imageResize.GetThumbnailImage(40, 40, () => false, IntPtr.Zero);
+            return imageResize;
         }
 
         private string GetAvatarsPath()
@@ -221,37 +202,56 @@ namespace CoralTime.BL.Services
 
         private MemberAvatarView CreateIconMemberAvatarView(string fileName, int memberId)
         {
-            return CreateMemberAvatarView(fileName, memberId, GetIconUrl(fileName));
+            return CreateMemberAvatarView(fileName, memberId, GetUrlIcon(memberId));
         }
 
-        private MemberAvatarView CreateAvaterMemberAvatarView(string fileName, int memberId)
+        private MemberAvatarView CreateAvatarMemberAvatarView(string fileName, int memberId)
         {
-            return CreateMemberAvatarView(fileName, memberId, GetAvatarUrl(fileName));
+            return CreateMemberAvatarView(fileName, memberId, GetUrlAvatar(memberId));
         }
 
         private MemberAvatarView CreateMemberAvatarView(string fileName, int memberId, string url)
         {
-            return new MemberAvatarView
+            var memberAvatarView = new MemberAvatarView
             {
                 AvatarFileName = fileName,
                 MemberId = memberId,
                 AvatarUrl = url
             };
+
+            return memberAvatarView;
         }
 
-        public void SaveAllIconsAndAvatarsInStaticFiles()
+        public void SaveIconsAndAvatarsToStaticFiles()
         {
-            var avatars = Uow.MemberAvatarRepository.GetQueryAsNoTraking().Where(x => true).ToArray();
+            var memberAvatars = Uow.MemberAvatarRepository.GetQueryAsNoTraking().Where(x => true).ToArray();
 
-            foreach (var avatar in avatars)
+            foreach (var memberAvatar in memberAvatars)
             {
-                SaveAvatarToFileSystem(avatar);
+                SaveMemberAvatarToFileSystem(memberAvatar);
+            }
+        }
+
+        private void SaveMemberAvatarToFileSystem(MemberAvatar avatar)
+        {
+            var iconPath = Path.Combine(GetIconsPath(), avatar.AvatarFileName);
+            var avatarPath = Path.Combine(GetAvatarsPath(), avatar.AvatarFileName);
+
+            if (!File.Exists(iconPath))
+            {
+                File.WriteAllBytes(iconPath, avatar.ThumbnailFile);
+            }
+
+            if (!File.Exists(avatarPath))
+            {
+                File.WriteAllBytes(avatarPath, avatar.AvatarFile);
             }
         }
 
         private static string GetMD5(string email)
         {
             byte[] data;
+
             using (var hasher = MD5.Create())
             {
                 data = hasher.ComputeHash(Encoding.Default.GetBytes(email));

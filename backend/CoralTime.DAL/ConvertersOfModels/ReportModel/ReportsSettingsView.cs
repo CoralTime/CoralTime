@@ -23,11 +23,11 @@ namespace CoralTime.DAL.ConvertersOfModels
         
         public static ReportsSettings CreateModelForInsert(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)
         {
-            var modelForInsert = new ReportsSettings();
+            reportsSettings = new ReportsSettings();
 
-            MapViewToModel(modelForInsert, reportsSettingsView, memberId);
+            MapViewToModel(reportsSettings, reportsSettingsView, memberId);
 
-            return modelForInsert;
+            return reportsSettings;
         }
 
         public static ReportsSettings UpdateModelForUpdates(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)

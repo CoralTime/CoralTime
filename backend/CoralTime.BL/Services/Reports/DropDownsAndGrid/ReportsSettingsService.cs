@@ -126,7 +126,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 if (queryFromReportsSettings == null)
                 {
-                    queryFromReportsSettings =  queryFromReportsSettings.CreateModelForInsert(reportsSettingsView, memberId);
+                    queryFromReportsSettings = queryFromReportsSettings.CreateModelForInsert(reportsSettingsView, memberId);
 
                     SetIsCurrentQueryTrue(queryFromReportsSettings);
 

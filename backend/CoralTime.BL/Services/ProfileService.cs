@@ -137,18 +137,18 @@ namespace CoralTime.BL.Services
                         .Where(m => m.User.IsActive);
             }
 
-            var list = projectMembers.Select(m => new ProfileProjectMemberView
+            var profileProjectMemberViews = projectMembers.Select(m => new ProfileProjectMemberView
             {
                 MemberId = m.Id,
                 MemberName = m.FullName
             }).ToList();
 
-            foreach (var item in list)
+            foreach (var profileProjectMemberView in profileProjectMemberViews)
             {
-                _avatarService.AddIconUrlInViewModel(item);
+                profileProjectMemberView.UrlIcon = _avatarService.GetUrlIcon(profileProjectMemberView.MemberId);
             }
 
-            return list;
+            return profileProjectMemberViews;
         }
 
         public MemberView PatchNotifications(MemberNotificationView memberNotificationView)

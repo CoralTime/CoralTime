@@ -20,7 +20,7 @@ namespace CoralTime.ViewModels.Member
 
         public string TimeZone { get; set; }
 
-        public string IconUrl { get; set; }
+        public string UrlIcon { get; set; }
 
         public int WeekStart { get; set; }
 

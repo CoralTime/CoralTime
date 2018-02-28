@@ -33,7 +33,7 @@ namespace CoralTime.ViewModels.MemberProjectRoles
 
         public bool IsProjectPrivate { get; set; }
 
-        public string IconUrl { get; set; }
+        public string UrlIcon { get; set; }
 
         public IEnumerable<MemberView> Members { get; set; }
 

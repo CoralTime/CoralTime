@@ -88,7 +88,7 @@ namespace CoralTime.Api.v1
         {
             try
             {
-                _avatarService.SaveAllIconsAndAvatarsInStaticFiles();
+                _avatarService.SaveIconsAndAvatarsToStaticFiles();
                 return Ok();
             }
             catch (Exception e)

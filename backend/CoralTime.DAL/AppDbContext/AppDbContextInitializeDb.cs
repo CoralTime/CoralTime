@@ -131,7 +131,7 @@ namespace CoralTime.DAL
                 }
             }
 
-            await SaveListOfEntitiesToDbAsync(DbContext.ProjectRoles, projectRoleList);
+            await InsertListOfEntitiesToDbAsync(DbContext.ProjectRoles, projectRoleList);
         }
 
         private static async Task InitializeSettings()
@@ -165,14 +165,14 @@ namespace CoralTime.DAL
                 }
             }
 
-            await SaveListOfEntitiesToDbAsync(DbContext.Settings, settingsList);
+            await InsertListOfEntitiesToDbAsync(DbContext.Settings, settingsList);
         }
 
         private static async Task InitializeTaskTypes()
         {
             var tasksList = await CreateListOfEntitiesFromConfigByNameAsync(DbContext.TaskTypes, "Tasks");
 
-            await SaveListOfEntitiesToDbAsync(DbContext.TaskTypes, tasksList);
+            await InsertListOfEntitiesToDbAsync(DbContext.TaskTypes, tasksList);
         }
 
         private static async Task InitializeUsers(string typeUser, string roleUser)
@@ -261,14 +261,14 @@ namespace CoralTime.DAL
         {
             var clientsList = await CreateListOfEntitiesFromConfigByNameAsync(DbContext.Clients, "Clients");
              
-            await SaveListOfEntitiesToDbAsync(DbContext.Clients, clientsList);
+            await InsertListOfEntitiesToDbAsync(DbContext.Clients, clientsList);
         }
 
         private static async Task InitializeProjects()
         {
             var projectList = await CreateListOfEntitiesFromConfigByNameAsync(DbContext.Projects, "Projects");
             
-            await SaveListOfEntitiesToDbAsync(DbContext.Projects, projectList);
+            await InsertListOfEntitiesToDbAsync(DbContext.Projects, projectList);
         }
 
         private static async Task InitializeXRefProjectsClients()
@@ -324,7 +324,7 @@ namespace CoralTime.DAL
                 }
             }
 
-            await SaveListOfEntitiesToDbAsync(DbContext.MemberProjectRoles, memberProjectRoleList);
+            await InsertListOfEntitiesToDbAsync(DbContext.MemberProjectRoles, memberProjectRoleList);
         }
 
         private static async Task InitializeXRefTimeEntries()
@@ -361,7 +361,7 @@ namespace CoralTime.DAL
                     timeEntryList.Add(newTimeEntry);
                 }
 
-                await SaveListOfEntitiesToDbAsync(DbContext.TimeEntries, timeEntryList);
+                await InsertListOfEntitiesToDbAsync(DbContext.TimeEntries, timeEntryList);
             }
         }
 
@@ -432,7 +432,7 @@ namespace CoralTime.DAL
             }
         }
 
-        private static async Task SaveListOfEntitiesToDbAsync<TEntity>(DbSet<TEntity> dbSet, List<TEntity> listOfEntities) where TEntity : class
+        private static async Task InsertListOfEntitiesToDbAsync<TEntity>(DbSet<TEntity> dbSet, List<TEntity> listOfEntities) where TEntity : class
         {
             try
             {

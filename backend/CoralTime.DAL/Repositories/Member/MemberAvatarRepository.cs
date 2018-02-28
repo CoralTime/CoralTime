@@ -14,5 +14,10 @@ namespace CoralTime.DAL.Repositories
         {
             return query.Include(x => x.Member);
         }
+
+        public MemberAvatar LinkedCacheGetByMemberId(int memberId)
+        {
+            return LinkedCacheGetList().FirstOrDefault(m => m.MemberId == memberId);
+        }
     }
 }

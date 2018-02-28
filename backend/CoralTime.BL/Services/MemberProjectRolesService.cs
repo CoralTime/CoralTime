@@ -121,9 +121,9 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private void AddIconUrl(MemberProjectRoleView item)
+        private void AddIconUrl(MemberProjectRoleView mrpView)
         {
-            _avatarService.AddIconUrlInViewModel(item);
+            mrpView.UrlIcon = _avatarService.GetUrlIcon(mrpView.MemberId);
         }
 
         private List<MemberProjectRole> AddGlobalProjectsRoles(List<MemberProjectRoleView> memberProjRole)
@@ -200,10 +200,11 @@ namespace CoralTime.BL.Services
             }
 
             var membersNotAssigtProjectView = membersNotAssignProjectByProjId.Select(x => x.GetView(Mapper)).ToList();
-            foreach (var item in membersNotAssigtProjectView)
+            foreach (var member in membersNotAssigtProjectView)
             {
-                _avatarService.AddIconUrlInMemberView(item);
+                member.UrlIcon = _avatarService.GetUrlIcon(member.Id);
             }
+
             return membersNotAssigtProjectView;
         }
 

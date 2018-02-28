@@ -8,6 +8,6 @@ namespace CoralTime.ViewModels.Profiles
 
         public string MemberName { get; set; }
 
-        public string IconUrl { get; set; }
+        public string UrlIcon { get; set; }
     }
 }

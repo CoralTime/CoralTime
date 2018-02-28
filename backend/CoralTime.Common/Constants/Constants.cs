@@ -159,7 +159,11 @@ namespace CoralTime.Common.Constants
             public static string StaticFilesFolder => "StaticFiles";
         }
 
-        public static string DefaultIconFileName => "userpic.svg"; 
+        public const string ImageTypeAvatar = "ImageTypeAvatar";
+
+        public const string ImageTypeIcon = "ImageTypeIcon";
+
+        public const string DefaultIconFileName = "userpic.svg"; 
 
         #endregion
     }

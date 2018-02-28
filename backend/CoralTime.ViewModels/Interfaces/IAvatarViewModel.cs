@@ -5,6 +5,6 @@
     {
         int MemberId { get; set; }
 
-        string IconUrl { get; set; }
+        string UrlIcon { get; set; }
     }
 }
