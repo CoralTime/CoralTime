@@ -3,7 +3,7 @@ using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Member;
@@ -140,7 +140,7 @@ namespace CoralTime.BL.Services
                 .Where(t => t.ProjectId == project.Id && t.Member.User.IsActive)
                 .Select(m => m.Member);
 
-            return member.Select(x => x.GetViewWithProjectCount(Mapper));
+            return member.Select(x => x.GetView(Mapper));
         }
 
         public ProjectView Create(ProjectView projectData)

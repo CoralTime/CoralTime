@@ -17,7 +17,7 @@ namespace CoralTime.Api.v1.Reports.Export
         public ReportsExportFileController(IReportExportService service, ILogger<ReportsExportFileController> logger)
             : base(logger, service) { }
 
-        [HttpPost]
+        [HttpPost]  
         public async Task<IActionResult> ReportsExportFileAsync([FromBody]ReportsGridView reportsGridData)
         {
             try

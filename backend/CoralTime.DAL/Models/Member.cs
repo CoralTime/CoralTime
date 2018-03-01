@@ -24,6 +24,8 @@ namespace CoralTime.DAL.Models
 
         public List<ReportsSettings> ReportsSettings { get; set; }
 
+        public MemberImage MemberImage { get; set; }
+
         public int DefaultProjectId { get; set; }
 
         public int DefaultTaskId { get; set; }

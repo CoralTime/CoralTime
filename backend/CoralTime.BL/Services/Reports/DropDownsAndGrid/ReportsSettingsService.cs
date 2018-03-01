@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
-using CoralTime.DAL.ConvertersOfModels;
+using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;

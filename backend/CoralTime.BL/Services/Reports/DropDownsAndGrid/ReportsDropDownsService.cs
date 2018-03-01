@@ -1,6 +1,6 @@
 ﻿using CoralTime.BL.Services.Reports.Export;
 using CoralTime.Common.Constants;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;

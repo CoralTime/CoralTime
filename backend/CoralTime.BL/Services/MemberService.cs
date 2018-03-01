@@ -4,7 +4,7 @@ using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Errors;
@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoralTime.DAL.ConvertViewToModel;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
@@ -26,9 +27,9 @@ namespace CoralTime.BL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly bool _isDemo;
-        private readonly IAvatarService _avatarService;
+        private readonly IImageService _avatarService;
 
-        public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper, IAvatarService avatarService)
+        public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper, IImageService avatarService)
             : base(uow, mapper)
         {
             _userManager = userManager;
@@ -68,9 +69,9 @@ namespace CoralTime.BL.Services
             return GetProjects(memberId).Select(p => p.GetViewTimeTrackerAllProjects(Mapper));
         }
 
-        public async Task<Member> CreateNewUser(MemberView memberView)
+        public async Task<MemberView> CreateNewUser(MemberView memberView)
         {
-            if (! EmailChecker.IsValidEmail(memberView.Email))
+            if (!EmailChecker.IsValidEmail(memberView.Email))
             {
                 throw new CoralTimeDangerException("Invalid email");
             }
@@ -598,15 +599,9 @@ namespace CoralTime.BL.Services
 
         #region Other Methods.
 
-        private async Task<Member> CreateNewUserCommon(MemberView memberView, ApplicationUser applicationUserNew, string roleUser)
+        private async Task<MemberView> CreateNewUserCommon(MemberView memberView, ApplicationUser applicationUserNew, string roleUser)
         {
-            //var userByName = Uow.UserRepository.LinkedCacheGetByName(memberView.UserName);
-            //if (userByName != null)
-            //{
-            //    throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist");
-            //}
-
-            #region Check ApplicationUser, Roles, Claims, Member
+            #region Check ApplicationUser, Roles, Member
 
             // Check ApplicationUser
             var isExistApplicationUser = await _userManager.FindByNameAsync(memberView.UserName);
@@ -650,7 +645,7 @@ namespace CoralTime.BL.Services
             #region Set UserId to new Member. Save to Db. Get Member from Db with related entity User by UserId.
 
             // 1. Convert MemberView to Member.
-            var newMember = Mapper.Map<MemberView, Member>(memberView);
+            var newMember = memberView.GetModel(Mapper);
 
             // 2. Assign UserId to Member (After Save, when you try to get entity from Db, before assign UserId to entity then it has Related Entity User).
             newMember.UserId = applicationUser.Id;
@@ -675,7 +670,11 @@ namespace CoralTime.BL.Services
                 CheckIdentityResultErrors(userCreateRoleResult);
             }
 
-            return memberByName;
+            var memberViewResult = memberByName.GetView(Mapper);
+
+            memberViewResult.UrlIcon = _avatarService.GetUrlIcon(memberView.Id);
+
+            return memberViewResult;
         }
 
         private void CheckIdentityResultErrors(IdentityResult userCreateRoleResult)

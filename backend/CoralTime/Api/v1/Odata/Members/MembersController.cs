@@ -16,8 +16,8 @@ namespace CoralTime.Api.v1.Odata.Members
     [Route("api/v1/odata/[controller]")]
     public class MembersController : BaseODataController<MembersController, IMemberService>
     {
-        private readonly IAvatarService _avatarService;
-        public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper, IAvatarService avatarService)
+        private readonly IImageService _avatarService;
+        public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper, IImageService avatarService)
             : base(logger, mapper, service)
         {
             _avatarService = avatarService;
@@ -76,34 +76,24 @@ namespace CoralTime.Api.v1.Odata.Members
         // POST: api/v1/odata/Members
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Create([FromBody]MemberView memberData)
+        public async Task<IActionResult> Create([FromBody] MemberView memberData)
         {
             if (!ModelState.IsValid)
             {
                 return SendInvalidModelResponse();
             }
 
-            try
+            var memberView = await _service.CreateNewUser(memberData);
+
+            if (memberData.SendInvitationEmail)
             {
-                var createNewUserResult = await _service.CreateNewUser(memberData);
-
-                if (memberData.SendInvitationEmail)
-                {
-                    var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
-                    await _service.SentInvitationEmailAsync(memberData, baseUrl);
-                }
-
-                var locationUri = $"{Request.Host}/api/v1/odata/Members/{createNewUserResult.Id}";
-
-                var memberView = _mapper.Map<Member, MemberView>(createNewUserResult);
-                memberView.UrlIcon = _avatarService.GetUrlIcon(memberView.Id);
-
-                return Created(locationUri, memberView);
+                var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
+                await _service.SentInvitationEmailAsync(memberData, baseUrl);
             }
-            catch (Exception e)
-            {
-                return SendErrorResponse(e);
-            }
+
+            var locationUri = $"{Request.Host}/api/v1/odata/Members/{memberView.Id}";
+
+            return Created(locationUri, memberView);
         }
 
         // PUT: api/v1/odata/Members(1)

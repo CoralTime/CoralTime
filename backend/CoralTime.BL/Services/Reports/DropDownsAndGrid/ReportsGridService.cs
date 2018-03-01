@@ -1,6 +1,6 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Grid;
@@ -73,33 +73,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return result;
         }
 
+        // TODO Check empty list how it was working in frimt end 
         public ReportsTotalGridMembersView GetGroupingReportsGridByUsers(ReportsGridView reportsGridData)
         {
-            var reportsGridUsers = new ReportsTotalGridMembersView
-            {
-                ReportsGridView = new List<ReportTotalForGridMemberView>
-                {
-                    new ReportTotalForGridMemberView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridUsers;
-            }
-
-            var timeEntriesGroupByUsers = timeEntriesForGrouping.ToList()
+            var timeEntriesGroupByUsers = GetTimeEntriesForGrouping(reportsGridData).ToList()
                 .GroupBy(i => i.Member)
                 .OrderBy(x => x.Key.FullName)
                 .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
-            var result = reportsGridUsers.GetViewReportsTotalGridUsers(timeEntriesGroupByUsers, Mapper);
+            var reportsGridUsers = new ReportsTotalGridMembersView().GetViewReportsTotalGridUsers(timeEntriesGroupByUsers, Mapper);
 
-            return result;
+            return reportsGridUsers;
         }
 
         public ReportsTotalGridByDatesView GetGroupingReportsGridByDates(ReportsGridView reportsGridData)

@@ -14,13 +14,13 @@ namespace CoralTime.Api.v1
     {
         private readonly IMemberProjectRoleService _roleService;
         private readonly IRefreshDataBaseService _refreshDataBaseService;
-        private readonly IAvatarService _avatarService;
+        private readonly IImageService _avatarService;
 
         public ServiceController(
             IMemberService service, 
             IMemberProjectRoleService roleService, 
             IRefreshDataBaseService refreshDataBaseService, 
-            IAvatarService avatarService,
+            IImageService avatarService,
             ILogger<ServiceController> logger) : base(logger, service)
         {
             _roleService = roleService;
@@ -81,14 +81,14 @@ namespace CoralTime.Api.v1
             }
         }
 
-        // GET api/v1/Service/UpdateIconFilesCache
+        // GET api/v1/Service/SaveImagesFromDbToStaticFiles
         [HttpGet]
-        [Route("UpdateIconFilesCache")]
-        public ActionResult UpdateIconFilesCache()
+        [Route("SaveImagesFromDbToStaticFiles")]
+        public ActionResult SaveImagesFromDbToStaticFiles()
         {
             try
             {
-                _avatarService.SaveIconsAndAvatarsToStaticFiles();
+                _avatarService.SaveImagesFromDbToFolder();
                 return Ok();
             }
             catch (Exception e)

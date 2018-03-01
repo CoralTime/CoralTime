@@ -209,7 +209,7 @@ namespace CoralTime
             services.AddScoped<IReportsService, ReportsService>();
             services.AddScoped<IReportExportService, ReportsExportService>();
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
-            services.AddScoped<IAvatarService, AvatarService>();
+            services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IRefreshDataBaseService, RefreshDataBaseService>();
             services.AddScoped<CheckSecureHeaderServiceFilter>();
             services.AddScoped<CheckSecureHeaderNotificationFilter>();

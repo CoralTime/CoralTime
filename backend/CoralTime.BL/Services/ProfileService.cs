@@ -3,7 +3,7 @@ using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.DateFormat;
@@ -27,9 +27,9 @@ namespace CoralTime.BL.Services
         private readonly IMemberService _memberService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly bool _isDemo;
-        private readonly IAvatarService _avatarService;
+        private readonly IImageService _avatarService;
 
-        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IAvatarService avatarService)
+        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IImageService avatarService)
             : base(uow, mapper)
         {
             _config = config;

@@ -22,10 +22,13 @@ namespace CoralTime.DAL.Mapper
         {
             CreateMap<Member, MemberView>().ConvertUsing(new MemberToMemberViewConverter());
             CreateMap<MemberView, Member>().ConvertUsing(new MemberViewToMemberConverter());
-            CreateMap<MemberAvatarView, MemberAvatar>();
-            CreateMap<MemberAvatar, MemberAvatarView>();
+
+            CreateMap<MemberImageView, MemberImage>();
+            CreateMap<MemberImage, MemberImageView>();
+
             CreateMap<MemberProjectRoleView, MemberProjectRole>();
             CreateMap<MemberProjectRole, MemberProjectRoleView>().ConvertUsing(new MemberProjectRoleToMemberProjectRoleViewConverter());
+
             CreateMap<Member, ReportUsersView>()
                 .ForMember(x => x.IsUserActive, x => x.MapFrom(m => m.User.IsActive))
                 .ForMember(x => x.UserId, x => x.MapFrom(m => m.Id))

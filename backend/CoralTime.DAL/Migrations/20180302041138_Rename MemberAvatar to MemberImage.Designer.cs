@@ -12,9 +12,10 @@ using System;
 namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180302041138_Rename MemberAvatar to MemberImage")]
+    partial class RenameMemberAvatartoMemberImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,8 +192,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.HasIndex("LastEditorUserId");
 
-                    b.HasIndex("MemberId")
-                        .IsUnique();
+                    b.HasIndex("MemberId");
 
                     b.ToTable("MemberImages");
                 });
@@ -636,8 +636,8 @@ namespace CoralTime.DAL.Migrations
                         .HasForeignKey("LastEditorUserId");
 
                     b.HasOne("CoralTime.DAL.Models.Member", "Member")
-                        .WithOne("MemberImage")
-                        .HasForeignKey("CoralTime.DAL.Models.MemberImage", "MemberId")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

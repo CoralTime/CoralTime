@@ -13,7 +13,7 @@ namespace CoralTime.DAL.Cache
         private static readonly string TimeEntryClassName = Prefix + typeof(TimeEntry).Name;
         private static readonly string MemberProjectRoleClassName = Prefix + typeof(MemberProjectRole).Name;
         private static readonly string ApplicationUserClassName = Prefix + typeof(ApplicationUser).Name;
-        private static readonly string MemberAvatarClassName = Prefix + typeof(MemberAvatar).Name;
+        private static readonly string MemberAvatarClassName = Prefix + typeof(MemberImage).Name;
 
         public static List<string> GetCancelationTokenSourcesNames()
         {

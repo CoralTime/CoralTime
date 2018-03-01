@@ -180,33 +180,33 @@ namespace CoralTime.BL.Services.Reports.Export
         public async Task<FileResult> ExportFileGroupByProjectsAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByProjects = _reportService.GetGroupingReportsGridByProjects(reportsGridData);
-            var result = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByProjects);
+            var exportFileGroupByProjects = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByProjects);
 
-            return result;
+            return exportFileGroupByProjects;
         }
 
         public async Task<FileResult> ExportFileGroupByUsersAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByUsers = _reportService.GetGroupingReportsGridByUsers(reportsGridData);
-            var result = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByUsers);
+            var exportFileGroupByUsers = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByUsers);
 
-            return result;
+            return exportFileGroupByUsers;
         }
 
         public async Task<FileResult> ExportFileGroupByDatesAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByDates = _reportService.GetGroupingReportsGridByDates(reportsGridData);
-            var result = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByDates);
+            var exportFileGroupByDates = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByDates);
 
-            return result;
+            return exportFileGroupByDates;
         }
 
         public async Task<FileResult> ExportFileGroupByClientsAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
             var groupByClient = _reportService.GetGroupingReportsGridByClients(reportsGridData);
-            var result = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByClient);
+            var exportFileGroupByClients = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByClient);
 
-            return result;
+            return exportFileGroupByClients;
         }
 
         #endregion

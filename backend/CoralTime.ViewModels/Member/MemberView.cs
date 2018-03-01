@@ -22,8 +22,6 @@ namespace CoralTime.ViewModels.Member
 
         public string UrlIcon { get; set; }
 
-        public string UrlAvatar { get; set; }
-
         public int WeekStart { get; set; }
 
         public int DateFormatId { get; set; }

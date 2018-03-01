@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Member;
@@ -17,9 +17,9 @@ namespace CoralTime.BL.Services
     public class MemberProjectRoleService : BaseService, IMemberProjectRoleService
     {
         private readonly IProjectService _projectService;
-        private readonly IAvatarService _avatarService;
+        private readonly IImageService _avatarService;
 
-        public MemberProjectRoleService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IAvatarService avatarService)
+        public MemberProjectRoleService(UnitOfWork uow, IProjectService projectService, IMapper mapper, IImageService avatarService)
             : base(uow, mapper)
         {
             _projectService = projectService;

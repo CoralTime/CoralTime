@@ -74,11 +74,11 @@
 
         #endregion
 
-        #region MemberPicRepository
+        #region MemberImageRepository
 
-        private MemberAvatarRepository _memberAvatarRepository;
+        private MemberImageRepository _memberImageRepository;
 
-        public MemberAvatarRepository MemberAvatarRepository => _memberAvatarRepository ?? (_memberAvatarRepository = new MemberAvatarRepository(_context, _memoryCache, _userId));
+        public MemberImageRepository MemberImageRepository => _memberImageRepository ?? (_memberImageRepository = new MemberImageRepository(_context, _memoryCache, _userId));
 
         #endregion
 

@@ -6,7 +6,6 @@ namespace CoralTime.Common.Constants
 {
     public static class Constants
     {
-
         public const string UserTypeAdmins = "Admins";
         public const string UserTypeMembers = "Members";
 
@@ -155,15 +154,17 @@ namespace CoralTime.Common.Constants
         public static class Folders
         {
             public static string IconFolder => "Icons";
+
             public static string AvatarFolder => "Avatars";
+
             public static string StaticFilesFolder => "StaticFiles";
         }
 
         public const string ImageTypeAvatar = "ImageTypeAvatar";
-
         public const string ImageTypeIcon = "ImageTypeIcon";
 
-        public const string DefaultIconFileName = "userpic.svg"; 
+        public const string ImageTypeSizeIcon = "40";
+        public const string ImageTypeSizeAvatar = "200";
 
         #endregion
     }

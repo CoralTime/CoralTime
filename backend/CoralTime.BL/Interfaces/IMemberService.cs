@@ -14,7 +14,7 @@ namespace CoralTime.BL.Interfaces
 
         IEnumerable<ProjectView> GetTimeTrackerAllProjects(int memberId);
 
-        Task<Member> CreateNewUser(MemberView member);
+        Task<MemberView> CreateNewUser(MemberView member);
 
         Task<MemberView> Update(MemberView memberView);
 

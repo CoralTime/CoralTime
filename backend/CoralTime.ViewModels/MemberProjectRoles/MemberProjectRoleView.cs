@@ -15,6 +15,11 @@ namespace CoralTime.ViewModels.MemberProjectRoles
 
         public string ProjectName { get; set; }
 
+        public bool IsProjectActive { get; set; }
+
+        public bool IsProjectPrivate { get; set; }
+
+
         public int MemberId { get; set; }
 
         public string MemberName { get; set; }
@@ -23,17 +28,15 @@ namespace CoralTime.ViewModels.MemberProjectRoles
 
         public string MemberUserName { get; set; }
 
+        public bool IsMemberActive { get; set; }
+
+        public string UrlIcon { get; set; }
+
+
         public int RoleId { get; set; }
 
         public string RoleName { get; set; }
 
-        public bool IsMemberActive { get; set; }
-
-        public bool IsProjectActive { get; set; }
-
-        public bool IsProjectPrivate { get; set; }
-
-        public string UrlIcon { get; set; }
 
         public IEnumerable<MemberView> Members { get; set; }
 
