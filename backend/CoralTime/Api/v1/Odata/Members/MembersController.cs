@@ -1,6 +1,5 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Member;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
@@ -44,12 +43,7 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                var memberById = _service.GetById(id);
-
-                var memberView = _mapper.Map<Member, MemberView>(memberById);
-                memberView.UrlIcon = _avatarService.GetUrlIcon(memberView.Id);
-
-                return Ok(memberView);
+                return Ok(_service.GetById(id));
             }
             catch (Exception e)
             {
@@ -64,8 +58,7 @@ namespace CoralTime.Api.v1.Odata.Members
         {
             try
             {
-                var result = _service.GetTimeTrackerAllProjects(id);
-                return Ok(result);
+                return Ok(_service.GetTimeTrackerAllProjects(id));
             }
             catch (Exception e)
             {
@@ -76,24 +69,19 @@ namespace CoralTime.Api.v1.Odata.Members
         // POST: api/v1/odata/Members
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Create([FromBody] MemberView memberData)
+        public async Task<IActionResult> Create([FromBody] MemberView memberView)
         {
             if (!ModelState.IsValid)
             {
                 return SendInvalidModelResponse();
             }
 
-            var memberView = await _service.CreateNewUser(memberData);
-
-            if (memberData.SendInvitationEmail)
-            {
-                var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
-                await _service.SentInvitationEmailAsync(memberData, baseUrl);
-            }
+            var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
 
             var locationUri = $"{Request.Host}/api/v1/odata/Members/{memberView.Id}";
+            var createdMemberView = await _service.CreateNewUser(memberView, baseUrl);
 
-            return Created(locationUri, memberView);
+            return base.Created(locationUri, (object)createdMemberView);
         }
 
         // PUT: api/v1/odata/Members(1)
@@ -107,20 +95,11 @@ namespace CoralTime.Api.v1.Odata.Members
             }
 
             memberView.Id = id;
+            var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
 
             try
             {
-                var updatedMember = await _service.Update(memberView);
-
-                if (memberView.SendInvitationEmail)
-                {
-                    var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
-                    await _service.SentUpdateAccountEmailAsync(updatedMember, baseUrl);
-                }
-
-                updatedMember.UrlIcon = _avatarService.GetUrlIcon(updatedMember.Id);
-
-                return Ok(updatedMember);
+                return Ok(await _service.Update(memberView, baseUrl));
             }
             catch (Exception e)
             {
@@ -132,9 +111,6 @@ namespace CoralTime.Api.v1.Odata.Members
         [ODataRoute("Members({id})")]
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
-        public IActionResult Delete([FromODataUri]int id)
-        {
-            return BadRequest($"Can't delete the member with Id - {id}");
-        }
+        public IActionResult Delete([FromODataUri]int id) => BadRequest($"Can't delete the member with Id - {id}");
     }
 }

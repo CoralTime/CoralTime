@@ -16,8 +16,13 @@ namespace CoralTime.BL.Services
 {
     public class ProjectService : BaseService, IProjectService
     {
-        public ProjectService(UnitOfWork uow, IMapper mapper)
-            : base(uow, mapper) { }
+        private readonly IImageService _avatarService;
+
+        public ProjectService(UnitOfWork uow, IMapper mapper, IImageService avatarService)
+            : base(uow, mapper)
+        {
+            _avatarService = avatarService;
+        }
 
         // Tab "Projects - Grid". Return projects for manager where it has "manager" role only!
         public IEnumerable<ProjectView> ManageProjectsOfManager()
@@ -140,7 +145,8 @@ namespace CoralTime.BL.Services
                 .Where(t => t.ProjectId == project.Id && t.Member.User.IsActive)
                 .Select(m => m.Member);
 
-            return member.Select(x => x.GetView(Mapper));
+            var memberView = member.Select(x => x.GetViewWithProjectCount(Mapper, _avatarService.GetUrlIcon(x.Id)));
+            return memberView;
         }
 
         public ProjectView Create(ProjectView projectData)

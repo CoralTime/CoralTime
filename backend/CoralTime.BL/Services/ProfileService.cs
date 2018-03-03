@@ -166,7 +166,9 @@ namespace CoralTime.BL.Services
 
                 Uow.MemberRepository.LinkedCacheClear();
 
-                return memberByName.GetView(Mapper);
+                var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+                var memberView = memberByName.GetView(Mapper, urlIcon);
+                return memberView;
             }
             catch (Exception e)
             {
@@ -191,7 +193,11 @@ namespace CoralTime.BL.Services
                 Uow.Save();
 
                 Uow.MemberRepository.LinkedCacheClear();
-                return memberByName.GetView(Mapper);
+
+                var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+                var memberView = memberByName.GetView(Mapper, urlIcon);
+
+                return memberView;
             }
             catch (Exception e)
             {
@@ -225,7 +231,9 @@ namespace CoralTime.BL.Services
                 _memberService.UpdateUserClaims(memberByName.Id);
 
                 Uow.MemberRepository.LinkedCacheClear();
-                return memberByName.GetView(Mapper);
+
+                var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+                return memberByName.GetView(Mapper, urlIcon);
             }
             catch (Exception e)
             {

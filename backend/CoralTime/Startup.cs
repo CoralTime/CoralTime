@@ -129,7 +129,7 @@ namespace CoralTime
 
             // Configure NLog
             env.ConfigureNLog("nlog.config");
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
