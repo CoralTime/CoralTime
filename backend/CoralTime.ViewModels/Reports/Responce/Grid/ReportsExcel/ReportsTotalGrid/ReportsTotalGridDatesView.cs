@@ -2,8 +2,19 @@
 
 namespace CoralTime.ViewModels.Reports
 {
-    public class ReportsTotalGridByDatesView: IReportsTotalGridView<ReportTotalForGridDateView>
+    public class ReportsTotalGridDatesView: IReportsTotalGridView<ReportTotalForGridDateView>
     {
+        public ReportsTotalGridDatesView()
+        {
+            ReportsGridView = new List<ReportTotalForGridDateView>
+            {
+                new ReportTotalForGridDateView
+                {
+                    Items = new List<ReportsGridItemsView>()
+                }
+            };
+        }
+
         public int TotalEstimatedTime { get; set; }
 
         public int TotalActualTime { get; set; }

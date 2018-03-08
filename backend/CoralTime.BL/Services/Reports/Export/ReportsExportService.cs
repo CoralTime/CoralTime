@@ -187,7 +187,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public async Task<FileResult> ExportFileGroupByUsersAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
-            var groupByUsers = _reportService.GetGroupingReportsGridByUsers(reportsGridData);
+            var groupByUsers = _reportService.GetGroupingReportsGridByMembers(reportsGridData);
             var exportFileGroupByUsers = await GetGroupedReportsExportFileAsync(reportsGridData, httpContext, groupByUsers);
 
             return exportFileGroupByUsers;

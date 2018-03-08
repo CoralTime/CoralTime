@@ -22,7 +22,7 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpGet]
-        public IActionResult GetDropdowns()
+        public IActionResult GetReportsDropdowns()
         {
             try
             {
@@ -37,7 +37,7 @@ namespace CoralTime.Api.v1.Reports
         }
 
         [HttpPost]
-        public IActionResult GetGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
+        public IActionResult GetReportsGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +58,7 @@ namespace CoralTime.Api.v1.Reports
 
                     case (int) Constants.ReportsGroupBy.User:
                     {
-                        return new JsonResult(_service.GetGroupingReportsGridByUsers(reportsGridView));
+                        return new JsonResult(_service.GetGroupingReportsGridByMembers(reportsGridView));
                     }
 
                     case (int) Constants.ReportsGroupBy.Date:

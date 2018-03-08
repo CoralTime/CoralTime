@@ -16,7 +16,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         public async Task ExportEmailGroupByUsers(ReportsExportEmailView emailData)
         {
-            var groupByUsers = _reportService.GetGroupingReportsGridByUsers(emailData);
+            var groupByUsers = _reportService.GetGroupingReportsGridByMembers(emailData);
             await SendReportWithGroupingAsync(emailData, groupByUsers);
         }
 

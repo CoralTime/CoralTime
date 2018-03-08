@@ -9,7 +9,7 @@ namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static ReportsTotalGridByDatesView GetViewReportsTotalGridDatess(this ReportsTotalGridByDatesView reportsGridEntitiesClients, Dictionary<DateTime, IEnumerable<TimeEntry>> timeEntries, IMapper _mapper)
+        public static ReportsTotalGridDatesView GetViewReportsTotalGridDatess(this ReportsTotalGridDatesView reportsGridEntitiesClients, Dictionary<DateTime, IEnumerable<TimeEntry>> timeEntries, IMapper _mapper)
         {
             var reportGridDateView = timeEntries.Select(x => x.GetViewReportGridDate(_mapper));
 
