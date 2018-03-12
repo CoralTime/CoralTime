@@ -1,5 +1,4 @@
-﻿using CoralTime.ViewModels.Profiles;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace CoralTime.BL.Interfaces
 {
@@ -9,7 +8,7 @@ namespace CoralTime.BL.Interfaces
 
         string GetUrlIcon(int memberId);
 
-        MemberImageView UploadImage(IFormFile uploadedFile);
+        string UploadImage(IFormFile uploadedFile);
 
         void SaveImagesFromDbToFolder();
     }

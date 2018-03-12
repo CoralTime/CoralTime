@@ -353,8 +353,8 @@ namespace CoralTime.DAL
                         ProjectId = timeEntryProjectByName.Id,
                         TaskTypesId = timeEntryTaskByName.Id,
                         Date = (DateTime) timeEntryDate,
-                        Time = int.Parse(timeEntry["Time"]),
-                        PlannedTime = int.Parse(timeEntry["PlannedTime"]),
+                        TimeActual = int.Parse(timeEntry["TimeActual"]),
+                        TimeEstimated = int.Parse(timeEntry["TimeEstimated"]),
                         Description = timeEntry["Description"]
                     };
 

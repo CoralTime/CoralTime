@@ -23,8 +23,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             new ReportsDropDownGroupBy
             {
-                Id = (int) Constants.ReportsGroupBy.User,
-                Description = Constants.ReportsGroupBy.User.ToString()
+                Id = (int) Constants.ReportsGroupBy.Member,
+                Description = Constants.ReportsGroupBy.Member.ToString()
             },
 
             new ReportsDropDownGroupBy
@@ -181,7 +181,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 Filters = reportClientView,
                 GroupBy = _dropDownGroupBy,
-                ShowColumns = ReportsExportService.showColumnsInfo,
+                ShowColumns = Constants.showColumnsInfo222,
                 UserDetails = userDetails,
                 CustomQueries = valuesCustomQueries.OrderBy(x => x.QueryName).ToList()
             };
@@ -209,10 +209,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             dropDownsQuery.ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
                 ? new[]
                 {
-                    (int) ReportsExportService.ShowColumnModelIds.ShowEstimatedTime,
-                    (int) ReportsExportService.ShowColumnModelIds.ShowDate,
-                    (int) ReportsExportService.ShowColumnModelIds.ShowNotes,
-                    (int) ReportsExportService.ShowColumnModelIds.ShowStartFinish
+                    (int) Constants.ShowColumnModelIds.ShowEstimatedTime,
+                    (int) Constants.ShowColumnModelIds.ShowDate,
+                    (int) Constants.ShowColumnModelIds.ShowNotes,
+                    (int) Constants.ShowColumnModelIds.ShowStartFinish
                 }
                 : ConvertStringToArrayOfInts(defaultReportSettings.FilterShowColumnIds);
 

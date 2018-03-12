@@ -16,6 +16,6 @@ namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 
         public List<ReportsDropDownGroupBy> GroupBy { get; set; }
 
-        public ShowColumnModel[] ShowColumns { get; set; }
+        public ShowColumnModel222[] ShowColumns { get; set; }
     }
 }

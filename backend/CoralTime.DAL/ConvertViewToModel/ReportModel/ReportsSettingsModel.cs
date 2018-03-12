@@ -21,16 +21,7 @@ namespace CoralTime.DAL.ConvertViewToModel
             reportsSettings.FilterShowColumnIds = CommonHelpers.ConvertFromArrayOfIntsToString(reportsSettingsView.ShowColumnIds);
         }
         
-        public static ReportsSettings CreateModelForInsert(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)
-        {
-            reportsSettings = new ReportsSettings();
-
-            MapViewToModel(reportsSettings, reportsSettingsView, memberId);
-
-            return reportsSettings;
-        }
-
-        public static ReportsSettings UpdateModelForUpdates(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)
+        public static ReportsSettings GetModel(this ReportsSettings reportsSettings, ReportsSettingsView reportsSettingsView, int memberId)
         {
             MapViewToModel(reportsSettings, reportsSettingsView, memberId);
 

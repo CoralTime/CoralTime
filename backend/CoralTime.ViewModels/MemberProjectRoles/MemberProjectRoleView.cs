@@ -6,7 +6,7 @@ using CoralTime.ViewModels.Interfaces;
 
 namespace CoralTime.ViewModels.MemberProjectRoles
 {
-    public class MemberProjectRoleView : IAvatarViewModel
+    public class MemberProjectRoleView : IMemberImageIconView
     {
         [Key]
         public int Id { get; set; }
@@ -22,6 +22,8 @@ namespace CoralTime.ViewModels.MemberProjectRoles
 
         public int MemberId { get; set; }
 
+        public string UrlIcon { get; set; }
+
         public string MemberName { get; set; }
 
         public string MemberEmail { get; set; }
@@ -29,8 +31,6 @@ namespace CoralTime.ViewModels.MemberProjectRoles
         public string MemberUserName { get; set; }
 
         public bool IsMemberActive { get; set; }
-
-        public string UrlIcon { get; set; }
 
 
         public int RoleId { get; set; }

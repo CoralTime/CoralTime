@@ -15,12 +15,6 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns();
 
-        ReportsTotalGridProjectsView GetGroupingReportsGridByProjects(ReportsGridView reportsGridData);
-
-        ReportsTotalGridMembersView GetGroupingReportsGridByMembers(ReportsGridView reportsGridData);
-
-        ReportsTotalGridDatesView GetGroupingReportsGridByDates(ReportsGridView reportsGridData);
-
-        ReportsTotalGridClientsView GetGroupingReportsGridByClients(ReportsGridView reportsGridData);
+        ReportTotalView GetReportsGroupingBy(ReportsGridView reportsGridView);
     }
 }

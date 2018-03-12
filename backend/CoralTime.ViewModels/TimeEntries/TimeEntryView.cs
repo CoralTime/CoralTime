@@ -3,7 +3,7 @@ using System;
 
 namespace CoralTime.ViewModels.TimeEntries
 {
-    public class TimeEntryView : TimeEntryTimeView
+    public class TimeEntryView //: TimeValuesView
     {
         [Key]
         public int Id { get; set; }
@@ -24,7 +24,9 @@ namespace CoralTime.ViewModels.TimeEntries
 
         public string Description { get; set; }
 
-        public int? PlannedTime { get; set; }
+        public TimeOptions TimeOptions { get; set; }
+
+        public TimeValuesView TimeValues { get; set; }
 
         public bool IsProjectActive { get; set; }
 

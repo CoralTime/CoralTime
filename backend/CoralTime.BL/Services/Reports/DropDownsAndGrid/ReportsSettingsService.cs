@@ -5,7 +5,6 @@ using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;
-using System;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -28,20 +27,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
                 if(queryFromReportsSettings != null && !queryFromReportsSettings.IsCurrentQuery)
                 {
-                    try
-                    {
-                        ResetIsCustomQueryForAllQueries(memberId);
+                    ResetIsCustomQueryForAllQueries(memberId);
 
-                        SetIsCurrentQueryTrue(queryFromReportsSettings);
+                    SetIsCurrentQueryTrue(queryFromReportsSettings);
 
-                        Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
-
-                        Uow.Save();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
-                    }
+                    Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
+                    Uow.Save();
                 }
             }
         }
@@ -73,15 +64,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             if (!IsDefaultQuery(getReportsSettingsByid.QueryName))
             {
-                try
-                {
-                    Uow.ReportsSettingsRepository.Delete(id);
-                    Uow.Save();
-                }
-                catch (Exception e)
-                {
-                    throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
-                }
+                Uow.ReportsSettingsRepository.Delete(id);
+                Uow.Save();
             }
             else
             {
@@ -107,46 +91,33 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 allQueries.ForEach(query => query.IsCurrentQuery = false);
 
-                try
-                {
-                    Uow.ReportsSettingsRepository.UpdateRange(allQueries);
-                    Uow.Save();
-                }
-                catch (Exception e)
-                {
-                    throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
-                }
+                Uow.ReportsSettingsRepository.UpdateRange(allQueries);
+                Uow.Save();
             }
         }
 
         private void SaveQueryToReportsSettings(ReportsSettingsView reportsSettingsView, int memberId)
         {
             var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
-            try
+        
+            if (queryFromReportsSettings == null)
             {
-                if (queryFromReportsSettings == null)
-                {
-                    queryFromReportsSettings = queryFromReportsSettings.CreateModelForInsert(reportsSettingsView, memberId);
+                queryFromReportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
 
-                    SetIsCurrentQueryTrue(queryFromReportsSettings);
+                SetIsCurrentQueryTrue(queryFromReportsSettings);
 
-                    Uow.ReportsSettingsRepository.Insert(queryFromReportsSettings);
-                }
-                else
-                {
-                    queryFromReportsSettings = queryFromReportsSettings.UpdateModelForUpdates(reportsSettingsView, memberId);
-
-                    SetIsCurrentQueryTrue(queryFromReportsSettings);
-
-                    Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
-                }
-
-                Uow.Save();
+                Uow.ReportsSettingsRepository.Insert(queryFromReportsSettings);
             }
-            catch (Exception e)
+            else
             {
-                throw new CoralTimeDangerException("An error occurred while work with Reports Settings", e);
+                queryFromReportsSettings.GetModel(reportsSettingsView, memberId);
+
+                SetIsCurrentQueryTrue(queryFromReportsSettings);
+
+                Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
             }
+
+            Uow.Save();
         }
 
         private void CheckCustomQueryForThisMember(int? id, ReportsSettings reportsSettings)

@@ -58,37 +58,37 @@ namespace CoralTime.BL.Services.Reports.Export
         //    return Encoding.UTF8.GetBytes(sb.ToString());
         //}
 
-        private string[] CreateItemsCSV(List<ReportsGridItemsView> items)
-        {
-            var result = new string[items.Count + 1];
-            var props = ExcludeProps(typeof(ReportsGridItemsView));
+        //private string[] CreateItemsCSV(List<ReportsGridItemsView> items)
+        //{
+        //    var result = new string[items.Count + 1];
+        //    var props = ExcludeProps(typeof(ReportsGridItemsView));
 
-            var headers = RenameNestedEntityHeaders(props);
+        //    var headers = RenameNestedEntityHeaders(props);
 
-            result[0] = string.Join(",", headers);
+        //    result[0] = string.Join(",", headers);
 
-            int index = 1;
-            foreach (var item in items)
-            {
-                var fields = new List<string>();
+        //    int index = 1;
+        //    foreach (var item in items)
+        //    {
+        //        var fields = new List<string>();
 
-                foreach (var prop in props)
-                {
-                    if (IsGroupByThisProperty(prop.Name))
-                    {
-                        continue;
-                    }
+        //        foreach (var prop in props)
+        //        {
+        //            if (IsGroupByThisProperty(prop.Name))
+        //            {
+        //                continue;
+        //            }
 
-                    var value = prop.GetValue(item, null) ?? string.Empty;
-                    fields.Add(value.ToString());
-                }
+        //            var value = prop.GetValue(item, null) ?? string.Empty;
+        //            fields.Add(value.ToString());
+        //        }
 
-                result[index] = string.Join(",", fields);
-                index++;
-            }
+        //        result[index] = string.Join(",", fields);
+        //        index++;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
     }
 }

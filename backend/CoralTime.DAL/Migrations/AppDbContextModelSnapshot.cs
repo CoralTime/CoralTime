@@ -417,13 +417,13 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("MemberId");
 
-                    b.Property<int>("PlannedTime");
-
                     b.Property<int>("ProjectId");
 
                     b.Property<int>("TaskTypesId");
 
-                    b.Property<int>("Time");
+                    b.Property<int>("TimeActual");
+
+                    b.Property<int>("TimeEstimated");
 
                     b.Property<int>("TimeFrom");
 

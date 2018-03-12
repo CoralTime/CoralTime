@@ -6,8 +6,6 @@ using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels;
-using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -17,7 +15,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using CoralTime.DAL.ConvertModelToView;
 
 namespace CoralTime.BL.Services
 {
@@ -115,9 +112,9 @@ namespace CoralTime.BL.Services
 
         #endregion
 
-        #region Upload Avatar
+        #region Upload Image
 
-        public MemberImageView UploadImage(IFormFile uploadedFile)
+        public string UploadImage(IFormFile uploadedFile)
         {
             var member = Uow.GetMemberByUserIdImpersonated();
 
@@ -125,26 +122,25 @@ namespace CoralTime.BL.Services
 
             var updatedMemberImage = CreateUpdatedMemberImage(uploadedFile, member);
             
-            var memberAvatar = Uow.MemberImageRepository.LinkedCacheGetByMemberId(member.Id);
-            if (memberAvatar == null)
+            var memberImage = Uow.MemberImageRepository.LinkedCacheGetByMemberId(member.Id);
+            if (memberImage == null)
             {
-                memberAvatar = memberAvatar.CreateModelForInsert(updatedMemberImage);
-                Uow.MemberImageRepository.Insert(memberAvatar);
+                memberImage = new MemberImage().UpdateProperties(updatedMemberImage);
+                Uow.MemberImageRepository.Insert(memberImage);
             }
             else
             {
-                memberAvatar = memberAvatar.CreateModelForUpdate(updatedMemberImage);
-                Uow.MemberImageRepository.Update(memberAvatar);
+                memberImage.UpdateProperties(updatedMemberImage);
+                Uow.MemberImageRepository.Update(memberImage);
             }
 
             Uow.Save();
             Uow.MemberImageRepository.LinkedCacheClear();
 
-            SaveMemberImageToFolder(memberAvatar);
+            SaveMemberImageToFolder(memberImage);
 
-            var memberAvatarView = memberAvatar.GetView(GetUrlAvatar(member.Id));
-
-            return memberAvatarView;
+            var urlAvatar = GetUrlAvatar(member.Id);
+            return urlAvatar;
         }
 
         private static MemberImage CreateUpdatedMemberImage(IFormFile uploadedFile, Member member)

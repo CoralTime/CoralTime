@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.Common.Constants;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.TimeEntries;
 using System.Linq;
 
@@ -29,10 +28,10 @@ namespace CoralTime.DAL.ConvertModelToView
             return tEntry;
         }
 
-        public static ReportsGridItemsView GetViewReportsGridItem(this TimeEntry timeEntry, IMapper _mapper)
-        {
-            var tEntry = _mapper.Map<TimeEntry, ReportsGridItemsView>(timeEntry);
-            return tEntry;
-        }
+        //public static IReportsGridItemsView GetViewReportsGridItem(this TimeEntry timeEntry, IMapper _mapper)
+        //{
+        //    var tEntry = _mapper.Map<TimeEntry, IReportsGridItemsView>(timeEntry);
+        //    return tEntry;
+        //}
     }
 }

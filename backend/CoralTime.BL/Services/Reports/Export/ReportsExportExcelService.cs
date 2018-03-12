@@ -17,11 +17,6 @@ namespace CoralTime.BL.Services.Reports.Export
     {
         private byte[] CreateFileExcel(DataSet groupingList)
         {
-            if (!RunSetCommonValuesForExport)
-            {
-                throw new InvalidOperationException("You forgot run SetCommonValuesForExport() for set common values.");
-            }
-
             using (var memoryStream = new MemoryStream())
             {
                 var workbook = new XSSFWorkbook();
@@ -138,19 +133,14 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             switch (groupById)
             {
-                case (int) Constants.ReportsGroupBy.None:
-                {
-                    return Constants.ReportsGroupBy.None.ToString();
-                }
-
                 case (int) Constants.ReportsGroupBy.Project:
                 {
                     return Constants.ReportsGroupBy.Project.ToString();
                 }
 
-                case (int) Constants.ReportsGroupBy.User:
+                case (int) Constants.ReportsGroupBy.Member:
                 {
-                    return Constants.ReportsGroupBy.User.ToString();
+                    return Constants.ReportsGroupBy.Member.ToString();
                 }
 
                 case (int) Constants.ReportsGroupBy.Date:
@@ -678,8 +668,8 @@ namespace CoralTime.BL.Services.Reports.Export
                 || prop.Name == ExternalProperties.TotalEstimatedTime.ToString()
                 || prop.Name == ExternalProperties.TotalForActualTime.ToString() 
                 || prop.Name == ExternalProperties.TotalForEstimatedTime.ToString()
-                || prop.Name == InternalProperties.ActualTime.ToString()
-                || prop.Name == InternalProperties.EstimatedTime.ToString()
+                || prop.Name == InternalProperties.TimeActual.ToString()
+                || prop.Name == InternalProperties.TimeEstimated.ToString()
                 || prop.Name == InternalProperties.TimeFrom.ToString()
                 || prop.Name == InternalProperties.TimeTo.ToString())
             {
@@ -720,16 +710,6 @@ namespace CoralTime.BL.Services.Reports.Export
             {
                 var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
                 value = DateTime.Parse(value).ToString(dateFormat);
-            }
-
-            return value;
-        }
-
-        private string ResetValueForGroupByNone(PropertyInfo prop, string value)
-        {
-            if (prop.Name == InternalProperties.TimeEntryName.ToString() && GroupById == (int)Constants.ReportsGroupBy.None)
-            {
-                value = string.Empty;
             }
 
             return value;
@@ -800,11 +780,11 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Work with inner List<ReportGridItemView> of entities and its properties. And check if field is generic.
 
-        private IEnumerable<ReportsGridItemsView> GetValueListFromProp<T>(PropertyInfo prop, T item)
-        {
-            var getListValueFromProp = (IEnumerable<ReportsGridItemsView>)prop.GetValue(item, null);
-            return getListValueFromProp;
-        }
+        //private IEnumerable<ReportsGridItemsView> GetValueListFromProp<T>(PropertyInfo prop, T item)
+        //{
+        //    var getListValueFromProp = (IEnumerable<ReportsGridItemsView>)prop.GetValue(item, null);
+        //    return getListValueFromProp;
+        //}
 
         //private void CreateRowEntityHeaderNames(SharedStringTablePart shareStringPart, SheetData sheetData)
         //{
@@ -876,31 +856,31 @@ namespace CoralTime.BL.Services.Reports.Export
         //    return totalForRow;
         //}
 
-        private void CreateRowsEntityValues(DataTable dataTable, IEnumerable<ReportsGridItemsView> valueListFromProp)
-        {
-            foreach (var item in valueListFromProp)
-            {
-                var dataRow = dataTable.NewRow();
+        //private void CreateRowsEntityValues(DataTable dataTable, IEnumerable<ReportsGridItemsView> valueListFromProp)
+        //{
+        //    foreach (var item in valueListFromProp)
+        //    {
+        //        var dataRow = dataTable.NewRow();
 
-                var valuesForRow = new List<string>();
+        //        var valuesForRow = new List<string>();
 
-                foreach (var prop in PropsEntityHeadersAndRows)
-                {
-                    if (!IsGroupByThisProperty(prop.Name))
-                    {
-                        var value = GetValueSingleFromProp(prop, item);
+        //        foreach (var prop in PropsEntityHeadersAndRows)
+        //        {
+        //            if (!IsGroupByThisProperty(prop.Name))
+        //            {
+        //                var value = GetValueSingleFromProp(prop, item);
 
-                        value = UpdateDateFormatForValue(prop, value);
-                        value = UpdateTimeFormatForValue(prop, value);
+        //                value = UpdateDateFormatForValue(prop, value);
+        //                value = UpdateTimeFormatForValue(prop, value);
 
-                        valuesForRow.Add(value);
-                    }
-                }
+        //                valuesForRow.Add(value);
+        //            }
+        //        }
 
-                dataRow.ItemArray = valuesForRow.ToArray();
-                dataTable.Rows.Add(dataRow);
-            }
-        }
+        //        dataRow.ItemArray = valuesForRow.ToArray();
+        //        dataTable.Rows.Add(dataRow);
+        //    }
+        //}
 
         #endregion
 

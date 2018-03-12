@@ -1,11 +1,10 @@
 using CoralTime.BL.Interfaces.Reports;
-using CoralTime.Common.Constants;
-using CoralTime.Common.Middlewares;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CoralTime.Api.v1.Reports
 {
@@ -13,28 +12,11 @@ namespace CoralTime.Api.v1.Reports
     [Route("api/v1/[controller]")]
     public class ReportsController : BaseController<ReportsController, IReportsService>
     {
-        private IReportsSettingsService _reportsSettingsService;
-
-        public ReportsController(IReportsService service, ILogger<ReportsController> logger, IReportsSettingsService reportsSettingsService)
-            : base(logger, service)
-        {
-            _reportsSettingsService = reportsSettingsService;
-        }
+        public ReportsController(IReportsService service, ILogger<ReportsController> logger)
+            : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetReportsDropdowns()
-        {
-            try
-            {
-                return new JsonResult(_service.ReportsDropDowns());
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"GetReportsDropdowns method {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
-            }
-        }
+        public IActionResult GetReportsDropdowns() => new JsonResult(_service.ReportsDropDowns());
 
         [HttpPost]
         public IActionResult GetReportsGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
@@ -44,45 +26,15 @@ namespace CoralTime.Api.v1.Reports
                 return BadRequest("Invalid Model");
             }
 
-            try
+            var jsonSerializatorSettings = new JsonSerializerSettings
             {
-                _reportsSettingsService.SaveCurrentQuery(reportsGridView.CurrentQuery);
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
-                // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGridView.CurrentQuery.GroupById)
-                {
-                    case (int) Constants.ReportsGroupBy.Project:
-                    {
-                        return new JsonResult(_service.GetGroupingReportsGridByProjects(reportsGridView));
-                    }
+            var reportsGroupingBy = _service.GetReportsGroupingBy(reportsGridView);
 
-                    case (int) Constants.ReportsGroupBy.User:
-                    {
-                        return new JsonResult(_service.GetGroupingReportsGridByMembers(reportsGridView));
-                    }
-
-                    case (int) Constants.ReportsGroupBy.Date:
-                    {
-                        return new JsonResult(_service.GetGroupingReportsGridByDates(reportsGridView));
-                    }
-
-                    case (int) Constants.ReportsGroupBy.Client:
-                    {
-                        return new JsonResult(_service.GetGroupingReportsGridByClients(reportsGridView));
-                    }
-
-                    default:
-                    {
-                        return BadRequest("Invalid Grouping value");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridView});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
-            }
+            return new JsonResult(reportsGroupingBy, jsonSerializatorSettings);
         }
     }
 }

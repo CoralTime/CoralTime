@@ -49,7 +49,7 @@ namespace CoralTime.BL.Services
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
 
             // Check correct timing values from TimeEntryView.
-            CheckCorrectTimingValues(timeEntryView.TimeFrom, timeEntryView.TimeTo, timeEntryView.Time);
+            CheckCorrectTimingValues(timeEntryView.TimeValues.TimeFrom, timeEntryView.TimeValues.TimeTo, timeEntryView.TimeValues.TimeActual);
 
             // Check that total time per day is not grater than 24 hours.
             CheckTotalTimeAtDay(relatedMemberByName, timeEntryView, timeEntry);
@@ -86,7 +86,7 @@ namespace CoralTime.BL.Services
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
 
             // Check correct timing values from TimeEntryView.
-            CheckCorrectTimingValues(timeEntryView.TimeFrom, timeEntryView.TimeTo, timeEntryView.Time);
+            CheckCorrectTimingValues(timeEntryView.TimeValues.TimeFrom, timeEntryView.TimeValues.TimeTo, timeEntryView.TimeValues.TimeActual);
 
             // Check that total time per day is not grater than 24 hours.
             CheckTotalTimeAtDay(relatedMemberByName, timeEntryView, timeEntryById);
@@ -278,13 +278,13 @@ namespace CoralTime.BL.Services
         {
             var totalTimeForDay = Uow.TimeEntryRepository.GetQueryWithIncludes()
                 .Where(tEntry => tEntry.MemberId == memberByName.Id && tEntry.Date.Date == timeEntryView.Date.Date)
-                .Sum(tEntry => tEntry.Time);
+                .Sum(tEntry => tEntry.TimeActual);
 
-            var newTime = timeEntryView.Time;
+            var newTime = timeEntryView.TimeValues.TimeActual;
             var newDate = timeEntryView.Date;
             if (timeEntryById != null)
             {
-                var oldTime = timeEntryById.Time;
+                var oldTime = timeEntryById.TimeActual;
                 var oldDate = timeEntryById.Date;
 
                 if (oldDate != newDate)
@@ -373,14 +373,14 @@ namespace CoralTime.BL.Services
 
             timeEntry.Date = timeEntryView.Date.Date;
 
-            timeEntry.Time = timeEntryView.Time;
-            timeEntry.PlannedTime = timeEntryView.PlannedTime ?? 0;
-            timeEntry.TimeFrom = timeEntryView.TimeFrom ?? 0;
-            timeEntry.TimeTo = timeEntryView.TimeTo ?? 0;
-            timeEntry.TimeTimerStart = timeEntryView.TimeTimerStart;
+            timeEntry.TimeActual = timeEntryView.TimeValues.TimeActual;
+            timeEntry.TimeEstimated = timeEntryView.TimeValues.TimeEstimated ?? 0;
+            timeEntry.TimeFrom = timeEntryView.TimeValues.TimeFrom ?? 0;
+            timeEntry.TimeTo = timeEntryView.TimeValues.TimeTo ?? 0;
+            timeEntry.TimeTimerStart = timeEntryView.TimeOptions.TimeTimerStart;
 
             timeEntry.Description = timeEntryView.Description;
-            timeEntry.IsFromToShow = timeEntryView.IsFromToShow;
+            timeEntry.IsFromToShow = timeEntryView.TimeOptions.IsFromToShow;
 
             #endregion
         }
