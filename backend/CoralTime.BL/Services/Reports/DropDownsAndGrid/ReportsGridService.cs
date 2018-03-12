@@ -123,7 +123,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var timeEntriesGroupByDate = timeEntriesForGrouping.ToList()
                 .GroupBy(i => i.Date)
-                .ToDictionary(key => key.Key, key => key.AsEnumerable());
+                .OrderBy(x => x.Key.Date)
+                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
 
             var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
 
