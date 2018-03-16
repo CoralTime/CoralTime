@@ -3,6 +3,7 @@ import { ImpersonationService } from '../../services/impersonation.service';
 import { User } from '../../models/user';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
 import { ActivatedRoute } from '@angular/router';
+import { Avatar, UserPicService } from '../../services/user-pic.service';
 
 @Component({
 	selector: 'ct-profile',
@@ -17,7 +18,8 @@ export class ProfileComponent implements OnInit {
 
 	constructor(private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
-	            private route: ActivatedRoute) {
+	            private route: ActivatedRoute,
+	            private userPicService: UserPicService) {
 	}
 
 	ngOnInit() {
@@ -25,21 +27,29 @@ export class ProfileComponent implements OnInit {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
 
-		this.avatarUrl = this.userInfo.iconUrl.replace('Icons', 'Avatars');
+		this.avatarUrl = this.userInfo.iconUrl.replace('Icons', 'Avatars')
+			.replace('s=40', 's=200');
+		// this.getAvatar();
 		this.getProjects();
 	}
 
-	private getProjects(): void {
+	getAvatar(): void {
+		this.userPicService.loadUserPicture(this.userInfo.id, true).subscribe((res: Avatar) => {
+			this.avatarUrl = res.avatarUrl;
+		});
+	}
+
+	getProjects(): void {
 		this.profileService.getProjects().subscribe((projects: ProfileProjects[]) => {
 			this.projects = this.sortList(projects, 'name');
 		});
 	}
 
-	private sortList(list: any[], sortingField: string): any[] {
+	sortList(list: any[], sortingField: string): any[] {
 		return list.sort((a, b) => a[sortingField].toLowerCase() < b[sortingField].toLowerCase() ? -1 : 1);
 	}
 
-	private getProjectMembers(projectId: number, index: number): void {
+	getProjectMembers(projectId: number, index: number): void {
 		this.profileService.getProjectMembers(projectId).subscribe((members: ProfileProjectMember[]) => {
 			this.projects[index].memberList = this.sortList(members, 'memberName');
 		});
