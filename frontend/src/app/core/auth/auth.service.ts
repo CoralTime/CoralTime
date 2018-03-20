@@ -1,4 +1,4 @@
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { Http, Headers, Response } from '@angular/http';
 import { Injectable, EventEmitter } from '@angular/core';
@@ -8,7 +8,6 @@ import 'rxjs/add/operator/map';
 
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
-import { UserInfoService } from './user-info.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 const AUTH_USER_STORAGE_KEY = 'APPLICATION_USER';
@@ -39,9 +38,8 @@ export class AuthService {
 
 	constructor(private http: Http,
 	            private impersonateService: ImpersonationService,
-	            private mdDialog: MdDialog,
-	            private router: Router,
-	            private userInfoService: UserInfoService) {
+	            private matDialog: MatDialog,
+	            private router: Router) {
 		if (localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
 			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
 		}
@@ -141,8 +139,7 @@ export class AuthService {
 	logout(ignoreRedirect?: boolean): void {
 		this.impersonateService.stopImpersonation(true);
 		this.authUser = null;
-		this.userInfoService.setUserInfo(null);
-		this.mdDialog.closeAll();
+		this.matDialog.closeAll();
 		localStorage.removeItem(AUTH_USER_STORAGE_KEY);
 		if (!ignoreRedirect) {
 			this.router.navigate(['/login']);

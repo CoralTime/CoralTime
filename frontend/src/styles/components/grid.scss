@@ -83,7 +83,7 @@
   width: 40px;
   height: 25px;
   border-radius: 12.5px;
-  background: url(/assets/icons/grid-settings.svg) no-repeat center;
+  background: url(./assets/icons/grid-settings.svg) no-repeat center;
   background-size: 16px;
   overflow: hidden;
   cursor: pointer;
@@ -116,7 +116,7 @@
 }
 
 tr:hover .ct-grid-settings {
-  background: url(/assets/icons/grid-settings.svg) no-repeat center, white;
+  background: url(./assets/icons/grid-settings.svg) no-repeat center, white;
   background-size: 16px;
   &:after {
     background: rgba(255, 255, 255, .4);

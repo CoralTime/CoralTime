@@ -158,7 +158,7 @@
     }
   }
 
-  .ct-color-picker md-icon {
+  .ct-color-picker mat-icon {
     color: $nav-link-border;
   }
 
@@ -540,7 +540,7 @@
     color: inherit;
   }
 
-  md-radio-group > div {
+  mat-radio-group > div {
     margin-top: -2px;
 
     .mat-radio-label {

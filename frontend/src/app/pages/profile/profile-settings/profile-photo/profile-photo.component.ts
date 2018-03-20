@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Bounds, CropperSettings, ImageCropperComponent } from 'ng2-img-cropper';
 import { ProfileService } from '../../../../services/profile.service';
 import { NotificationService } from '../../../../core/notification.service';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { UserPicService } from '../../../../services/user-pic.service';
 
 @Component({
@@ -20,7 +20,7 @@ export class ProfilePhotoComponent {
 	@ViewChild(ImageCropperComponent) cropper: ImageCropperComponent;
 
 	constructor(private notificationService: NotificationService,
-	            private mdDialog: MdDialog,
+	            private matDialog: MatDialog,
 	            private profileService: ProfileService,
 	            private userPicService: UserPicService) {
 		this.cropperSettings = new CropperSettings();
@@ -61,7 +61,7 @@ export class ProfilePhotoComponent {
 				},
 				error => {
 					this.notificationService.danger('Error changing profile photo.');
-					this.mdDialog.closeAll();
+					this.matDialog.closeAll();
 				});
 	}
 

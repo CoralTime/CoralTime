@@ -3,8 +3,7 @@ import {
 	ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { coerceBooleanProperty } from '@angular/material';
-import { SlimScrollDirective } from 'ng2-slimscroll/src/directives/slimscroll.directive';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 const LIST_ITEM_HEIGHT = 42;
 
@@ -56,7 +55,7 @@ export class InputListComponent implements ControlValueAccessor {
 	private scrollTopNumber: number = 0;
 	private selectedObject: any;
 
-	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
+	@ViewChild('slimScroll') slimScroll: any;
 
 	private _disabled: boolean = false;
 	@Input()

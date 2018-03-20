@@ -42,7 +42,7 @@
                      (ngModelChange)="descriptionOnChange()"></ct-textarea>
     </div>
     <div class="ct-time-actions clearfix">
-        <button class="ct-timer" type="button" md-button
+        <button class="ct-timer" type="button" mat-button
                 [disabled]="!canActivateTimer()"
                 (click)="toggleTimer()"
                 [class.ct-timer-started]="isTimerShown">
@@ -113,7 +113,7 @@
         </div>
     </div>
     <div class="ct-form-actions clearfix">
-        <button md-button
+        <button mat-button
                 class="ct-submit mat-button ct-color-{{currentTimeEntry.color}}"
                 (click)="submit()"
                 [disabled]="entryTimeForm.invalid || entryTimeForm.pristine || isRequestLoading">Done

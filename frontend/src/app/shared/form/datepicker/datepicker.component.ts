@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { IDatePickerDirectiveConfig, DatePickerComponent } from 'ng2-date-picker';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { coerceBooleanProperty } from '@angular/material';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { IDay } from 'ng2-date-picker/day-calendar/day.model';
 import { WeekDays } from 'ng2-date-picker/common/types/week-days.type';
 import * as moment from 'moment';

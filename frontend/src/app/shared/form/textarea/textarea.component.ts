@@ -3,8 +3,8 @@ import {
 	ChangeDetectionStrategy, ChangeDetectorRef, ViewChild
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { coerceBooleanProperty, MdTextareaAutosize } from '@angular/material';
-import { SlimScrollDirective } from 'ng2-slimscroll/src/directives/slimscroll.directive';
+import { MatTextareaAutosize } from '@angular/material';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 export const TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
 	provide: NG_VALUE_ACCESSOR,
@@ -33,8 +33,8 @@ export class TextareaComponent implements ControlValueAccessor {
 	modelValue: any;
 	isFocusClassShown: boolean = false;
 
-	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
-	@ViewChild('autoSizer') autoSizer: MdTextareaAutosize;
+	@ViewChild('slimScroll') slimScroll: any;
+	@ViewChild('autoSizer') autoSizer: MatTextareaAutosize;
 
 	private _disabled: boolean = false;
 	@Input()

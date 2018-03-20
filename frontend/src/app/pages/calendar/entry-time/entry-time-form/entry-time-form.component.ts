@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Project } from '../../../../models/project';
 import { Task } from '../../../../models/task';
-import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
+import { TimeEntry, DateUtils, CalendarDay, Time } from '../../../../models/calendar';
 import { Subscription, Observable } from 'rxjs';
 import { ArrayUtils } from '../../../../core/object-utils';
 import { TasksService } from '../../../../services/tasks.service';
@@ -17,18 +17,6 @@ import { ImpersonationService } from '../../../../services/impersonation.service
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../../models/user';
 import { SelectItem } from 'primeng/primeng';
-
-export class Time {
-	hours: string;
-	minutes: string;
-	seconds: string;
-
-	constructor(hours: string, minutes: string, seconds?: string) {
-		this.hours = hours;
-		this.minutes = minutes;
-		this.seconds = seconds;
-	}
-}
 
 @Component({
 	selector: 'ct-entry-time-form',

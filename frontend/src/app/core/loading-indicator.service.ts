@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Observable, Subscription } from 'rxjs';
+import * as Rx from 'rxjs'
 
 @Injectable()
 export class LoadingIndicatorService {
@@ -27,8 +26,8 @@ export class LoadingIndicatorService {
 		});
 	}
 
-	getStatus(): Observable<number> {
-		let source = Observable.empty();
+	getStatus(): Observable<number | {}> {
+		let source = Rx.Observable.empty();
 
 		return source
 			.startWith(this.status)
@@ -53,7 +52,7 @@ export class LoadingIndicatorService {
 			this.incrimentSubscription.unsubscribe();
 		}
 
-		this.incrimentSubscription = Observable
+		this.incrimentSubscription = Rx.Observable
 			.interval(50)
 			.timeInterval().subscribe(() => {
 				this.inc();

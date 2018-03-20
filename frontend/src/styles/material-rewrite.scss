@@ -7,8 +7,7 @@
 }
 
 .mat-dialog-container {
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
+  position: relative;
   border-radius: 0 !important;
   background-color: $calendarTaskColor;
   padding: 20px !important;
