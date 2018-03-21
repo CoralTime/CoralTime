@@ -5,6 +5,12 @@ namespace CoralTime.ViewModels.TimeEntries
 {
     public class TimeEntryView //: TimeValuesView
     {
+        public TimeEntryView()
+        {
+            TimeOptions = new TimeOptions();
+            TimeValues = new TimeValuesView();
+        }
+
         [Key]
         public int Id { get; set; }
 
