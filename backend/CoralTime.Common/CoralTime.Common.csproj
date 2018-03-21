@@ -12,7 +12,7 @@
     <PackageReference Include="IdentityModel" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.2" />
     <PackageReference Include="NETCore.MailKit" Version="2.0.2" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.4.1" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.0-rc3" />
     <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
   </ItemGroup>
 

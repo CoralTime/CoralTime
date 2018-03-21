@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace CoralTime.ViewModels.Reports
+﻿namespace CoralTime.ViewModels.Reports
 {
-    public class ShowColumnModel
+    public class ShowColumnModel222
     {
         public int Id { get; set; }
 
-        public List<ShowColumnDescription> ShowColumnDescriptions { get; set; }
+        public string Description { get; set; }
     }
 }

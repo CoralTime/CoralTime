@@ -110,8 +110,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.0.0-beta1" />
     <PackageReference Include="NETCore.MailKit" Version="2.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-rc6" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.0-rc2" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-rc7" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.0-rc3" />
     <PackageReference Include="SapientGuardian.EntityFrameworkCore.MySql" Version="7.1.23" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
   </ItemGroup>

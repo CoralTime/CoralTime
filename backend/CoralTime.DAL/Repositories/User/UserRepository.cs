@@ -7,7 +7,6 @@ namespace CoralTime.DAL.Repositories
 {
     public class UserRepository : BaseRepository<ApplicationUser>
     {
-
         public UserRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 

@@ -17,8 +17,10 @@ namespace CoralTime.DAL.Repositories
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly AppDbContext _context;
         private readonly IMemoryCache _memoryCache;
-        public readonly string CurrentUserName;
-        public readonly string InpersonatedUserName;
+
+        public readonly string UserNameCurrent;
+        public readonly string UserNameImpersonated;
+
         private readonly string _userId;
 
         public UnitOfWork(UserManager<ApplicationUser> userManager, AppDbContext context, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
@@ -26,9 +28,35 @@ namespace CoralTime.DAL.Repositories
             _userManager = userManager;
             _context = context;
             _memoryCache = memoryCache;
-            CurrentUserName = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
-            InpersonatedUserName = GetUserNameWithImpersonation(httpContextAccessor);
+
+            UserNameCurrent = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
+            UserNameImpersonated = GetUserNameWithImpersonation(httpContextAccessor);
+
             _userId = httpContextAccessor?.HttpContext?.User.Claims?.FirstOrDefault(c=> c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
+        }
+
+        public ApplicationUser GetUserCurrent()
+        {
+            return UserRepository.GetRelatedUserByName(UserNameCurrent);
+        }
+
+        public ApplicationUser GetUserImpersonated()
+        {
+            return UserRepository.GetRelatedUserByName(UserNameImpersonated);
+        }
+
+        public Member GetMemberByUserIdCurrent()
+        {
+            var userCurrentd = GetUserCurrent();
+            var meberByUserCurrent = MemberRepository.GetQueryByUserId(userCurrentd.Id);
+            return meberByUserCurrent;
+        }
+
+        public Member GetMemberByUserIdImpersonated()
+        {
+            var userImpersonated = GetUserImpersonated();
+            var meberByImpersonatedUser = MemberRepository.GetQueryByUserId(userImpersonated.Id);
+            return meberByImpersonatedUser;
         }
 
         public int Save()

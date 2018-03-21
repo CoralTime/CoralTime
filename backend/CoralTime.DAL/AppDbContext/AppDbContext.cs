@@ -9,8 +9,6 @@ namespace CoralTime.DAL
 {
     public partial class AppDbContext : IdentityDbContext<ApplicationUser>, IPersistedGrantDbContext
     {
-        public AppDbContext() { }
-
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
@@ -32,7 +30,7 @@ namespace CoralTime.DAL
 
         public DbSet<UserForgotPassRequest> UserForgotPassRequests { get; set; }
 
-        public DbSet<MemberAvatar> MemberAvatars { get; set; }
+        public DbSet<MemberImage> MemberImages { get; set; }
 
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
@@ -73,9 +71,12 @@ namespace CoralTime.DAL
             builder.Entity<TaskType>()
                 .HasOne(p => p.Project);
 
-            builder.Entity<MemberAvatar>()
+            builder.Entity<MemberImage>()
                 .HasOne(p => p.Member);
-            
+
+            builder.Entity<Member>()
+                .HasOne(p => p.MemberImage);
+
             builder.Entity<Project>()
                 .HasMany(p => p.TaskTypes)
                 .WithOne(p => p.Project).IsRequired(false);

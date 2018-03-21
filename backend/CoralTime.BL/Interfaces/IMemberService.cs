@@ -10,13 +10,13 @@ namespace CoralTime.BL.Interfaces
     {
         IEnumerable<MemberView> GetAllMembers();
 
-        Member GetById(int id);
+        MemberView GetById(int id);
 
         IEnumerable<ProjectView> GetTimeTrackerAllProjects(int memberId);
 
-        Task<Member> CreateNewUser(MemberView member);
+        Task<MemberView> CreateNewUser(MemberView member, string baseUrl);
 
-        Task<MemberView> Update(MemberView memberView);
+        Task<MemberView> Update(MemberView memberView, string baseUrl);
 
         #region Password.
 

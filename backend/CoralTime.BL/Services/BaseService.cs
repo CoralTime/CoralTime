@@ -12,8 +12,8 @@ namespace CoralTime.BL.Services
         {
             Uow = uow;
             Mapper = mapper;
-            CurrentUserName = Uow.CurrentUserName;
-            InpersonatedUserName = Uow.InpersonatedUserName;
+            CurrentUserName = Uow.UserNameCurrent;
+            InpersonatedUserName = Uow.UserNameImpersonated;
         }
         
         protected UnitOfWork Uow { get; set; }
@@ -22,7 +22,7 @@ namespace CoralTime.BL.Services
 
         public void CheckCurrentUser()
         {
-            CheckUserByUserName(Uow.CurrentUserName);
+            CheckUserByUserName(Uow.UserNameCurrent);
         }
 
         public void CheckUserByUserName(string userName)

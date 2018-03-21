@@ -129,7 +129,7 @@ namespace CoralTime
 
             // Configure NLog
             env.ConfigureNLog("nlog.config");
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -202,7 +202,6 @@ namespace CoralTime
             services.AddScoped<IMemberProjectRoleService, MemberProjectRoleService>();
             services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<INotificationService, NotificationsService>();
-            services.AddScoped<IPicturesCacheGuid, PicturesCacheGuidService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ITasksService, TasksService>();
@@ -210,7 +209,7 @@ namespace CoralTime
             services.AddScoped<IReportsService, ReportsService>();
             services.AddScoped<IReportExportService, ReportsExportService>();
             services.AddScoped<IReportsSettingsService, ReportsSettingsService>();
-            services.AddScoped<IAvatarService, AvatarService>();
+            services.AddScoped<IImageService, ImageService>();
             services.AddScoped<IRefreshDataBaseService, RefreshDataBaseService>();
             services.AddScoped<CheckSecureHeaderServiceFilter>();
             services.AddScoped<CheckSecureHeaderNotificationFilter>();
@@ -258,7 +257,6 @@ namespace CoralTime
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings.
-
                 if (isDemo)
                 {
                     options.Password.RequireDigit = false;

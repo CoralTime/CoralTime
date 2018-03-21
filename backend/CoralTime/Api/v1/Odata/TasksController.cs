@@ -1,7 +1,6 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
 using CoralTime.DAL.Models;
-using CoralTime.Services;
 using CoralTime.ViewModels.Tasks;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;

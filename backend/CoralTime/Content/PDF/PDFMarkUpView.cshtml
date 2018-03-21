@@ -2,7 +2,7 @@
 @using CoralTime.Common.Constants @*todo @Constants.ReportsGroupBy.Clients.ToString()*@
 @using RazorLight
 
-@model CoralTime.ViewModels.Reports.PDF.ReportsPDFCommonView
+@model CoralTime.ViewModels.Reports.PDF.ReportExportView
 
 <!DOCTYPE html>
 <html>
@@ -11,109 +11,111 @@
     <link rel="stylesheet" type="text/css" href="@Model.PatchCssStyle">
 </head>
 <body>
+<div class="divIncludeTable">
+    <table class="tableEntityHeaders">
+        <tr>
+            <td>
+                <span>@Model.PeriodCell.NameDisplay</span>
+                <span>@Model.PeriodCell.Value</span>
+            </td>
+        </tr>
+    </table>
+</div>
+@*@foreach (var groupedItems in Model.ReportTotalView.GroupedItems)
+{
     <div class="divIncludeTable">
         <table class="tableEntityHeaders">
-            <tr>
-                <td>
-                    <span>@Model.PeriodCell.NameDisplay</span>
-                    <span>@Model.PeriodCell.Value</span>
-                </td>
-                @if (Model.GroupById != (int)Constants.ReportsGroupBy.None)
-                {
-                    foreach (var grandHeader in Model.PDFGrandModel.GrandHeaders)
+            <thead>
+                <tr class="rowCommonEntityHeaders containerFlex">
+                    @foreach (var entityHeader in groupedItems.TotalForHeaders)
                     {
-                        <td style="text-align: right;">
-                            <span>@grandHeader.NameDisplay</span>
-                            <span>@grandHeader.Value</span>
-                        </td>
-                    }
-                }
-            </tr>
-        </table>
-    </div>
-    @foreach (var entity in Model.PDFGrandModel.Entities)
-    {
-        <div class="divIncludeTable">
-            <table class="tableEntityHeaders">
-                <thead>
-                    <tr class="rowCommonEntityHeaders containerFlex">
-                        @foreach (var entityHeader in entity.TotalHeaders)
+                        if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForActualTime.ToString() || entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForEstimatedTime.ToString())
                         {
-                            if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString() || entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
+                            if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForActualTime.ToString())
                             {
-                                if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString())
-                                {
-                                    <td class="columnCommonEntityHeaders childFlexRight2">
-                                        <span>@entityHeader.NameDisplay</span>
-                                        <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
-                                    </td>
-                                }
-                                else if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
-                                {
-                                    <td class="columnCommonEntityHeaders childFlexRight2">
-                                        <span>@entityHeader.NameDisplay</span>
-                                        <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
-                                    </td>
-                                }
+                                <td class="columnCommonEntityHeaders childFlexRight2">
+                                    <span>@entityHeader.NameDisplay</span>
+                                    <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
+                                </td>
                             }
-                            else
+                            else if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalForEstimatedTime.ToString())
                             {
-                                if (Model.GroupById != (int)Constants.ReportsGroupBy.None)
-                                {
-                                    <td class="columnCommonEntityHeaders childFlexLeft">
-                                        @if (entityHeader.NameDisplay != string.Empty)
-                                        {<span>@entityHeader.NameDisplay</span>}<span class="spanCommonEntityHeaders">@entityHeader.Value</span>
-                                    </td>
-                                }
+                                <td class="columnCommonEntityHeaders childFlexRight2">
+                                    <span>@entityHeader.NameDisplay</span>
+                                    <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
+                                </td>
                             }
                         }
-                    </tr>
-                </thead>
-            </table>
-            <table class="tableNestedHeaders">
-                <thead>
-                    <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
-                        @foreach (var entityHeaders in entity.EntityHeaders)
+                        else
                         {
-                            if (entityHeaders.Value == ReportsExportService.NameDisplays.Notes.ToString())
+                            if (Model.GroupById != (int)Constants.ReportsGroupBy.None)
+                            {
+                                <td class="columnCommonEntityHeaders childFlexLeft">
+                                    @if (entityHeader.NameDisplay != string.Empty)
+                                    {<span>@entityHeader.NameDisplay</span>}<span class="spanCommonEntityHeaders">@entityHeader.Value</span>
+                                </td>
+                            }
+                        }
+                    }
+                </tr>
+            </thead>
+        </table>
+        <table class="tableNestedHeaders">
+            <thead>
+                <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
+                    @foreach (var entityHeaders in groupedItems.EntityHeaders)
+                    {
+                        if (entityHeaders.Value == ReportsExportService.NameDisplays.Notes.ToString())
+                        {
+                            <td class="columnNestedEntityRows">
+                                <span>@entityHeaders.NameDisplay</span>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                <span>@entityHeaders.NameDisplay</span>
+                            </td>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var entityRows in groupedItems.EntityRows)
+                {
+                    <tr style="max-width: 500px;">
+                        @foreach (var entityRow in entityRows)
+                        {
+                            if (entityRow.NameDefault == ReportsExportService.InternalProperties.Description.ToString())
                             {
                                 <td class="columnNestedEntityRows">
-                                    <span>@entityHeaders.NameDisplay</span>
+                                    <span>@entityRow.Value</span>
                                 </td>
                             }
                             else
                             {
                                 <td>
-                                    <span>@entityHeaders.NameDisplay</span>
+                                    <span>@entityRow.Value</span>
                                 </td>
                             }
                         }
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var entityRows in entity.EntityRows)
-                    {
-                        <tr style="max-width: 500px;">
-                            @foreach (var entityRow in entityRows)
-                            {
-                                if (entityRow.NameDefault == ReportsExportService.InternalProperties.Description.ToString())
-                                {
-                                    <td class="columnNestedEntityRows">
-                                        <span>@entityRow.Value</span>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        <span>@entityRow.Value</span>
-                                    </td>
-                                }
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+                }
+            </tbody>
+        </table>
+    </div>
+}*@
+<div class="divIncludeTable">
+    <table class="tableEntityHeaders">
+        <tr>
+            <td style="text-align: right;">
+                <span>@Model.ReportTotalView.TimeTotal.TimeActualTotalDisplayName: @Model.ReportTotalView.TimeTotal.TimeActualTotal</span>
+            </td>
+            <td style="text-align: right;">
+                <span>@Model.ReportTotalView.TimeTotal.TimeEstimatedTotalDisplayName: @Model.ReportTotalView.TimeTotal.TimeEstimatedTotal</span>
+            </td>
+        </tr>
+    </table>
+</div>
 </body>
 </html>

@@ -24,6 +24,5 @@ namespace CoralTime.DAL.Repositories
         {
             return GetQueryAsNoTrakingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
         }
-       
     }
 }

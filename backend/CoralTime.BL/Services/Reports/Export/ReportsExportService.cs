@@ -6,7 +6,6 @@ using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.PDF;
 using CoralTime.ViewModels.Reports.Request.Grid;
-using CoralTime.ViewModels.Reports.Responce.ReportsGrid;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -78,7 +77,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #endregion
 
-        #region Exclude excess properties (Exlude enums and array of Properties) 
+        #region Exclude excess properties (Exclude enums and array of Properties) 
 
         public enum ExternalProperties
         {
@@ -86,10 +85,10 @@ namespace CoralTime.BL.Services.Reports.Export
             ClientName,
             MemberName,
             Date,
+            TotalForActualTime,
+            TotalForEstimatedTime,
             TotalActualTime,
             TotalEstimatedTime,
-            GrandActualTime,
-            GrandEstimatedTime,
         }
 
         public enum InternalProperties
@@ -102,11 +101,11 @@ namespace CoralTime.BL.Services.Reports.Export
             Date,
             TimeFrom,
             TimeTo,
-            ActualTime,
-            EstimatedTime,
+            TimeActual,
+            TimeEstimated,
             Description,
-            TotalActualTime,
-            TotalEstimatedTime,
+            TotalForTimeActual,
+            TotalForTimeEstimated,
         }
 
         private readonly List<string> _alwaysShowProperty = new List<string>
@@ -134,99 +133,84 @@ namespace CoralTime.BL.Services.Reports.Export
             ExcludePropertyByDefault.TaskId.ToString(),
         };
 
-
-        public enum ShowColumnModelIds
-        {
-            ShowEstimatedTime = 1 ,
-            ShowDate = 2,
-            ShowNotes = 3,
-            ShowStartFinish = 4
-        }
-
-        public static readonly ShowColumnModel[] showColumnsInfo =
-        {
-            //new ShowColumnModel{ Id = 0, ShowColumnDescriptions = new List<ShowColumnDescription>
-            //{
-            //    new ShowColumnDescription { Name = InternalProperties.ActualTime.ToString(), Description = "Show Actual Hours" },
-            //    new ShowColumnDescription { Name = InternalProperties.TotalActualTime.ToString(), Description = "Show Total Actual Hours" },
-            //    new ShowColumnDescription { Name = ExternalProperties.GrandActualTime.ToString(), Description = "Show Grand Actual Hours" },
-            //}},
-            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowEstimatedTime, ShowColumnDescriptions = new List<ShowColumnDescription>
-            {
-                new ShowColumnDescription { Name = InternalProperties.EstimatedTime.ToString(), Description = "Show Estimated Hours" },
-                new ShowColumnDescription { Name = InternalProperties.TotalEstimatedTime.ToString(), Description = "Show Total Estimated Hours" },
-                new ShowColumnDescription { Name = ExternalProperties.GrandEstimatedTime.ToString(), Description = "Show Grand Estimated Hours" },
-            }},
-            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowDate, ShowColumnDescriptions = new List<ShowColumnDescription>
-            {
-                new ShowColumnDescription { Name = InternalProperties.Date.ToString(), Description = "Show Date"}
-            }},
-            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowNotes, ShowColumnDescriptions = new List<ShowColumnDescription>
-            {
-                new ShowColumnDescription { Name = InternalProperties.Description.ToString(), Description = "Show Notes"}
-            }},
-            new ShowColumnModel{ Id = (int) ShowColumnModelIds.ShowStartFinish, ShowColumnDescriptions = new List<ShowColumnDescription>
-            {
-                new ShowColumnDescription { Name = InternalProperties.TimeFrom.ToString(), Description = "Show Start Time"},
-                new ShowColumnDescription { Name = InternalProperties.TimeTo.ToString(), Description = "Show Finish Time"}
-            }}
-        };
+        //public static readonly ShowColumnModel[] showColumnsInfo =
+        //{
+        //    new ShowColumnModel{ Id = (int) Constants.ShowColumnModelIds.ShowEstimatedTime, ShowColumnDescriptions = new List<ShowColumnDescription>
+        //    {
+        //        new ShowColumnDescription { Name = InternalProperties.TimeEstimated.ToString(), Description = "Show Estimated Hours" },
+        //    }},
+        //    new ShowColumnModel{ Id = (int) Constants.ShowColumnModelIds.ShowDate, ShowColumnDescriptions = new List<ShowColumnDescription>
+        //    {
+        //        new ShowColumnDescription { Name = InternalProperties.Date.ToString(), Description = "Show Date"}
+        //    }},
+        //    new ShowColumnModel{ Id = (int) Constants.ShowColumnModelIds.ShowNotes, ShowColumnDescriptions = new List<ShowColumnDescription>
+        //    {
+        //        new ShowColumnDescription { Name = InternalProperties.Description.ToString(), Description = "Show Notes"}
+        //    }},
+        //    new ShowColumnModel{ Id = (int) Constants.ShowColumnModelIds.ShowStartFinish, ShowColumnDescriptions = new List<ShowColumnDescription>
+        //    {
+        //        new ShowColumnDescription { Name = InternalProperties.TimeFrom.ToString(), Description = "Show Start Time"},
+        //        new ShowColumnDescription { Name = InternalProperties.TimeTo.ToString(), Description = "Show Finish Time"}
+        //    }}
+        //};
 
         #endregion
 
         #region Export Excel, CSV, PDF. 
 
-        public async Task<FileResult> ExportFileGroupByNoneAsync(ReportsGridView reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileGroupedByTypeAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
-            var groupByNone = _reportService.ReportsGridGroupByNone(reportsGridData);
-            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByNone);
+            var groupByType = _reportService.GetReportsGroupingBy(reportsGridData);
 
-            return result;
-        }
+            var fileOfBytes = await CreateReportsFileOfBytesAsync(reportsGridData, groupByType);
+            var fileStreamResult = SaveFileToFileStreamResult(httpContext, fileOfBytes);
 
-        public async Task<FileResult> ExportFileGroupByProjectsAsync(ReportsGridView reportsGridData, HttpContext httpContext)
-        {
-            var groupByProjects = _reportService.ReportsGridGroupByProjects(reportsGridData);
-            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByProjects);
-
-            return result;
-        }
-
-        public async Task<FileResult> ExportFileGroupByUsersAsync(ReportsGridView reportsGridData, HttpContext httpContext)
-        {
-            var groupByUsers = _reportService.ReportsGridGroupByUsers(reportsGridData);
-            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByUsers);
-
-            return result;
-        }
-
-        public async Task<FileResult> ExportFileGroupByDatesAsync(ReportsGridView reportsGridData, HttpContext httpContext)
-        {
-            var groupByDates = _reportService.ReportsGridGroupByDates(reportsGridData);
-            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByDates);
-
-            return result;
-        }
-
-        public async Task<FileResult> ExportFileGroupByClientsAsync(ReportsGridView reportsGridData, HttpContext httpContext)
-        {
-            var groupByClient = _reportService.ReportsGridGroupByClients(reportsGridData);
-            var result = await GetExportFileWithGroupingAsync(reportsGridData, httpContext, groupByClient);
-
-            return result;
+            return fileStreamResult;
         }
 
         #endregion
 
         #region Export Excel, CSV, PDF. (Common methods)
 
-        private async Task<FileStreamResult> GetExportFileWithGroupingAsync<T>(ReportsGridView reportsGridData, HttpContext httpContext, IReportsGrandGridView<T> groupingList)
+        private async Task<byte[]> CreateReportsFileOfBytesAsync(ReportsGridView reportsGridView, ReportTotalView reportTotalView)
         {
-            var fileByte = await CreateReportFileByteUpdateFileNameContentTypeAsync(reportsGridData, groupingList);
+            SetCommonValuesForExport(reportsGridView);
 
-            var fileStreamResult = SaveFileToFileStreamResult(httpContext, fileByte);
+            var fileOfBytes = new byte[0];
 
-            return fileStreamResult;
+            UpdateFileName();
+
+            switch (reportsGridView.FileTypeId ?? 0)
+            {
+                case (int) FileType.Excel:
+                {
+                    FileName = FileName + ExtensionXLSX;
+                    //fileOfBytes = CreateFileExcel(reportTotalView);
+                    ContentType = ContentTypeXLSX;
+
+                    break;
+                }
+
+                case (int) FileType.CSV:
+                {
+                    FileName = FileName + ExtensionCSV;
+                    //file = CreateFileCSV(reportTotalView);
+                    ContentType = ContentTypeCSV;
+
+                    break;
+                }
+
+                case (int) FileType.PDF:
+                {
+                    FileName = FileName + ExtensionPDF;
+                    fileOfBytes = await CreateFilePDFAsync(reportTotalView);
+                    ContentType = ContentTypePDF;
+
+                    break;
+                }
+            }
+
+            return fileOfBytes;
         }
 
         private FileStreamResult SaveFileToFileStreamResult(HttpContext httpContext, byte[] fileByte)
@@ -241,55 +225,14 @@ namespace CoralTime.BL.Services.Reports.Export
             return fileStreamResult;
         }
 
-        private async Task<byte[]> CreateReportFileByteUpdateFileNameContentTypeAsync<T>(ReportsGridView reportsGridData, IReportsGrandGridView<T> groupingList)
-        {
-            SetCommonValuesForExport<T>(reportsGridData);
-
-            var file = new byte[0];
-
-            UpdateFileName();
-
-            switch (reportsGridData.FileTypeId ?? 0)
-            {
-                case (int) FileType.Excel:
-                {
-                    FileName = FileName + ExtensionXLSX;
-                    file = CreateFileExcel(groupingList);
-                    ContentType = ContentTypeXLSX;
-
-                    break;
-                }
-
-                case (int) FileType.CSV:
-                {
-                    FileName = FileName + ExtensionCSV;
-                    file = CreateFileCSV(groupingList);
-                    ContentType = ContentTypeCSV;
-
-                    break;
-                }
-
-                case (int) FileType.PDF:
-                {
-                    FileName = FileName + ExtensionPDF;
-                    file = await CreateFilePDFAsync(groupingList);
-                    ContentType = ContentTypePDF;
-
-                    break;
-                }
-            }
-
-            return file;
-        }
-
         private void UpdateFileName()
         {
-            if(!string.IsNullOrEmpty(_reportService.SingleFilteredProjectName))
+            if (!string.IsNullOrEmpty(_reportService.SingleFilteredProjectName))
             {
                 FileName = FileName + " " + _reportService.SingleFilteredProjectName + " " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
             }
             else
-        {
+            {
                 FileName = FileName + " Reports " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
             }
         }
@@ -299,32 +242,19 @@ namespace CoralTime.BL.Services.Reports.Export
             return CultureInfo.InvariantCulture.DateTimeFormat.GetAbbreviatedMonthName(date.Month) + " " + date.Day;
         }
 
-        private bool RunSetCommonValuesForExport { get; set; }
-
-        private void SetCommonValuesForExport<T>(ReportsGridView reportsGridData)
+        private void SetCommonValuesForExport(ReportsGridView reportsGridData)
         {
-            RunSetCommonValuesForExport = true;
-
-            #region Set Global Properties. 
-            // TODO change type!
-            GroupById = reportsGridData.CurrentQuery.GroupById ?? 3;
-
+            GroupById = SetGroupByOrDefaultGrouping(reportsGridData.CurrentQuery.GroupById);
             ShowColumnIds = reportsGridData.CurrentQuery.ShowColumnIds;
 
             DateFormatId = reportsGridData.DateFormatId;
-
             DateFrom = _reportService.DateFrom;
             DateTo = _reportService.DateTo;
+        }
 
-            #endregion
-
-            #region Get excluded props by Grand, Entity, NestedEntity headers in arrays.
-
-            PropsGroupByAndTotalTimes = ExcludeProps(typeof(T));
-            PropsEntityHeadersAndRows = ExcludeProps(typeof(IReportsGridItemsView));
-            PropsEntitiesTotalHeaders = ExcludeProps(typeof(IReportsGrandGridView<T>));
-
-            #endregion
+        private int SetGroupByOrDefaultGrouping(int? groupById)
+        {
+            return groupById ?? (int) Constants.ReportsGroupBy.Date;
         }
 
         #region Exclude excess properties
@@ -336,23 +266,23 @@ namespace CoralTime.BL.Services.Reports.Export
             4. Rename some properties.
         */
 
-        private bool IsPropByDefaultGrouping(string propName)
-        {
-            var result = propName == InternalProperties.ProjectName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Project
-                         || propName == InternalProperties.MemberName.ToString() && GroupById == (int) Constants.ReportsGroupBy.User
-                         || propName == InternalProperties.Date.ToString() && GroupById == (int) Constants.ReportsGroupBy.Date
-                         || propName == InternalProperties.ClientName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Client
-                         || propName == InternalProperties.TimeEntryName.ToString() && GroupById == (int) Constants.ReportsGroupBy.None;
+        //private bool IsGroupByThisProperty(string propName)
+        //{
+        //    var result = propName == InternalProperties.ProjectName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Project
+        //                 || propName == InternalProperties.MemberName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Member
+        //                 || propName == InternalProperties.Date.ToString() && GroupById == (int) Constants.ReportsGroupBy.Date
+        //                 || propName == InternalProperties.ClientName.ToString() && GroupById == (int) Constants.ReportsGroupBy.Client
+        //                 || propName == InternalProperties.TimeEntryName.ToString() && GroupById == (int) Constants.ReportsGroupBy.None;
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        private bool IsPropTotalOrActualTime(string propName)
-        {
-            var result = propName == InternalProperties.TotalActualTime.ToString() 
-                         || propName == InternalProperties.TotalEstimatedTime.ToString();
-            return result;
-        }
+        //private bool IsPropTotalOrActualTime(string propName)
+        //{
+        //    var result = propName == InternalProperties.TotalForTimeActual.ToString() 
+        //                 || propName == InternalProperties.TotalForTimeEstimated.ToString();
+        //    return result;
+        //}
 
         private List<PropertyInfo> ExcludeProps(Type type)
         {
@@ -381,7 +311,7 @@ namespace CoralTime.BL.Services.Reports.Export
             var availableProps = new List<PropertyInfo>();
             foreach (var prop in props)
             {
-                if (hideColumns.All(x => x != prop.Name) && prop.Name != ExternalProperties.TotalActualTime.ToString() && prop.Name != ExternalProperties.TotalEstimatedTime.ToString())
+                if (hideColumns.All(x => x != prop.Name) && prop.Name != ExternalProperties.TotalForActualTime.ToString() && prop.Name != ExternalProperties.TotalForEstimatedTime.ToString())
                 {
                     availableProps.Add(prop);
                 }
@@ -392,125 +322,126 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private string[] AddHideColumns()
         {
-            if (ShowColumnIds != null)
-            {
-                foreach (var showColumnInfo in showColumnsInfo)
-                {
-                    var isAddPropToExcludeArray = !ShowColumnIds.Contains(showColumnInfo.Id);
-                    if (isAddPropToExcludeArray)
-                    {
-                        var showColumnDescriptionsById = showColumnsInfo.FirstOrDefault(x => x.Id == showColumnInfo.Id)?.ShowColumnDescriptions;
+            // TODO 
+            //if (ShowColumnIds != null)
+            //{
+            //    foreach (var showColumnInfo in Constants.showColumnsInfo222)
+            //    {
+            //        var isAddPropToExcludeArray = !ShowColumnIds.Contains(showColumnInfo.Id);
+            //        if (isAddPropToExcludeArray)
+            //        {
+            //            var showColumnDescriptionsById = Constants.showColumnsInfo222.FirstOrDefault(x => x.Id == showColumnInfo.Id)?.Description;
                         
-                        foreach (var tmpItem in showColumnDescriptionsById)
-                        {
-                            if (GroupById == (int)Constants.ReportsGroupBy.Date && showColumnDescriptionsById.Any(x => x.Name.Contains(InternalProperties.Date.ToString())))
-                            {
-                                continue;
-                            }
+            //            foreach (var tmpItem in showColumnDescriptionsById)
+            //            {
+            //                if (GroupById == (int)Constants.ReportsGroupBy.Date && showColumnDescriptionsById.Any(x => x.Name.Contains(InternalProperties.Date.ToString())))
+            //                {
+            //                    continue;
+            //                }
 
-                            _excludeProperties = _excludeProperties.Append(tmpItem.Name).ToArray();
-                        }
-                    }
-                }
-            }
+            //                _excludeProperties = _excludeProperties.Append(tmpItem.Name).ToArray();
+            //            }
+            //        }
+            //    }
+            //}
 
             return _excludeProperties;
         }
 
-        private List<string> RenameNestedEntityHeaders(List<PropertyInfo> props)
-        {
-            var result = new List<string>();
+        //private List<string> RenameNestedEntityHeaders(List<PropertyInfo> props)
+        //{
+        //    var result = new List<string>();
 
-            foreach (var prop in props)
-            {
-                if (IsPropByDefaultGrouping(prop.Name))
-                {
-                    continue;
-                }
+        //    foreach (var prop in props)
+        //    {
+        //        //if (IsGroupByThisProperty(prop.Name))
+        //        //{
+        //        //    continue;
+        //        //}
 
-                if (prop.Name == InternalProperties.ClientName.ToString())
-                {
-                    result.Add("Client");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.ClientName.ToString())
+        //        {
+        //            result.Add("Client");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.MemberName.ToString())
-                {
-                    result.Add("User");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.MemberName.ToString())
+        //        {
+        //            result.Add("User");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.ProjectName.ToString())
-                {
-                    result.Add("Project");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.ProjectName.ToString())
+        //        {
+        //            result.Add("Project");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.TaskName.ToString())
-                {
-                    result.Add("Task");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.TaskName.ToString())
+        //        {
+        //            result.Add("Task");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.Description.ToString())
-                {
-                    result.Add("Notes");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.Description.ToString())
+        //        {
+        //            result.Add("Notes");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.ActualTime.ToString())
-                {
-                    result.Add("Act. Hours");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.TimeActual.ToString())
+        //        {
+        //            result.Add("Act. Hours");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.EstimatedTime.ToString())
-                {
-                    result.Add("Est. Hours");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.TimeEstimated.ToString())
+        //        {
+        //            result.Add("Est. Hours");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.TimeFrom.ToString())
-                {
-                    result.Add("Start");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.TimeFrom.ToString())
+        //        {
+        //            result.Add("Start");
+        //            continue;
+        //        }
 
-                if (prop.Name == InternalProperties.TimeTo.ToString())
-                {
-                    result.Add("Finish");
-                    continue;
-                }
+        //        if (prop.Name == InternalProperties.TimeTo.ToString())
+        //        {
+        //            result.Add("Finish");
+        //            continue;
+        //        }
 
-                result.Add(prop.Name);
-            }
+        //        result.Add(prop.Name);
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public enum NameDisplays
-        {
-            Notes
-        }
+        //public enum NameDisplays
+        //{
+        //    Notes
+        //}
 
         private string GetNameDisplayForGrandAndTotalHeaders(string propName)
         {
-            if (propName == ExternalProperties.GrandActualTime.ToString())
+            if (propName == ExternalProperties.TotalActualTime.ToString())
             {
                 return string.Empty;
             }
 
-            if (propName == ExternalProperties.GrandEstimatedTime.ToString())
+            if (propName == ExternalProperties.TotalEstimatedTime.ToString())
             {
                 return string.Empty;
             }
 
-            if (propName == InternalProperties.TotalActualTime.ToString())
+            if (propName == InternalProperties.TotalForTimeActual.ToString())
             {
                 return "TOTAL FOR: ";
             }
 
-            if (propName == InternalProperties.TotalEstimatedTime.ToString())
+            if (propName == InternalProperties.TotalForTimeEstimated.ToString())
             {
                 return "TOTAL FOR: ";
             }
@@ -541,7 +472,7 @@ namespace CoralTime.BL.Services.Reports.Export
             {
                 var tmpName = "User";
 
-                if (GroupById == (int)Constants.ReportsGroupBy.User)
+                if (GroupById == (int)Constants.ReportsGroupBy.Member)
                 {
                     tmpName = tmpName.ToUpper() + ": ";
                 }
@@ -565,7 +496,7 @@ namespace CoralTime.BL.Services.Reports.Export
             {
                 var tmpName = "Date";
 
-                if (GroupById == (int)Constants.ReportsGroupBy.User)
+                if (GroupById == (int)Constants.ReportsGroupBy.Member)
                 {
                     tmpName = InternalProperties.Date.ToString().ToUpper() + ": ";
                 }
@@ -583,160 +514,44 @@ namespace CoralTime.BL.Services.Reports.Export
             return propName;
         }
 
-        private List<PropertyInfo> ExludePropByDefaultGrouping(List<PropertyInfo> props)
+        //private List<PropertyInfo> ExludePropByDefaultGrouping(List<PropertyInfo> props)
+        //{
+        //    var availableProps = new List<PropertyInfo>();
+
+        //    foreach (var prop in props)
+        //    {
+        //        if (IsGroupByThisProperty(prop.Name))
+        //        {
+        //            continue;
+        //        }
+
+        //        availableProps.Add(prop);
+        //    }
+
+        //    return availableProps;
+        //}
+
+        private ReportsCell GetNameDisplayForTotalHeaderPDF(PropertyInfo prop, string value)
         {
-            var availableProps = new List<PropertyInfo>();
-
-            foreach (var prop in props)
-            {
-                if (IsPropByDefaultGrouping(prop.Name))
-                {
-                    continue;
-                }
-
-                availableProps.Add(prop);
-            }
-
-            return availableProps;
-        }
-
-        private PDFCell GetNameDisplayForTotalHeaderPDF(PropertyInfo prop, string value)
-        {
-            var PDFcell = new PDFCell
+            var PDFcell = new ReportsCell
             {
                 NameDisplay = prop.Name,
                 NameDefault = prop.Name
             };
 
-            #region Grand headers 
-
-            if (prop.Name == ExternalProperties.GrandActualTime.ToString())
-            {
-                PDFcell.NameDisplay = "Grand Actual Time: ";
-                return PDFcell;
-            }
-
-            if (prop.Name == ExternalProperties.GrandEstimatedTime.ToString())
-            {
-                PDFcell.NameDisplay = "Grand Estimated Time: ";
-                return PDFcell;
-            }
-
-            #endregion
-
-            #region Total headers 
+            #region TotalFor headers 
              
-            if (prop.Name == InternalProperties.TotalActualTime.ToString())
-            {
-                PDFcell.NameDisplay = "Total Actual Time: ";
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.TotalEstimatedTime.ToString())
-            {
-                PDFcell.NameDisplay = "Total Estimated Time: ";
-                return PDFcell;
-            }
-
             if (prop.Name == InternalProperties.ClientName.ToString() && value == Constants.WithoutClient.Name)
             {
                 PDFcell.NameDisplay = string.Empty;
                 return PDFcell;
             }
 
-            if (prop.Name == InternalProperties.TimeEntryName.ToString())
-            {
-                PDFcell.NameDisplay = string.Empty;
-                return PDFcell;
-            }
-
-            #endregion
-
-            #region Entity headers
-
-            if (prop.Name == InternalProperties.ProjectName.ToString())
-            {
-                PDFcell.NameDisplay = "Project";
-
-                if (GroupById == (int)Constants.ReportsGroupBy.Project)
-                {
-                    PDFcell.NameDisplay = PDFcell.NameDisplay + ": ";
-                }
-
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.ClientName.ToString())
-            {
-                PDFcell.NameDisplay = "Client";
-
-                if (GroupById == (int)Constants.ReportsGroupBy.Client)
-                {
-                    PDFcell.NameDisplay = PDFcell.NameDisplay + ": ";
-                }
-
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.Date.ToString())
-            {
-                PDFcell.NameDisplay = "Date";
-
-                if (GroupById == (int) Constants.ReportsGroupBy.Date)
-                {
-                    PDFcell.NameDisplay = PDFcell.NameDisplay + ": ";
-                }
-
-                return PDFcell;
-            }
-
-            if (prop.Name.Contains(InternalProperties.MemberName.ToString()))
-            {
-                PDFcell.NameDisplay = "User";
-
-                if (GroupById == (int)Constants.ReportsGroupBy.User)
-                {
-                    PDFcell.NameDisplay = PDFcell.NameDisplay + ": ";
-                }
-
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.TaskName.ToString())
-            {
-                PDFcell.NameDisplay = "Task";
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.Description.ToString())
-            {
-                PDFcell.NameDisplay = "Notes";
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.ActualTime.ToString())
-            {
-                PDFcell.NameDisplay = "Actual Hours";
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.EstimatedTime.ToString())
-            {
-                PDFcell.NameDisplay = "Estimated Hours";
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.TimeFrom.ToString())
-            {
-                PDFcell.NameDisplay = "Start";
-                return PDFcell;
-            }
-
-            if (prop.Name == InternalProperties.TimeTo.ToString())
-            {
-                PDFcell.NameDisplay = "Finish";
-                return PDFcell;
-            }
+            //if (prop.Name == InternalProperties.TimeEntryName.ToString())
+            //{
+            //    PDFcell.NameDisplay = string.Empty;
+            //    return PDFcell;
+            //}
 
             #endregion
 
@@ -747,14 +562,9 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Common Arrays of available Properties
 
-        private List<PropertyInfo> PropsGroupByAndTotalTimes = new List<PropertyInfo>();
-        private List<PropertyInfo> PropsEntityHeadersAndRows = new List<PropertyInfo>();
-        private List<PropertyInfo> PropsEntitiesTotalHeaders = new List<PropertyInfo>();
-
         private string GetValueForCellPeriodDate()
         {
             var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
-            //value = DateTime.Parse(value).ToString(dateFormat, );
             var valueForPeriodCell = "Period: " + DateFrom.ToString(dateFormat, CultureInfo.InvariantCulture) + " - " + DateTo.ToString(dateFormat, CultureInfo.InvariantCulture);
             return valueForPeriodCell;
         }
@@ -764,11 +574,11 @@ namespace CoralTime.BL.Services.Reports.Export
             return "TOTAL: ";
         }
 
-        private PDFCell GetPeriodPDFCell()
+        private ReportsCell GetPeriodPDFCell()
         {
             var dateFormat = new GetDateFormat().GetDateFormaDotNetById(DateFormatId);
 
-            var pdfCell = new PDFCell
+            var pdfCell = new ReportsCell
             {
                 NameDefault = "PeriodName",
                 NameDisplay = "Period: ",
@@ -780,27 +590,6 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #endregion
 
-        private TCell CreateCell<T, TCell>(PropertyInfo prop, T entity) where TCell: PDFCell, new()
-        {
-            var value = "EmptyValue";
-
-            if (entity != null)
-            {
-                value = GetFormattedValueForCell(prop, entity);
-            }
-
-            var cell = GetNameDisplayForTotalHeaderPDF(prop, value);
-
-            var grandEntityHeadersModel = new TCell
-            {
-                NameDefault = cell.NameDefault,
-                NameDisplay = cell.NameDisplay,
-                Value = value
-            };
-
-            return grandEntityHeadersModel;
-        }
-
         private string GetFormattedValueForCell<T>(PropertyInfo prop, T entity)
         {
             var value = GetValueSingleFromProp(prop, entity);
@@ -808,7 +597,6 @@ namespace CoralTime.BL.Services.Reports.Export
             value = UpdateTimeFormatForValue(prop, value);
             value = UpdateProjectNameToUpperCase(prop, value);
             value = UpdateDateFormat(prop, value);
-            value = ResetValueForGroupByNone(prop, value);
 
             return value;
         }

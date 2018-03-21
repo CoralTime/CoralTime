@@ -264,8 +264,8 @@
       "ProjectName": "CoralTime",
       "TaskTypeName": "Testing",
       "DayNumberOfWeek": "1",
-      "Time": "3600",
-      "PlannedTime": "0",
+      "TimeActual": "3600",
+      "TimeEstimated": "0",
       "Description": "Filling in test data for the demo site'"
     }
   ]

@@ -3,7 +3,8 @@ using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
+using CoralTime.DAL.ConvertModelToView.Profile;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.DateFormat;
@@ -14,7 +15,6 @@ using CoralTime.ViewModels.Member.MemberPreferencesView;
 using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static CoralTime.Common.Constants.Constants;
@@ -27,9 +27,9 @@ namespace CoralTime.BL.Services
         private readonly IMemberService _memberService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly bool _isDemo;
-        private readonly IAvatarService _avatarService;
+        private readonly IImageService _avatarService;
 
-        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IAvatarService avatarService)
+        public ProfileService(UnitOfWork uow, IConfiguration config, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IImageService avatarService)
             : base(uow, mapper)
         {
             _config = config;
@@ -94,7 +94,7 @@ namespace CoralTime.BL.Services
             return null;
         }
 
-        public List<ProfileProjectMemberView> GetProjectMembers(int projectId)
+        public IEnumerable<ProjectMembersView> GetProjectMembers(int projectId)
         {
             var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
             if (user == null || !user.IsActive)
@@ -123,32 +123,22 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeForbiddenException($"User with userName {InpersonatedUserName} has no access to project with id {projectId}");
             }
 
-            IEnumerable<Member> projectMembers;
+            var projectMembers = new List<Member>();
 
             if (project.IsPrivate)
             {
                 projectMembers = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
                         .Where(r => r.ProjectId == projectId && r.Member.User.IsActive)
-                        .Select(r => r.Member);
+                        .Select(r => r.Member).ToList();
             }
             else
             {
-                projectMembers = Uow.MemberRepository.LinkedCacheGetList()
-                        .Where(m => m.User.IsActive);
+                projectMembers = Uow.MemberRepository.LinkedCacheGetList().Where(m => m.User.IsActive).ToList();
             }
 
-            var list = projectMembers.Select(m => new ProfileProjectMemberView
-            {
-                MemberId = m.Id,
-                MemberName = m.FullName
-            }).ToList();
+            var profileProjectMemberView = projectMembers.Select(x => x.GetViewProjectMembers(Mapper, _avatarService.GetUrlIcon(x.Id)));
 
-            foreach (var item in list)
-            {
-                _avatarService.AddIconUrlInViewModel(item);
-            }
-
-            return list;
+            return profileProjectMemberView;
         }
 
         public MemberView PatchNotifications(MemberNotificationView memberNotificationView)
@@ -159,19 +149,15 @@ namespace CoralTime.BL.Services
             memberByName.SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(memberNotificationView.SendEmailDays);
             memberByName.IsWeeklyTimeEntryUpdatesSend = memberNotificationView.IsWeeklyTimeEntryUpdatesSend;
 
-            try
-            {
-                Uow.MemberRepository.Update(memberByName);
-                Uow.Save();
+            Uow.MemberRepository.Update(memberByName);
+            Uow.Save();
 
-                Uow.MemberRepository.LinkedCacheClear();
+            Uow.MemberRepository.LinkedCacheClear();
 
-                return memberByName.GetView(Mapper);
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating member", e);
-            }
+            var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+            var memberView = memberByName.GetView(Mapper, urlIcon);
+
+            return memberView;
         }
 
         public MemberView PatchPreferences(MemberPreferencesView memberPreferencesView)
@@ -184,19 +170,16 @@ namespace CoralTime.BL.Services
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;
             memberByName.TimeFormat = memberPreferencesView.TimeFormat;
             memberByName.WeekStart = (WeekStart)memberPreferencesView.WeekStart;
+     
+            Uow.MemberRepository.Update(memberByName);
+            Uow.Save();
 
-            try
-            {
-                Uow.MemberRepository.Update(memberByName);
-                Uow.Save();
+            Uow.MemberRepository.LinkedCacheClear();
 
-                Uow.MemberRepository.LinkedCacheClear();
-                return memberByName.GetView(Mapper);
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating member", e);
-            }
+            var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+            var memberView = memberByName.GetView(Mapper, urlIcon);
+
+            return memberView;
         }
 
         public MemberView PatchPersonalInfo(MemberPersonalInfoView memberPreferencesView)
@@ -214,23 +197,19 @@ namespace CoralTime.BL.Services
             CheckRelatedEntities(InpersonatedUserName, out var memberByName);
             memberByName = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName);
             memberByName.FullName = memberPreferencesView.FullName;
+          
+            Uow.MemberRepository.Update(memberByName);
+            Uow.Save();
 
-            try
-            {
-                Uow.MemberRepository.Update(memberByName);
+            _memberService.ChangeEmailByUserAsync(memberByName, memberPreferencesView.Email).GetAwaiter().GetResult();
+            _memberService.UpdateUserClaims(memberByName.Id);
 
-                Uow.Save();
+            Uow.MemberRepository.LinkedCacheClear();
 
-                _memberService.ChangeEmailByUserAsync(memberByName, memberPreferencesView.Email).GetAwaiter().GetResult();
-                _memberService.UpdateUserClaims(memberByName.Id);
+            var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+            var memberView = memberByName.GetView(Mapper, urlIcon);
 
-                Uow.MemberRepository.LinkedCacheClear();
-                return memberByName.GetView(Mapper);
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeSafeEntityException("An error occurred while updating member", e);
-            }
+            return memberView;
         }
 
         private void CheckRelatedEntities(string userName, out Member relatedMemberByName)
