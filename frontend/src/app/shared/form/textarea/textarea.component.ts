@@ -29,14 +29,17 @@ export class TextareaComponent implements ControlValueAccessor {
 	@Input() maxlength: number;
 	@Input() placeholder: string = '';
 	@Input() canResize: boolean = false;
+
 	@Output() change: EventEmitter<TextareaChange> = new EventEmitter<TextareaChange>();
-	modelValue: any;
-	isFocusClassShown: boolean = false;
 
 	@ViewChild('slimScroll') slimScroll: any;
 	@ViewChild('autoSizer') autoSizer: MatTextareaAutosize;
 
-	private _disabled: boolean = false;
+	isFocusClassShown: boolean;
+	modelValue: any;
+
+	private _disabled: boolean;
+
 	@Input()
 	get disabled(): boolean {
 		return this._disabled;
@@ -50,10 +53,6 @@ export class TextareaComponent implements ControlValueAccessor {
 	private onTouched: () => any = () => {};
 
 	constructor(private ref: ChangeDetectorRef) {
-		setTimeout(() => {
-			this.autoSizer.resizeToFitContent();
-			this.slimScroll.getBarHeight();
-		}, 0);
 	}
 
 	updateModel(modelValue: any) {
@@ -99,7 +98,12 @@ export class TextareaComponent implements ControlValueAccessor {
 		event.value = this.modelValue;
 
 		this._controlValueAccessorChangeFn(this.modelValue);
-		this.slimScroll.getBarHeight();
+		this.resizeTextarea();
 		this.change.emit(event);
+	}
+
+	private resizeTextarea(): void {
+		this.autoSizer.resizeToFitContent();
+		this.slimScroll.getBarHeight();
 	}
 }
