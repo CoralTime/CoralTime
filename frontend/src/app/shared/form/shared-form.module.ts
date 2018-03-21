@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MultiSelectComponent } from './multiselect/multiselect.component';
 import { SelectComponent } from './select/select.component';
 import { DirectivesModule } from '../directives/directives.module';
-// import { ColorPickerComponent } from './color-picker/color-picker.component';
+import { ColorPickerComponent } from './color-picker/color-picker.component';
 import { TextareaComponent } from './textarea/textarea.component';
 import { InputListComponent } from './input-list/input-list.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -22,7 +22,7 @@ import { MaterialModule } from '../material.module';
 		TextMaskModule
 	],
 	declarations: [
-		// ColorPickerComponent,
+		ColorPickerComponent,
 		InputListComponent,
 		MultiSelectComponent,
 		SelectComponent,
@@ -32,7 +32,7 @@ import { MaterialModule } from '../material.module';
 		FormsModule,
 		MaterialModule,
 		ReactiveFormsModule,
-		// ColorPickerComponent,
+		ColorPickerComponent,
 		InputListComponent,
 		MultiSelectComponent,
 		SelectComponent,

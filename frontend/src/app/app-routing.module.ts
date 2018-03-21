@@ -22,14 +22,14 @@ export const appRoutes: Routes = [
 		path: 'profile',
 		loadChildren: 'app/pages/profile/profile.module#ProfileModule'
 	},
-	// {
-	// 	path: 'projects',
-	// 	loadChildren: 'app/pages/projects/projects.module#ProjectsModule'
-	// },
-	// {
-	// 	path: 'clients',
-	// 	loadChildren: 'app/pages/clients/clients.module#ClientsModule'
-	// },
+	{
+		path: 'projects',
+		loadChildren: 'app/pages/projects/projects.module#ProjectsModule'
+	},
+	{
+		path: 'clients',
+		loadChildren: 'app/pages/clients/clients.module#ClientsModule'
+	},
 	{
 		path: 'calendar',
 		loadChildren: 'app/pages/calendar/calendar.module#CalendarModule'
@@ -46,18 +46,18 @@ export const appRoutes: Routes = [
 		path: 'forgot-password',
 		loadChildren: 'app/pages/forgot-password/forgot-password.module#ForgotPasswordModule'
 	},
-	// {
-	// 	path: 'tasks',
-	// 	loadChildren: 'app/pages/tasks/tasks.module#TasksModule'
-	// },
-	// {
-	// 	path: 'users',
-	// 	loadChildren: 'app/pages/users/users.module#UsersModule'
-	// },
-	// {
-	// 	path: 'reports',
-	// 	loadChildren: 'app/pages/reports/reports.module#ReportsModule'
-	// },
+	{
+		path: 'tasks',
+		loadChildren: 'app/pages/tasks/tasks.module#TasksModule'
+	},
+	{
+		path: 'users',
+		loadChildren: 'app/pages/users/users.module#UsersModule'
+	},
+	{
+		path: 'reports',
+		loadChildren: 'app/pages/reports/reports.module#ReportsModule'
+	},
 	{
 		path: 'error',
 		component: ServerErrorComponent

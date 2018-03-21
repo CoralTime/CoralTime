@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import {
 	MatButtonModule, MatCheckboxModule, MatDialogModule, MatIconModule, MatInputModule, MatListModule,
-	MatProgressSpinnerModule, MatSnackBarModule
+	MatProgressSpinnerModule, MatRadioModule, MatSelectModule, MatSnackBarModule
 } from '@angular/material';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 @NgModule({
 	imports: [
@@ -13,7 +14,10 @@ import {
 		MatInputModule,
 		MatListModule,
 		MatProgressSpinnerModule,
-		MatSnackBarModule
+		MatRadioModule,
+		MatSelectModule,
+		MatSnackBarModule,
+		OverlayModule
 	],
 	exports: [
 		MatButtonModule,
@@ -23,7 +27,10 @@ import {
 		MatInputModule,
 		MatListModule,
 		MatProgressSpinnerModule,
-		MatSnackBarModule
+		MatRadioModule,
+		MatSelectModule,
+		MatSnackBarModule,
+		OverlayModule
 	]
 })
 

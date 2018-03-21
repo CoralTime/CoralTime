@@ -3,6 +3,7 @@ import { Validator, AbstractControl, NG_ASYNC_VALIDATORS } from '@angular/forms'
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/debounceTime';
 import { ProjectsService } from '../../services/projects.service';
 import { Project } from '../../models/project';
 
