@@ -10,7 +10,7 @@
                 <label class="ct-form-label">Client Name</label>
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" [ctClientNameValidator]="model" name="name"
-                           maxlength="200" validate-onblur [(ngModel)]="model.name"
+                           maxlength="200" ctValidateOnblur [(ngModel)]="model.name"
                            pattern=".*[^\s]+.*" required #clientName="ngModel" autofocus
                            (ngModelChange)="checkIsNameEmpty()">
                 </div>
@@ -36,7 +36,7 @@
             <div>
                 <label class="ct-form-label">Contact Email</label>
                 <input class="ct-input ct-full-width" #contactEmail="ngModel" type="email" name="email" maxlength="200"
-                       [email]="!!model.email" [(ngModel)]="model.email" [pattern]="emailPattern" validate-onblur>
+                       [email]="!!model.email" [(ngModel)]="model.email" [pattern]="emailPattern" ctValidateOnblur>
                 <div class="ct-error-text" *ngIf="!contactEmail.pristine && contactEmail.errors">Invalid email</div>
             </div>
 

@@ -1,8 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { Request, XHRBackend, RequestOptions, Response, Http, RequestOptionsArgs, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
 
 import { AuthService } from './auth/auth.service';
 import { NotificationService } from './notification.service';

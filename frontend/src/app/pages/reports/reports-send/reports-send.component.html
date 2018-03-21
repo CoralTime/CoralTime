@@ -9,7 +9,7 @@
                 <label class="ct-form-label">From</label>
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" #fromEmail="ngModel"
-                           required validate-onblur autofocus
+                           required ctValidateOnblur autofocus
                            type="email" name="clientFrom" [email]="!!model.fromEmail"
                            [(ngModel)]="model.fromEmail"
                            [pattern]="emailPattern">

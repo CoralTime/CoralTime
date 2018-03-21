@@ -21,7 +21,7 @@
                 <label class="ct-form-label">Username</label>
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" #userName="ngModel"
-                           [ctUsernameValidator]="model" pattern=".*[^\s]+.*" validate-onblur required
+                           [ctUsernameValidator]="model" pattern=".*[^\s]+.*" ctValidateOnblur required
                            name="userName" maxlength="200"
                            [(ngModel)]="model.userName"/>
                 </div>
@@ -52,7 +52,7 @@
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" #password="ngModel"
                            type="password" name="password"
-                           ctPasswordValidator validate-onblur required
+                           ctPasswordValidator ctValidateOnblur required
                            [(ngModel)]="model.password"/>
                 </div>
                 <div *ngIf="password.errors?.ctPasswordLengthInvalid"
@@ -74,7 +74,7 @@
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" type="password" name="confirmPassword" #confirmPassword="ngModel"
                            [(ngModel)]="model.confirmPassword"
-                           required validateEqual="password" validate-onblur/>
+                           required validateEqual="password" ctValidateOnblur/>
                 </div>
                 <div class="ct-error-text" *ngIf="confirmPassword.invalid && !confirmPassword.pristine">Passwords must be equal.</div>
                 <div *ngIf="errorPasswordMessage && !model.confirmPassword && !model.id" class="ct-login-failed ct-error-text">Confirm Password is required!
@@ -88,7 +88,7 @@
                            type="email" name="email"
                            [ctEmailValidator]="model" maxlength="200"
                            [pattern]="emailPattern"
-                           [email]="!!model.email" validate-onblur required
+                           [email]="!!model.email" ctValidateOnblur required
                            [(ngModel)]="model.email">
                 </div>
 

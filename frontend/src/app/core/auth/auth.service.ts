@@ -4,7 +4,6 @@ import { Http, Headers, Response } from '@angular/http';
 import { Injectable, EventEmitter } from '@angular/core';
 import { URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
 
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
