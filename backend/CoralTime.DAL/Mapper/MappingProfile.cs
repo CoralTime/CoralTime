@@ -51,12 +51,12 @@ namespace CoralTime.DAL.Mapper
                 .ForMember(x => x.IsTaskTypeActive, x => x.MapFrom(m => m.TaskType.IsActive))
                 .ForMember(x => x.IsProjectActive, x => x.MapFrom(m => m.Project.IsActive))
                 
-                .ForMember(x => x.TimeValues.TimeActual, x => x.MapFrom(m => m.TimeActual))
-                .ForMember(x => x.TimeValues.TimeEstimated, x => x.MapFrom(m => m.TimeEstimated))
-                .ForMember(x => x.TimeValues.TimeFrom, x => x.MapFrom(m => m.TimeFrom))
-                .ForMember(x => x.TimeValues.TimeTo, x => x.MapFrom(m => m.TimeTo))
-                .ForMember(x => x.TimeOptions.IsFromToShow, x => x.MapFrom(m => m.IsFromToShow))
-                .ForMember(x => x.TimeOptions.TimeTimerStart, x => x.MapFrom(m => m.TimeTimerStart));
+                .ForPath(x => x.TimeValues.TimeActual, x => x.MapFrom(m => m.TimeActual))
+                .ForPath(x => x.TimeValues.TimeEstimated, x => x.MapFrom(m => m.TimeEstimated))
+                .ForPath(x => x.TimeValues.TimeFrom, x => x.MapFrom(m => m.TimeFrom))
+                .ForPath(x => x.TimeValues.TimeTo, x => x.MapFrom(m => m.TimeTo))
+                .ForPath(x => x.TimeOptions.IsFromToShow, x => x.MapFrom(m => m.IsFromToShow))
+                .ForPath(x => x.TimeOptions.TimeTimerStart, x => x.MapFrom(m => m.TimeTimerStart));
 
             CreateMap<Member, ProjectMembersView>()
                 .ForMember(x => x.MemberId, x => x.MapFrom(z => z.Id))
