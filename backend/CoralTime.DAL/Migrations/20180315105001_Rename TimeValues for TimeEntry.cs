@@ -9,12 +9,12 @@ namespace CoralTime.DAL.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "Time",
+                name: "PlannedTime",
                 table: "TimeEntries",
                 newName: "TimeEstimated");
 
             migrationBuilder.RenameColumn(
-                name: "PlannedTime",
+                name: "Time",
                 table: "TimeEntries",
                 newName: "TimeActual");
         }
@@ -24,12 +24,12 @@ namespace CoralTime.DAL.Migrations
             migrationBuilder.RenameColumn(
                 name: "TimeEstimated",
                 table: "TimeEntries",
-                newName: "Time");
+                newName: "PlannedTime");
 
             migrationBuilder.RenameColumn(
                 name: "TimeActual",
                 table: "TimeEntries",
-                newName: "PlannedTime");
+                newName: "Time");
         }
     }
 }
