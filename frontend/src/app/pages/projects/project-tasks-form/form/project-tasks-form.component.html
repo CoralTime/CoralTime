@@ -1,0 +1,24 @@
+<form class="ct-form ct-projects-tasks-form" [formGroup]="form">
+    <ul formArrayName="tasks">
+        <li *ngFor="let control of tasks.controls; let i = index">
+            <div class="ct-required-field-container">
+                <input class="ct-input" formControlName="{{i}}"
+                       pattern=".*[^\s]+.*" maxlength="200"
+                       [ctTaskEqualValidator]="projectTasks">
+            </div>
+
+            <div class="ct-buttons-block" mat-dialog-actions>
+                <button mat-raised-button class="ct-button ct-blue-button"
+                        [disabled]="isRequestLoading"
+                        (click)="submitTask(i, tasks.controls[i])">Add
+                </button>
+                <button (click)="delTask(i)" class="ct-cancel-button">Cancel</button>
+            </div>
+
+        </li>
+    </ul>
+
+    <div class="ct-add-button" [class.ct-disabled]="tasks.length > 4" (click)="addNewTask()">
+        <i class="material-icons">add</i> Add New Task
+    </div>
+</form>

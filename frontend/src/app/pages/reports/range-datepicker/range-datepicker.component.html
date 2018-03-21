@@ -1,0 +1,14 @@
+<div class="ct-range-datepicker">
+    <ul class="ct-hot-links-container">
+        <li *ngFor="let key in DATE_PERIOD" (click)="setPeriod(DATE_PERIOD[key])"><a>{{key}}</a></li>
+    </ul>
+    <div class="ct-datepicker-container">
+        <ct-datepicker class="ct-datepicker" [required]="true"
+                       [name]="'date'" ngModel
+                       [firstDayOfWeek]="firstDayOfWeek"
+                       [multiselect]="true"
+                       [date]="selectedRange"
+                       [displayDate]="displayDate"
+                       (dateClicked)="dateOnClick($event)"></ct-datepicker>
+    </div>
+</div>

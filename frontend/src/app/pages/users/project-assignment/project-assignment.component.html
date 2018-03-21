@@ -1,0 +1,86 @@
+<div class="ct-dialog ct-data-dialog">
+    <div class="ct-dialog-title">
+        <span>Project assignment for</span><span>{{user?.fullName}}</span>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
+    </div>
+
+    <div class="ct-search-container">
+        <div class="ct-grid-search-filter">
+            <mat-input-container class="full-width">
+                <input #gb mdInput placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
+            </mat-input-container>
+            <i class="fa fa-search"></i>
+        </div>
+    </div>
+
+    <div class="ct-grid" #grid>
+        <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
+            <!--<p-dataTable class="ct-grid-container ct-table" #tableWrapper-->
+                         <!--[value]="assignedProjectsPagedResult?.data"-->
+                         <!--scrollable="true" [sortField]="'projectName'"-->
+                         <!--[responsive]="true" [lazy]="true"-->
+                         <!--[globalFilter]="gb"-->
+                         <!--[resizeObservable]="resizeObservable"-->
+                         <!--(onLazyLoad)="updateAssignedProjects($event)"-->
+                         <!--(onMoreContent)="updateAssignedProjects()"-->
+                         <!--(onEndScrollEvent)="onAssignedProjectsEndScroll()">-->
+                <!--<p-column field="projectName" header="{{assignedProjectsPagedResult?.count}} projects"-->
+                          <!--[style]="{'width':'600px'}" [sortable]="true"></p-column>-->
+
+                <!--<p-column header="Access Level" [style]="{'width':'180px'}">-->
+                    <!--<ng-template let-col let-userProject="rowData" pTemplate="body">-->
+                        <!--<ct-select *ngIf="userProject.id" [name]="'role'"-->
+                                   <!--class="ct-users-project-edit-role ct-select-ellipse"-->
+                                   <!--[displayName]="'name'" [trackBy]="'id'"-->
+                                   <!--[icon]="'chevron-down'"-->
+                                   <!--[container]="tableWrapper.el.nativeElement"-->
+                                   <!--[(ngModel)]="userProject.role"-->
+                                   <!--(change)="changeRole(userProject)"-->
+                                   <!--[options]="projectRoles">-->
+                        <!--</ct-select>-->
+                        <!--<ct-select *ngIf="!userProject.id" [name]="'role'"-->
+                                   <!--class="ct-users-project-edit-role ct-select-ellipse"-->
+                                   <!--[displayName]="'name'" [trackBy]="'id'"-->
+                                   <!--[icon]="'chevron-down'"-->
+                                   <!--[container]="tableWrapper.el.nativeElement"-->
+                                   <!--[(ngModel)]="userProject.role"-->
+                                   <!--(change)="assignToPublic(userProject)"-->
+                                   <!--[options]="projectRoles">-->
+                        <!--</ct-select>-->
+                    <!--</ng-template>-->
+                <!--</p-column>-->
+
+                <!--<p-column header="Actions" styleClass="ct-user-actions-col">-->
+                    <!--<ng-template let-col let-userProject="rowData" pTemplate="body">-->
+                        <!--<a *ngIf="userProject.isProjectPrivate"-->
+                           <!--[class.ct-disabled]="isRequestLoading"-->
+                           <!--(click)="removeFromUser(userProject)" class="ct-grid-link ct-grid-ellipse ct-grid-delete">-->
+                            <!--<i class="material-icons">clear</i>-->
+                        <!--</a>-->
+                        <!--<span *ngIf="!userProject.isProjectPrivate">Public</span>-->
+                    <!--</ng-template>-->
+                <!--</p-column>-->
+            <!--</p-dataTable>-->
+
+            <!--<p-dataTable class="ct-grid-container ct-table"-->
+                         <!--[value]="notAssignedProjectsPagedResult?.data"-->
+                         <!--scrollable="true" [sortField]="'name'"-->
+                         <!--[responsive]="true" [lazy]="true"-->
+                         <!--[globalFilter]="gb"-->
+                         <!--[resizeObservable]="resizeObservable"-->
+                         <!--(onLazyLoad)="updateNotAssignedProjects($event)"-->
+                         <!--(onMoreContent)="updateNotAssignedProjects()"-->
+                         <!--(onEndScrollEvent)="onNotAssignedProjectsEndScroll()">-->
+                <!--<p-column field="name" header="{{notAssignedProjectsPagedResult?.count}} Unassigned"-->
+                          <!--[style]="{'width':'780px'}" [sortable]="true"></p-column>-->
+
+                <!--<p-column header="Actions">-->
+                    <!--<ng-template let-col let-project="rowData" pTemplate="body">-->
+                        <!--<span (click)="addToUser(project)" class="ct-grid-button"-->
+                              <!--[class.ct-disabled]="isRequestLoading">Assign to User</span>-->
+                    <!--</ng-template>-->
+                <!--</p-column>-->
+            <!--</p-dataTable>-->
+        </div>
+    </div>
+</div>
