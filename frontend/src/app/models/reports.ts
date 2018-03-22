@@ -97,9 +97,9 @@ export interface ReportItem {
 	clientId: number;
 	clientName: string;
 	date: Date;
-	description: string;
 	memberId: number;
 	memberName: string;
+	notes: string;
 	taskId: number;
 	taskName: string;
 	timeValues: TimeValues;

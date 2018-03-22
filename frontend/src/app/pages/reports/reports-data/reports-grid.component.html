@@ -52,10 +52,10 @@
         </ng-template>
     </p-column>
 
-    <p-column *ngIf="showColumnIds.indexOf(3) > -1" field="description" header="Notes" styleClass="ct-column-description">
+    <p-column *ngIf="showColumnIds.indexOf(3) > -1" field="notes" header="Notes" styleClass="ct-column-description">
         <ng-template let-col let-item="rowData" pTemplate="body" let-index="rowIndex">
             <div class="ct-grid-description">
-                <ct-read-more [text]="item.description"></ct-read-more>
+                <ct-read-more [text]="item.notes"></ct-read-more>
             </div>
         </ng-template>
     </p-column>
