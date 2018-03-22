@@ -16,7 +16,7 @@ namespace CoralTime.Api.v1
     {
         private readonly IImageService _imageService;
 
-        public ProfileController(IProfileService service, ILogger<ProfileController> logger, ImageService imageService)
+        public ProfileController(IProfileService service, ILogger<ProfileController> logger, IImageService imageService)
             : base(logger, service)
         {
             _imageService = imageService;
@@ -64,7 +64,7 @@ namespace CoralTime.Api.v1
 
         #region Member Avatar
 
-        [HttpGet("Member({id}/UrlAvatar)")]
+        [HttpGet("Member({id})/UrlAvatar")]
         public IActionResult GetUrlAvatar(int id) => Ok(_imageService.GetUrlAvatar(id));
 
         [HttpPut("UploadImage")]
