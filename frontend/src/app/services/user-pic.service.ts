@@ -18,8 +18,8 @@ export class UserPicService {
 	            private constantService: ConstantService) {
 	}
 
-	loadUserPicture(userId: number, isAvatar: boolean): Observable<Avatar> {
-		return this.http.get((isAvatar ? this.constantService.userAvatarApi : this.constantService.userIconApi) + userId)
+	loadUserPicture(userId: number): Observable<Avatar> {
+		return this.http.get(this.constantService.profileApi + '/Member(' + userId + ')/UrlAvatar')
 			.map((res: Response) => res.json());
 	}
 }

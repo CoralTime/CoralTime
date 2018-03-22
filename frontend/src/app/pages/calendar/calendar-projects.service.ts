@@ -12,8 +12,8 @@ export class CalendarProjectsService {
 	readonly odata: ODataService<Project>;
 
 	defaultProject: Project;
-	projects: Project[] = [];
 	filteredProjects: number[] = [];
+	projects: Project[] = [];
 
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,

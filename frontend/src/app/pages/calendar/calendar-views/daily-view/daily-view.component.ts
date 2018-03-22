@@ -86,23 +86,23 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		}
 
 		timeEntries.forEach((timeEntry) => {
-			time += timeEntry['time'];
+			time += timeEntry.timeValues['timeActual'];
 		});
 
 		return this.setTimeString(time);
 	}
 
-	getTotalPlannedTime(timeEntries?: TimeEntry[]): string {
-		let plannedTime = 0;
+	getTotalEstimatedTime(timeEntries?: TimeEntry[]): string {
+		let timeEstimated = 0;
 		if (!timeEntries) {
-			return this.setTimeString(plannedTime);
+			return this.setTimeString(timeEstimated);
 		}
 
 		timeEntries.forEach((timeEntry: TimeEntry) => {
-			plannedTime += timeEntry['plannedTime'];
+			timeEstimated += timeEntry.timeValues['timeEstimated'];
 		});
 
-		return this.setTimeString(plannedTime);
+		return this.setTimeString(timeEstimated);
 	}
 
 	ngOnDestroy() {

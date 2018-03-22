@@ -29,7 +29,7 @@
                           [sortable]="true" [style]="{'width':'330px'}">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <span class="ct-grid-userpic">
-                            <ct-user-pic [iconUrl]="userProject.iconUrl"></ct-user-pic>
+                            <ct-user-pic [urlIcon]="userProject.urlIcon"></ct-user-pic>
                         </span>
                         <span class="ct-grid-link-text">
                             {{userProject.memberName}}
@@ -94,7 +94,7 @@
                           styleClass="ct-user-info-col" [style]="{'width':'330px'}">
                     <ng-template let-col let-user="rowData" pTemplate="body">
                          <span class="ct-grid-userpic">
-                            <ct-user-pic [iconUrl]="user.iconUrl"></ct-user-pic>
+                            <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>
                         </span>
                         <span class="ct-grid-link-text">
                             {{user.fullName}}

@@ -27,8 +27,8 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	endDay: string;
 	timeEntries: TimeEntry[];
 
-	private timeEntriesSubscription: Subscription;
 	private subscriptionImpersonation: Subscription;
+	private timeEntriesSubscription: Subscription;
 
 	constructor(private route: ActivatedRoute,
 	            private calendarService: CalendarService,
@@ -163,8 +163,8 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.timeEntriesSubscription.unsubscribe();
 		this.subscriptionImpersonation.unsubscribe();
+		this.timeEntriesSubscription.unsubscribe();
 	}
 
 	private moveDate(date: string, dif: number): string {

@@ -87,17 +87,17 @@ export class ProfileProjects {
 }
 
 export class ProfileProjectMember {
-	iconUrl: string;
 	memberId: number;
 	memberName: string;
+	urlIcon: string;
 
 	constructor(data: any) {
 		if (!data) {
 			return;
 		}
-		this.iconUrl = data.iconUrl;
 		this.memberId = data.memberId;
 		this.memberName = data.memberName;
+		this.urlIcon = data.urlIcon;
 	}
 }
 

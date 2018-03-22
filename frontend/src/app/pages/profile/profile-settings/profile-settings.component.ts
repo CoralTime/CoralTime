@@ -80,7 +80,7 @@ export class ProfileSettingsComponent implements OnInit {
 			this.userModel = new User(this.impersonationService.impersonationUser || data.user);
 		});
 
-		this.avatarUrl = this.userModel.iconUrl.replace('Icons', 'Avatars');
+		this.avatarUrl = this.userModel.urlIcon.replace('Icons', 'Avatars');
 		this.timeZones = this.profileService.getTimeZones();
 		this.timeFormatModel = this.userModel.timeFormat ? new TimeFormat(this.userModel.timeFormat) : this.timeFormats[1];
 		this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name === this.userModel.timeZone);
@@ -106,7 +106,7 @@ export class ProfileSettingsComponent implements OnInit {
 	onSubmitPhotoDialog(avatarUrl: string): void {
 		this.avatarUrl = avatarUrl;
 		let iconObject = {
-			iconUrl: avatarUrl.replace('Avatars', 'Icons')
+			urlIcon: avatarUrl.replace('Avatars', 'Icons')
 		};
 
 		if (this.impersonationService.impersonationId) {
