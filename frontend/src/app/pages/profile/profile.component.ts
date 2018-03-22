@@ -27,14 +27,14 @@ export class ProfileComponent implements OnInit {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
 
-		this.avatarUrl = this.userInfo.urlIcon.replace('Icons', 'Avatars')
-			.replace('s=40', 's=200');
-		// this.getAvatar();
+		// this.avatarUrl = this.userInfo.urlIcon.replace('Icons', 'Avatars')
+		// 	.replace('s=40', 's=200');
+		this.getAvatar();
 		this.getProjects();
 	}
 
 	getAvatar(): void {
-		this.userPicService.loadUserPicture(this.userInfo.id, true).subscribe((res: Avatar) => {
+		this.userPicService.loadUserPicture(this.userInfo.id).subscribe((res: Avatar) => {
 			this.avatarUrl = res.avatarUrl;
 		});
 	}

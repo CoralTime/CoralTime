@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { ReportGridView, ReportItem } from '../../../services/reposts.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../models/user';
+import { ReportGridView, ReportItem } from '../../../models/reports';
 import { ImpersonationService } from '../../../services/impersonation.service';
 import * as moment from 'moment';
 
