@@ -33,7 +33,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	@ViewChild('form') form: EntryTimeComponent;
 	@ViewChildren(MenuComponent) menuList: QueryList<MenuComponent>;
 
-	actualTime: Time;
 	currentTimeEntry: TimeEntry;
 	dialogRef: MdDialogRef<MultipleDatepickerComponent>;
 	isCalendarShown: boolean = false;
@@ -46,13 +45,14 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	isUserManagerOnProject: boolean;
 	firstDayOfWeek: number;
 	lockReason: string = '';
-	plannedTime: Time;
 	selectedDate: string;
 	ticks: number;
+	timeActual: Time;
+	timeEstimated: Time;
 	timerValue: string;
 	timerSubscription: Subscription;
 
-	private totalPlannedTimeForDay: number;
+	private totalEstimatedTimeForDay: number;
 	private totalTrackedTimeForDay: number;
 
 	constructor(private route: ActivatedRoute,
@@ -70,8 +70,8 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			this.isUserAdmin = data.user.isAdmin;
 		});
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
-		this.actualTime = this.splitTime(this.timeEntry.timeValues.timeActual);
-		this.plannedTime = this.splitTime(this.timeEntry.timeValues.timeEstimated);
+		this.timeActual = this.splitTime(this.timeEntry.timeValues.timeActual);
+		this.timeEstimated = this.splitTime(this.timeEntry.timeValues.timeEstimated);
 		this.selectedDate = this.currentTimeEntry.date;
 		this.isUserManagerOnProject = this.timeEntry.isUserManagerOnProject;
 
@@ -94,8 +94,8 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			width: '650px'
 		});
 		this.dialogRef.componentInstance.timeEntry = this.currentTimeEntry;
-		this.dialogRef.componentInstance.actualTime = this.actualTime;
-		this.dialogRef.componentInstance.plannedTime = this.plannedTime;
+		this.dialogRef.componentInstance.timeActual = this.timeActual;
+		this.dialogRef.componentInstance.timeEstimated = this.timeEstimated;
 		this.dialogRef.componentInstance.firstDayOfWeek = this.firstDayOfWeek;
 
 		this.dialogRef.componentInstance.onSubmit.subscribe((event) => {
@@ -257,9 +257,10 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			if (err) {
 				return;
 			}
+
+			this.isTimerShown = false;
 			this.timerUpdated.emit();
 			this.timerSubscription.unsubscribe();
-			this.isTimerShown = false;
 			this.calendarService.isTimerActivated = this.isTimerShown;
 		});
 	}
@@ -304,7 +305,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
 				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
 			};
-			this.actualTime = this.splitTime(this.currentTimeEntry.timeValues.timeActual);
+			this.timeActual = this.splitTime(this.currentTimeEntry.timeValues.timeActual);
 		}
 
 		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
@@ -374,7 +375,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	private setDayInfo(date?: string): void {
 		let dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
 		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
-		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeEstimated');
+		this.totalEstimatedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeEstimated');
 	}
 
 	private saveTimeEntry(timeEntry: TimeEntry): void {

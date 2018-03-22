@@ -43,7 +43,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	@Output() deleted: EventEmitter<void> = new EventEmitter<void>();
 	@Output() timerUpdated: EventEmitter<void> = new EventEmitter<void>();
 
-	actualTime: string;
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
 	isFocusClassShown: boolean;
@@ -52,15 +51,16 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	isFromToFormFocus: boolean;
 	isRequestLoading: boolean;
 	isTimerShown: boolean;
-	plannedTime: string;
 	projectList: Project[];
 	projectModel: Project;
 	taskList: Task[];
 	taskModel: Task;
 	ticks: number;
-	timeMask = [/\d/, /\d/, ':', /\d/, /\d/];
+	timeActual: string;
+	timeEstimated: string;
 	timeFrom: string = '00:00';
 	timeTo: string = '00:00';
+	timeMask = [/\d/, /\d/, ':', /\d/, /\d/];
 	timerSubscription: Subscription;
 	timerValue: Time;
 	userInfo: User;
@@ -80,7 +80,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	private dayInfo: CalendarDay;
 	private defaultProject: Project;
 	private totalTrackedTimeForDay: number;
-	private totalPlannedTimeForDay: number;
+	private totalEstimatedTimeForDay: number;
 
 	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
@@ -98,8 +98,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		});
 
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
-		this.actualTime = this.convertTimeToString(this.timeEntry.timeValues.timeActual);
-		this.plannedTime = this.convertTimeToString(this.timeEntry.timeValues.timeEstimated);
+		this.timeActual = this.convertTimeToString(this.timeEntry.timeValues.timeActual);
+		this.timeEstimated = this.convertTimeToString(this.timeEntry.timeValues.timeEstimated);
 
 		if (this.currentTimeEntry.timeOptions.isFromToShow) {
 			this.fillFromToForm();
@@ -234,7 +234,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
 				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
 			};
-			this.actualTime = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
+			this.timeActual = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
 		}
 
 		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
@@ -272,8 +272,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.isFromToFormFocus = false;
 
 		this.timeTo = this.getMax(timeFrom, timeTo);
-		this.setActualTime();
-		this.actualTime = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
+		this.setTimeActual();
+		this.timeActual = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
 	}
 
 	private isFromToFormValueValid(): boolean {
@@ -290,22 +290,23 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		if (this.convertFormValueToSeconds(timeFrom) > this.convertFormValueToSeconds(timeTo)) {
 			return timeFrom;
 		}
+
 		return timeTo;
 	}
 
 	// TRACKING TIME
 
-	actualTimeOnChange(): void {
+	timeActualOnChange(): void {
 		this.closeFromToForm();
 		this.isFormChanged = true;
-		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.actualTime);
+		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeActual);
 		this.currentTimeEntry.timeValues.timeFrom = null;
 		this.currentTimeEntry.timeValues.timeTo = null;
 	}
 
-	plannedTimeOnChange(): void {
+	timeEstimatedOnChange(): void {
 		this.isFormChanged = true;
-		this.currentTimeEntry.timeValues.timeEstimated = this.convertFormValueToSeconds(this.plannedTime);
+		this.currentTimeEntry.timeValues.timeEstimated = this.convertFormValueToSeconds(this.timeEstimated);
 	}
 
 	// SUBMIT TIMEENTRY
@@ -377,7 +378,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 			return false;
 		}
-		if (!this.isPlannedTimeValid()) {
+		if (!this.isEstimatedTimeValid()) {
 			this.notificationService.danger('Total planned time can\'t be more than 24 hours');
 			return false;
 		}
@@ -406,9 +407,9 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	isPlannedTimeValid(): boolean {
+	isEstimatedTimeValid(): boolean {
 		this.setDayInfo();
-		return this.totalPlannedTimeForDay - this.timeEntry.timeValues.timeEstimated
+		return this.totalEstimatedTimeForDay - this.timeEntry.timeValues.timeEstimated
 			+ this.currentTimeEntry.timeValues.timeEstimated < MAX_TIMER_VALUE;
 	}
 
@@ -488,7 +489,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private setActualTime(): void {
+	private setTimeActual(): void {
 		this.currentTimeEntry.timeValues.timeFrom = this.convertFormValueToSeconds(this.timeFrom);
 		this.currentTimeEntry.timeValues.timeTo = this.convertFormValueToSeconds(this.timeTo);
 		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeTo) -
@@ -537,6 +538,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	private setDayInfo(date?: string): void {
 		this.dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
 		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'timeActual');
-		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'timeEstimated');
+		this.totalEstimatedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'timeEstimated');
 	}
 }

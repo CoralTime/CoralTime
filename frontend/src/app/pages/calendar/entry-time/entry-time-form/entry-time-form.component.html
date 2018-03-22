@@ -96,19 +96,19 @@
     </div>
     <div class="ct-time-period clearfix">
         <div class="ct-actual-time" [class.ct-disabled-form]="isTimerShown">
-            <label for="actualTime" class="ct-period-icon" title="Tracked time"></label>
-            <input id="actualTime" name="actualTime" autocomplete="off" time
-                   [(ngModel)]="actualTime"
+            <label for="timeActual" class="ct-period-icon" title="Tracked time"></label>
+            <input id="timeActual" name="actualTime" autocomplete="off" time
+                   [(ngModel)]="timeActual"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="actualTimeOnChange()"
+                   (ngModelChange)="timeActualOnChange()"
                    [disabled]="isTimerShown">
         </div>
         <div class="ct-planned-time">
-            <label for="plannedTime" class="ct-period-icon" title="Planned time"></label>
-            <input id="plannedTime" name="plannedTime" autocomplete="off" time
-                   [(ngModel)]="plannedTime"
+            <label for="timeEstimated" class="ct-period-icon" title="Planned time"></label>
+            <input id="timeEstimated" name="plannedTime" autocomplete="off" time
+                   [(ngModel)]="timeEstimated"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="plannedTimeOnChange()"
+                   (ngModelChange)="timeEstimatedOnChange()"
                    [disabled]="isTimerShown">
         </div>
     </div>

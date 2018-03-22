@@ -46,7 +46,7 @@
         </ng-template>
     </p-column>
 
-    <p-column *ngIf="showColumnIds.indexOf(1) > -1" styleClass="ct-cell-estimated" field="estimatedTime" header="Est. hours">
+    <p-column *ngIf="showColumnIds.indexOf(1) > -1" styleClass="ct-cell-estimated" field="timeEstimated" header="Est. hours">
         <ng-template let-item="rowData" pTemplate="body">
             <span>{{getTimeString(item.timeValues.timeEstimated)}}</span>
         </ng-template>

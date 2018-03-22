@@ -11,8 +11,8 @@ import Moment = moment.Moment;
 
 export class MultipleDatepickerComponent {
 	@Input() firstDayOfWeek: number;
-	@Input() actualTime: Time;
-	@Input() plannedTime: Time;
+	@Input() timeActual: Time;
+	@Input() timeEstimated: Time;
 	@Input() timeEntry: TimeEntry;
 
 	@Output() onSubmit: EventEmitter<string[]> = new EventEmitter();
