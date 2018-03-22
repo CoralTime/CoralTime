@@ -86,7 +86,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		}
 
 		timeEntries.forEach((timeEntry) => {
-			time += timeEntry['time'];
+			time += timeEntry.timeValues['timeActual'];
 		});
 
 		return this.setTimeString(time);
@@ -99,7 +99,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		}
 
 		timeEntries.forEach((timeEntry: TimeEntry) => {
-			plannedTime += timeEntry['plannedTime'];
+			plannedTime += timeEntry.timeValues['timeEstimated'];
 		});
 
 		return this.setTimeString(plannedTime);

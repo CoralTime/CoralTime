@@ -62,7 +62,7 @@
                 Stop Timer
             </div>
         </button>
-        <button type="button" *ngIf="!currentTimeEntry.isFromToShow"
+        <button type="button" *ngIf="!currentTimeEntry.timeOptions.isFromToShow"
                 class="ct-time-path"
                 [disabled]="isTimerShown"
                 (click)="openFromToForm()">
@@ -71,7 +71,7 @@
                 From... To...
             </div>
         </button>
-        <div *ngIf="currentTimeEntry.isFromToShow" class="ct-time-path"
+        <div *ngIf="currentTimeEntry.timeOptions.isFromToShow" class="ct-time-path"
              [class.ct-focus]="isFromToFormFocus">
             <div class="ct-from-to-form">
                 <div class="ct-from-time">

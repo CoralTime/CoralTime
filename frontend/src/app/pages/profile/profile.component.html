@@ -6,7 +6,7 @@
 
         <div class="ct-page-content">
             <div class="ct-user-pic-container">
-                <ct-user-pic [iconUrl]='avatarUrl' [fullSize]="true"></ct-user-pic>
+                <ct-user-pic [urlIcon]='avatarUrl' [fullSize]="true"></ct-user-pic>
 
                 <div *ngIf="impersonationUser?.fullName || userInfo?.fullName" class="ct-user-settings-info">
                     <h3>Name</h3>
@@ -54,7 +54,7 @@
 
                         <div class="ct-profile-users-list" [class.ct-profile-members-hidden]="!project.isMemberListShown || !project.memberList.length">
                             <div *ngFor="let member of project.memberList" class="ct-profile-user">
-                                <ct-user-pic [iconUrl]="member.iconUrl"></ct-user-pic>
+                                <ct-user-pic [urlIcon]="member.urlIcon"></ct-user-pic>
                                 <p>{{member.memberName}}
                                     <span *ngIf="member.memberId == (impersonationUser?.id || userInfo?.id)">(You)</span>
                                 </p>

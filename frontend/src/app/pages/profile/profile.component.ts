@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
 
-		this.avatarUrl = this.userInfo.iconUrl.replace('Icons', 'Avatars')
+		this.avatarUrl = this.userInfo.urlIcon.replace('Icons', 'Avatars')
 			.replace('s=40', 's=200');
 		// this.getAvatar();
 		this.getProjects();
