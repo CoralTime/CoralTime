@@ -12,6 +12,7 @@ $textAreaHeight: 116px;
   .ct-textarea {
     box-sizing: border-box;
     width: 100%;
+    min-height: 114px;
     padding: 0;
     background: $primary-btn-text;
     border: none;
@@ -35,6 +36,10 @@ $textAreaHeight: 116px;
 
     .ct-textarea-container {
       min-height: 40px;
+    }
+
+    .ct-textarea {
+      min-height: 0;
     }
   }
 }

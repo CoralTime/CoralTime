@@ -42,11 +42,10 @@
 
             <div>
                 <label class="ct-form-label">Color</label>
-                <!--<ct-color-picker [(ngModel)]="model.color" name="color">-->
-                    <!--<mat-option *ngFor="let item of [0,1,2,3,4,5,6,7];" [value]="item">-->
-                        <!--<span class="ct-color-circle ct-color-{{item}}"></span>-->
-                    <!--</mat-option>-->
-                <!--</ct-color-picker>-->
+                <ct-color-picker [name]="'color'"
+                                 [(ngModel)]="model.color"
+                                 [options]="[0,1,2,3,4,5,6,7]">
+                </ct-color-picker>
             </div>
 
             <div>
