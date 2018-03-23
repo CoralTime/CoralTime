@@ -32,8 +32,8 @@ export class CalendarDayComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.isToday(this.dayInfo.date)) {
-			this.calendarService.isTimerActivated =
-				!!this.dayInfo.timeEntries.find((timeEntry) => timeEntry.timeTimerStart && timeEntry.timeTimerStart !== -1);
+			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
+				timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
 		}
 	}
 
@@ -55,7 +55,7 @@ export class CalendarDayComponent implements OnInit {
 		let time: number = 0;
 		if (timeEnries) {
 			for (let i = 0; i < timeEnries.length; i++) {
-				time += timeEnries[i][type];
+				time += timeEnries[i].timeValues[type];
 			}
 		}
 
@@ -98,12 +98,12 @@ export class CalendarDayComponent implements OnInit {
 			if (DateUtils.formatDateToString(this.draggedTimeEntry.date) === this.dayInfo.date) {
 				return;
 			}
-			if (!this.isNewTrackedTimeValid(this.dayInfo.date, this.draggedTimeEntry.time)) {
+			if (!this.isNewTrackedTimeValid(this.dayInfo.date, this.draggedTimeEntry.timeValues.timeActual)) {
 				this.notificationService.danger('Total actual time can\'t be more than 24 hours');
 				return;
 			}
 			this.draggedTimeEntry.date = this.dayInfo.date;
-			this.draggedTimeEntry.timeTimerStart = -1;
+			this.draggedTimeEntry.timeOptions.timeTimerStart = -1;
 
 			if (this.isAltPressed()) {
 				submitObservable = this.calendarService.Post(this.draggedTimeEntry);
