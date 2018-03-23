@@ -3,7 +3,7 @@ import { ImpersonationService } from '../../services/impersonation.service';
 import { User } from '../../models/user';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
 import { ActivatedRoute } from '@angular/router';
-import { Avatar, UserPicService } from '../../services/user-pic.service';
+import { UserPicService } from '../../services/user-pic.service';
 
 @Component({
 	selector: 'ct-profile',
@@ -27,15 +27,13 @@ export class ProfileComponent implements OnInit {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
 
-		// this.avatarUrl = this.userInfo.urlIcon.replace('Icons', 'Avatars')
-		// 	.replace('s=40', 's=200');
 		this.getAvatar();
 		this.getProjects();
 	}
 
 	getAvatar(): void {
-		this.userPicService.loadUserPicture(this.userInfo.id).subscribe((res: Avatar) => {
-			this.avatarUrl = res.avatarUrl;
+		this.userPicService.loadUserPicture(this.userInfo.id).subscribe((avatarUrl: string) => {
+			this.avatarUrl = avatarUrl;
 		});
 	}
 

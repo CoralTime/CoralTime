@@ -5,9 +5,7 @@ import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
 import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
-import {
-	DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, TimeZone, WeekDay
-} from '../../../services/profile.service';
+import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } from '../../../services/profile.service';
 import { EnterEmailService } from '../../forgot-password/enter-email/enter-email.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { NotificationService } from '../../../core/notification.service';
@@ -17,6 +15,7 @@ import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 import { SelectComponent } from '../../../shared/form/select/select.component';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ActivatedRoute } from '@angular/router';
+import { UserPicService } from '../../../services/user-pic.service';
 
 const STANDART_TIME_ARRAY = [
 	'0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
@@ -57,8 +56,6 @@ export class ProfileSettingsComponent implements OnInit {
 	taskModel: Task;
 	timeFormats: TimeFormat[] = [new TimeFormat(12), new TimeFormat(24)];
 	timeFormatModel: TimeFormat = this.timeFormats[1];
-	timeZones: TimeZone[];
-	timeZoneModel: TimeZone;
 	weekStartDays: string[] = ['Sunday', 'Monday'];
 	weekStartDayModel: string;
 
@@ -72,7 +69,8 @@ export class ProfileSettingsComponent implements OnInit {
 	            private profileService: ProfileService,
 	            private route: ActivatedRoute,
 	            private tasksService: TasksService,
-	            private userInfoService: UserInfoService) {
+	            private userInfoService: UserInfoService,
+	            private userPicService: UserPicService) {
 	}
 
 	ngOnInit() {
@@ -81,11 +79,10 @@ export class ProfileSettingsComponent implements OnInit {
 		});
 
 		this.avatarUrl = this.userModel.urlIcon.replace('Icons', 'Avatars');
-		this.timeZones = this.profileService.getTimeZones();
 		this.timeFormatModel = this.userModel.timeFormat ? new TimeFormat(this.userModel.timeFormat) : this.timeFormats[1];
-		this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name === this.userModel.timeZone);
 		this.weekStartDayModel = this.weekStartDays[this.userModel.weekStart];
 
+		this.getAvatar();
 		this.getDateFormats();
 		this.getProjects();
 		this.setSendEmailTimeData(this.userModel.timeFormat);
@@ -93,6 +90,12 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	// GENERAL
+
+	getAvatar(): void {
+		this.userPicService.loadUserPicture(this.userModel.id).subscribe((avatarUrl: string) => {
+			this.avatarUrl = avatarUrl;
+		});
+	}
 
 	openPhotoDialog(): void {
 		this.dialogRef = this.dialog.open(ProfilePhotoComponent);
@@ -234,7 +237,6 @@ export class ProfileSettingsComponent implements OnInit {
 			dateFormat: this.userModel.dateFormat,
 			dateFormatId: this.userModel.dateFormatId,
 			timeFormat: this.userModel.timeFormat,
-			timeZone: this.userModel.timeZone,
 			weekStart: this.userModel.weekStart
 		};
 
