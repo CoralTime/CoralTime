@@ -84,7 +84,7 @@ namespace CoralTime.Common.Middlewares
                 }
                 default:
                 {
-                    _logger.LogError($"\nException: {exception.Message}. \n InnerException: {exception?.InnerException.Message}. \nStack Trace: \n{exception.StackTrace}", exception);
+                    _logger.LogError($"\nException: {exception.Message}. \n InnerException: {exception?.InnerException?.Message}. \nStack Trace: \n{exception.StackTrace}", exception);
                     break;
                 }
             }
@@ -98,7 +98,7 @@ namespace CoralTime.Common.Middlewares
                 message = message + ". InnerMessage: " + exseptionInnerMessage.Message;
             }
 #endif
-            _logger.Log(LogLevel.Error, new EventId(), exseptionInnerMessage.Message, exception, (i, exception1) => i.ToString());
+            _logger.Log(LogLevel.Error, new EventId(), exseptionInnerMessage?.Message, exception, (i, exception1) => i?.ToString());
 
             return context.Response.WriteAsync(message);
         }

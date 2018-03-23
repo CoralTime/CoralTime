@@ -68,7 +68,7 @@ namespace CoralTime.Api.v1
         public IActionResult GetUrlAvatar(int id) => Ok(_imageService.GetUrlAvatar(id));
 
         [HttpPut("UploadImage")]
-        public IActionResult UploadImage(IFormFile uploadedImageFile) => Ok(_imageService.UploadImage(uploadedImageFile));
+        public IActionResult UploadImage(IFormFile file) => Ok(_imageService.UploadImage(file));
 
         #endregion
     }
