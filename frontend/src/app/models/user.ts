@@ -16,7 +16,6 @@ export class User {
 	sendEmailTime: number;
 	sendInvitationEmail: boolean;
 	timeFormat: number;
-	timeZone: string;
 	urlIcon: string;
 	userName: string;
 	weekStart: number;
@@ -40,7 +39,6 @@ export class User {
 			this.sendEmailTime = data.sendEmailTime;
 			this.sendInvitationEmail = data.sendInvitationEmail;
 			this.timeFormat = data.timeFormat;
-			this.timeZone = data.timeZone;
 			this.urlIcon = data.urlIcon;
 			this.userName = data.userName;
 			this.weekStart = data.weekStart;

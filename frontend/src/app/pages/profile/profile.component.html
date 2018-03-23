@@ -18,11 +18,6 @@
                     <p>{{impersonationUser?.email || userInfo?.email}}</p>
                 </div>
 
-                <div *ngIf="impersonationUser?.timeZone || userInfo?.timeZone" class="ct-user-settings-info">
-                    <h3>Your timezone</h3>
-                    <p>{{impersonationUser?.timeZone || userInfo?.timeZone}}</p>
-                </div>
-
                 <button [routerLink]="['/profile/settings']" class="ct-button ct-blue-button">Settings</button>
             </div>
 

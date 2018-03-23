@@ -90,17 +90,6 @@
                         </div>
 
                         <div>
-                            <label class="ct-form-label">Time Zone</label>
-                            <ct-select [name]="'timeZone'"
-                                       [defaultValue]="'None'"
-                                       [displayName]="'name'"
-                                       [(ngModel)]="timeZoneModel"
-                                       (ngModelChange)="userModel.timeZone = timeZoneModel.name"
-                                       [options]="timeZones">
-                            </ct-select>
-                        </div>
-
-                        <div>
                             <label class="ct-form-label">Date Format</label>
                             <ct-select [name]="'dateFormat'" [trackBy]="'dateFormat'"
                                        [defaultValue]="'None'"
