@@ -6,7 +6,7 @@
 
         <div class="ct-page-content">
             <div class="ct-user-pic-container">
-                <ct-user-pic [iconUrl]='avatarUrl' [fullSize]="true"></ct-user-pic>
+                <ct-user-pic [urlIcon]='avatarUrl' [fullSize]="true"></ct-user-pic>
 
                 <div *ngIf="impersonationUser?.fullName || userInfo?.fullName" class="ct-user-settings-info">
                     <h3>Name</h3>
@@ -16,11 +16,6 @@
                 <div *ngIf="impersonationUser?.email || userInfo?.email" class="ct-user-settings-info">
                     <h3>Email address</h3>
                     <p>{{impersonationUser?.email || userInfo?.email}}</p>
-                </div>
-
-                <div *ngIf="impersonationUser?.timeZone || userInfo?.timeZone" class="ct-user-settings-info">
-                    <h3>Your timezone</h3>
-                    <p>{{impersonationUser?.timeZone || userInfo?.timeZone}}</p>
                 </div>
 
                 <button [routerLink]="['/profile/settings']" class="ct-button ct-blue-button">Settings</button>
@@ -54,7 +49,7 @@
 
                         <div class="ct-profile-users-list" [class.ct-profile-members-hidden]="!project.isMemberListShown || !project.memberList.length">
                             <div *ngFor="let member of project.memberList" class="ct-profile-user">
-                                <ct-user-pic [iconUrl]="member.iconUrl"></ct-user-pic>
+                                <ct-user-pic [urlIcon]="member.urlIcon"></ct-user-pic>
                                 <p>{{member.memberName}}
                                     <span *ngIf="member.memberId == (impersonationUser?.id || userInfo?.id)">(You)</span>
                                 </p>

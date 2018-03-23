@@ -6,7 +6,7 @@
 
         <div class="ct-page-content">
             <div class="ct-user-pic-container">
-                <ct-user-pic [iconUrl]='avatarUrl' [fullSize]="true"></ct-user-pic>
+                <ct-user-pic [urlIcon]='avatarUrl' [fullSize]="true"></ct-user-pic>
                 <span class="ct-link-text" (click)="openPhotoDialog()">Change Profile Picture</span>
             </div>
 
@@ -86,17 +86,6 @@
                                        [(ngModel)]="taskModel"
                                        (ngModelChange)="userModel.defaultTaskId = taskModel.id"
                                        [options]="tasks">
-                            </ct-select>
-                        </div>
-
-                        <div>
-                            <label class="ct-form-label">Time Zone</label>
-                            <ct-select [name]="'timeZone'"
-                                       [defaultValue]="'None'"
-                                       [displayName]="'name'"
-                                       [(ngModel)]="timeZoneModel"
-                                       (ngModelChange)="userModel.timeZone = timeZoneModel.name"
-                                       [options]="timeZones">
                             </ct-select>
                         </div>
 

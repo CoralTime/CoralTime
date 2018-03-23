@@ -61,7 +61,6 @@ class FormUser {
 			sendEmailTime: user.sendEmailTime,
 			sendInvitationEmail: this.sendInvitationEmail || false,
 			timeFormat: user.timeFormat,
-			timeZone: user.timeZone,
 			userName: this.userName,
 			weekStart: user.weekStart
 		});

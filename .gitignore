@@ -333,5 +333,4 @@ backend/CoralTime/Configs/
 backend/CoralTime/tempkey.rsa
 backend/.vscode/
 backend/CoralTime/ConfigsNetCore2.0/
-backend/CoralTime/.vscode/
 backend/CoralTime/commands.json

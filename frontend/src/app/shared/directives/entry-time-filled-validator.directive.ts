@@ -17,8 +17,8 @@ export class EntryTimeFilledValidator implements Validator {
 		let v = c.value;
 		let invalidValue = '00:00';
 
-		if (invalidValue.indexOf(v['actualTime']) + 1 &&
-			invalidValue.indexOf(v['plannedTime']) + 1) {
+		if (invalidValue.indexOf(v['timeActual']) + 1 &&
+			invalidValue.indexOf(v['timeEstimated']) + 1) {
 			return {
 				EntryTimeFilled: false
 			};

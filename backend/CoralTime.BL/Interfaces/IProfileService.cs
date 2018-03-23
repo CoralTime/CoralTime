@@ -14,7 +14,7 @@ namespace CoralTime.BL.Interfaces
 
         DateConvert[] GetDateFormats();
 
-        List<ProfileProjectMemberView> GetProjectMembers(int projectId);
+        IEnumerable<ProjectMembersView> GetProjectMembers(int projectId);
 
         MemberView PatchNotifications(MemberNotificationView memberNotificationView);
 

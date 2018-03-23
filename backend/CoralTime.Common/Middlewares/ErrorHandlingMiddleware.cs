@@ -35,49 +35,58 @@ namespace CoralTime.Common.Middlewares
             var code = HttpStatusCode.InternalServerError; // 500 if unexpected
 
             var exseptionMessage = exception.Message;
-            var exseptionInnerMessage = exception.InnerException;
+            var exseptionInnerMessage = exception?.InnerException;
             context.Response.ContentType = "application/json";
             var message = "Oops. Something went wrong";
 
-            if (exception is CoralTimeSafeEntityException)
+            switch (exception)
             {
-                _logger.LogWarning($"CoralTimeSafeException, {exception.Message} , {exception.StackTrace}");
-                code = HttpStatusCode.BadRequest;
-                message = exception.Message;
-            }
-            else if (exception is CoralTimeAlreadyExistsException)
-            {
-                _logger.LogWarning($"CoralTimeAlreadyExistsException, {exception.Message} , {exception.StackTrace}");
-                code = HttpStatusCode.BadRequest;
-                message = exception.Message;
-            }
-            else if (exception is CoralTimeEntityNotFoundException)
-            {
-                _logger.LogWarning($"CoralTimeEntityNotFoundException, {exception.Message} , {exception.StackTrace}");
-                code = HttpStatusCode.BadRequest;
-                message = exception.Message;
-            }
-
-            else if (exception is CoralTimeUnauthorizedException)
-            {
-                code = HttpStatusCode.Unauthorized;
-                message = exception.Message;
-                _logger.LogWarning($"CoralTimeUnauthorizedException, {exception.Message} , {exception.StackTrace}");
-            }
-            else if (exception is CoralTimeDangerException)
-            {
-                code = HttpStatusCode.BadRequest;
-                _logger.LogError($"CoralTimeDangerException, {exception.Message} , {exception.StackTrace}");
-            }
-            else if (exception is CoralTimeForbiddenException)
-            {
-                code = HttpStatusCode.Forbidden;
-                message = exception.Message;
-                _logger.LogError($"CoralTimeForbiddenException, {exception.Message} , {exception.StackTrace}");
-            }
-            else
-            {
-                _logger.LogError($"\nException: {exception.Message}. \nInnerException: {exception.InnerException.Message}. \nStack Trace: \n{exception.StackTrace}", exception);
+                case CoralTimeSafeEntityException ex:
+                {
+                    _logger.LogWarning($"CoralTimeSafeException, {ex.Message} , {ex.StackTrace}");
+                    code = HttpStatusCode.BadRequest;
+                    message = exception.Message;
+                    break;
+                }
+                case CoralTimeAlreadyExistsException ex:
+                {
+                    _logger.LogWarning($"CoralTimeAlreadyExistsException, {exception.Message} , {exception.StackTrace}");
+                    code = HttpStatusCode.BadRequest;
+                    message = exception.Message;
+                    break;
+                }
+                case CoralTimeEntityNotFoundException ex:
+                {
+                    _logger.LogWarning($"CoralTimeEntityNotFoundException, {exception.Message} , {exception.StackTrace}");
+                    code = HttpStatusCode.BadRequest;
+                    message = exception.Message;
+                    break;
+                }
+                case CoralTimeUnauthorizedException ex:
+                {
+                    code = HttpStatusCode.Unauthorized;
+                    message = exception.Message;
+                    _logger.LogWarning($"CoralTimeUnauthorizedException, {exception.Message} , {exception.StackTrace}");
+                    break;
+                }
+                case CoralTimeDangerException ex:
+                {
+                    code = HttpStatusCode.BadRequest;
+                    _logger.LogError($"CoralTimeDangerException, {exception.Message} , {exception.StackTrace}");
+                    break;
+                }
+                case CoralTimeForbiddenException ex:
+                {
+                    code = HttpStatusCode.Forbidden;
+                    message = exception.Message;
+                    _logger.LogError($"CoralTimeForbiddenException, {exception.Message} , {exception.StackTrace}");
+                    break;
+                }
+                default:
+                {
+                    _logger.LogError($"\nException: {exception.Message}. \n InnerException: {exception?.InnerException?.Message}. \nStack Trace: \n{exception.StackTrace}", exception);
+                    break;
+                }
             }
 
             context.Response.StatusCode = (int)code;
@@ -89,7 +98,7 @@ namespace CoralTime.Common.Middlewares
                 message = message + ". InnerMessage: " + exseptionInnerMessage.Message;
             }
 #endif
-            _logger.Log(LogLevel.Error, new EventId(), exseptionInnerMessage.Message, exception, (i, exception1) => i.ToString());
+            _logger.Log(LogLevel.Error, new EventId(), exseptionInnerMessage?.Message, exception, (i, exception1) => i?.ToString());
 
             return context.Response.WriteAsync(message);
         }

@@ -11,9 +11,6 @@ const routes: Routes = [
 		path: '',
 		component: CalendarComponent,
 		canActivate: [AuthGuard],
-		data: {
-			title: 'Calendar'
-		},
 		resolve: {
 			user: UserInfoResolve
 		},

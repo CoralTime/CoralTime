@@ -3,6 +3,7 @@ import { TimeEntry } from '../../../models/calendar';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ConfirmationComponent } from '../../../shared/confirmation/confirmation.component';
 import { CalendarService } from '../../../services/calendar.service';
+import { ObjectUtils } from '../../../core/object-utils';
 
 @Component({
 	selector: 'ct-entry-time',
@@ -118,13 +119,7 @@ export class EntryTimeComponent implements OnDestroy {
 	}
 
 	private isTimeEntryFormChanged(obj: any, obj2: any): boolean {
-		for (let prop in obj) {
-			if (obj[prop] !== obj2[prop]) {
-				return true;
-			}
-		}
-
-		return false;
+		return !ObjectUtils.deepEqualWithEvery(obj, obj2);
 	}
 
 	private scrollWindow(el: HTMLElement): void {

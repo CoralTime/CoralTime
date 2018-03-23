@@ -62,7 +62,7 @@ export class CalendarService {
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {
 		let totalTime: number = 0;
 		day && day.timeEntries.forEach((timeEntry: TimeEntry) => {
-			totalTime += timeEntry[timeField];
+			totalTime += timeEntry.timeValues[timeField];
 		});
 
 		return totalTime;
@@ -76,8 +76,8 @@ export class CalendarService {
 	}
 
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {
-		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.isFromToShow === true);
-		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.isFromToShow === false);
+		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === true);
+		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === false);
 
 		ArrayUtils.sortByField(arrayWithFromToPeriod, 'timeFrom');
 		ArrayUtils.sortByField(otherTimeEntries, 'id');

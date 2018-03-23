@@ -4,8 +4,8 @@
                (timerUpdated)="updateTimer()"
                (deleted)="deleteTimeEntry()"
                class="ct-border-{{timeEntry.color}}"></ct-entry-time>
-<div *ngIf="timeEntry.isFromToShow" class="ct-calendar-time-entry-period">
-    {{setTimeString(timeEntry.timeFrom)}} - {{setTimeString(timeEntry.timeTo)}}
+<div *ngIf="timeEntry.timeOptions.isFromToShow" class="ct-calendar-time-entry-period">
+    {{setTimeString(timeEntry.timeValues.timeFrom)}} - {{setTimeString(timeEntry.timeValues.timeTo)}}
 </div>
 
 <a *ngIf="isTimeEntryAvailable && !isTimerShown"
@@ -53,14 +53,14 @@
     </div>
     <div class="ct-calendar-time-entry-time" (click)="openEntryTimeForm()">
         <div *ngIf="!isTimerShown" class="ct-calendar-time-entry-hours-tracked" title="Tracked time">
-            <span>{{setTimeString(timeEntry.time)}}</span>
+            <span>{{setTimeString(timeEntry.timeValues.timeActual)}}</span>
         </div>
         <div *ngIf="isTimerShown" class="ct-timer-block" style=" z-index: 2; position:relative;">
             <span class="ct-clock"><i></i></span>
             <span>{{timerValue}}</span>
         </div>
-        <div *ngIf="timeEntry.plannedTime > 0" class="ct-calendar-time-entry-hours-planned" title="Planned time">
-            <span>{{setTimeString(timeEntry.plannedTime)}}</span>
+        <div *ngIf="timeEntry.timeValues.timeEstimated > 0" class="ct-calendar-time-entry-hours-planned" title="Planned time">
+            <span>{{setTimeString(timeEntry.timeValues.timeEstimated)}}</span>
         </div>
     </div>
     <div *ngIf="isTimerShown" title="Stop timer" (click)="stopTimer()" class="ct-calendar-task-stop-timer"></div>

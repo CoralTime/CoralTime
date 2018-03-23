@@ -1,10 +1,11 @@
-﻿using System;
+﻿using CoralTime.DAL.Models.TimeValues;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models
 {
-    public class TimeEntry : LogChanges
+    public class TimeEntry : LogChanges, ITimeValues
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -30,9 +31,9 @@ namespace CoralTime.DAL.Models
 
         #region Time values.
 
-        public int Time { get; set; } //Duration,  ActualTime
+        public int TimeActual { get; set; }
 
-        public int PlannedTime { get; set; }
+        public int TimeEstimated { get; set; }
 
         [Required]
 

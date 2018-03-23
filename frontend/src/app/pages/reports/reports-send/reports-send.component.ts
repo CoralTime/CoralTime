@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { ClientsService } from '../../../services/clients.service';
 import { Client } from '../../../models/client';
-import { ReportFilters, ReportsService } from '../../../services/reposts.service';
-import { NgForm } from '@angular/forms';
+import { ReportsService } from '../../../services/reposts.service';
+import { ReportFilters } from '../../../models/reports';
 import { User } from '../../../models/user';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import * as moment from 'moment';

@@ -82,17 +82,17 @@ namespace CoralTime.DAL.Repositories
             {
                 var key = GenerateCacheKey();
                 var items = CacheManager.CachedListGet<T>(key);
-                if (items != null) 
-                    return items;
-                
-                lock (LockObject)
+                if (items == null)
                 {
-                    var cachedItems = CacheManager.CachedListGet<T>(key);
-                    if (cachedItems != null)
-                        return cachedItems;
-                        
-                    items = GetQueryAsNoTrakingWithIncludes().ToList();
-                    CacheManager.LinkedPutList(key, items);
+                    lock (LockObject)
+                    {
+                        items = CacheManager.CachedListGet<T>(key);
+                        if (items == null)
+                        {
+                            items = GetQueryAsNoTrakingWithIncludes().ToList();
+                            CacheManager.LinkedPutList(key, items);
+                        }
+                    }
                 }
 
                 return items;
@@ -249,15 +249,5 @@ namespace CoralTime.DAL.Repositories
         }
 
         #endregion
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing) 
-                return;
-            if (_db == null) 
-                return;
-            _db.Dispose();
-            _db = null;
-        }
     }
 }

@@ -4,7 +4,7 @@ using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Errors;
@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoralTime.DAL.ConvertViewToModel;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
@@ -26,9 +27,9 @@ namespace CoralTime.BL.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly bool _isDemo;
-        private readonly IAvatarService _avatarService;
+        private readonly IImageService _avatarService;
 
-        public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper, IAvatarService avatarService)
+        public MemberService(UnitOfWork uow, UserManager<ApplicationUser> userManager, IConfiguration configuration, IMapper mapper, IImageService avatarService)
             : base(uow, mapper)
         {
             _userManager = userManager;
@@ -42,16 +43,17 @@ namespace CoralTime.BL.Services
             var globalActiveProjCount = Uow.ProjectRepository.LinkedCacheGetList().Where(x => !x.IsPrivate && x.IsActive).Select(x => x.Id).ToArray();
 
             var allMembers = GetAllMembersCommon(InpersonatedUserName);
-            var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper)).ToList();
-            foreach (var item in allMembersView)
+
+            var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper, _avatarService.GetUrlIcon(p.Id))).ToList();
+            foreach (var member in allMembersView)
             {
-                _avatarService.AddIconUrlInMemberView(item);
+                member.UrlIcon= _avatarService.GetUrlIcon(member.Id);
             }
 
             return allMembersView;
         }
 
-        public Member GetById(int id)
+        public MemberView GetById(int id)
         {
             var memberById = Uow.MemberRepository.LinkedCacheGetById(id);
 
@@ -60,7 +62,10 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"Member with id {id} not found.");
             }
 
-            return memberById;
+            var urlIcon = _avatarService.GetUrlIcon(memberById.Id);
+            var memberViewResult = memberById.GetView(Mapper, urlIcon);
+
+            return memberViewResult;
         }
 
         public IEnumerable<ProjectView> GetTimeTrackerAllProjects(int memberId)
@@ -68,42 +73,105 @@ namespace CoralTime.BL.Services
             return GetProjects(memberId).Select(p => p.GetViewTimeTrackerAllProjects(Mapper));
         }
 
-        public async Task<Member> CreateNewUser(MemberView memberView)
+        public async Task<MemberView> CreateNewUser(MemberView memberView, string baseUrl)
         {
-            if (! EmailChecker.IsValidEmail(memberView.Email))
+            if (!EmailChecker.IsValidEmail(memberView.Email))
             {
                 throw new CoralTimeDangerException("Invalid email");
             }
-            
-            if (memberView.IsAdmin)
-            {
-                var applicationUserAdmin = new ApplicationUser
-                {
-                    UserName = memberView.UserName,
-                    Email = memberView.Email,
-                    IsAdmin = true,
-                    IsManager = false,
-                    IsActive = true
-                };
 
-                return await CreateNewUserCommon(memberView, applicationUserAdmin, ApplicationRoleAdmin);
-            }
-            else
+            var applicationUserNew = new ApplicationUser
             {
-                var applicationUserMember = new ApplicationUser
-                {
-                    UserName = memberView.UserName,
-                    Email = memberView.Email,
-                    IsAdmin = false,
-                    IsManager = false,
-                    IsActive = true
-                };
+                UserName = memberView.UserName,
+                Email = memberView.Email,
+                IsManager = false,
+                IsActive = true,
+                IsAdmin = memberView.IsAdmin
+            };
 
-                return await CreateNewUserCommon(memberView, applicationUserMember, ApplicationRoleUser);
+            var roleUser = memberView.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
+
+            #region Check ApplicationUser, Roles, Member
+
+            // Check ApplicationUser
+            var isExistApplicationUser = await _userManager.FindByNameAsync(memberView.UserName);
+            if (isExistApplicationUser != null)
+            {
+                throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist");
             }
+
+            // Check ApplicationUser Roles
+            var isExistRolesForMember = await _userManager.GetRolesAsync(applicationUserNew).ToAsyncEnumerable().Any(x => x.Contains(roleUser));
+            if (isExistRolesForMember)
+            {
+                throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist '{roleUser}' role");
+            }
+
+            // Check Member
+            var isExistMember = Uow.MemberRepository.GetQueryByUserName(applicationUserNew.UserName);
+            if (isExistMember != null)
+            {
+                throw new CoralTimeAlreadyExistsException($"Member with userName {memberView.UserName} already exist");
+            }
+
+            #endregion
+
+            // Insert ApplicationUser
+            var userCreationResult = await _userManager.CreateAsync(applicationUserNew, memberView.Password);
+            if (!userCreationResult.Succeeded)
+            {
+                CheckIdentityResultErrors(userCreationResult);
+            }
+
+            var applicationUser = await _userManager.FindByNameAsync(applicationUserNew.UserName);
+
+            // Insert ApplicationUser Roles
+            var userCreateRoleResult = await _userManager.AddToRoleAsync(applicationUser, roleUser);
+            if (!userCreateRoleResult.Succeeded)
+            {
+                CheckIdentityResultErrors(userCreateRoleResult);
+            }
+
+            #region Set UserId to new Member. Save to Db. Get Member from Db with related entity User by UserId.
+
+            // 1. Convert MemberView to Member.
+            var newMember = memberView.GetModel(Mapper);
+
+            // 2. Assign UserId to Member (After Save, when you try to get entity from Db, before assign UserId to entity then it has Related Entity User).
+            newMember.UserId = applicationUser.Id;
+
+            // 3. Save in Db.
+            Uow.MemberRepository.Insert(newMember);
+            Uow.Save();
+
+            // 4. Clear cache for Members.
+            Uow.MemberRepository.LinkedCacheClear();
+
+            // 5. Get From Db -> Cache New Member. (Get entity With new created related entity - User)
+            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(memberView.UserName);
+
+            #endregion
+
+            // Identity #3. Create claims. Add Claims for user in AspNetUserClaims.
+            var claimsUser = ClaimsCreator.CreateUserClaims(applicationUser.UserName, memberView.FullName, memberView.Email, roleUser, memberByName.Id);
+            var claimsUserResult = await _userManager.AddClaimsAsync(applicationUser, claimsUser);
+            if (!claimsUserResult.Succeeded)
+            {
+                CheckIdentityResultErrors(userCreateRoleResult);
+            }
+
+            var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+            var memberViewResult = memberByName.GetView(Mapper, urlIcon);
+
+            if (memberView.SendInvitationEmail)
+            {
+                await SentInvitationEmailAsync(memberView, baseUrl);
+            }
+
+            return memberViewResult;
         }
 
-        public async Task<MemberView> Update(MemberView memberView)
+        public async Task<MemberView> Update(MemberView memberView, string baseUrl)
         {
             var memberByName = Uow.MemberRepository.GetQueryByUserName(CurrentUserName);
 
@@ -231,9 +299,15 @@ namespace CoralTime.BL.Services
             }
 
             var memberByIdResult = Uow.MemberRepository.LinkedCacheGetById(memberById.Id);
-            var result = memberByIdResult.GetView(Mapper);
+            var urlIcon = _avatarService.GetUrlIcon(memberByIdResult.Id);
+            var meberView = memberByIdResult.GetView(Mapper, urlIcon);
 
-            return result;
+            if (memberView.SendInvitationEmail)
+            {
+                await SentUpdateAccountEmailAsync(meberView, baseUrl);
+            }
+
+            return meberView;
         }
 
         #region Change Password.
@@ -597,86 +671,6 @@ namespace CoralTime.BL.Services
         #endregion
 
         #region Other Methods.
-
-        private async Task<Member> CreateNewUserCommon(MemberView memberView, ApplicationUser applicationUserNew, string roleUser)
-        {
-            //var userByName = Uow.UserRepository.LinkedCacheGetByName(memberView.UserName);
-            //if (userByName != null)
-            //{
-            //    throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist");
-            //}
-
-            #region Check ApplicationUser, Roles, Claims, Member
-
-            // Check ApplicationUser
-            var isExistApplicationUser = await _userManager.FindByNameAsync(memberView.UserName);
-            if (isExistApplicationUser != null)
-            {
-                throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist");
-            }
-
-            // Check ApplicationUser Roles
-            var isExistRolesForMember = await _userManager.GetRolesAsync(applicationUserNew).ToAsyncEnumerable().Any(x => x.Contains(roleUser));
-            if (isExistRolesForMember)
-            {
-                throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist '{roleUser}' role");
-            }
-
-            // Check Member
-            var isExistMember = Uow.MemberRepository.GetQueryByUserName(applicationUserNew.UserName);
-            if (isExistMember != null)
-            {
-                throw new CoralTimeAlreadyExistsException($"Member with userName {memberView.UserName} already exist");
-            }
-
-            #endregion
-
-            // Insert ApplicationUser
-            var userCreationResult = await _userManager.CreateAsync(applicationUserNew, memberView.Password);
-            if (!userCreationResult.Succeeded)
-            {
-                CheckIdentityResultErrors(userCreationResult);
-            }
-
-            var applicationUser = await _userManager.FindByNameAsync(applicationUserNew.UserName);
-            
-            // Insert ApplicationUser Roles
-            var userCreateRoleResult = await _userManager.AddToRoleAsync(applicationUser, roleUser);
-            if (!userCreateRoleResult.Succeeded)
-            {
-                CheckIdentityResultErrors(userCreateRoleResult);
-            }
-
-            #region Set UserId to new Member. Save to Db. Get Member from Db with related entity User by UserId.
-
-            // 1. Convert MemberView to Member.
-            var newMember = Mapper.Map<MemberView, Member>(memberView);
-
-            // 2. Assign UserId to Member (After Save, when you try to get entity from Db, before assign UserId to entity then it has Related Entity User).
-            newMember.UserId = applicationUser.Id;
-
-            // 3. Save in Db.
-            Uow.MemberRepository.Insert(newMember);
-            Uow.Save();
-
-            // 4. Clear cache for Members.
-            Uow.MemberRepository.LinkedCacheClear();
-
-            // 5. Get From Db -> Cache New Member. (Get entity With new created related entity - User)
-            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(memberView.UserName);
-
-            #endregion
-
-            // Identity #3. Create claims. Add Claims for user in AspNetUserClaims.
-            var claimsUser = ClaimsCreator.CreateUserClaims(applicationUser.UserName, memberView.FullName, memberView.Email, roleUser, memberByName.Id);
-            var claimsUserResult = await _userManager.AddClaimsAsync(applicationUser, claimsUser);
-            if (!claimsUserResult.Succeeded)
-            {
-                CheckIdentityResultErrors(userCreateRoleResult);
-            }
-
-            return memberByName;
-        }
 
         private void CheckIdentityResultErrors(IdentityResult userCreateRoleResult)
         {

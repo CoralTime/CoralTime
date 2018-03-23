@@ -15,14 +15,6 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportsDropDownsView ReportsDropDowns();
 
-        ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData);
-
-        ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData);
-
-        ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData);
-
-        ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData);
-
-        ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData);
+        ReportTotalView GetReportsGroupingBy(ReportsGridView reportsGridView);
     }
 }

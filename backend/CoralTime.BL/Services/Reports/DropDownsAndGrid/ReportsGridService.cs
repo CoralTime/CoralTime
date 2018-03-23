@@ -1,6 +1,6 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Grid;
@@ -14,156 +14,76 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportsService
     {
-        #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
+        private int GroupById { get; set; }
 
-        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData)
+        private int[] ShowColumnIds { get; set; }
+
+        #region Get DropDowns and Grid. Filtration By / Grouping By: Projects, Users, Dates, Clients.
+
+        public ReportTotalView GetReportsGroupingBy(ReportsGridView reportsGridView)
         {
-            var reportsGridTimeEntry = new ReportsGrandGridTimeEntryView
+            _reportsSettingsService.SaveCurrentQuery(reportsGridView.CurrentQuery);
+
+            GroupById = SetGroupByOrDefaultGrouping(reportsGridView.CurrentQuery.GroupById);
+            ShowColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
+
+            var answer = new ReportTotalView();
+
+            var filteredTimeEntries = GetFilteredTimeEntries(reportsGridView);
+            if (filteredTimeEntries.Any())
             {
-                ReportsGridView = new List<ReportGridTimeEntryView>
+                switch (reportsGridView.CurrentQuery.GroupById)
                 {
-                    new ReportGridTimeEntryView
+                    case (int) ReportsGroupBy.Project:
                     {
-                        Items = new List<ReportsGridItemsView>()
+                        var timeEntriesGroupByProjects = filteredTimeEntries
+                            .GroupBy(i => i.Project)
+                            .OrderBy(x => x.Key.Name)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        return answer.GetView(timeEntriesGroupByProjects, GroupById, ShowColumnIds);
+                    }
+
+                    case (int) ReportsGroupBy.Member:
+                    {
+                        var timeEntriesGroupByMembers = filteredTimeEntries
+                            .GroupBy(i => i.Member)
+                            .OrderBy(x => x.Key.FullName)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        return answer.GetView(timeEntriesGroupByMembers, GroupById, ShowColumnIds);
+                    }
+
+                    case (int) ReportsGroupBy.Date:
+                    {
+                        var timeEntriesGroupByDate = filteredTimeEntries
+                            .GroupBy(i => i.Date)
+                            .OrderBy(x => x.Key)
+                            .ToDictionary(key => key.Key, key => key.OrderBy(x => x.Date).ToList());
+
+                        return answer.GetView(timeEntriesGroupByDate, GroupById, ShowColumnIds);
+                    }
+
+                    case (int) ReportsGroupBy.Client:
+                    {
+                        var timeEntriesGroupByClients = filteredTimeEntries
+                            .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
+                            .OrderBy(x => x.Key.Name)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        return answer.GetView(timeEntriesGroupByClients, GroupById, ShowColumnIds);
                     }
                 }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridTimeEntry;
             }
 
-            var timeEntriesGroupByNone = timeEntriesForGrouping.ToList()
-                .GroupBy(x => x.Id)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData)
-        {
-            var reportsGridProjects = new ReportsGrandGridProjectsView
-            {
-                ReportsGridView = new List<ReportGridProjectView>
-                {
-                    new ReportGridProjectView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridProjects;
-            }
-
-            var timeEntriesGroupByProjects = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Project)
-                .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData)
-        {
-            var reportsGridUsers = new ReportsGrandGridMembersView
-            {
-                ReportsGridView = new List<ReportGridMemberView>
-                {
-                    new ReportGridMemberView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridUsers;
-            }
-
-            var timeEntriesGroupByUsers = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Member)
-                .OrderBy(x => x.Key.FullName)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData)
-        {
-            var reportsGridDates = new ReportsGrandGridDatesView
-            {
-                ReportsGridView = new List<ReportGridDateView>
-                {
-                    new ReportGridDateView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridDates;
-            }
-
-            var timeEntriesGroupByDate = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Date)
-                .ToDictionary(key => key.Key, key => key.AsEnumerable());
-
-            var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData)
-        {
-            var reportsGridClients = new ReportsGrandGridClients
-            {
-                ReportsGridView = new List<ReportGridClientView>
-                {
-                    new ReportGridClientView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridClients;
-            }
-
-            var timeEntriesGroupByClients = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
-                .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
-
-            return result;
+            return answer;
         }
 
         #endregion
 
         #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients. (Common methods)
 
-        private IQueryable<TimeEntry> GetTimeEntriesForGrouping(ReportsGridView reportsGridData)
+        private List<TimeEntry> GetFilteredTimeEntries(ReportsGridView reportsGridData)
         {
             var currentMember = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
 
@@ -205,7 +125,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.CurrentQuery.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridData.CurrentQuery.ClientIds.Contains(WithoutClient.Id));
             }
 
-            return timeEntriesByDateOfUser;
+            return timeEntriesByDateOfUser.ToList();
         }
 
         private void CheckAndSetIfInFilterChooseSingleProject(ReportsGridView reportsGridData, IQueryable<TimeEntry> timeEntriesByDateOfUser)
@@ -267,23 +187,21 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private Client CreateWithOutClientInstance()
         {
-            var getAdminUserById = Uow.UserRepository.LinkedCacheGetList().FirstOrDefault(x => x.Id == "038d14e5-27ef-4b07-89b5-39ea8ed0cbf7");
-
-            var withoutClient = new Client
+            return new Client
             {
                 Id = WithoutClient.Id,
                 Name = WithoutClient.Name,
-                Creator = getAdminUserById,
-                LastEditor = getAdminUserById,
                 CreationDate = DateTime.Now,
-                CreatorId = getAdminUserById.Id,
-                LastEditorUserId = getAdminUserById.Id,
                 LastUpdateDate = DateTime.Now,
             };
-
-            return withoutClient;
         }
 
         #endregion
+
+        // TODO dublicate int reportsExportService
+        private int SetGroupByOrDefaultGrouping(int? groupById)
+        {
+            return groupById ?? (int) ReportsGroupBy.Date;
+        }
     }
 }

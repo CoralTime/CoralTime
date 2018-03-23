@@ -1,8 +1,9 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ReportsService, } from '../../services/reposts.service';
 import {
-	ReportsService, ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters, ReportGridView
-} from '../../services/reposts.service';
+	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
+	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn
+} from '../../models/reports';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
 import { ArrayUtils } from '../../core/object-utils';
 import { AuthService } from '../../core/auth/auth.service';
@@ -108,7 +109,7 @@ export class ReportsComponent implements OnInit {
 		this.setReportFilters(reportDropdowns.currentQuery);
 		this.setReportsGroupBy(reportDropdowns.values.groupBy);
 		this.setReportsQueryItems(reportDropdowns);
-		this.setShowColumnItems();
+		this.setShowColumnItems(reportDropdowns.values.showColumns);
 
 		this.getClientItems(reportDropdowns.values.filters);
 		this.getProjectItems(this.clients);
@@ -137,13 +138,8 @@ export class ReportsComponent implements OnInit {
 		this.queryModel = ArrayUtils.findByProperty(this.queryItems, 'queryId', reportDropdowns.currentQuery.queryId);
 	}
 
-	private setShowColumnItems(): void {
-		this.showColumnItems = [
-			new CustomSelectItem('Show Estimated Hours', 1),
-			new CustomSelectItem('Show Date', 2),
-			new CustomSelectItem('Show Notes', 3),
-			new CustomSelectItem('Show Start/Finish Time', 4)
-		];
+	private setShowColumnItems(showColumns: ShowColumn[]): void {
+		this.showColumnItems = showColumns.map((col: ShowColumn) => new CustomSelectItem(col.description, col.id));
 	}
 
 	// GRID DISPLAYING
@@ -164,7 +160,7 @@ export class ReportsComponent implements OnInit {
 
 		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
 				this.reportsGridData = res;
-				this.gridData = this.getNextGridDataPage(this.reportsGridData.reportsGridView, []);
+				this.gridData = this.getNextGridDataPage(this.reportsGridData.groupedItems, []);
 			},
 			() => {
 				this.notificationService.danger('Error loading reports grid.');
@@ -184,7 +180,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private isAllGridRowsShown(gridDataShown: ReportGridData[]): boolean {
-		let gridData = this.reportsGridData.reportsGridView;
+		let gridData = this.reportsGridData.groupedItems;
 		return gridDataShown.length === gridData.length
 			&& gridDataShown[gridDataShown.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
 	}
@@ -263,7 +259,7 @@ export class ReportsComponent implements OnInit {
 			this.loadingIndicatorService.start();
 
 			setTimeout(() => {
-				this.getNextGridDataPage(this.reportsGridData.reportsGridView, this.gridData);
+				this.getNextGridDataPage(this.reportsGridData.groupedItems, this.gridData);
 				this.loadingIndicatorService.complete();
 				this.isGridLoading = false;
 			}, 0);
@@ -392,7 +388,7 @@ export class ReportsComponent implements OnInit {
 	// SEND REPORTS
 
 	openSendReportsDialog(): void {
-		if (this.reportsGridData.grandActualTime === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
@@ -427,12 +423,12 @@ export class ReportsComponent implements OnInit {
 	// GENERAL
 
 	checkDataAndPrintPage(): void {
-		if (this.reportsGridData.grandActualTime === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
 			this.notificationService.danger('There is no data to print.');
 			return;
 		}
 
-		if (this.getRowsNumberFromGrid(this.reportsGridData.reportsGridView) > 300) {
+		if (this.getRowsNumberFromGrid(this.reportsGridData.groupedItems) > 300) {
 			this.openConfirmationDialog();
 		} else {
 			this.printPage();
@@ -453,12 +449,12 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private printPage(): void {
-		this.gridData = this.showAllReportsGrid(this.reportsGridData.reportsGridView);
+		this.gridData = this.showAllReportsGrid(this.reportsGridData.groupedItems);
 		setTimeout(() => window.print(), 300);
 	}
 
 	exportAs(fileTypeId: number): void {
-		if (this.reportsGridData.grandActualTime === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
