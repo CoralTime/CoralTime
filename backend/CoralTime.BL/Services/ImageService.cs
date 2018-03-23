@@ -172,9 +172,14 @@ namespace CoralTime.BL.Services
 
             var isFileSizeValid = fileSize < long.Parse(_config["FileConstraints:MaxFileSize"]);
 
-            if (!(isFileNameValid != null && isFileSizeValid))
+            if (isFileNameValid != null)
             {
-                throw new CoralTimeForbiddenException("File size is greater than 1 Mb or FileName is Invalid");
+                throw new CoralTimeForbiddenException("FileName is Invalid");
+            }
+
+            if (!isFileSizeValid)
+            {
+                throw new CoralTimeForbiddenException("File size is greater than 1 Mb");
             }
         }
 
