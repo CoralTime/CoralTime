@@ -1,8 +1,8 @@
 ﻿namespace CoralTime.ViewModels.Reports
 {
-    public class ShowColumnDescription
+    public class ReportShowColumnModel
     {
-        public string Name { get; set; }
+        public int Id { get; set; }
 
         public string Description { get; set; }
     }

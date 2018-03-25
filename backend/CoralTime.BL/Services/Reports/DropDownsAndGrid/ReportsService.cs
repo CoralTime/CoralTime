@@ -2,10 +2,11 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.DAL.Repositories;
 using System;
+using CoralTime.Common.Constants;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public partial class ReportsService : BaseService, IReportsService
+    public partial class ReportsService : BaseService, IReportsService, IReportBaseService
     {
         private IReportsSettingsService _reportsSettingsService;
 
@@ -20,5 +21,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         public DateTime DateTo { get; private set; }
 
         public string SingleFilteredProjectName { get; private set; } = null;
+
+        public int SetGroupByOrDefaultGrouping(int? groupById)
+        {
+            return groupById ?? (int) Constants.ReportsGroupBy.Date;
+        }
     }
 }

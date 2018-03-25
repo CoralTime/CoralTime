@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 {
-    public class ReportsDropDownValues : ReportsDropDowns
+    public class ReportDropDownValues : ReportDropDowns
     {
-        public ReportsDropDownValues()
+        public ReportDropDownValues()
         {
-            UserDetails = new ReportsUserDetails();
+            UserDetails = new ReportUserDetails();
             CustomQueries = new List<ReportsSettingsView>();
         }
 
-        public ReportsUserDetails UserDetails { get; set; }
+        public ReportUserDetails UserDetails { get; set; }
 
         public List<ReportsSettingsView> CustomQueries { get; set; }
     }

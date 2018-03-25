@@ -121,24 +121,24 @@ namespace CoralTime.Common.Constants
             ShowStartFinish = 4
         }
 
-        public static readonly ShowColumnModel222[] showColumnsInfo222 =
+        public static readonly ReportShowColumnModel[] showColumnsInfo222 =
         {
-            new ShowColumnModel222
+            new ReportShowColumnModel
             {
                 Id = (int) ShowColumnModelIds.ShowEstimatedTime,
                 Description = "Show Estimated Hours"
             },
-            new ShowColumnModel222
+            new ReportShowColumnModel
             {
                 Id = (int) ShowColumnModelIds.ShowDate,
                 Description = "Show Date"
             },
-            new ShowColumnModel222
+            new ReportShowColumnModel
             {
                 Id = (int) ShowColumnModelIds.ShowNotes,
                 Description = "Show Notes"
             },
-            new ShowColumnModel222
+            new ReportShowColumnModel
             {
                 Id = (int) ShowColumnModelIds.ShowStartFinish,
                 Description = "Show Start/Finish Time"

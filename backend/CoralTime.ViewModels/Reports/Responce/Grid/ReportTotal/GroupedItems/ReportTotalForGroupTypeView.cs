@@ -1,12 +1,21 @@
-﻿namespace CoralTime.ViewModels.Reports
+﻿using Newtonsoft.Json;
+
+namespace CoralTime.ViewModels.Reports
 {
     public class ReportTotalForGroupTypeView : ReportTotalForView
     {
-        public ReportTotalForGroupTypeView(int groupById)
+        [JsonIgnore] public int? DateFormatId { get; }
+
+        private ReportTotalForGroupTypeView() 
+            : base(null, null) { }
+
+        public ReportTotalForGroupTypeView(int? groupById, int[] showColumnIds, int? dateFormatId)
+            : base(groupById, showColumnIds)
         {
-            GroupByType = new ReportGroupByType(groupById);
+            GroupByType = new ReportGroupByType(groupById, showColumnIds);
+            DateFormatId = dateFormatId;
         }
 
-        public ReportGroupByType GroupByType { get; set; }
+        public ReportGroupByType GroupByType { get; }
     }
 }

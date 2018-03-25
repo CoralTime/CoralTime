@@ -90,7 +90,6 @@ namespace CoralTime.DAL.Mapper
                     DateFormatId = source.DateFormatId,
                     DateFormat = new GetDateFormat().GetDateFormatById(source.DateFormatId),
                     SendEmailDays = ConverterBitMask.DayOfWeekIntToString(source.SendEmailDays),
-                    TimeZone =  source.TimeZone,
                     TimeFormat = source.TimeFormat,
                     SendEmailTime = source.SendEmailTime,
                     WeekStart =  (int)source.WeekStart
@@ -108,7 +107,6 @@ namespace CoralTime.DAL.Mapper
                     DefaultProjectId = source.DefaultProjectId,
                     FullName = source.FullName,
                     DateFormatId = source.DateFormatId,
-                    TimeZone = source.TimeZone,
                     WeekStart = (WeekStart)source.WeekStart,
                     IsWeeklyTimeEntryUpdatesSend = source.IsWeeklyTimeEntryUpdatesSend,
                     SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(source.SendEmailDays),

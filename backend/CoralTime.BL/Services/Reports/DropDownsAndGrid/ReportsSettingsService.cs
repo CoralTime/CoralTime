@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
+using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
@@ -8,9 +9,9 @@ using CoralTime.ViewModels.Reports.Request.Grid;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public class ReportsSettingsService : BaseService, IReportsSettingsService
+    public class ReportsSettingsService : BaseService, IReportsSettingsService, IReportBaseService
     {
-        public ReportsSettingsService(UnitOfWork uow, IMapper mapper) 
+        public ReportsSettingsService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
         public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView)
@@ -103,7 +104,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             if (queryFromReportsSettings == null)
             {
                 queryFromReportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
-
+                queryFromReportsSettings.GroupById = SetGroupByOrDefaultGrouping(queryFromReportsSettings.GroupById);
                 SetIsCurrentQueryTrue(queryFromReportsSettings);
 
                 Uow.ReportsSettingsRepository.Insert(queryFromReportsSettings);
@@ -111,7 +112,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             else
             {
                 queryFromReportsSettings.GetModel(reportsSettingsView, memberId);
-
+                queryFromReportsSettings.GroupById = SetGroupByOrDefaultGrouping(queryFromReportsSettings.GroupById);
                 SetIsCurrentQueryTrue(queryFromReportsSettings);
 
                 Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
@@ -126,6 +127,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 throw new CoralTimeEntityNotFoundException($"There is no record for this member by id = {id}");
             }
+        }
+
+        public int SetGroupByOrDefaultGrouping(int? groupById)
+        {
+            return groupById ?? (int) Constants.ReportsGroupBy.Date;
         }
     }
 }

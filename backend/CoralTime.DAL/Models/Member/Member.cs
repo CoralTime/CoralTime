@@ -30,8 +30,6 @@ namespace CoralTime.DAL.Models
 
         public int DefaultTaskId { get; set; }
 
-        public string TimeZone { get; set; }
-
         public Constants.WeekStart WeekStart { get; set; }
 
         public int DateFormatId { get; set; }

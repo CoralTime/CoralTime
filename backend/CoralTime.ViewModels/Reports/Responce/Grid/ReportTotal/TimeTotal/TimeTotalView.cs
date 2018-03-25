@@ -7,14 +7,14 @@ namespace CoralTime.ViewModels.Reports
         public TimeTotalView()
         {
             TimeEstimatedTotal = 0;
-            TimeActualTotalDisplayName = "Total Actual Time";
-            TimeEstimatedTotalDisplayName = "Total Estimated Time";
+            DisplayNameTimeActualTotal = "Total: ";
+            DisplayNameTimeEstimatedTotal = "Total: ";
         }
 
         public int TimeActualTotal { get; set; }
-        [JsonIgnore] public string TimeActualTotalDisplayName { get; set; }
-
         public int? TimeEstimatedTotal { get; set; }
-        [JsonIgnore] public string TimeEstimatedTotalDisplayName { get; set; }
+
+        [JsonIgnore] public string DisplayNameTimeActualTotal { get; set; }
+        [JsonIgnore] public string DisplayNameTimeEstimatedTotal { get; set; }
     }
 }

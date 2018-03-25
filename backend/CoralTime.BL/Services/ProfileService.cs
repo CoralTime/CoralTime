@@ -166,7 +166,6 @@ namespace CoralTime.BL.Services
             memberByName = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName);
             memberByName.DefaultProjectId = memberPreferencesView.DefaultProjectId;
             memberByName.DefaultTaskId = memberPreferencesView.DefaultTaskId;
-            memberByName.TimeZone = memberPreferencesView.TimeZone;
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;
             memberByName.TimeFormat = memberPreferencesView.TimeFormat;
             memberByName.WeekStart = (WeekStart)memberPreferencesView.WeekStart;

@@ -84,7 +84,10 @@ namespace CoralTime.Common.Middlewares
                 }
                 default:
                 {
-                    _logger.LogError($"\nException: {exception.Message}. \n InnerException: {exception?.InnerException?.Message}. \nStack Trace: \n{exception.StackTrace}", exception);
+                    var z = exception.Message;
+                    var z2 = exception?.InnerException?.Message ?? string.Empty;
+                    var z3 = exception.StackTrace;
+                    _logger.LogError($"\nException: {z}. \n InnerException: {z2}. \nStack Trace: \n{z3}", exception);
                     break;
                 }
             }

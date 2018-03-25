@@ -3,19 +3,19 @@ using System.Collections.Generic;
 
 namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 {
-    public class ReportsDropDowns
+    public class ReportDropDowns
     {
-        public ReportsDropDowns()
+        public ReportDropDowns()
         {
             Filters = new List<ReportClientView>();
-            GroupBy = new List<ReportsDropDownGroupBy>();
+            GroupBy = new List<ReportDropDownGroupBy>();
             //ShowColumns = new ShowColumnModel[0];
         }
 
         public List<ReportClientView> Filters { get; set; }
 
-        public List<ReportsDropDownGroupBy> GroupBy { get; set; }
+        public List<ReportDropDownGroupBy> GroupBy { get; set; }
 
-        public ShowColumnModel222[] ShowColumns { get; set; }
+        public ReportShowColumnModel[] ShowColumns { get; set; }
     }
 }

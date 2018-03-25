@@ -14,20 +14,20 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportsService
     {
-        private int GroupById { get; set; }
-
-        private int[] ShowColumnIds { get; set; }
-
         #region Get DropDowns and Grid. Filtration By / Grouping By: Projects, Users, Dates, Clients.
 
         public ReportTotalView GetReportsGroupingBy(ReportsGridView reportsGridView)
         {
             _reportsSettingsService.SaveCurrentQuery(reportsGridView.CurrentQuery);
 
-            GroupById = SetGroupByOrDefaultGrouping(reportsGridView.CurrentQuery.GroupById);
-            ShowColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
+            var groupById = SetGroupByOrDefaultGrouping(reportsGridView.CurrentQuery.GroupById);
+            var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
+            var dateFormatId = reportsGridView.DateFormatId;
 
-            var answer = new ReportTotalView();
+            var dateFrom = reportsGridView.CurrentQuery.DateFrom;
+            var dateTo = reportsGridView.CurrentQuery.DateTo;
+
+            var answer = new ReportTotalView(groupById, showColumnIds, dateFormatId , dateFrom, dateTo);
 
             var filteredTimeEntries = GetFilteredTimeEntries(reportsGridView);
             if (filteredTimeEntries.Any())
@@ -41,7 +41,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key.Name)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
-                        return answer.GetView(timeEntriesGroupByProjects, GroupById, ShowColumnIds);
+                        return answer.GetView(timeEntriesGroupByProjects);
                     }
 
                     case (int) ReportsGroupBy.Member:
@@ -51,7 +51,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key.FullName)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
-                        return answer.GetView(timeEntriesGroupByMembers, GroupById, ShowColumnIds);
+                        return answer.GetView(timeEntriesGroupByMembers);
                     }
 
                     case (int) ReportsGroupBy.Date:
@@ -61,7 +61,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key)
                             .ToDictionary(key => key.Key, key => key.OrderBy(x => x.Date).ToList());
 
-                        return answer.GetView(timeEntriesGroupByDate, GroupById, ShowColumnIds);
+                        return answer.GetView(timeEntriesGroupByDate);
                     }
 
                     case (int) ReportsGroupBy.Client:
@@ -71,7 +71,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key.Name)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
-                        return answer.GetView(timeEntriesGroupByClients, GroupById, ShowColumnIds);
+                        return answer.GetView(timeEntriesGroupByClients);
                     }
                 }
             }
@@ -81,7 +81,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         #endregion
 
-        #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients. (Common methods)
+        #region Get DropDowns and Grid. Filtration By / Grouping By: Projects, Users, Dates, Clients. (Common methods)
 
         private List<TimeEntry> GetFilteredTimeEntries(ReportsGridView reportsGridData)
         {
@@ -197,11 +197,5 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         }
 
         #endregion
-
-        // TODO dublicate int reportsExportService
-        private int SetGroupByOrDefaultGrouping(int? groupById)
-        {
-            return groupById ?? (int) ReportsGroupBy.Date;
-        }
     }
 }
