@@ -7,13 +7,9 @@ ct-color-picker {
   margin-top: -18px;
   position: relative;
 
-  mat-icon {
+  .mat-icon {
     width: 24px;
     height: 24px;
-
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   .ct-color-circle {
@@ -22,6 +18,10 @@ ct-color-picker {
     display: inline-block;
     border-radius: 100%;
   }
+}
+
+.ct-color-value {
+  cursor: pointer;
 }
 
 .ct-color-picker-popup {

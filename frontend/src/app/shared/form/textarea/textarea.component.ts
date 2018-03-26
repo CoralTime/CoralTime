@@ -53,6 +53,9 @@ export class TextareaComponent implements ControlValueAccessor {
 	private onTouched: () => any = () => {};
 
 	constructor(private ref: ChangeDetectorRef) {
+		setTimeout(() => {
+			this.autoSizer.resizeToFitContent(true);
+		}, 0);
 	}
 
 	updateModel(modelValue: any) {
@@ -103,7 +106,7 @@ export class TextareaComponent implements ControlValueAccessor {
 	}
 
 	private resizeTextarea(): void {
-		this.autoSizer.resizeToFitContent();
+		this.autoSizer.resizeToFitContent(true);
 		this.slimScroll.getBarHeight();
 	}
 }
