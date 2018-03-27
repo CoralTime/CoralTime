@@ -26,10 +26,6 @@ namespace CoralTime.DAL.ConvertModelToView
 
         public static string UpdateTimeFormatForValue(string value)
         {
-            if (string.IsNullOrEmpty(value))
-            {
-
-            }
             var time = TimeSpan.FromSeconds(Int32.Parse(value));
             if (time.TotalHours == 0)
             {
