@@ -6,10 +6,7 @@
 
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
-            <mat-input-container class="full-width">
-                <input #gb mdInput placeholder="Search task..."
-                       [(ngModel)]="filterStr">
-            </mat-input-container>
+            <input class="ct-input-element" #gb placeholder="Search task..." [(ngModel)]="filterStr">
             <i class="fa fa-search"></i>
         </div>
     </div>
@@ -20,39 +17,39 @@
 
     <div class="ct-grid" #grid>
         <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
-            <!--<p-dataTable class="ct-grid-container ct-table"-->
-                         <!--[value]="tasksPagedResult?.data"-->
-                         <!--scrollable="true" [sortField]="'name'"-->
-                         <!--[responsive]="true" [lazy]="true"-->
-                         <!--[globalFilter]="gb"-->
-                         <!--[resizeObservable]="resizeObservable"-->
-                         <!--(onLazyLoad)="updateTasks($event)"-->
-                         <!--(onMoreContent)="updateTasks()"-->
-                         <!--(onEndScrollEvent)="onEndScroll()">-->
+            <p-dataTable class="ct-grid-container ct-table"
+                         [value]="tasksPagedResult?.data"
+                         scrollable="true" [sortField]="'name'"
+                         [responsive]="true" [lazy]="true"
+                         [globalFilter]="gb"
+                         [resizeObservable]="resizeObservable"
+                         (onLazyLoad)="updateTasks($event)"
+                         (onMoreContent)="updateTasks()"
+                         (onEndScrollEvent)="onEndScroll()">
 
-                <!--<p-column field="name" header="Task" [sortable]="true" [style]="{'width':'400px'}">-->
-                    <!--<ng-template let-col let-projectTask="rowData" pTemplate="body">-->
-                        <!--<span class="ct-grid-link-text">{{projectTask.name}}</span>-->
-                    <!--</ng-template>-->
-                <!--</p-column>-->
+                <p-column field="name" header="Task" [sortable]="true" [style]="{'width':'400px'}">
+                    <ng-template let-col let-projectTask="rowData" pTemplate="body">
+                        <span class="ct-grid-link-text">{{projectTask.name}}</span>
+                    </ng-template>
+                </p-column>
 
-                <!--<p-column field="projectId" header="Task Type" [sortable]="true" [style]="{'width':'100px'}">-->
-                    <!--<ng-template let-col let-projectTask="rowData" pTemplate="body">-->
-                        <!--<span *ngIf="projectTask.projectId">custom</span>-->
-                        <!--<span *ngIf="!projectTask.projectId">general</span>-->
-                    <!--</ng-template>-->
-                <!--</p-column>-->
+                <p-column field="projectId" header="Task Type" [sortable]="true" [style]="{'width':'100px'}">
+                    <ng-template let-col let-projectTask="rowData" pTemplate="body">
+                        <span *ngIf="projectTask.projectId">custom</span>
+                        <span *ngIf="!projectTask.projectId">general</span>
+                    </ng-template>
+                </p-column>
 
-                <!--<p-column field="projectDel" header="Actions">-->
-                    <!--<ng-template let-col let-projectTask="rowData" pTemplate="body">-->
-                        <!--<a *ngIf="projectTask.projectId"-->
-                           <!--(click)="removeTask(projectTask)"-->
-                           <!--class="ct-grid-link ct-grid-ellipse ct-grid-delete">-->
-                            <!--<i class="material-icons" aria-hidden="true">clear</i>-->
-                        <!--</a>-->
-                    <!--</ng-template>-->
-                <!--</p-column>-->
-            <!--</p-dataTable>-->
+                <p-column field="projectDel" header="Actions">
+                    <ng-template let-col let-projectTask="rowData" pTemplate="body">
+                        <a *ngIf="projectTask.projectId"
+                           (click)="removeTask(projectTask)"
+                           class="ct-grid-link ct-grid-ellipse ct-grid-delete">
+                            <i class="material-icons" aria-hidden="true">clear</i>
+                        </a>
+                    </ng-template>
+                </p-column>
+            </p-dataTable>
         </div>
     </div>
 </div>

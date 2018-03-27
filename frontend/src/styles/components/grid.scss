@@ -194,6 +194,7 @@ tr:hover .ct-grid-settings {
   }
   .ui-datatable-scrollable-wrapper {
     .slimscroll-wrapper {
+      height: 100% !important;
       margin-top: 20px;
       .slimscroll-grid {
         right: 0 !important;
@@ -328,6 +329,10 @@ tr:hover .ct-grid-settings {
         }
       }
     }
+  }
+
+  .ui-sortable-column:focus {
+    outline: none;
   }
 
   .ct-grid-label {

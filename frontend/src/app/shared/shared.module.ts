@@ -1,4 +1,4 @@
-// import { DataTableModule } from './datatable/datatable';
+import { DataTableModule } from './datatable/datatable';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -30,7 +30,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
 		CalendarModule,
 		DirectivesModule,
 		DatepickerModule,
-		// DataTableModule,
+		DataTableModule,
 		MenuModule,
 		SharedFormModule,
 	],
@@ -54,7 +54,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
 		TranslateModule,
 		DirectivesModule,
 		DatepickerModule,
-		// DataTableModule,
+		DataTableModule,
 		MenuModule,
 		SharedFormModule,
 		UserPicComponent,

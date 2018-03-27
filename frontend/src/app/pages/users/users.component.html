@@ -1,7 +1,5 @@
 <div class="ct-grid-search-filter">
-    <!--<mat-input-container class="full-width">-->
-        <!--<input #gb mdInput placeholder="Search user..." [(ngModel)]="filterStr">-->
-    <!--</mat-input-container>-->
+    <input class="ct-input-element" #gb placeholder="Search user..." [(ngModel)]="filterStr">
     <i class="fa fa-search"></i>
 </div>
 
@@ -17,56 +15,56 @@
     </div>
 
     <div class="ct-data-table-wrapper" (window:resize)="onResize()">
-        <!--<p-dataTable class="ct-grid-container ct-table"-->
-                     <!--[value]="pagedResult?.data"-->
-                     <!--[resizeObservable]="resizeObservable"-->
-                     <!--scrollable="true" [sortField]="'fullName'"-->
-                     <!--[responsive]="true" [lazy]="true"-->
-                     <!--[globalFilter]="gb"-->
-                     <!--(onLazyLoad)="loadLazy($event)"-->
-                     <!--(onMoreContent)="loadLazy()"-->
-                     <!--(onEndScrollEvent)="onEndScroll()">-->
-            <!--<p-column field="fullName" header="Full Name" [sortable]="true">-->
-                <!--<ng-template let-col let-user="rowData" pTemplate="body">-->
-                    <!--<span (click)="openUserDialog(user)" class="ct-grid-userpic">-->
-                    <!--<ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>-->
-                    <!--</span>-->
-                    <!--<span (click)="openUserDialog(user)" class="ct-grid-link-text" title="{{user.userName}}">-->
-                        <!--{{user.fullName}}-->
-                    <!--</span>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
+        <p-dataTable class="ct-grid-container ct-table"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'fullName'"
+                     [responsive]="true" [lazy]="true"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column field="fullName" header="Full Name" [sortable]="true">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <span (click)="openUserDialog(user)" class="ct-grid-userpic">
+                    <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>
+                    </span>
+                    <span (click)="openUserDialog(user)" class="ct-grid-link-text" title="{{user.userName}}">
+                        {{user.fullName}}
+                    </span>
+                </ng-template>
+            </p-column>
 
-            <!--<p-column field="email" header="Email" [sortable]="true"></p-column>-->
+            <p-column field="email" header="Email" [sortable]="true"></p-column>
 
-            <!--<p-column field="userName" header="Username" [sortable]="true">-->
-                <!--<ng-template let-col let-user="rowData" pTemplate="body">-->
-                    <!--<span title="{{user.userName}}">{{user.userName}}</span>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
+            <p-column field="userName" header="Username" [sortable]="true">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <span title="{{user.userName}}">{{user.userName}}</span>
+                </ng-template>
+            </p-column>
 
-            <!--<p-column [style]="{'width':'150px'}" header="Role" [sortable]="false">-->
-                <!--<ng-template let-col let-user="rowData" pTemplate="body">-->
-                    <!--<span class="ct-lowercase">{{user.getRole()}}</span>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
+            <p-column [style]="{'width':'150px'}" header="Role" [sortable]="false">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <span class="ct-lowercase">{{user.getRole()}}</span>
+                </ng-template>
+            </p-column>
 
-            <!--<p-column [style]="{'width':'110px'}" header="Projects">-->
-                <!--<ng-template let-col let-user="rowData" pTemplate="body">-->
-                    <!--<a *ctIsGranted="'roleEditMember'" (click)="openProjectAssignmentDialog(user)" class="ct-grid-link ct-grid-count">-->
-                        <!--{{user.projectsCount}}-->
-                        <!--<span class="ct-manage-text">Manage</span>-->
-                    <!--</a>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
+            <p-column [style]="{'width':'110px'}" header="Projects">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <a *ctIsGranted="'roleEditMember'" (click)="openProjectAssignmentDialog(user)" class="ct-grid-link ct-grid-count">
+                        {{user.projectsCount}}
+                        <span class="ct-manage-text">Manage</span>
+                    </a>
+                </ng-template>
+            </p-column>
 
-            <!--<p-column [style]="{'width':'60px'}">-->
-                <!--<ng-template let-col let-user="rowData" pTemplate="body">-->
-                    <!--<a *ngIf="user.id !== currentUserId && user.id !== impersonateUserId" class="ct-grid-link" (click)="impersonateMember(user)">-->
-                        <!--<i class="ct-edit-timesheet-icon"></i>-->
-                    <!--</a>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
-        <!--</p-dataTable>-->
+            <p-column [style]="{'width':'60px'}">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <a *ngIf="user.id !== currentUserId && user.id !== impersonateUserId" class="ct-grid-link" (click)="impersonateMember(user)">
+                        <i class="ct-edit-timesheet-icon"></i>
+                    </a>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
     </div>
 </div>

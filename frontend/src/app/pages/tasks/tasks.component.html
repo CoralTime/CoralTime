@@ -1,7 +1,5 @@
 <div class="ct-grid-search-filter">
-    <!--<mat-input-container class="full-width">-->
-        <!--<input class="mat-input-element" #gb placeholder="Search tasks..." [(ngModel)]="filterStr">-->
-    <!--</mat-input-container>-->
+    <input class="ct-input-element" #gb placeholder="Search tasks..." [(ngModel)]="filterStr">
     <i class="fa fa-search"></i>
 </div>
 
@@ -16,36 +14,36 @@
         </div>
     </div>
 
-    <!--<div class="ct-data-table-wrapper" (window:resize)="onResize()">-->
-        <!--<p-dataTable class="ct-grid-container ct-table"-->
-                     <!--[value]="pagedResult?.data"-->
-                     <!--[resizeObservable]="resizeObservable"-->
-                     <!--scrollable="true" [sortField]="'name'"-->
-                     <!--[responsive]="true" [lazy]="true"-->
-                     <!--[globalFilter]="gb"-->
-                     <!--(onLazyLoad)="loadLazy($event)"-->
-                     <!--(onMoreContent)="loadLazy()"-->
-                     <!--(onEndScrollEvent)="onEndScroll()">-->
-            <!--<p-column [style]="{'width':'450px'}" field="name" header="Task" [sortable]="true">-->
-                <!--<ng-template let-col let-task="rowData" pTemplate="body">-->
-                    <!--<span (click)="openTaskDialog(task)" class="ct-grid-link-text" title="{{task.name}}">{{task.name}}</span>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
+    <div class="ct-data-table-wrapper" (window:resize)="onResize()">
+        <p-dataTable class="ct-grid-container ct-table"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'name'"
+                     [responsive]="true" [lazy]="true"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column [style]="{'width':'450px'}" field="name" header="Task" [sortable]="true">
+                <ng-template let-col let-task="rowData" pTemplate="body">
+                    <span (click)="openTaskDialog(task)" class="ct-grid-link-text" title="{{task.name}}">{{task.name}}</span>
+                </ng-template>
+            </p-column>
 
-            <!--<p-column [style]="{'width':'250px'}" field="projectId" header="Task Type" [sortable]="true">-->
-                <!--<ng-template let-col let-task="rowData" pTemplate="body">-->
-                    <!--<span *ngIf="task.projectId">custom</span>-->
-                    <!--<span *ngIf="!task.projectId">general</span>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
+            <p-column [style]="{'width':'250px'}" field="projectId" header="Task Type" [sortable]="true">
+                <ng-template let-col let-task="rowData" pTemplate="body">
+                    <span *ngIf="task.projectId">custom</span>
+                    <span *ngIf="!task.projectId">general</span>
+                </ng-template>
+            </p-column>
 
-            <!--<p-column field="description" header="Description" styleClass="ct-column-description">-->
-                <!--<ng-template let-col let-task="rowData" pTemplate="body" let-index="rowIndex">-->
-                    <!--<div class="ct-grid-description">-->
-                        <!--<ct-read-more [text]="task.description"></ct-read-more>-->
-                    <!--</div>-->
-                <!--</ng-template>-->
-            <!--</p-column>-->
-        <!--</p-dataTable>-->
-    <!--</div>-->
+            <p-column field="description" header="Description" styleClass="ct-column-description">
+                <ng-template let-col let-task="rowData" pTemplate="body" let-index="rowIndex">
+                    <div class="ct-grid-description">
+                        <ct-read-more [text]="task.description"></ct-read-more>
+                    </div>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
 </div>
