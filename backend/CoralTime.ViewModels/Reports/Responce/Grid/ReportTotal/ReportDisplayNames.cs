@@ -2,22 +2,15 @@
 
 namespace CoralTime.ViewModels.Reports
 {
-    public class ReportGroupByTypeDisplayNames
+    public class ReportDisplayNames
     {
-        [JsonIgnore] public int? GroupByTypeId { get; }
-        [JsonIgnore] public int[] ShowColumnIds { get; }
-
-        private ReportGroupByTypeDisplayNames() { }
-
-        public ReportGroupByTypeDisplayNames(int? groupById, int[] showColumnIds)
+        public ReportDisplayNames()
         {
-            GroupByTypeId = groupById;
-            ShowColumnIds = showColumnIds;
-
             DisplayNameClient = "Client";
             DisplayNameProject = "Project";
             DisplayNameMember = "User";
             DisplayNameDate = "Date";
+
             DisplayNameTimeFrom = "Start";
             DisplayNameTimeTo = "Finish";
             DisplayNameTimeActual = "Act. Hours";

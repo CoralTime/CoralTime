@@ -4,24 +4,17 @@ using System.Collections.Generic;
 
 namespace CoralTime.ViewModels.Reports
 {
-    public class ReportTotalView 
+    public class ReportTotalView : ReportTotalForGroupTypeView
     {
-        [JsonIgnore] public int? GroupByTypeId { get; }
-        [JsonIgnore] public int[] ShowColumnIds { get; }
-        [JsonIgnore] public int? DateFormatId { get; }
-
         public ReportTotalView(int groupById, int[] showColumnIds, int? dateFormatId, DateTime? dateFrom, DateTime? dateTo)
-        {
+            : base(groupById,showColumnIds,dateFormatId, new ReportDisplayNames())
+        { 
             TimeTotal = new TimeTotalView();
 
             GroupedItems = new List<ReportTotalForGroupTypeView>
             {
-                new ReportTotalForGroupTypeView(groupById, showColumnIds, dateFormatId)
+                new ReportTotalForGroupTypeView(groupById, showColumnIds, dateFormatId, new ReportDisplayNames())
             };
-
-            GroupByTypeId = groupById;
-            ShowColumnIds = showColumnIds;
-            DateFormatId = dateFormatId;
 
             PeriodCell =  new ReportPeriodView(dateFrom, dateTo);
         }

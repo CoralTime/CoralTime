@@ -6,11 +6,8 @@ namespace CoralTime.ViewModels.Reports
     {
         [JsonIgnore] public int? DateFormatId { get; }
 
-        private ReportTotalForGroupTypeView() 
-            : base(null, null) { }
-
-        public ReportTotalForGroupTypeView(int? groupById, int[] showColumnIds, int? dateFormatId)
-            : base(groupById, showColumnIds)
+        public ReportTotalForGroupTypeView(int? groupById, int[] showColumnIds, int? dateFormatId, ReportDisplayNames displayNames)
+            : base(groupById, showColumnIds, displayNames)
         {
             GroupByType = new ReportGroupByType(groupById, showColumnIds);
             DateFormatId = dateFormatId;

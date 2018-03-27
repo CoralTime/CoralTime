@@ -3,13 +3,17 @@ using Newtonsoft.Json;
 
 namespace CoralTime.ViewModels.Reports
 {
-    public class ReportItemsView: ReportGroupByTypeDisplayNames
+    public class ReportItemsView
     {
-        private ReportItemsView() 
-            : base(null,null) { }
+        [JsonIgnore] public int? GroupByTypeId { get; }
+        [JsonIgnore] public int[] ShowColumnIds { get; }
 
-        public ReportItemsView(int? groupById, int[] showColumnIds)
-            : base(groupById, showColumnIds) { }
+        public ReportItemsView(int? groupById, int[] showColumnIds, ReportDisplayNames displayNames)
+        {
+            GroupByTypeId = groupById;
+            ShowColumnIds = showColumnIds;
+            DisplayNames = displayNames;
+        }
 
         [JsonIgnore] public int? ClientId { get; set; }
         public string ClientName { get; set; }
@@ -28,5 +32,7 @@ namespace CoralTime.ViewModels.Reports
         public TimeValuesView TimeValues { get; set; }
 
         public string Notes { get; set; }
+
+        [JsonIgnore] public ReportDisplayNames DisplayNames { get; set; }
     }
 }
