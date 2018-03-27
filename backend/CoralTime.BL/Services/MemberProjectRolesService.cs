@@ -52,7 +52,7 @@ namespace CoralTime.BL.Services
 
                 var addGlobalProjectsRoles = AddGlobalProjectsRoles(memberProjectRoleView);
 
-                var addGlobalProjectsRolesView = addGlobalProjectsRoles.Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.MemberId)));
+                var addGlobalProjectsRolesView = addGlobalProjectsRoles.Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.Member.Id)));
 
                 memberProjectRoleView.AddRange(addGlobalProjectsRolesView);
 
