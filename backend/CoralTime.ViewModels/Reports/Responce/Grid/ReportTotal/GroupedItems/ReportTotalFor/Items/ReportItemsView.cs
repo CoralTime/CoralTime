@@ -6,13 +6,16 @@ namespace CoralTime.ViewModels.Reports
     public class ReportItemsView
     {
         [JsonIgnore] public int? GroupByTypeId { get; }
+
         [JsonIgnore] public int[] ShowColumnIds { get; }
 
-        public ReportItemsView(int? groupById, int[] showColumnIds, ReportDisplayNames displayNames)
+        [JsonIgnore] public ReportDisplayNames DisplayNames { get; set; }
+
+        public ReportItemsView(int? groupById, int[] showColumnIds)
         {
             GroupByTypeId = groupById;
             ShowColumnIds = showColumnIds;
-            DisplayNames = displayNames;
+            DisplayNames = new ReportDisplayNames();
         }
 
         [JsonIgnore] public int? ClientId { get; set; }
@@ -32,7 +35,5 @@ namespace CoralTime.ViewModels.Reports
         public TimeValuesView TimeValues { get; set; }
 
         public string Notes { get; set; }
-
-        [JsonIgnore] public ReportDisplayNames DisplayNames { get; set; }
     }
 }

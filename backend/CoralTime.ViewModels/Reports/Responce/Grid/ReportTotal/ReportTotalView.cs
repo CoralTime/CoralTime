@@ -7,13 +7,13 @@ namespace CoralTime.ViewModels.Reports
     public class ReportTotalView : ReportTotalForGroupTypeView
     {
         public ReportTotalView(int groupById, int[] showColumnIds, int? dateFormatId, DateTime? dateFrom, DateTime? dateTo)
-            : base(groupById,showColumnIds,dateFormatId, new ReportDisplayNames())
+            : base(groupById,showColumnIds,dateFormatId)
         { 
             TimeTotal = new TimeTotalView();
 
             GroupedItems = new List<ReportTotalForGroupTypeView>
             {
-                new ReportTotalForGroupTypeView(groupById, showColumnIds, dateFormatId, new ReportDisplayNames())
+                new ReportTotalForGroupTypeView(groupById, showColumnIds, dateFormatId)
             };
 
             PeriodCell =  new ReportPeriodView(dateFrom, dateTo);

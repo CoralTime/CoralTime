@@ -86,7 +86,6 @@ namespace CoralTime.DAL.ConvertModelToView
             var dateFormatId = reportTotalView.DateFormatId;
             var dateFrom = reportTotalView.PeriodCell.DateFrom;
             var dateTo = reportTotalView.PeriodCell.DateTo;
-            var displayNames = reportTotalView.DisplayNames;
 
             reportTotalView.PeriodCell.DisplayNamePeriodValue = GetPeriodCellvalue(dateFrom, dateTo, dateFormatId);
 
@@ -96,7 +95,7 @@ namespace CoralTime.DAL.ConvertModelToView
 
             foreach (var dictionaryOfGroupTimeEntries in dictionaryOfGroupsTimeEntries)
             {
-                var reportItemsGroupByTypeView = new ReportTotalForGroupTypeView(groupByTypeId, showColumnIds, dateFormatId, displayNames).GetView(dictionaryOfGroupTimeEntries);
+                var reportItemsGroupByTypeView = new ReportTotalForGroupTypeView(groupByTypeId, showColumnIds, dateFormatId).GetView(dictionaryOfGroupTimeEntries);
 
                 reportTotalView.TimeTotal.TimeActualTotal += reportItemsGroupByTypeView.TimeTotalFor.TimeActualTotalFor;
                 reportTotalView.TimeTotal.TimeEstimatedTotal += reportItemsGroupByTypeView.TimeTotalFor.TimeEstimatedTotalFor;
@@ -114,9 +113,8 @@ namespace CoralTime.DAL.ConvertModelToView
         {
             var groupByTypeId = reportItemsGroupByTypeView.GroupByTypeId;
             var showColumnIds = reportItemsGroupByTypeView.ShowColumnIds;
-            var displayNames = reportItemsGroupByTypeView.DisplayNames;
 
-            var reportTimeTotalForItemsView = new ReportTotalForView(groupByTypeId, showColumnIds, displayNames).GetView(dictionaryOfGroupTimeEntries.Value);
+            var reportTimeTotalForItemsView = new ReportTotalForView(groupByTypeId, showColumnIds).GetView(dictionaryOfGroupTimeEntries.Value);
 
             switch (dictionaryOfGroupTimeEntries.Key)
             {
@@ -127,6 +125,7 @@ namespace CoralTime.DAL.ConvertModelToView
 
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = reportItemsGroupByTypeView.DisplayNames.DisplayNameProject + ": ";
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = project.Name;
+                    reportTimeTotalForItemsView.DisplayNames.DisplayNameProject = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameProject;
 
                     break;
                 }
@@ -138,6 +137,7 @@ namespace CoralTime.DAL.ConvertModelToView
 
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = reportItemsGroupByTypeView.DisplayNames.DisplayNameMember + ": ";
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = member.FullName;
+                    reportTimeTotalForItemsView.DisplayNames.DisplayNameMember = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameMember;
 
                     break;
                 }
@@ -148,6 +148,7 @@ namespace CoralTime.DAL.ConvertModelToView
                     
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = reportItemsGroupByTypeView.DisplayNames.DisplayNameDate + ": ";
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = UpdateDateFormat(dateTime, reportItemsGroupByTypeView.DateFormatId);
+                    reportTimeTotalForItemsView.DisplayNames.DisplayNameDate = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameDate;
 
                     break;
                 }
@@ -159,16 +160,13 @@ namespace CoralTime.DAL.ConvertModelToView
 
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = client.Id == WithoutClient.Id ? null : reportItemsGroupByTypeView.DisplayNames.DisplayNameClient + ": ";
                     reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = client.Name;
+                    reportTimeTotalForItemsView.DisplayNames.DisplayNameClient = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameClient;
 
                     break;
                 }
             }
 
-            reportTimeTotalForItemsView.DisplayNames.DisplayNameProject = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameProject;
-            reportTimeTotalForItemsView.DisplayNames.DisplayNameMember = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameMember;
-            reportTimeTotalForItemsView.DisplayNames.DisplayNameDate = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameDate;
-            reportTimeTotalForItemsView.DisplayNames.DisplayNameClient = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameClient;
-
+            reportItemsGroupByTypeView.DisplayNames = reportTimeTotalForItemsView.DisplayNames;
             reportItemsGroupByTypeView.TimeTotalFor = reportTimeTotalForItemsView.TimeTotalFor;
             reportItemsGroupByTypeView.Items = reportTimeTotalForItemsView.Items;
 
@@ -179,8 +177,7 @@ namespace CoralTime.DAL.ConvertModelToView
         {
             var groupByTypeId = reportTimeTotalForItemsView.GroupByTypeId;
             var showColumnIds = reportTimeTotalForItemsView.ShowColumnIds;
-            var displayNames = reportTimeTotalForItemsView.DisplayNames;
-            reportTimeTotalForItemsView.Items = groupedTimeEntries.Select(x => MapTimeEntryToReportGridItemsView(x, new ReportItemsView(groupByTypeId, showColumnIds, displayNames))).ToList();
+            reportTimeTotalForItemsView.Items = groupedTimeEntries.Select(x => MapTimeEntryToReportGridItemsView(x, new ReportItemsView(groupByTypeId, showColumnIds))).ToList();
 
             foreach (var groupingTimeEntries in reportTimeTotalForItemsView.Items)
             {
@@ -198,6 +195,12 @@ namespace CoralTime.DAL.ConvertModelToView
 
         private static void HideDisplayNamesByGroupingAndShowColumnsIds(ReportTotalView reportTotalView)
         {
+
+            reportTotalView.DisplayNames.DisplayNameProject = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTotalView.DisplayNames.DisplayNameProject;
+            reportTotalView.DisplayNames.DisplayNameMember = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTotalView.DisplayNames.DisplayNameMember;
+            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTotalView.DisplayNames.DisplayNameDate;
+            reportTotalView.DisplayNames.DisplayNameClient = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTotalView.DisplayNames.DisplayNameClient;
+
             reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowDate) ? reportTotalView.DisplayNames.DisplayNameDate : null;
             reportTotalView.DisplayNames.DisplayNameNotes = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowNotes) ? reportTotalView.DisplayNames.DisplayNameNotes : null;
             reportTotalView.DisplayNames.DisplayNameTimeFrom = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeFrom : null;
