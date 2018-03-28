@@ -7,8 +7,8 @@ namespace CoralTime.ViewModels.Reports
         public TimeTotalView()
         {
             TimeEstimatedTotal = 0;
-            DisplayNameTimeActualTotal = "Total: ";
-            DisplayNameTimeEstimatedTotal = "Total: ";
+            DisplayNameTimeActualTotal = "Total";
+            DisplayNameTimeEstimatedTotal = "Total";
         }
 
         public int TimeActualTotal { get; set; }

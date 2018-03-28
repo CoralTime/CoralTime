@@ -92,7 +92,7 @@ namespace CoralTime.BL.Services.Reports.Export
                 case (int) FileType.Excel:
                 {
                     FileName = FileName + ExtensionXLSX;
-                    //fileOfBytes = CreateFileExcel(reportTotalView);
+                    fileOfBytes = CreateFileExcel(reportTotalView);
                     ContentType = ContentTypeXLSX;
 
                     break;

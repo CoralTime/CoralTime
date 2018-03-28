@@ -26,6 +26,10 @@ namespace CoralTime.DAL.ConvertModelToView
 
         public static string UpdateTimeFormatForValue(string value)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+
+            }
             var time = TimeSpan.FromSeconds(Int32.Parse(value));
             if (time.TotalHours == 0)
             {
@@ -100,6 +104,8 @@ namespace CoralTime.DAL.ConvertModelToView
                 reportTotalView.TimeTotal.TimeActualTotal += reportItemsGroupByTypeView.TimeTotalFor.TimeActualTotalFor;
                 reportTotalView.TimeTotal.TimeEstimatedTotal += reportItemsGroupByTypeView.TimeTotalFor.TimeEstimatedTotalFor;
                 reportTotalView.GroupedItems.Add(reportItemsGroupByTypeView);
+
+                reportItemsGroupByTypeView.DisplayNames = reportTotalView.DisplayNames;
             }
 
             reportTotalView.TimeTotal.TimeEstimatedTotal = showColumnIds.Contains((int) ShowColumnModelIds.ShowEstimatedTime)
@@ -109,10 +115,10 @@ namespace CoralTime.DAL.ConvertModelToView
             return reportTotalView;
         }
 
-        private static ReportTotalForGroupTypeView GetView<TGroupBy>(this ReportTotalForGroupTypeView reportItemsGroupByTypeView, KeyValuePair<TGroupBy, List<TimeEntry>> dictionaryOfGroupTimeEntries)
+        private static ReportTotalForGroupTypeView GetView<TGroupBy>(this ReportTotalForGroupTypeView reportTotalForGroupTypeView, KeyValuePair<TGroupBy, List<TimeEntry>> dictionaryOfGroupTimeEntries)
         {
-            var groupByTypeId = reportItemsGroupByTypeView.GroupByTypeId;
-            var showColumnIds = reportItemsGroupByTypeView.ShowColumnIds;
+            var groupByTypeId = reportTotalForGroupTypeView.GroupByTypeId;
+            var showColumnIds = reportTotalForGroupTypeView.ShowColumnIds;
 
             var reportTimeTotalForItemsView = new ReportTotalForView(groupByTypeId, showColumnIds).GetView(dictionaryOfGroupTimeEntries.Value);
 
@@ -120,82 +126,81 @@ namespace CoralTime.DAL.ConvertModelToView
             {
                 case Project project:
                 {
-                    reportItemsGroupByTypeView.GroupByType.ProjectId = project.Id;
-                    reportItemsGroupByTypeView.GroupByType.ProjectName = project.Name;
+                    reportTotalForGroupTypeView.GroupByType.ProjectId = project.Id;
+                    reportTotalForGroupTypeView.GroupByType.ProjectName = project.Name;
 
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = reportItemsGroupByTypeView.DisplayNames.DisplayNameProject + ": ";
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = project.Name;
-                    reportTimeTotalForItemsView.DisplayNames.DisplayNameProject = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameProject;
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayName = reportTotalForGroupTypeView.DisplayNames.DisplayNameProject + ": ";
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayNameValue = project.Name;
+                    //reportTimeTotalForItemsView.DisplayNames.DisplayNameProject = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameProject;
 
                     break;
                 }
 
                 case Member member:
                 {
-                    reportItemsGroupByTypeView.GroupByType.MemberId = member.Id;
-                    reportItemsGroupByTypeView.GroupByType.MemberName = member.FullName;
+                    reportTotalForGroupTypeView.GroupByType.MemberId = member.Id;
+                    reportTotalForGroupTypeView.GroupByType.MemberName = member.FullName;
 
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = reportItemsGroupByTypeView.DisplayNames.DisplayNameMember + ": ";
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = member.FullName;
-                    reportTimeTotalForItemsView.DisplayNames.DisplayNameMember = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameMember;
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayName = reportTotalForGroupTypeView.DisplayNames.DisplayNameMember + ": ";
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayNameValue = member.FullName;
+                    //reportTimeTotalForItemsView.DisplayNames.DisplayNameMember = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameMember;
 
                     break;
                 }
 
                 case DateTime dateTime:
                 {
-                    reportItemsGroupByTypeView.GroupByType.Date = dateTime;
+                    reportTotalForGroupTypeView.GroupByType.Date = dateTime;
                     
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = reportItemsGroupByTypeView.DisplayNames.DisplayNameDate + ": ";
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = UpdateDateFormat(dateTime, reportItemsGroupByTypeView.DateFormatId);
-                    reportTimeTotalForItemsView.DisplayNames.DisplayNameDate = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameDate;
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayName = reportTotalForGroupTypeView.DisplayNames.DisplayNameDate + ": ";
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayNameValue = UpdateDateFormat(dateTime, reportTotalForGroupTypeView.DateFormatId);
+                    //reportTimeTotalForItemsView.DisplayNames.DisplayNameDate = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameDate;
 
                     break;
                 }
 
                 case Client client:
                 {
-                    reportItemsGroupByTypeView.GroupByType.ClientId = client.Id;
-                    reportItemsGroupByTypeView.GroupByType.ClientName = client.Name;
+                    reportTotalForGroupTypeView.GroupByType.ClientId = client.Id;
+                    reportTotalForGroupTypeView.GroupByType.ClientName = client.Name;
 
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayName = client.Id == WithoutClient.Id ? null : reportItemsGroupByTypeView.DisplayNames.DisplayNameClient + ": ";
-                    reportItemsGroupByTypeView.GroupByType.GroupByTypeDisplayNameValue = client.Name;
-                    reportTimeTotalForItemsView.DisplayNames.DisplayNameClient = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameClient;
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayName = client.Id == WithoutClient.Id ? null : reportTotalForGroupTypeView.DisplayNames.DisplayNameClient + ": ";
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayNameValue = client.Name;
+                    //reportTimeTotalForItemsView.DisplayNames.DisplayNameClient = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameClient;
 
                     break;
                 }
             }
 
-            reportItemsGroupByTypeView.DisplayNames = reportTimeTotalForItemsView.DisplayNames;
-            reportItemsGroupByTypeView.TimeTotalFor = reportTimeTotalForItemsView.TimeTotalFor;
-            reportItemsGroupByTypeView.Items = reportTimeTotalForItemsView.Items;
+            //reportTotalForGroupTypeView.DisplayNames = reportTimeTotalForItemsView.DisplayNames;
+            reportTotalForGroupTypeView.TimeTotalFor = reportTimeTotalForItemsView.TimeTotalFor;
+            reportTotalForGroupTypeView.Items = reportTimeTotalForItemsView.Items;
 
-            return reportItemsGroupByTypeView;
+            return reportTotalForGroupTypeView;
         }
 
-        private static ReportTotalForView GetView(this ReportTotalForView reportTimeTotalForItemsView, List<TimeEntry> groupedTimeEntries)
+        private static ReportTotalForView GetView(this ReportTotalForView reportTotalForView, List<TimeEntry> groupedTimeEntries)
         {
-            var groupByTypeId = reportTimeTotalForItemsView.GroupByTypeId;
-            var showColumnIds = reportTimeTotalForItemsView.ShowColumnIds;
-            reportTimeTotalForItemsView.Items = groupedTimeEntries.Select(x => MapTimeEntryToReportGridItemsView(x, new ReportItemsView(groupByTypeId, showColumnIds))).ToList();
+            var groupByTypeId = reportTotalForView.GroupByTypeId;
+            var showColumnIds = reportTotalForView.ShowColumnIds;
 
-            foreach (var groupingTimeEntries in reportTimeTotalForItemsView.Items)
+            reportTotalForView.Items = groupedTimeEntries.Select(x => MapTimeEntryToReportGridItemsView(x, new ReportItemsView(groupByTypeId, showColumnIds))).ToList();
+
+            foreach (var groupingTimeEntries in reportTotalForView.Items)
             {
-                reportTimeTotalForItemsView.TimeTotalFor.TimeActualTotalFor += groupingTimeEntries.TimeValues.TimeActual;
-                reportTimeTotalForItemsView.TimeTotalFor.TimeEstimatedTotalFor += groupingTimeEntries.TimeValues.TimeEstimated;
+                reportTotalForView.TimeTotalFor.TimeActualTotalFor += groupingTimeEntries.TimeValues.TimeActual;
+                reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor += groupingTimeEntries.TimeValues.TimeEstimated;
             }
 
-            reportTimeTotalForItemsView.TimeTotalFor.DisplayNameTimeEstimatedTotalFor = reportTimeTotalForItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowEstimatedTime) ? reportTimeTotalForItemsView.TimeTotalFor.DisplayNameTimeEstimatedTotalFor : null;
-            reportTimeTotalForItemsView.TimeTotalFor.TimeEstimatedTotalFor = reportTimeTotalForItemsView.ShowColumnIds.Contains((int) ShowColumnModelIds.ShowEstimatedTime)
-                ? reportTimeTotalForItemsView.TimeTotalFor.TimeEstimatedTotalFor
+            reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor = reportTotalForView.ShowColumnIds.Contains((int) ShowColumnModelIds.ShowEstimatedTime)
+                ? reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor
                 : null;
 
-            return reportTimeTotalForItemsView;
+            return reportTotalForView;
         }
 
         private static void HideDisplayNamesByGroupingAndShowColumnsIds(ReportTotalView reportTotalView)
         {
-
             reportTotalView.DisplayNames.DisplayNameProject = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTotalView.DisplayNames.DisplayNameProject;
             reportTotalView.DisplayNames.DisplayNameMember = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTotalView.DisplayNames.DisplayNameMember;
             reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTotalView.DisplayNames.DisplayNameDate;
@@ -206,8 +211,6 @@ namespace CoralTime.DAL.ConvertModelToView
             reportTotalView.DisplayNames.DisplayNameTimeFrom = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeFrom : null;
             reportTotalView.DisplayNames.DisplayNameTimeTo = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeTo : null;
             reportTotalView.DisplayNames.DisplayNameTimeEstimated = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowEstimatedTime) ? reportTotalView.DisplayNames.DisplayNameTimeEstimated : null;
-
-            reportTotalView.TimeTotal.DisplayNameTimeEstimatedTotal = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowEstimatedTime) ? reportTotalView.TimeTotal.DisplayNameTimeEstimatedTotal : null;
         }
     }
 }
