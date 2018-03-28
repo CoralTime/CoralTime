@@ -314,7 +314,6 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 	 * custom code block start
 	 */
 	isBarDisplay: boolean;
-	needCheckContentHeight: boolean = true;
 	rowLength: number = 0;
 
 	@Output() onEndScroll: EventEmitter<any> = new EventEmitter();
@@ -333,15 +332,21 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 		}
 	}
 
+	checkContentHeight(): void {
+		if (this.isBarDisplay === false) {
+			this.loadMoreContent.emit();
+		}
+	}
+
+	isRowLengthChanged(): boolean {
+		return this.dt.dataToRender && this.rowLength !== this.dt.dataToRender.length;
+	}
+
 	getBarHeight(): void {
 		let that = this.slimScroll;
 		const barHeight = Math.max((that.el.offsetHeight / that.el.scrollHeight) * that.el.offsetHeight, 30) + 'px';
 		const display = parseInt(barHeight, 10) === that.el.offsetHeight ? 'none' : 'block';
-
-		// this.isBarDisplay = (display === 'block');
-		// if (display === 'block') {
-		// 	this.needCheckContentHeight = false;
-		// }
+		this.isBarDisplay = (display === 'block');
 
 		this.renderer.setElementStyle(that.bar, 'height', barHeight);
 		this.renderer.setElementStyle(that.bar, 'display', display);
@@ -395,27 +400,6 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 		return over;
 	}
 
-	isRowLengthChanged(): boolean {
-		return this.dt.dataToRender && this.rowLength !== this.dt.dataToRender.length;
-	}
-
-	checkContentHeight(): void {
-		// if (this.isBarDisplay === false && this.isRowLengthChanged()) {
-		// console.log(222, this.rowLength, this.dt.dataToRender);
-		// 	this.rowLength = this.dt.dataToRender && this.dt.dataToRender.length;
-		// 	this.loadMoreContent.emit();
-		// }
-
-		let wrapperHeight = this.slimScroll.el.offsetHeight;
-		let contentHeight = this.slimScroll.el.children[0].clientHeight;
-		if (contentHeight > 100) {
-			this.needCheckContentHeight = false;
-			if (wrapperHeight >= contentHeight) {
-				this.loadMoreContent.emit();
-			}
-		}
-	}
-
 	ngAfterViewChecked() {
 		if (this.virtualScroll && !this.rowHeight) {
 			let row = this.domHandler.findSingle(this.scrollTable, 'tr.ui-widget-content:not(.ui-datatable-emptymessage-row)');
@@ -432,8 +416,12 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 			});
 		}
 
-		if (this.needCheckContentHeight) {
-			this.checkContentHeight();
+		if (this.isRowLengthChanged()) {
+			this.rowLength = this.dt.dataToRender && this.dt.dataToRender.length;
+
+			setTimeout(() => {
+				this.checkContentHeight();
+			}, 100);
 		}
 	}
 
