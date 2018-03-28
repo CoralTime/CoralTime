@@ -13,7 +13,8 @@
             <p>
                 Lock time entries in
                 <mat-input-container>
-                    <input type="number" mdInput name="daysBeforeStopEditJobs"
+                    <input matInput name="daysBeforeStopEditJobs"
+                           placeholder="0"
                            [(ngModel)]="model.daysBeforeStopEditTimeEntries"
                            [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isTimeLockEnabled"
@@ -39,7 +40,8 @@
             <p>
                 Send notification email if the time entries missed for more than
                 <mat-input-container>
-                    <input type="number" mdInput name="notificationDay"
+                    <input matInput name="notificationDay"
+                           placeholder="0"
                            [(ngModel)]="model.notificationDay"
                            [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isNotificationEnabled"

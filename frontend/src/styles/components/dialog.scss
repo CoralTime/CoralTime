@@ -398,12 +398,16 @@
 
   &.ct-small-data-dialog {
     width: 600px;
+
+    &:before {
+      width: 640px;
+    }
   }
-  
+
   &:before {
     position: absolute;
     content: '';
-    width: 100%;
+    width: 940px;
     height: 100%;
     top: 0;
     left: 0;
@@ -494,11 +498,51 @@
   .mat-input-container {
     width: 35px;
     font-size: $formControlFontSize;
+
+    &.mat-form-field-should-float {
+      .mat-input-placeholder {
+        display: none;
+      }
+    }
+
+    .mat-form-field-required-marker {
+      display: none;
+    }
+
+    .mat-form-field-infix {
+      padding: 0;
+      border: 0;
+    }
+
+    .mat-form-field-label-wrapper {
+      padding: 0;
+      top: 0;
+    }
+
+    .mat-input-placeholder {
+      top: 0;
+      text-align: center;
+      color: $nav-link-border;
+    }
+
+    &.mat-form-field-disabled {
+      .mat-input-placeholder {
+        opacity: .7;
+        color: rgba(0, 0, 0, .38);
+      }
+    }
+
+    .mat-form-field-underline {
+      height: 0;
+      overflow: hidden;
+    }
   }
 
   .mat-input-underline {
     border: none;
     border-top: 1px solid $nav-link-border;
+    bottom: 0;
+    left: 0;
 
     .mat-input-ripple {
       height: 1px;
@@ -613,10 +657,6 @@
         border-top-style: solid;
       }
     }
-  }
-
-  .mat-radio-container {
-    top: 4px;
   }
 
   .ct-dialog-title {

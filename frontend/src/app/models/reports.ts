@@ -73,14 +73,19 @@ export interface ReportGrid {
 }
 
 export interface TimeTotal {
-	timeActualTotalFor: number;
-	timeEstimatedTotalFor: number;
+	timeActualTotal: number;
+	timeEstimatedTotal: number;
 }
 
 export class ReportGridView {
 	groupByType: GroupByType;
 	items: ReportItem[];
-	timeTotalFor: TimeTotal;
+	timeTotalFor: TimeTotalFor;
+}
+
+export interface TimeTotalFor {
+	timeActualTotalFor: number;
+	timeEstimatedTotalFor: number;
 }
 
 export interface GroupByType {

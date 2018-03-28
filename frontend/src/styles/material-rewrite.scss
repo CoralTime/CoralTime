@@ -36,7 +36,7 @@
   }
 }
 
-.mat-radio-button {
+.mat-radio-button.mat-accent {
   &.mat-radio-checked .mat-radio-outer-circle {
     border-color: $nav-link-border;
   }
@@ -140,4 +140,8 @@
 
 .cdk-overlay-container {
   z-index: 1001;
+}
+
+.mat-list-item {
+  height: auto !important;
 }

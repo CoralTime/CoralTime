@@ -140,7 +140,7 @@
             </div>
         </div>
 
-        <div *ngIf="reportsGridData?.timeTotal.timeActualTotalFor > 0" class="ct-grid-container ct-total-time-container">
+        <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-time-container">
             <label>Total</label>
             <div class="ui-datatable-tablewrapper">
                 <table>
@@ -155,13 +155,13 @@
 
                         <td class="ct-cell-actual">
                             <div class="ct-total-hours-tracked">
-                                <span>{{getTimeString(reportsGridData?.timeTotal.timeActualTotalFor, true)}}</span>
+                                <span>{{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
                             </div>
                         </td>
 
                         <td *ngIf="showColumnIds?.indexOf(1) > -1" class="ct-cell-estimated">
                             <div class="ct-total-hours-planned" *ngIf="showColumnIds?.indexOf(1) > -1">
-                                <span>{{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotalFor)}}</span>
+                                <span>{{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
                             </div>
                         </td>
 

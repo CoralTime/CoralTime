@@ -388,7 +388,7 @@ export class ReportsComponent implements OnInit {
 	// SEND REPORTS
 
 	openSendReportsDialog(): void {
-		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
@@ -423,7 +423,7 @@ export class ReportsComponent implements OnInit {
 	// GENERAL
 
 	checkDataAndPrintPage(): void {
-		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to print.');
 			return;
 		}
@@ -454,7 +454,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	exportAs(fileTypeId: number): void {
-		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
