@@ -6,6 +6,7 @@ import { LoadingIndicatorService } from '../../core/loading-indicator.service';
 	selector: 'ct-loading-bar',
 	templateUrl: 'loading-bar.component.html'
 })
+
 export class LoadingBarComponent implements OnInit, OnDestroy {
 	status = 0;
 	private subscription: Subscription;
@@ -16,7 +17,7 @@ export class LoadingBarComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.subscription = this.indicatorService.getStatus().subscribe(status => {
 			setTimeout(() => {
-				this.status = status;
+				this.status = +status;
 			}, 0);
 		});
 	}

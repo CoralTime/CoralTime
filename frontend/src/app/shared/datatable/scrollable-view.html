@@ -2,9 +2,9 @@
 	<div #scrollHeaderBox  class="ui-datatable-scrollable-header-box">
 		<table [class]="dt.tableStyleClass" [ngStyle]="dt.tableStyle">
 			<thead class="ui-datatable-thead">
-				<tr *ngIf="!dt.headerColumnGroup" class="ui-state-default" [pColumnHeaders]="columns"></tr>
-				<ng-template [ngIf]="dt.headerColumnGroup">
-					<tr *ngFor="let headerRow of dt.headerColumnGroup.rows" class="ui-state-default" [pColumnHeaders]="headerRow.columns"></tr>
+				<tr *ngIf="!headerColumnGroup" class="ui-state-default" [pColumnHeaders]="columns"></tr>
+				<ng-template [ngIf]="headerColumnGroup">
+					<tr *ngFor="let headerRow of headerColumnGroup.rows" class="ui-state-default" [pColumnHeaders]="headerRow.columns"></tr>
 				</ng-template>
 			</thead>
 		</table>
@@ -13,13 +13,13 @@
 <!--was
 <div #scrollBody class="ui-datatable-scrollable-body" [ngStyle]="{'width': width,'max-height':dt.scrollHeight}">
 -->
-<div #scrollBody class="ui-datatable-scrollable-body" [ngStyle]="{'width': width,'max-height':dt.scrollHeight}" #slimScroll="slimScroll" slimScroll>
-	<div #scrollTableWrapper style="position:relative" [ngStyle]="{'height':virtualTableHeight}">
+<div #scrollBody class="ui-datatable-scrollable-body" [ngStyle]="{'width': width}" #slimScroll="slimScroll" slimScroll>
+	<div #scrollTableWrapper style="position:relative">
 		<table #scrollTable [class]="dt.tableStyleClass" [ngStyle]="dt.tableStyle" [ngClass]="{'ui-datatable-virtual-table':virtualScroll}" style="top:0px">
 			<colgroup class="ui-datatable-scrollable-colgroup">
-				<col *ngFor="let col of dt.visibleColumns()" />
+				<col *ngFor="let col of columns" [ngStyle]="col.headerStyle||col.style" [ngClass]="{'ui-helper-hidden': col.hidden}"/>
 			</colgroup>
-			<tbody [ngClass]="{'ui-datatable-data ui-widget-content': true, 'ui-datatable-hoverable-rows': (dt.rowHover||dt.selectionMode)}" [pTableBody]="columns"></tbody>
+			<tbody [ngClass]="{'ui-datatable-data ui-widget-content': true, 'ui-datatable-hoverable-rows': (dt.rowHover||dt.selectionMode)}" [pTableBody]="columns" [data]="dt.dataToRender"></tbody>
 		</table>
 	</div>
 </div>

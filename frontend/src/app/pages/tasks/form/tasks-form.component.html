@@ -1,7 +1,7 @@
 <div class="ct-dialog ct-dialog-add ct-tasks-dialog">
     <div class="ct-dialog-title">
         <span>{{dialogHeader}}</span><span *ngIf="task.id">{{ task.name }}</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
     <form #taskForm="ngForm" class="ct-form-add">
@@ -37,11 +37,11 @@
             </div>
         </div>
 
-        <div class="ct-buttons-block" md-dialog-actions>
-            <button md-raised-button class="ct-button ct-blue-button" (click)="submit()"
+        <div class="ct-buttons-block" mat-dialog-actions>
+            <button mat-raised-button class="ct-button ct-blue-button" (click)="submit()"
                     [disabled]="isRequestLoading || taskName.errors?.ctTaskNameInvalid">{{submitButtonText}}
             </button>
-            <button md-dialog-close class="ct-cancel-button">Cancel</button>
+            <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>
     </form>
 </div>

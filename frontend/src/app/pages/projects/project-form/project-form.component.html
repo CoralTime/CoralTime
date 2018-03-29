@@ -1,7 +1,7 @@
 <div class="ct-dialog ct-dialog-add ct-project-dialog">
     <div class="ct-dialog-title">
         <span>{{dialogHeader}}</span><span *ngIf="project.id">{{ project.name }}</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
     <form #projectForm="ngForm" class="ct-form-add">
@@ -42,9 +42,9 @@
 
             <div>
                 <label class="ct-form-label">Color</label>
-                <ct-color-picker [(ngModel)]="model.color" name="color">
-                    <md-option *ngFor="let item of [0,1,2,3,4,5,6,7];" [value]="item">
-                        <span class="ct-color-circle ct-color-{{item}}"></span></md-option>
+                <ct-color-picker [name]="'color'"
+                                 [(ngModel)]="model.color"
+                                 [options]="[0,1,2,3,4,5,6,7]">
                 </ct-color-picker>
             </div>
 
@@ -66,10 +66,10 @@
             </div>
         </div>
 
-        <div class="ct-buttons-block" md-dialog-actions>
-            <button md-raised-button class="ct-button ct-blue-button" [disabled]="projectName.errors?.ctProjectNameInvalid || isRequestLoading" (click)="submit()">{{submitButtonText}}
+        <div class="ct-buttons-block" mat-dialog-actions>
+            <button mat-raised-button class="ct-button ct-blue-button" [disabled]="projectName.errors?.ctProjectNameInvalid || isRequestLoading" (click)="submit()">{{submitButtonText}}
             </button>
-            <button md-dialog-close class="ct-cancel-button">Cancel</button>
+            <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>
     </form>
 </div>

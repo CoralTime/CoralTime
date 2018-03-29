@@ -21,14 +21,14 @@ export class LoadingIndicatorDirective implements OnInit, OnDestroy {
 		this.subscription.unsubscribe();
 	}
 
-	private process(status: number) {
+	private process(status: number | {}) {
 		setTimeout(() => {
 			if (status > 0 && this.status === 0) {
 				this.viewContainer.createEmbeddedView(this.templateRef);
 			} else if (status === 0 && this.status > 0) {
 				this.viewContainer.clear();
 			}
-			this.status = status;
+			this.status = +status;
 			this.ref.markForCheck();
 		}, 0);
 	}

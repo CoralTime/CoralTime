@@ -1,15 +1,12 @@
 <div class="ct-dialog ct-data-dialog ct-small-data-dialog ct-project-tasks-dialog">
     <div class="ct-dialog-title">
         <span>Tasks for</span><span>{{project.name}}</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
-            <md-input-container class="full-width">
-                <input #gb mdInput placeholder="Search task..."
-                       [(ngModel)]="filterStr">
-            </md-input-container>
+            <input class="ct-input-element" #gb placeholder="Search task..." [(ngModel)]="filterStr">
             <i class="fa fa-search"></i>
         </div>
     </div>

@@ -50,7 +50,7 @@
                             <div *ngIf="resetPasswordMessage" class="ct-reset-password-message">{{resetPasswordMessage}}</div>
                         </div>
 
-                        <button md-raised-button class="ct-button ct-blue-button" [disabled]="!personalInfoForm.valid">
+                        <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!personalInfoForm.valid">
                             Save Personal Info
                         </button>
                     </form>
@@ -117,7 +117,7 @@
                             </ct-select>
                         </div>
 
-                        <button md-raised-button class="ct-button ct-blue-button" [disabled]="!preferencesForm.valid">
+                        <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!preferencesForm.valid">
                             Save Preferences
                         </button>
                     </form>
@@ -147,21 +147,21 @@
 
                         <div>
                             <label class="ct-form-label">On the following days:</label>
-                            <md-checkbox *ngFor="let day of sendEmailDaysArray; let i = index"
+                            <mat-checkbox *ngFor="let day of sendEmailDaysArray; let i = index"
                                          [name]="'sendEmailDay-' + i"
                                          [(ngModel)]="sendEmailDays[day.dayNumber]"
                                          (change)="sendEmailDayOnChange()">
                                 {{day.name}}
-                            </md-checkbox>
+                            </mat-checkbox>
                         </div>
 
                         <div>
-                            <md-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
+                            <mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
                                 Send weekly time entry updates
-                            </md-checkbox>
+                            </mat-checkbox>
                         </div>
 
-                        <button md-raised-button class="ct-button ct-blue-button" [disabled]="!notificationForm.valid">
+                        <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!notificationForm.valid">
                             Save Notifications
                         </button>
                     </form>

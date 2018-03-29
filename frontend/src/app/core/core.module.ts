@@ -1,6 +1,5 @@
 import { Http, HttpModule, BrowserXhr } from '@angular/http';
 import { NgModule, ErrorHandler } from '@angular/core';
-import { MaterialModule } from '@angular/material';
 import { ODataServiceFactory, ODataConfiguration } from './../services/odata';
 import { CustomHttp } from './custom-http';
 import { ConstantService } from './constant.service';
@@ -12,14 +11,12 @@ import { NotAuthGuard } from './auth/not-auth-guard.service';
 import { LoadingIndicatorService } from './loading-indicator.service';
 import { CustomBrowserXhr } from './custom-browser-xhr';
 import { AclService } from './auth/acl.service';
-import { CustomErrorHandler } from './services/raven-error-handler';
-import { UserInfoService } from './auth/user-info.service';
+import { CustomErrorHandler } from './raven-error-handler';
 import { UserPicService } from '../services/user-pic.service';
 
 @NgModule({
 	imports: [
 		HttpModule,
-		MaterialModule
 	],
 	exports: [
 		HttpModule
@@ -50,7 +47,6 @@ import { UserPicService } from '../services/user-pic.service';
 		NotAuthGuard,
 		NotificationService,
 		ODataServiceFactory,
-		UserInfoService,
 		UserPicService
 	]
 })

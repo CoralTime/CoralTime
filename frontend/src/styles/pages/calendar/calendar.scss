@@ -111,9 +111,19 @@ $calendarPhoneWidth: 809px;
       color: $nav-link-border;
     }
 
+    .ct-multiselect .mat-select-value-text {
+      line-height: 30px;
+      padding-right: 15px;
+
+      &:after {
+        position: absolute;
+        right: 0;
+      }
+    }
+
     .ct-multiselect.active .mat-select-value-text:after {
-      content: "\f0de" !important;
       top: 5px;
+      content: "\f0de" !important;
     }
 
     .ct-select {
@@ -155,7 +165,7 @@ $calendarPhoneWidth: 809px;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      background: url(/assets/ct-bg-calendar.jpg);
+      background: url(./assets/ct-bg-calendar.jpg);
 
       &:first-child {
         margin-left: 0;
@@ -248,7 +258,7 @@ $calendarPhoneWidth: 809px;
               height: 30px;
               top: 2px;
               left: -5px;
-              background: url(/assets/icons/time.actual2.svg) no-repeat center center;
+              background: url(./assets/icons/time.actual2.svg) no-repeat center center;
               background-size: 45px 45px;
             }
           }
@@ -256,7 +266,7 @@ $calendarPhoneWidth: 809px;
             color: $plannedTime;
 
             &:before {
-              background: url(/assets/icons/time.estimated1.svg) no-repeat center center;
+              background: url(./assets/icons/time.estimated1.svg) no-repeat center center;
               background-size: 45px 45px;
             }
           }
@@ -420,7 +430,7 @@ $calendarPhoneWidth: 809px;
               height: 20px;
               top: 6px;
               left: 0;
-              background: url(/assets/icons/tasktile.time.actual.svg) no-repeat center center;
+              background: url(./assets/icons/tasktile.time.actual.svg) no-repeat center center;
               background-size: 20px 20px;
             }
 
@@ -438,7 +448,7 @@ $calendarPhoneWidth: 809px;
             margin-left: 12px;
 
             &:before {
-              background: url(/assets/icons/tasktile.time.estimated.svg) no-repeat center center;
+              background: url(./assets/icons/tasktile.time.estimated.svg) no-repeat center center;
               background-size: 20px 20px;
             }
           }
@@ -485,7 +495,7 @@ $calendarPhoneWidth: 809px;
 
             i {
               position: absolute;
-              background: url(/assets/icons/tick.png) no-repeat;
+              background: url(./assets/icons/tick.png) no-repeat;
               background-size: 4px 13px;
               display: block;
               width: 4px;
@@ -750,7 +760,7 @@ $calendarPhoneWidth: 809px;
 
   .ct-hours-tracked {
     &:before {
-      background: url(/assets/icons/time.actual2.svg) no-repeat center center;
+      background: url(./assets/icons/time.actual2.svg) no-repeat center center;
       background-size: 45px 45px;
     }
   }
@@ -759,7 +769,7 @@ $calendarPhoneWidth: 809px;
     color: $plannedTime;
 
     &:before {
-      background: url(/assets/icons/time.estimated1.svg) no-repeat center center;
+      background: url(./assets/icons/time.estimated1.svg) no-repeat center center;
       background-size: 45px 45px;
     }
   }
@@ -767,6 +777,10 @@ $calendarPhoneWidth: 809px;
 
 .ct-impersonation-header + .ct-wrapper .ct-total-tracked-time {
   top: 50px;
+}
+
+.ui-multiselect-panel.ct-impersonate .ui-multiselect-panel{
+  margin-top: 50px;
 }
 
 .ct-calendar-multiselect.ui-multiselect-panel > div {

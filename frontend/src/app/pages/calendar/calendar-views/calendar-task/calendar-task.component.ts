@@ -2,13 +2,12 @@ import {
 	Component, Input, ViewChild, EventEmitter, Output, OnInit, OnDestroy, QueryList,
 	ViewChildren, ElementRef
 } from '@angular/core';
-import { TimeEntry, DateUtils } from '../../../../models/calendar';
+import { TimeEntry, DateUtils, Time } from '../../../../models/calendar';
 import { Subscription, Observable } from 'rxjs';
 import { CalendarService } from '../../../../services/calendar.service';
 import { NotificationService } from '../../../../core/notification.service';
 import { MultipleDatepickerComponent } from '../../entry-time/multiple-datepicker/multiple-datepicker.component';
-import { MdDialogRef, MdDialog } from '@angular/material';
-import { Time } from '../../entry-time/entry-time-form/entry-time-form.component';
+import { MatDialogRef, MatDialog } from '@angular/material';
 import { MenuComponent } from '../../../../shared/menu/menu.component';
 import { User } from '../../../../models/user';
 import { ActivatedRoute } from '@angular/router';
@@ -34,7 +33,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	@ViewChildren(MenuComponent) menuList: QueryList<MenuComponent>;
 
 	currentTimeEntry: TimeEntry;
-	dialogRef: MdDialogRef<MultipleDatepickerComponent>;
+	dialogRef: MatDialogRef<MultipleDatepickerComponent>;
 	isCalendarShown: boolean = false;
 	isOpenLeft: boolean = false;
 	isOpenRight: boolean = false;
@@ -57,7 +56,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	constructor(private route: ActivatedRoute,
 	            private calendarService: CalendarService,
-	            private dialog: MdDialog,
+	            private dialog: MatDialog,
 	            private elementRef: ElementRef,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService) {

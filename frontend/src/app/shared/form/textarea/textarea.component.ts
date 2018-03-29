@@ -3,8 +3,8 @@ import {
 	ChangeDetectionStrategy, ChangeDetectorRef, ViewChild
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
-import { coerceBooleanProperty, MdTextareaAutosize } from '@angular/material';
-import { SlimScrollDirective } from 'ng2-slimscroll/src/directives/slimscroll.directive';
+import { MatTextareaAutosize } from '@angular/material';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 export const TEXTAREA_CONTROL_VALUE_ACCESSOR: any = {
 	provide: NG_VALUE_ACCESSOR,
@@ -29,14 +29,17 @@ export class TextareaComponent implements ControlValueAccessor {
 	@Input() maxlength: number;
 	@Input() placeholder: string = '';
 	@Input() canResize: boolean = false;
+
 	@Output() change: EventEmitter<TextareaChange> = new EventEmitter<TextareaChange>();
+
+	@ViewChild('slimScroll') slimScroll: any;
+	@ViewChild('autoSizer') autoSizer: MatTextareaAutosize;
+
+	isFocusClassShown: boolean;
 	modelValue: any;
-	isFocusClassShown: boolean = false;
 
-	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
-	@ViewChild('autoSizer') autoSizer: MdTextareaAutosize;
+	private _disabled: boolean;
 
-	private _disabled: boolean = false;
 	@Input()
 	get disabled(): boolean {
 		return this._disabled;
@@ -51,8 +54,7 @@ export class TextareaComponent implements ControlValueAccessor {
 
 	constructor(private ref: ChangeDetectorRef) {
 		setTimeout(() => {
-			this.autoSizer.resizeToFitContent();
-			this.slimScroll.getBarHeight();
+			this.autoSizer.resizeToFitContent(true);
 		}, 0);
 	}
 
@@ -99,7 +101,12 @@ export class TextareaComponent implements ControlValueAccessor {
 		event.value = this.modelValue;
 
 		this._controlValueAccessorChangeFn(this.modelValue);
-		this.slimScroll.getBarHeight();
+		this.resizeTextarea();
 		this.change.emit(event);
+	}
+
+	private resizeTextarea(): void {
+		this.autoSizer.resizeToFitContent(true);
+		this.slimScroll.getBarHeight();
 	}
 }

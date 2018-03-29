@@ -1,5 +1,5 @@
 <form #form="ngForm" class="ct-multiple-datepicker">
-    <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+    <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     <div class="ct-datepicker-container">
         <ct-datepicker class="ct-datepicker" [required]="true" *ngIf="isCalendarShown"
                        [name]="'date'" ngModel
@@ -37,9 +37,9 @@
                 </span>
             </div>
         </div>
-        <div md-dialog-actions class="ct-form-actions ct-datepicker-button-block">
-            <button class="ct-close" md-dialog-close>Cancel</button>
-            <button md-button md-dialog-close class="ct-submit ct-blue-button"
+        <div mat-dialog-actions class="ct-form-actions ct-datepicker-button-block">
+            <button class="ct-close" mat-dialog-close>Cancel</button>
+            <button mat-button mat-dialog-close class="ct-submit ct-blue-button"
                     (click)="submit()"
                     [disabled]="!form.valid">Add hours
             </button>

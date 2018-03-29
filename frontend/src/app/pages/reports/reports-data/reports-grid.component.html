@@ -40,7 +40,7 @@
         </ng-template>
     </p-column>
 
-    <p-column styleClass="ct-cell-actual" field="actualTime" header="Act. hours">
+    <p-column styleClass="ct-cell-actual" field="timeActual" header="Act. hours">
         <ng-template let-item="rowData" pTemplate="body">
             <span>{{getTimeString(item.timeValues.timeActual)}}</span>
         </ng-template>

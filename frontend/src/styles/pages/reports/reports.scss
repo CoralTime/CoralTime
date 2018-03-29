@@ -389,14 +389,14 @@ $fieldHeight: 30px;
 
     .ct-total-hours-tracked {
       &:before {
-        background: url(/assets/icons/tasktile.time.actual.svg) no-repeat center center;
+        background: url(./assets/icons/tasktile.time.actual.svg) no-repeat center center;
         background-size: 23px 23px;
       }
     }
 
     .ct-total-hours-planned {
       &:before {
-        background: url(/assets/icons/tasktile.time.estimated.svg) no-repeat center center;
+        background: url(./assets/icons/tasktile.time.estimated.svg) no-repeat center center;
         background-size: 23px 23px;
       }
     }
@@ -448,6 +448,8 @@ $fieldHeight: 30px;
     position: absolute;
     top: 100%;
     right: 210px;
+    width: 280px;
+    text-align: center;
     background: #fff;
     box-shadow: none;
     border: 1px solid $form-border;

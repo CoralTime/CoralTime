@@ -1,23 +1,22 @@
-<div #container [ngClass]="{'ct-multiselect ui-multiselect ui-widget ui-state-default ct-full-width':true,'active':focus,'ui-state-disabled': disabled}"
+<div #container [ngClass]="{'ct-multiselect ui-multiselect ct-full-width':true,'ui-state-disabled': disabled, 'active': overlayVisible}"
      [ngStyle]="style" [class]="styleClass" (click)="onMouseclick($event, input)">
     <div class="ui-helper-hidden-accessible">
-        <input #input [attr.id]="inputId" (focus)="onFocus($event)" (blur)="onInputBlur($event)" [disabled]="disabled"
-               [attr.tabindex]="tabindex">
+        <input #input readonly="readonly" [attr.id]="inputId"
+               [disabled]="disabled" [attr.tabindex]="tabindex"
+               (focus)="onInputFocus($event)"
+               (blur)="onInputBlur($event)"
+               (keydown)="onInputKeydown($event)">
     </div>
+
     <div class="ct-select" [title]="toString(valuesAsString)">
-        <div class="mat-select-trigger">
-            <span class="mat-select-value">
-                <span class="mat-select-value-text">{{toString(valuesAsString)}}</span>
-            </span>
-        </div>
+        <label class="mat-select-value-text">{{toString(valuesAsString)}}</label>
     </div>
-    <div #panel class="ui-multiselect-panel {{styleClass}}" [style.display]="overlayVisible ? 'block' : 'none'"
-         (click)="panelClick=true">
+
+    <div #panel [ngClass]="['ui-multiselect-panel', panelStyleClass||'']" [ngStyle]="panelStyle"
+         [style.display]="overlayVisible ? 'block' : 'none'" (click)="panelClick = true">
         <div class="ui-multiselect-panel ui-widget ui-widget-content ui-shadow">
             <div class="ct-search-filter" *ngIf="showFilterSearch">
-                <md-input-container class="full-width">
-                    <input mdInput placeholder="Search" [(ngModel)]="filterValue" (input)="onFilter($event)">
-                </md-input-container>
+                <input #filterInput (input)="onFilter($event)" [attr.placeholder]="'Search'">
                 <i class="fa fa-search"></i>
                 <i class="fa fa-times" (click)="clearFilter()"></i>
             </div>
@@ -28,20 +27,28 @@
                     <li *ngIf="extraActionTitle"><a (click)="doExtraAction($event)">{{extraActionTitle}}</a></li>
                 </ul>
             </div>
+
             <div #slimScroll="slimScroll" slimScroll>
-                <ul class="ui-multiselect-items ui-helper-reset">
-                    <li *ngFor="let option of options" class="ui-multiselect-item " (click)="onItemClick($event,option.value)" [style.display]="isItemVisible(option) ? 'block' : 'none'"
-                        [ngClass]="{'selected':isSelected(option.value)}">
-                        <label [class.ct-archived-option]="!option.isActive" class="ct-multiselect-label-block">
-                            <span class="ui-chkbox-icon" [ngClass]="{'fa fa-check':isSelected(option.value)}"></span>
-                            <span>{{option.label}}</span>
-                        </label>
+                <ul class="ui-multiselect-items ui-helper-reset" [style.max-height]="scrollHeight||'auto'">
+                    <li *ngFor="let option of options; let index = i" class="ui-multiselect-item" (click)="onItemClick($event,option.value)"
+                        [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'selected':isSelected(option.value)}">
+                        <div class="ui-chkbox">
+                            <div class="ui-helper-hidden-accessible">
+                                <input #itemcb type="checkbox" [checked]="isSelected(option.value)" (focus)="focusedItemCheckbox=itemcb" (blur)="focusedItemCheckbox=null" [attr.aria-label]="option.label">
+                            </div>
+                            <div class="ui-chkbox-box" [ngClass]="{'ui-state-focus': (focusedItemCheckbox === itemcb)}">
+                                <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isSelected(option.value)}"></span>
+                            </div>
+                        </div>
+                        <label [class.ct-archived-option]="!option.isActive" *ngIf="!itemTemplate">{{option.label}}</label>
+                        <ng-container *ngTemplateOutlet="itemTemplate; context: {$implicit: option, index: i}"></ng-container>
                     </li>
                 </ul>
             </div>
+
+
             <div class="ct-multiselect-panel-footer clearfix" *ngIf="showSubmitButton">
-                <!--<button (click)="close($event)" class="ct-cancel-button">Cancel</button>-->
-                <button md-raised-button (click)="submit($event)" class="ct-blue-button">Apply</button>
+                <button mat-raised-button (click)="submit($event)" class="ct-blue-button">Apply</button>
             </div>
         </div>
     </div>

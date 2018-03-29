@@ -28,8 +28,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 	private subscriptionImpersonation: Subscription;
 
-	constructor(private calendarService: CalendarService,
-	            private impersonationService: ImpersonationService,
+	constructor(public impersonationService: ImpersonationService,
+	            private calendarService: CalendarService,
 	            private route: ActivatedRoute,
 	            private router: Router,
 	            private projectsService: CalendarProjectsService) {}
@@ -44,7 +44,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
 				let route = this.route.snapshot.children[0];
-				this.date = route.params['date'] ?  DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
+				this.date = route.params['date'] ? DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 				this.projectIds = route.params['projectIds'] ? route.params['projectIds'].split(',') : [];
 				this.projectIds.forEach((id, index) => { this.projectIds[index] = +id; });
 				this.projectsService.filteredProjects = this.projectIds;

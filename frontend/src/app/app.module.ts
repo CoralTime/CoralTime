@@ -1,7 +1,6 @@
+import '../vendors'
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { MenubarModule } from 'primeng/primeng';
-import { MaterialModule } from '@angular/material';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { Http } from '@angular/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -14,6 +13,7 @@ import { ProjectRolesService } from './services/project-roles.service';
 import { CoreModule } from './core/core.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { HttpClient } from '@angular/common/http';
 import { LayoutModule } from './pages/layout/layout.module';
 import { ProjectsService } from './services/projects.service';
 import { TasksService } from './services/tasks.service';
@@ -21,7 +21,7 @@ import { UsersService } from './services/users.service';
 import { SettingsService } from './services/settings.service';
 import { ImpersonationService } from './services/impersonation.service';
 
-export function httpFactory(http: Http) {
+export function httpFactory(http: HttpClient) {
 	return new TranslateHttpLoader(http, 'assets/translate/i18n', '.json');
 }
 
@@ -30,14 +30,13 @@ export function httpFactory(http: Http) {
 		AppComponent
 	],
 	imports: [
-		BrowserModule,
-		CoreModule,
-		BrowserAnimationsModule,
 		AppRoutingModule,
-		SharedModule,
+		BrowserModule,
+		BrowserAnimationsModule,
+		CoreModule,
+		ErrorsModule,
 		LayoutModule,
-		MenubarModule,
-		MaterialModule,
+		SharedModule,
 		TranslateModule.forRoot({
 			loader: {
 				provide: TranslateLoader,
@@ -45,17 +44,16 @@ export function httpFactory(http: Http) {
 				deps: [Http]
 			}
 		}),
-		ErrorsModule
 	],
 	bootstrap: [AppComponent],
 	providers: [
-		ProjectRolesService,
 		ClientsService,
+		ImpersonationService,
+		ProjectRolesService,
 		ProjectsService,
-		TasksService,
-		UsersService,
 		SettingsService,
-		ImpersonationService
+		TasksService,
+		UsersService
 	]
 })
 

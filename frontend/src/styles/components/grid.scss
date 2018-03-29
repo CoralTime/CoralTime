@@ -68,6 +68,7 @@
     left: 7px;
     top: 3px;
   }
+
   &:after {
     width: 12px;
     height: 10px;
@@ -83,10 +84,11 @@
   width: 40px;
   height: 25px;
   border-radius: 12.5px;
-  background: url(/assets/icons/grid-settings.svg) no-repeat center;
+  background: url(./assets/icons/grid-settings.svg) no-repeat center;
   background-size: 16px;
   overflow: hidden;
   cursor: pointer;
+
   &:after {
     content: '';
     position: absolute;
@@ -98,6 +100,7 @@
 
 .ct-manage-add {
   position: relative;
+
   &:before, &:after {
     position: absolute;
     content: '';
@@ -107,6 +110,7 @@
     height: 17px;
     background: $main-blue;
   }
+
   &:after {
     height: 1px;
     width: 17px;
@@ -116,8 +120,9 @@
 }
 
 tr:hover .ct-grid-settings {
-  background: url(/assets/icons/grid-settings.svg) no-repeat center, white;
+  background: url(./assets/icons/grid-settings.svg) no-repeat center, white;
   background-size: 16px;
+
   &:after {
     background: rgba(255, 255, 255, .4);
   }
@@ -126,6 +131,7 @@ tr:hover .ct-grid-settings {
 .ct-grid-container {
   tr {
     vertical-align: top;
+
     td {
       position: relative;
       color: $grid-text;
@@ -145,35 +151,8 @@ tr:hover .ct-grid-settings {
   .ct-proj-client-name {
     white-space: nowrap;
     text-overflow: ellipsis;
-    display: inline-block;
-
-    @media (min-width: 1820px) {
-      max-width: 470px;
-    }
-
-    @media (max-width: 1819px) {
-      max-width: 420px;
-    }
-
-    @media (max-width: 1700px) {
-      max-width: 380px;
-    }
-
-    @media (max-width: 1615px) {
-      max-width: 350px;
-    }
-
-    @media (max-width: 1455px) {
-      max-width: 300px;
-    }
-
-    @media (max-width: 1310px) {
-      max-width: 240px;
-    }
-
-    @media (max-width: 1135px) {
-      max-width: 190px;
-    }
+    display: block;
+    overflow: hidden;
   }
 
   .ct-edit-links {
@@ -181,23 +160,24 @@ tr:hover .ct-grid-settings {
     top: -8px;
   }
 
-  .ui-paginator-bottom {
-    display: none !important;
+  .ui-datatable-scrollable-header {
+    background: none;
   }
 
-  .ui-datatable-scrollable-header {
-    background: none !important;
-  }
   .ui-datatable-scrollable-body {
     padding-right: 0;
     max-height: calc(100vh - 146px);
   }
+
   .ui-datatable-scrollable-wrapper {
     .slimscroll-wrapper {
+      height: 100% !important;
       margin-top: 20px;
+
       .slimscroll-grid {
         right: 0 !important;
       }
+
       .slimscroll-bar {
         right: 3px !important;
       }
@@ -213,10 +193,6 @@ tr:hover .ct-grid-settings {
     border-bottom: 1px;
     font-family: inherit;
     font-size: $baseFont;
-
-    @media (max-width: 1065px) {
-      table-layout: fixed;
-    }
 
     tr {
       > td {
@@ -246,6 +222,7 @@ tr:hover .ct-grid-settings {
       border: none !important;
       font-family: inherit;
     }
+
     th:first-child,
     td:first-child {
       padding-left: 20px !important;
@@ -285,34 +262,6 @@ tr:hover .ct-grid-settings {
           position: relative;
         }
       }
-
-      .fa-unsorted, .fa-sort {
-        &:before {
-          content: "\f077"
-        }
-
-        &:after {
-          content: "\f078"
-        }
-      }
-
-      .fa-sort-up, .fa-sort-asc {
-        &:before {
-          content: "\f077";
-        }
-        &:after {
-          content: "";
-        }
-      }
-
-      .fa-sort-down, .fa-sort-desc {
-        &:before {
-          content: "\f078";
-        }
-        &:after {
-          content: "";
-        }
-      }
     }
 
     tbody {
@@ -328,6 +277,10 @@ tr:hover .ct-grid-settings {
         }
       }
     }
+  }
+
+  .ui-sortable-column:focus {
+    outline: none;
   }
 
   .ct-grid-label {
@@ -355,152 +308,6 @@ tr:hover .ct-grid-settings {
 
     .ct-color-#{$i} {
       border: 1px solid transparent;
-    }
-  }
-
-  .ct-grid-proj-name, .ct-grid-client-name {
-    display: inline-block;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .ct-grid-proj-name {
-    @media (min-width: 1801px) {
-      max-width: 430px;
-    }
-
-    @media (max-width: 1800px) {
-      max-width: 380px;
-    }
-
-    @media (max-width: 1705px) {
-      max-width: 360px;
-    }
-
-    @media (max-width: 1615px) {
-      max-width: 320px;
-    }
-
-    @media (max-width: 1465px) {
-      max-width: 260px;
-    }
-
-    @media (max-width: 1315px) {
-      max-width: 220px;
-    }
-
-    @media (max-width: 1180px) {
-      max-width: 200px;
-    }
-
-    @media (max-width: 1110px) {
-      max-width: 150px;
-    }
-  }
-
-  .ct-grid-client-name {
-    @media (min-width: 1801px) {
-      max-width: 670px;
-    }
-
-    @media (max-width: 1800px) {
-      max-width: 610px;
-    }
-
-    @media (max-width: 1705px) {
-      max-width: 545px;
-    }
-
-    @media (max-width: 1615px) {
-      max-width: 530px;
-    }
-
-    @media (max-width: 1615px) {
-      max-width: 500px;
-    }
-
-    @media (max-width: 1465px) {
-      max-width: 450px;
-    }
-
-    @media (max-width: 1355px) {
-      max-width: 400px;
-    }
-
-    @media (max-width: 1315px) {
-      max-width: 350px;
-    }
-
-    @media (max-width: 1180px) {
-      max-width: 300px;
-    }
-
-    @media (max-width: 1110px) {
-      max-width: 260px;
-    }
-  }
-
-  .ct-grid-proj-name.ct-user-name {
-    @media (min-width: 1790px) {
-      max-width: 430px !important;
-    }
-
-    @media (max-width: 1789px) {
-      max-width: 380px;
-    }
-
-    @media (max-width: 1650px) {
-      max-width: 340px;
-    }
-
-    @media (max-width: 1565px) {
-      max-width: 300px;
-    }
-
-    @media (max-width: 1420px) {
-      max-width: 250px;
-    }
-
-    @media (max-width: 1270px) {
-      max-width: 210px;
-    }
-
-    @media (max-width: 1180px) {
-      max-width: 170px;
-    }
-  }
-
-  .ct-grid-proj-name.ct-task-name {
-    @media (min-width: 1800px) {
-      max-width: 580px !important;
-    }
-
-    @media (max-width: 1799px) {
-      max-width: 540px;
-    }
-
-    @media (max-width: 1705px) {
-      max-width: 510px;
-    }
-
-    @media (max-width: 1615px) {
-      max-width: 480px;
-    }
-
-    @media (max-width: 1580px) {
-      max-width: 450px;
-    }
-
-    @media (max-width: 1435px) {
-      max-width: 400px;
-    }
-
-    @media (max-width: 1300px) {
-      max-width: 350px;
-    }
-
-    @media (max-width: 1180px) {
-      max-width: 300px;
     }
   }
 
@@ -549,6 +356,7 @@ tr:hover .ct-grid-settings {
     background: white;
     border-radius: 12.5px;
     padding: 0 9px;
+
     span {
       color: transparent;
     }
