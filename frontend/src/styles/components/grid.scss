@@ -194,10 +194,6 @@ tr:hover .ct-grid-settings {
     font-family: inherit;
     font-size: $baseFont;
 
-    @media (max-width: 1065px) {
-      table-layout: fixed;
-    }
-
     tr {
       > td {
         color: $grid-text;

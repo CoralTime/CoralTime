@@ -779,6 +779,10 @@ $calendarPhoneWidth: 809px;
   top: 50px;
 }
 
+.ui-multiselect-panel.ct-impersonate .ui-multiselect-panel{
+  margin-top: 50px;
+}
+
 .ct-calendar-multiselect.ui-multiselect-panel > div {
   position: fixed;
   z-index: 996 !important;

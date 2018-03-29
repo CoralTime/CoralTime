@@ -177,8 +177,8 @@ export class InputListComponent implements ControlValueAccessor {
 
 	openList(): void {
 		if (this.options.length > 0) {
-			this.initScrollContent();
 			this.isOpen = true;
+			this.initScrollContent();
 		}
 	}
 
@@ -242,8 +242,8 @@ export class InputListComponent implements ControlValueAccessor {
 	}
 
 	private initScrollContent(): void {
-		this.slimScroll.getBarHeight();
 		setTimeout(() => {
+			this.slimScroll.getBarHeight();
 			this.scrollTopNumber = this.getOptionIndex(this.selectedObject);
 			this.slimScroll.scrollContent(this.scrollTopNumber, false, true);
 		}, 0);
