@@ -2,9 +2,10 @@
 
 namespace CoralTime.ViewModels.Reports
 {
-    public class ReportTotalForView
+    public class ReportTotalForView : ReportItemsView
     {
-        public ReportTotalForView()
+        public ReportTotalForView(int? groupById, int[] showColumnIds) 
+            : base (groupById,showColumnIds)
         {
             TimeTotalFor = new TimeTotalForView();
             Items = new List<ReportItemsView>();

@@ -1,6 +1,6 @@
 ﻿namespace CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy
 {
-    public class ReportsDropDownGroupBy
+    public class ReportDropDownGroupBy
     {
         public int Id { get; set; }
 

@@ -5,39 +5,35 @@ namespace CoralTime.ViewModels.Reports
 {
     public class ReportItemsView
     {
-        public ReportItemsView()
+        [JsonIgnore] public int? GroupByTypeId { get; }
+
+        [JsonIgnore] public int[] ShowColumnIds { get; }
+
+        [JsonIgnore] public ReportDisplayNames DisplayNames { get; set; }
+
+        public ReportItemsView(int? groupById, int[] showColumnIds)
         {
-            ClientDisplayName = "Client";
-            ProjectDisplayName = "Project";
-            MemberDisplayName = "User";
-            TaskDisplayName = "Task";
-            DateDisplayName = "Date";
-            NotesDisplayName = "Notes";
+            GroupByTypeId = groupById;
+            ShowColumnIds = showColumnIds;
+            DisplayNames = new ReportDisplayNames();
         }
 
         [JsonIgnore] public int? ClientId { get; set; }
         public string ClientName { get; set; }
-        [JsonIgnore] public string ClientDisplayName { get; set; }
 
         [JsonIgnore] public int ProjectId { get; set; }
         public string ProjectName { get; set; }
-        [JsonIgnore] public string ProjectDisplayName { get; set; }
-
+        
         [JsonIgnore] public int MemberId { get; set; }
         public string MemberName { get; set; }
-        [JsonIgnore] public string MemberDisplayName { get; set; }
 
         [JsonIgnore] public int TaskId { get; set; }
         public string TaskName { get; set; }
-        [JsonIgnore] public string TaskDisplayName { get; set; }
 
         public DateTime? Date { get; set; }
-        [JsonIgnore] public string DateDisplayName { get; set; }
 
         public TimeValuesView TimeValues { get; set; }
-        [JsonIgnore] public string TimeValuesDisplayName { get; set; }
 
         public string Notes { get; set; }
-        [JsonIgnore] public string NotesDisplayName { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 {
-    public class ReportsUserDetails
+    public class ReportUserDetails
     {
         public string CurrentUserFullName { get; set; }
 

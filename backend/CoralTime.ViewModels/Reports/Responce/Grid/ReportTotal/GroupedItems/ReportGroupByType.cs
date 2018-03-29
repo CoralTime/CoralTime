@@ -5,20 +5,23 @@ namespace CoralTime.ViewModels.Reports
 {
     public class ReportGroupByType
     {
+        [JsonIgnore] public int[] ShowColumnIds { get; set; }
+        [JsonIgnore] public int? GroupByTypeId { get; set; }
+        [JsonIgnore] public string GroupByTypeDisplayName { get; set; }
+        [JsonIgnore] public string GroupByTypeDisplayNameValue { get; set; }
+
         private ReportGroupByType() { }
 
-        public ReportGroupByType(int groupById)
+        public ReportGroupByType(int? groupById, int[] showColumnIds)
         {
             GroupByTypeId = groupById;
+            ShowColumnIds = showColumnIds;
 
             ProjectName = null;
             MemberName = null;
             Date = null;
             ClientName = null;    
         }
-
-        [JsonIgnore] public int? GroupByTypeId { get; set; }
-        [JsonIgnore] public string GroupByTypeDisplayName { get; set; }
 
         [JsonIgnore] public int ProjectId { get; set; }
         public string ProjectName { get; set; }

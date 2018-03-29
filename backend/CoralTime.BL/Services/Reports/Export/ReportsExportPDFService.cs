@@ -1,5 +1,5 @@
 ﻿using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.PDF;
+using CoralTime.ViewModels.Reports.Responce.Export;
 using RazorLight;
 using System.IO;
 using System.Text;
@@ -31,7 +31,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
             if (File.Exists(pathContentPDFWkhtmltopdf))
             {
-                var reportsExportView = new ReportExportView(pathContentPDFCssStyle, GroupById, GetPeriodPDFCell(), reportTotalView);
+                var reportsExportView = new ReportExportPDFView(pathContentPDFCssStyle, /*GetPeriodPDFCell(),*/ reportTotalView);
 
                 #region Parse view.
 
@@ -62,29 +62,5 @@ namespace CoralTime.BL.Services.Reports.Export
 
             return pdfBytesResult;
         }
-
-        //TODO
-        //private List<List<ReportsEntityRowsView>> CreateEntityRows<T>(PropertyInfo entityHeader, T entity)
-        //{
-        //    var entitiesRowsList = new List<List<ReportsEntityRowsView>>();
-
-        //    foreach (var entityRow in GetValueListFromProp(entityHeader, entity))
-        //    {
-        //        var entityRowsLocal = new List<ReportsEntityRowsView>();
-
-        //        foreach (var prop in PropsEntityHeadersAndRows)
-        //        {
-        //            if (!IsGroupByThisProperty(prop.Name))
-        //            {
-        //                var entityRowCell = CreateCell<ReportsGridItemsView, ReportsEntityRowsView>(prop, entityRow);
-        //                entityRowsLocal.Add(entityRowCell);
-        //            }
-        //        }
-
-        //        entitiesRowsList.Add(entityRowsLocal);
-        //    }
-
-        //    return entitiesRowsList;
-        //}
     }
 }

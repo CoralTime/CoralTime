@@ -2,15 +2,15 @@
 
 namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 {
-    public class ReportsDropDownsView 
+    public class ReportDropDownsView 
     {
-        public ReportsDropDownsView()
+        public ReportDropDownsView()
         {
-            Values = new ReportsDropDownValues();
+            Values = new ReportDropDownValues();
             CurrentQuery = new ReportsSettingsView();
         }
 
-        public ReportsDropDownValues Values { get; set; }
+        public ReportDropDownValues Values { get; set; }
 
         public ReportsSettingsView CurrentQuery { get; set; }
     }

@@ -274,7 +274,6 @@ namespace CoralTime.BL.Services
             memberById.DefaultProjectId = memberView.DefaultProjectId;
             memberById.DefaultTaskId = memberView.DefaultTaskId;
             memberById.DateFormatId = memberView.DateFormatId;
-            memberById.TimeZone = memberView.TimeZone;
             memberById.WeekStart = (WeekStart)memberView.WeekStart;
             memberById.IsWeeklyTimeEntryUpdatesSend =memberView.IsWeeklyTimeEntryUpdatesSend;
             memberById.TimeFormat = memberView.TimeFormat;

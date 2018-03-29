@@ -13,8 +13,10 @@ namespace CoralTime.BL.Interfaces.Reports
 
         string SingleFilteredProjectName { get; }
 
-        ReportsDropDownsView ReportsDropDowns();
+        ReportDropDownsView ReportsDropDowns();
 
         ReportTotalView GetReportsGroupingBy(ReportsGridView reportsGridView);
+
+        int SetGroupByOrDefaultGrouping(int? groupById);
     }
 }

@@ -1,5 +1,4 @@
-﻿using CoralTime.BL.Services.Reports.Export;
-using CoralTime.Common.Constants;
+﻿using CoralTime.Common.Constants;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports.Request.Grid;
@@ -13,39 +12,39 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportsService
     {
-        private readonly List<ReportsDropDownGroupBy> _dropDownGroupBy = new List<ReportsDropDownGroupBy>
+        private readonly List<ReportDropDownGroupBy> _dropDownGroupBy = new List<ReportDropDownGroupBy>
         {
-            new ReportsDropDownGroupBy
+            new ReportDropDownGroupBy
             {
                 Id = (int) Constants.ReportsGroupBy.Project,
                 Description = Constants.ReportsGroupBy.Project.ToString()
             },
 
-            new ReportsDropDownGroupBy
+            new ReportDropDownGroupBy
             {
                 Id = (int) Constants.ReportsGroupBy.Member,
                 Description = Constants.ReportsGroupBy.Member.ToString()
             },
 
-            new ReportsDropDownGroupBy
+            new ReportDropDownGroupBy
             {
                 Id = (int) Constants.ReportsGroupBy.Date,
                 Description = Constants.ReportsGroupBy.Date.ToString()
             },
 
-            new ReportsDropDownGroupBy
+            new ReportDropDownGroupBy
             {
                 Id = (int) Constants.ReportsGroupBy.Client,
                 Description = Constants.ReportsGroupBy.Client.ToString()
             }
         };
 
-        public ReportsDropDownsView ReportsDropDowns()
+        public ReportDropDownsView ReportsDropDowns()
         {
             var user = Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
             var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
 
-            var reportDropDowns = new ReportsDropDownsView
+            var reportDropDowns = new ReportDropDownsView
             {
                 Values = CreateDropDownValues(memberByUserName),
                 CurrentQuery = CreateDropDownCurrentQuery(memberByUserName.Id)
@@ -54,7 +53,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return reportDropDowns;
         }
 
-        private ReportsDropDownValues CreateDropDownValues(Member member)
+        private ReportDropDownValues CreateDropDownValues(Member member)
         {
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
@@ -161,7 +160,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 reportClientView.Add(reportClientViewlocal);
             }
 
-            var userDetails = new ReportsUserDetails
+            var userDetails = new ReportUserDetails
             {
                 CurrentUserFullName = member.FullName,
                 CurrentUserId = member.Id,
@@ -177,7 +176,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 valuesCustomQueries.Add(CreateReportsSettingsEntity(customReportSettings));
             }
 
-            var dropDownValues = new ReportsDropDownValues
+            var dropDownValues = new ReportDropDownValues
             {
                 Filters = reportClientView,
                 GroupBy = _dropDownGroupBy,
@@ -200,21 +199,19 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportsSettingsView CreateReportsSettingsEntity(ReportsSettings defaultReportSettings)
         {
-            var dropDownsQuery = new ReportsSettingsView();
-
-            // Group By Date as default.
-            dropDownsQuery.GroupById = defaultReportSettings?.GroupById ?? (int) Constants.ReportsGroupBy.Date;
-
-            // Show all columns as default.
-            dropDownsQuery.ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
-                ? new[]
-                {
-                    (int) Constants.ShowColumnModelIds.ShowEstimatedTime,
-                    (int) Constants.ShowColumnModelIds.ShowDate,
-                    (int) Constants.ShowColumnModelIds.ShowNotes,
-                    (int) Constants.ShowColumnModelIds.ShowStartFinish
-                }
-                : ConvertStringToArrayOfInts(defaultReportSettings.FilterShowColumnIds);
+            var dropDownsQuery = new ReportsSettingsView
+            {
+                GroupById = SetGroupByOrDefaultGrouping(defaultReportSettings?.GroupById),
+                ShowColumnIds = defaultReportSettings?.FilterShowColumnIds == null
+                    ? new[]
+                    {
+                        (int) Constants.ShowColumnModelIds.ShowEstimatedTime,
+                        (int) Constants.ShowColumnModelIds.ShowDate,
+                        (int) Constants.ShowColumnModelIds.ShowNotes,
+                        (int) Constants.ShowColumnModelIds.ShowStartFinish
+                    }
+                    : ConvertStringToArrayOfInts(defaultReportSettings.FilterShowColumnIds)
+            };
 
             if (defaultReportSettings != null)
             {
