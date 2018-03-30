@@ -3,40 +3,40 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MultiSelectComponent } from './multiselect/multiselect.component';
 import { SelectComponent } from './select/select.component';
-import { MaterialModule } from '@angular/material';
 import { DirectivesModule } from '../directives/directives.module';
-import { SlimScrollModule } from 'ng2-slimscroll';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
 import { TextareaComponent } from './textarea/textarea.component';
 import { InputListComponent } from './input-list/input-list.component';
 import { TextMaskModule } from 'angular2-text-mask';
+import { NgSlimScrollModule } from 'ngx-slimscroll';
+import { MaterialModule } from '../material.module';
 
 @NgModule({
 	imports: [
 		CommonModule,
-		FormsModule,
-		ReactiveFormsModule,
-		MaterialModule,
 		DirectivesModule,
-		SlimScrollModule,
+		FormsModule,
+		MaterialModule,
+		NgSlimScrollModule,
+		ReactiveFormsModule,
 		TextMaskModule
 	],
 	declarations: [
 		ColorPickerComponent,
+		InputListComponent,
 		MultiSelectComponent,
 		SelectComponent,
-		TextareaComponent,
-		InputListComponent
+		TextareaComponent
 	],
 	exports: [
 		FormsModule,
-		ReactiveFormsModule,
 		MaterialModule,
+		ReactiveFormsModule,
 		ColorPickerComponent,
+		InputListComponent,
 		MultiSelectComponent,
 		SelectComponent,
 		TextareaComponent,
-		InputListComponent,
 		TextMaskModule
 	]
 })

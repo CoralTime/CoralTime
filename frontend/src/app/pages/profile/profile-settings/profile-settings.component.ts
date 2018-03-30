@@ -9,13 +9,13 @@ import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } f
 import { EnterEmailService } from '../../forgot-password/enter-email/enter-email.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { NotificationService } from '../../../core/notification.service';
-import { UserInfoService } from '../../../core/auth/user-info.service';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 import { SelectComponent } from '../../../shared/form/select/select.component';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ActivatedRoute } from '@angular/router';
 import { UserPicService } from '../../../services/user-pic.service';
+import { UsersService } from '../../../services/users.service';
 
 const STANDART_TIME_ARRAY = [
 	'0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
@@ -59,9 +59,9 @@ export class ProfileSettingsComponent implements OnInit {
 	weekStartDays: string[] = ['Sunday', 'Monday'];
 	weekStartDayModel: string;
 
-	private dialogRef: MdDialogRef<ProfilePhotoComponent>;
+	private dialogRef: MatDialogRef<ProfilePhotoComponent>;
 
-	constructor(private dialog: MdDialog,
+	constructor(private dialog: MatDialog,
 	            private enterEmailService: EnterEmailService,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
@@ -69,8 +69,8 @@ export class ProfileSettingsComponent implements OnInit {
 	            private profileService: ProfileService,
 	            private route: ActivatedRoute,
 	            private tasksService: TasksService,
-	            private userInfoService: UserInfoService,
-	            private userPicService: UserPicService) {
+	            private userPicService: UserPicService,
+	            private usersService: UsersService) {
 	}
 
 	ngOnInit() {
@@ -116,7 +116,7 @@ export class ProfileSettingsComponent implements OnInit {
 			let impersonateUser = Object.assign(this.impersonationService.impersonationUser, iconObject);
 			this.impersonationService.setStorage(impersonateUser);
 		} else {
-			this.userInfoService.setUserInfo(iconObject);
+			this.usersService.setUserInfo(iconObject);
 		}
 	}
 
@@ -188,7 +188,7 @@ export class ProfileSettingsComponent implements OnInit {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, notificationsObject);
 						this.impersonationService.setStorage(impersonateUser);
 					} else {
-						this.userInfoService.setUserInfo(notificationsObject);
+						this.usersService.setUserInfo(notificationsObject);
 					}
 
 					this.notificationService.success('Profile settings has been successfully changed.');
@@ -216,7 +216,7 @@ export class ProfileSettingsComponent implements OnInit {
 						this.impersonationService.setStorage(impersonateUser);
 						this.impersonationService.onChange.emit(impersonateUser);
 					} else {
-						this.userInfoService.setUserInfo(personalInfoObject);
+						this.usersService.setUserInfo(personalInfoObject);
 					}
 
 					this.notificationService.success('Profile settings has been successfully changed.');
@@ -246,7 +246,7 @@ export class ProfileSettingsComponent implements OnInit {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
 						this.impersonationService.setStorage(impersonateUser);
 					} else {
-						this.userInfoService.setUserInfo(preferencesObject);
+						this.usersService.setUserInfo(preferencesObject);
 					}
 
 					this.notificationService.success('Profile settings has been successfully changed.');

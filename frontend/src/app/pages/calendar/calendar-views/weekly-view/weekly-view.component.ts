@@ -9,8 +9,8 @@ import { User } from '../../../../models/user';
 import * as moment from 'moment';
 
 @Component({
-	templateUrl: 'weekly-view.component.html',
-	selector: 'ct-calendar-weekly-view'
+	selector: 'ct-calendar-weekly-view',
+	templateUrl: 'weekly-view.component.html'
 })
 
 export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {

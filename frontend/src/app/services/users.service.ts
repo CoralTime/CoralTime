@@ -1,20 +1,52 @@
 import { UserProject } from '../models/user-project';
 import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { User } from '../models/user';
 import { Project } from '../models/project';
 import { ConstantService } from '../core/constant.service';
 import { CustomHttp } from '../core/custom-http';
+import { AuthService } from '../core/auth/auth.service';
 
 @Injectable()
 export class UsersService {
 	readonly odata: ODataService<User>;
 
-	constructor(private constantService: ConstantService,
+	onChange: EventEmitter<User> = new EventEmitter<User>();
+	private userInfo: User;
+
+	constructor(private authService: AuthService,
+	            private constantService: ConstantService,
 	            private http: CustomHttp,
 	            private odataFactory: ODataServiceFactory) {
 		this.odata = this.odataFactory.CreateService<User>('Members');
+		if (localStorage.hasOwnProperty('USER_INFO')) {
+			this.userInfo = JSON.parse(localStorage.getItem('USER_INFO'));
+		}
+
+		this.authService.onChange.subscribe(() => {
+			if (!this.authService.getAuthUser()) {
+				this.setUserInfo(null);
+			}
+		})
+	}
+
+	getUserInfo(userId: number): Promise<User> {
+		if (this.userInfo) {
+			return Promise.resolve(this.userInfo);
+		}
+
+		return this.getUserById(userId).toPromise()
+			.then((user: User) => {
+				this.setUserInfo(user);
+				return this.userInfo;
+			});
+	}
+
+	setUserInfo(obj: any): void {
+		this.userInfo = (obj && this.userInfo) ? Object.assign(this.userInfo, obj) : obj;
+		localStorage.setItem('USER_INFO', JSON.stringify(this.userInfo));
+		this.onChange.emit(this.userInfo);
 	}
 
 	assignProjectToUser(userId: number, projectId: number, roleId: number): Observable<any> {

@@ -11,7 +11,6 @@ import { ArrayUtils } from '../../../core/object-utils';
 import { NgForm } from '@angular/forms';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
-import { UserInfoService } from '../../../core/auth/user-info.service';
 
 class FormUser {
 	confirmPassword: string;
@@ -114,7 +113,6 @@ export class UsersFormComponent implements OnInit {
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
 	            private translatePipe: TranslatePipe,
-	            private userInfoService: UserInfoService,
 	            private userService: UsersService) { }
 
 	ngOnInit() {
@@ -202,7 +200,7 @@ export class UsersFormComponent implements OnInit {
 				}
 
 				if (this.authUser.id === updatedUser.id) {
-					this.userInfoService.setUserInfo(updatedUser);
+					this.userService.setUserInfo(updatedUser);
 				}
 
 				this.onSaved.emit({

@@ -1,24 +1,25 @@
 <div class="ct-dialog ct-project-settings-dialog">
     <div class="ct-dialog-title">
         <span>Settings for</span><span>{{project.name}}</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
     <form #projectSettingsForm="ngForm" (ngSubmit)="save()">
         <div class="ct-form-block">
             <label class="ct-form-label">Time Entries Lock</label>
-            <md-checkbox value="true" name="isTimeLockEnabled" [(ngModel)]="model.isTimeLockEnabled">Enable
-            </md-checkbox>
+            <mat-checkbox value="true" name="isTimeLockEnabled" [(ngModel)]="model.isTimeLockEnabled">Enable
+            </mat-checkbox>
 
             <p>
                 Lock time entries in
-                <md-input-container>
-                    <input type="number" mdInput name="daysBeforeStopEditJobs"
+                <mat-input-container>
+                    <input matInput name="daysBeforeStopEditJobs"
+                           placeholder="0"
                            [(ngModel)]="model.daysBeforeStopEditTimeEntries"
                            [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isTimeLockEnabled"
                            [disabled]="!model.isTimeLockEnabled"/>
-                </md-input-container>
+                </mat-input-container>
                 day(s) after the end of
                 <ct-select class="ct-select-inline" required
                            [name]="'lockPeriod'"
@@ -34,48 +35,49 @@
 
         <div class="ct-form-block">
             <label class="ct-form-label">Notify Team Members to fill Time Entries</label>
-            <md-checkbox value="true" name="isNotificationEnabled" [(ngModel)]="model.isNotificationEnabled">Enable
-            </md-checkbox>
+            <mat-checkbox value="true" name="isNotificationEnabled" [(ngModel)]="model.isNotificationEnabled">Enable
+            </mat-checkbox>
             <p>
                 Send notification email if the time entries missed for more than
-                <md-input-container>
-                    <input type="number" mdInput name="notificationDay"
+                <mat-input-container>
+                    <input matInput name="notificationDay"
+                           placeholder="0"
                            [(ngModel)]="model.notificationDay"
                            [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isNotificationEnabled"
                            [disabled]="!model.isNotificationEnabled">
-                </md-input-container>
+                </mat-input-container>
                 working days.
             </p>
         </div>
 
         <div class="ct-form-block">
             <label class="ct-form-label">Privacy</label>
-            <md-radio-group [(ngModel)]="model.isPrivate" name="isPrivate">
+            <mat-radio-group [(ngModel)]="model.isPrivate" name="isPrivate">
                 <div>
-                    <md-radio-button [value]="true">
+                    <mat-radio-button [value]="true">
                         Private
-                    </md-radio-button>
+                    </mat-radio-button>
                     <div class="ct-subscription">
                         Only added members are allowed to access a private project.
                     </div>
                 </div>
                 <div>
-                    <md-radio-button [value]="false">
+                    <mat-radio-button [value]="false">
                         Public
-                    </md-radio-button>
+                    </mat-radio-button>
                     <div class="ct-subscription">
                         All users are allowed to access a public project.
                     </div>
                 </div>
-            </md-radio-group>
+            </mat-radio-group>
         </div>
 
-        <div class="ct-buttons-block" md-dialog-actions>
-            <button md-raised-button [disabled]="!projectSettingsForm.form.valid || projectSettingsForm.form.pristine" type="submit"
+        <div class="ct-buttons-block" mat-dialog-actions>
+            <button mat-raised-button [disabled]="!projectSettingsForm.form.valid || projectSettingsForm.form.pristine" type="submit"
                     class="ct-button ct-blue-button">Save
             </button>
-            <button md-dialog-close class="ct-cancel-button">Cancel</button>
+            <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>
     </form>
 </div>

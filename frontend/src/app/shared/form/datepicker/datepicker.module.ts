@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 	declarations: [
 		DatepickerComponent
 	],
-	providers: [],
 	exports: [
 		DatepickerComponent
 	]

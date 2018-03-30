@@ -2,7 +2,7 @@ import { Directive } from '@angular/core';
 import { NgControl } from '@angular/forms';
 
 @Directive({
-	selector: '[validate-onblur]',
+	selector: '[ctValidateOnblur]',
 	host: {
 		'(focus)': 'onFocus($event)',
 		'(blur)': 'onBlur($event)'

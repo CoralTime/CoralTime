@@ -11,7 +11,7 @@ import { DateUtils } from '../../models/calendar';
 import { DatePeriod, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../models/user';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
 import { NotificationService } from '../../core/notification.service';
 import { ImpersonationService } from '../../services/impersonation.service';
@@ -76,11 +76,11 @@ export class ReportsComponent implements OnInit {
 
 	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
 
-	private reportsConfirmationRef: MdDialogRef<ConfirmationComponent>;
-	private reportsQueryRef: MdDialogRef<ReportsQueryFormComponent>;
-	private reportsSendRef: MdDialogRef<ReportsSendComponent>;
+	private reportsConfirmationRef: MatDialogRef<ConfirmationComponent>;
+	private reportsQueryRef: MatDialogRef<ReportsQueryFormComponent>;
+	private reportsSendRef: MatDialogRef<ReportsSendComponent>;
 
-	constructor(public dialog: MdDialog,
+	constructor(public dialog: MatDialog,
 	            private authService: AuthService,
 	            private impersonationService: ImpersonationService,
 	            private loadingIndicatorService: LoadingIndicatorService,
@@ -388,7 +388,7 @@ export class ReportsComponent implements OnInit {
 	// SEND REPORTS
 
 	openSendReportsDialog(): void {
-		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
@@ -423,7 +423,7 @@ export class ReportsComponent implements OnInit {
 	// GENERAL
 
 	checkDataAndPrintPage(): void {
-		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to print.');
 			return;
 		}
@@ -454,7 +454,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	exportAs(fileTypeId: number): void {
-		if (this.reportsGridData.timeTotal.timeActualTotalFor === 0) {
+		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}

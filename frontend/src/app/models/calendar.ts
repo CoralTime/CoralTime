@@ -18,6 +18,18 @@ export class CalendarDay {
 	}
 }
 
+export class Time {
+	hours: string;
+	minutes: string;
+	seconds: string;
+
+	constructor(hours: string, minutes: string, seconds?: string) {
+		this.hours = hours;
+		this.minutes = minutes;
+		this.seconds = seconds;
+	}
+}
+
 export interface TimeOptions {
 	isFromToShow: boolean;
 	timeTimerStart: number;

@@ -7,8 +7,7 @@
 }
 
 .mat-dialog-container {
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
+  position: relative;
   border-radius: 0 !important;
   background-color: $calendarTaskColor;
   padding: 20px !important;
@@ -37,7 +36,7 @@
   }
 }
 
-.mat-radio-button {
+.mat-radio-button.mat-accent {
   &.mat-radio-checked .mat-radio-outer-circle {
     border-color: $nav-link-border;
   }
@@ -141,4 +140,12 @@
 
 .cdk-overlay-container {
   z-index: 1001;
+}
+
+.cdk-overlay-pane {
+  max-width: 95vw !important;
+}
+
+.mat-list-item {
+  height: auto !important;
 }

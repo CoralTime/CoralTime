@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { PagedResult } from '../../services/odata/query';
 import { TasksService } from '../../services/tasks.service';
@@ -29,10 +29,10 @@ export class TasksComponent implements OnInit {
 	private lastEvent: any;
 	private subject = new Subject<any>();
 
-	private dialogRef: MdDialogRef<TaskFormComponent>;
+	private dialogRef: MatDialogRef<TaskFormComponent>;
 
 	constructor(private aclService: AclService,
-	            private dialog: MdDialog,
+	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private tasksService: TasksService) {

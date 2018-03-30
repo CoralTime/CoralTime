@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { TimeEntry } from '../../../models/calendar';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ConfirmationComponent } from '../../../shared/confirmation/confirmation.component';
 import { CalendarService } from '../../../services/calendar.service';
 import { ObjectUtils } from '../../../core/object-utils';
@@ -23,9 +23,9 @@ export class EntryTimeComponent implements OnDestroy {
 	@Output() timerUpdated: EventEmitter<void> = new EventEmitter<void>();
 	@ViewChild('entryForm') entryForm;
 
-	private dialogRef: MdDialogRef<ConfirmationComponent>;
+	private dialogRef: MatDialogRef<ConfirmationComponent>;
 
-	constructor(private dialog: MdDialog,
+	constructor(private dialog: MatDialog,
 	            private calendarService: CalendarService,
 	            private elementRef: ElementRef) {
 	}

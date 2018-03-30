@@ -13,7 +13,7 @@
 
             <div class="ct-calendar-projects">
                 <ct-multiselect
-                        [styleClass]="'ct-calendar-multiselect'"
+                        [panelStyleClass]="'ct-calendar-multiselect' + (impersonationService.impersonationUser ? ' ct-impersonate' : '')"
                         [(ngModel)]="projectIds"
                         (onChange)="toggleProject(projectIds)"
                         [appendTo]="'body'"

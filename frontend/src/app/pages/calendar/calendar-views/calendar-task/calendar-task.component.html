@@ -17,11 +17,11 @@
 <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu "
          (closed)="isCalendarShown = false">
     <ct-menu-item [class.ct-disabled]="!currentTimeEntry.id || isTimerShown">
-        <a md-ripple (click)="duplicateAction()">Duplicate <span class="ct-menu-hint">(Alt+Drag)</span></a>
+        <a mat-ripple (click)="duplicateAction()">Duplicate <span class="ct-menu-hint">(Alt+Drag)</span></a>
     </ct-menu-item>
     <ct-menu-item [autoClose]="false" [class.ct-disabled]="!currentTimeEntry.id || isTimerShown">
         <div class="ct-menu-container">
-            <a md-ripple (click)="moveAction(submenu)">Move <span class="ct-menu-hint">(Drag)</span></a>
+            <a mat-ripple (click)="moveAction(submenu)">Move <span class="ct-menu-hint">(Drag)</span></a>
             <ct-menu #submenu [xPosition]="'before'"
                      class="ct-submenu ct-datepicker-menu"
                      [class.ct-open-left]="isOpenLeft"
@@ -37,7 +37,7 @@
         </div>
     </ct-menu-item>
     <ct-menu-item [class.ct-disabled]="!currentTimeEntry.id || isTimerShown">
-        <a md-ripple (click)="deleteAction()">Delete</a>
+        <a mat-ripple (click)="deleteAction()">Delete</a>
     </ct-menu-item>
 </ct-menu>
 

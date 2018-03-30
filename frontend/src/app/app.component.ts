@@ -8,6 +8,7 @@ import { ImpersonationService } from './services/impersonation.service';
 	selector: 'ct-root',
 	templateUrl: 'app.component.html'
 })
+
 export class AppComponent implements OnInit {
 	constructor(private authService: AuthService,
 	            public impersonationService: ImpersonationService,

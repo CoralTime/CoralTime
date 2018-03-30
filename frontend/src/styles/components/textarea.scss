@@ -30,6 +30,10 @@ $textAreaHeight: 116px;
   }
 
   &.ct-can-resize {
+    .slimscroll-wrapper {
+      height: 100% !important;
+    }
+
     .ct-textarea-container {
       min-height: 40px;
     }
