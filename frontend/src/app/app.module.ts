@@ -43,7 +43,7 @@ export function httpFactory(http: HttpClient) {
 				useFactory: httpFactory,
 				deps: [Http]
 			}
-		}),
+		})
 	],
 	bootstrap: [AppComponent],
 	providers: [

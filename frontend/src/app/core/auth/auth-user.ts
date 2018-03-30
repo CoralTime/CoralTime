@@ -2,7 +2,7 @@ import { Roles } from './permissions';
 import * as jwt_decode from 'jwt-decode';
 
 export class AuthUser {
-	readonly accessToken: string;
+	accessToken: string;
 	readonly expiresIn: number;
 	readonly id: number;
 	readonly isManager: string;

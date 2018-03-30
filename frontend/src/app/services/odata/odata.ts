@@ -1,13 +1,14 @@
-import { Http, Response } from '@angular/http';
+import { Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import { ODataConfiguration } from './config';
 import { ODataQuery } from './query';
 import { GetOperation } from './operation';
 import { NotificationService } from '../../core/notification.service';
+import { CustomHttp } from '../../core/custom-http';
 
 export class ODataService<T> {
 	constructor(private _typeName: string,
-	            private http: Http,
+	            private http: CustomHttp,
 	            private config: ODataConfiguration,
 	            private notificationService: NotificationService) { }
 

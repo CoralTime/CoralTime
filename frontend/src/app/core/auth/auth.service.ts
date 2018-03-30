@@ -23,9 +23,6 @@ export class AuthService {
 	public adminOrManagerParameterOnChange: EventEmitter<void> = new EventEmitter<void>();
 	public onChange: EventEmitter<AuthUser> = new EventEmitter<AuthUser>();
 
-	private isRefreshingToken: boolean = false;
-	private tokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
-
 	get isUserAdminOrManager(): boolean {
 		return this._isUserAdminOrManager;
 	}
@@ -41,6 +38,7 @@ export class AuthService {
 	            private router: Router) {
 		if (localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
 			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
+			this.authUser.accessToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2RDNFNDZFOTEwNzNDNUQ0QkMyQzk5ODNCRTlGRjQ0OENGNjQwRDQiLCJ0eXAiOiJKV1QiLCJ4NXQiOiJCdFBrYnBFSFBGMUx3c21ZTy1uX1JJejJRTlEifQ.eyJuYmYiOjE0OTg0MjQ4MDIsImV4cCI6MTQ5ODUxMTIwMiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NTAwMC9yZXNvdXJjZXMiLCJXZWJBUEkiXSwiY2xpZW50X2lkIjoiY29yYWx0aW1lYXBwIiwic3ViIjoiM2Q2M2NkOTItMjA0Ny00MzdhLTlhNzAtM2U1Y2FhNTQyN2JmIiwiYXV0aF90aW1lIjoxNDk4NDI0ODAxLCJpZHAiOiJsb2NhbCIsIm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsIm5pY2tuYW1lIjoiVGVzdCBBZG1pbjEiLCJlbWFpbCI6ImNvcmFsdGltZWFkbWluQGNvcmFsdGVxLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJyb2xlcyIsIldlYkFQSSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJjdXN0b20iXX0.k5d0SWmdFOMUxkVVihxNqaArT8N2CjoRXqDp_0_Xy3PQWcRKV_AxQjGfH8teT3fgAyLro5zUBWH7RPMd1QzdZbOMR0u7flMfk2BHS9m0Yeua8O9NtET3ssVRcw45CfVOKEDZQunQQKVNyi5LjIEmMk6eWkgSwkrIykyYLQ0Ph0_V7xYmbcsaTvyZ1iAv7d5GO5VXUtn120tY4GxlYDNBYHzBBZm0wDEmeMsbiU2d4Q-Mukje8BH7gCJAftrRQAqKaMzFhhjjvMozC94IpM2rQAX9XHM7dET0VKWj3IIM3f_VOWmKOAjf6dC6Q4_PivKVnjOF93jgqxwMKT-Wl5ps4Q'
 		}
 	}
 
@@ -86,53 +84,36 @@ export class AuthService {
 
 	refreshToken(): Observable<Response> {
 		if (!localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
-			this.logout();
-			return null;
+			console.log(222);
+			return Observable.throw(new Error('User data not found.'));
 		}
 
-		if (!this.isRefreshingToken) {
-			let headers = new Headers();
-			headers.append('Content-Type', 'application/x-www-form-urlencoded');
+		let headers = new Headers();
+		headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
-			let params = new URLSearchParams();
-			this.isRefreshingToken = true;
-			this.tokenSubject.next(null);
+		let params = new URLSearchParams();
+		this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
+		let headerClientId = this.authUser.isSso ? this.clientIdSSO : this.clientId;
+		params.append('client_id', headerClientId);
+		params.append('client_secret', this.clientSecret);
+		params.append('grant_type', 'refresh_token');
+		params.append('refresh_token', this.authUser.refreshToken);
+		params.append('scope', this.scope);
 
-			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
-			let headerClientId = this.authUser.isSso ? this.clientIdSSO : this.clientId;
-			params.append('client_id', headerClientId);
-			params.append('client_secret', this.clientSecret);
-			params.append('grant_type', 'refresh_token');
-			params.append('refresh_token', this.authUser.refreshToken);
-			params.append('scope', this.scope);
-
-			let body = params.toString();
-			return this.http.post('/connect/token', body, {headers: headers})
-				.flatMap((response: Response) => {
-					if (response) {
-						this.setAuthUser(new AuthUser(response.json(), this.authUser.isSso));
-						this.tokenSubject.next(response);
-						return Observable.of(response);
-					}
-
-					this.logout();
-					return Observable.of(null);
-				})
-				.catch(error => {
-					this.logout();
-					return Observable.throw(error);
-				})
-				.finally(() => {
-					this.isRefreshingToken = false;
-				});
-		} else {
-			return this.tokenSubject
-				.filter(token => token != null)
-				.take(1)
-				.switchMap(response => {
+		let body = params.toString();
+		return this.http.post('/connect/token', body, {headers: headers})
+			.flatMap((response: Response) => {
+				if (response) {
+					this.setAuthUser(new AuthUser(response.json(), this.authUser.isSso));
 					return Observable.of(response);
-				});
-		}
+				}
+
+				this.logout();
+				return Observable.of(null);
+			})
+			.catch(error => {
+				return Observable.throw(error);
+			})
 	}
 
 	logout(ignoreRedirect?: boolean): void {

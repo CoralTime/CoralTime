@@ -13,6 +13,7 @@ import { CustomBrowserXhr } from './custom-browser-xhr';
 import { AclService } from './auth/acl.service';
 import { CustomErrorHandler } from './raven-error-handler';
 import { UserPicService } from '../services/user-pic.service';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
 	imports: [
@@ -26,10 +27,10 @@ import { UserPicService } from '../services/user-pic.service';
 			provide: BrowserXhr,
 			useClass: CustomBrowserXhr
 		},
-		{
-			provide: Http,
-			useClass: CustomHttp
-		},
+		// {
+		// 	provide: Http,
+		// 	useClass: CustomHttp
+		// },
 		{
 			provide: ErrorHandler,
 			useClass: CustomErrorHandler
