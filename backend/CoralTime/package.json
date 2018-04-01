@@ -1,10 +1,12 @@
 {
-    "name": "frontend_settings",
-    "version": "v1.0.0",
-    "scripts": {
-        "0_Npm_Version": "npm version",
-        "1_Npm_Install": "cd ../../frontend & npm install",
-        "2_Build_FrontEnd_Developing": "cd ../../frontend & npm run build",
-        "3_Build_FrontEnd_Production": "cd ../../frontend & npm run production"
-    }
+  "name": "frontend_settings",
+  "version": "v1.0.0",
+  "scripts": {
+    "1_1_Npm_Version": "npm version",
+    "1_2_Npm_Install": "cd ../../frontend & npm install",
+    "2_1_Build_FrontEnd_Developing": "cd ../../frontend & npm run build",
+    "2_2_Build_FrontEnd_Production": "cd ../../frontend & npm run production",
+    "3_1_Npm_Install_WithUpdates": "cd ../../frontend & npm install npm install i -g npm-check-updates",
+    "3_2_Npm_After_Install_UpdateFrontfiles": "cd ../../frontend & ncu -u"
+  }
 }

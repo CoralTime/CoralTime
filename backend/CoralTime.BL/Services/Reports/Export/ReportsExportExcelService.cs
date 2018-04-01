@@ -1,67 +1,55 @@
-﻿using System;
-using CoralTime.Common.Constants;
+﻿using CoralTime.Common.Constants;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.ViewModels.Reports;
+using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        //private XSSFFont DefaultFont { get; set; }
-        public static T DeepClone<T>(T obj)
-        {
-            using (var ms = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(ms, obj);
-                ms.Position = 0;
-
-                return (T) formatter.Deserialize(ms);
-            }
-        }
-
-        [Serializable]
-        private class SetupStyle
-        {
-
-        }
-
         private int RowIndex { get; set; } = 0;
 
-        private const int MaxCountOfColumns = 10;
-
-        private int CountColumnsOfFirstSize { get; set; } = 0; // Date, Client, Project, Member.
-        private int CountColumnsOfSecondSize { get; set; } = 0; // Start, Finish, Act Est
-        private int CountColumnsOfThirdSize { get; set; } = 0; // Notes
-
-        private const short WideColumnsFirstSize = 7000; 
-        private const short WideColumnsSecondSize = 5000;
+        private const short WideColumnsFirstSize = 5000; 
+        private const short WideColumnsSecondSize = 3000;
         private const short WideColumnsThirdSize = 10000;
 
-        private XSSFCellStyle CreateDefaultStyle(XSSFWorkbook workbook, ISheet sheet)
+        private XSSFCellStyle CreateDefStyle(XSSFWorkbook workbook)
         {
-            var defaultStyle = (XSSFCellStyle)workbook.CreateCellStyle();
-            defaultStyle.SetFont(CreateDefaultFont(workbook));
-            defaultStyle.WrapText = true;
-            defaultStyle.Alignment = HorizontalAlignment.Left;
-            defaultStyle.VerticalAlignment = VerticalAlignment.Center;
-            //defaultStyle.BorderBottom = BorderStyle.Thin;
-            //defaultStyle.BorderTop = BorderStyle.Thin;
-            //defaultStyle.BorderLeft = BorderStyle.Thin;
-            //defaultStyle.BorderRight = BorderStyle.Thin;
+            var defStyle = (XSSFCellStyle)workbook.CreateCellStyle();
+            defStyle.SetFont(CreateDefaultFont(workbook));
 
-            for (var i = 0; i < MaxCountOfColumns; i++)
-            {
-                sheet.SetDefaultColumnStyle(i, defaultStyle);
-            }
+            defStyle.WrapText = true;
+            defStyle.Alignment = HorizontalAlignment.Left;
+            defStyle.VerticalAlignment = VerticalAlignment.Center;
 
-            return defaultStyle;
+            return defStyle;
+        }
+
+        private XSSFCellStyle CreateGroupByTotalStyle(XSSFWorkbook workbook)
+        {
+            var groupByTotalStyle = CreateDefStyle(workbook);
+
+            groupByTotalStyle.SetFont(CreateFontColorAqua(workbook));
+
+            return groupByTotalStyle;
+        }
+
+        private XSSFCellStyle CreateHeadersStyle(XSSFWorkbook workbook)
+        {
+            var headersStyle = CreateDefStyle(workbook);
+
+            headersStyle.SetFont(CreateFontBold(workbook));
+
+            headersStyle.FillForegroundColor = HSSFColor.Grey25Percent.Index;
+            headersStyle.FillPattern = FillPattern.SolidForeground;
+
+            return headersStyle;
         }
 
         private XSSFCellStyle CreateTimeFormatStyle(XSSFWorkbook workbook, IFont font)
@@ -85,27 +73,25 @@ namespace CoralTime.BL.Services.Reports.Export
             return font;
         }
 
-        private XSSFFont CreateFontColorToAqua(XSSFWorkbook workbook)
+        private XSSFFont CreateFontColorAqua(XSSFWorkbook workbook)
         {
             var font = CreateDefaultFont(workbook);
+
+            var auaColor = new XSSFColor(new byte[] {0, 100, 230});
+            font.SetColor(auaColor); 
             
-            font.SetColor(new XSSFColor(new byte[] { 0, 100, 230 })); //font.Color = IndexedColors.Aqua.Index;
+            //font.Color = IndexedColors.Aqua.Index;
 
             return font;
         }
 
-        private XSSFFont CreateFontToBold(XSSFWorkbook workbook)
+        private XSSFFont CreateFontBold(XSSFWorkbook workbook)
         {
             var font = CreateDefaultFont(workbook);
 
             font.IsBold = true;
 
             return font;
-        }
-
-        private static void SetFontToCell(ICell cell, XSSFFont font)
-        {
-            cell.CellStyle.SetFont(font);
         }
 
         private byte[] CreateFileExcel(ReportTotalView reportTotalView)
@@ -115,8 +101,6 @@ namespace CoralTime.BL.Services.Reports.Export
                 var workbook = new XSSFWorkbook();
                 
                 var sheet = workbook.CreateSheet("Group By " + GetDescriptionGroupById(reportTotalView.GroupByTypeId));
-
-                var defaultStyle = CreateDefaultStyle(workbook, sheet);
 
                 // PeriodCell
                 CreateRowOfPeriodDates(reportTotalView, sheet);
@@ -156,15 +140,68 @@ namespace CoralTime.BL.Services.Reports.Export
                 // TOTAL 
                 CreateRowOfTotal(reportTotalView, sheet, workbook);
 
+                SetWidthForEachTypeOfColumn(reportTotalView.GroupedItems.FirstOrDefault(), sheet);
                 workbook.Write(memoryStream);
 
                 return memoryStream.ToArray();
             }
         }
 
+        private void SetWidthForEachTypeOfColumn(ReportTotalForGroupTypeView groupedItems, ISheet sheet)
+        {
+            var сountColumnsOfFirstSize  = 0; // Date, Client, Project, Member.
+            var сountColumnsOfSecondSize = 0; // Start, Finish, Act, Est
+            var сountColumnsOfThirdSize  = 0; // Notes
+
+            //var listOfHeaders = new List<string>();
+            if (groupedItems.DisplayNames.DisplayNameDate != null)
+            {
+                ++сountColumnsOfFirstSize;
+            }
+
+            if (groupedItems.DisplayNames.DisplayNameClient != null)
+            {
+                ++сountColumnsOfFirstSize;
+            }
+
+            if (groupedItems.DisplayNames.DisplayNameProject != null)
+            {
+                ++сountColumnsOfFirstSize;
+            }
+
+            if (groupedItems.DisplayNames.DisplayNameMember != null)
+            {
+                ++сountColumnsOfFirstSize;
+            }
+
+            //listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTask);
+            if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
+            {
+                ++сountColumnsOfSecondSize;
+            }
+
+            if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
+            {
+                ++сountColumnsOfSecondSize;
+            }
+
+            //listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeActual);
+            if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
+            {
+                ++сountColumnsOfSecondSize;
+            }
+
+            if (groupedItems.DisplayNames.DisplayNameNotes != null)
+            {
+                ++сountColumnsOfThirdSize;
+            }
+
+            SetWidthForEachTypeOfColumn(sheet, сountColumnsOfFirstSize, сountColumnsOfSecondSize, сountColumnsOfThirdSize);
+        }
+
         private void CreateRowOfPeriodDates(ReportTotalView reportTotalView, ISheet sheet)
         {
-            sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 3));
+            sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 1));
 
             var rowPeriod = sheet.CreateRow(RowIndex);
             rowPeriod.CreateCell(0).SetCellValue(reportTotalView.PeriodCell.DisplayNamePeriod + reportTotalView.PeriodCell.DisplayNamePeriodValue);
@@ -172,65 +209,59 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private void CreateRowOfGroupByType(ISheet sheet, ReportTotalForGroupTypeView groupedItems, XSSFWorkbook workbook)
         {
+            sheet.AddMergedRegion(new CellRangeAddress(RowIndex, RowIndex, 0, 1));
+
             var rowGroupByType = sheet.CreateRow(RowIndex);
             var valueGroupByType = groupedItems.GroupByType.GroupByTypeDisplayName?.ToUpper() + groupedItems.GroupByType.GroupByTypeDisplayNameValue?.ToUpper();
 
-            var cell = rowGroupByType.CreateCell(0);
-            cell.SetCellValue(valueGroupByType);
-
-            SetFontToCell(cell, CreateFontColorToAqua(workbook));
+            var cellGroupByType = rowGroupByType.CreateCell(0);
+            cellGroupByType.SetCellValue(valueGroupByType);
+            cellGroupByType.CellStyle = CreateGroupByTotalStyle(workbook);
         }
 
         private void CreateRowsOfListOfHeaders(ReportTotalForGroupTypeView groupedItems, ISheet sheet, XSSFWorkbook workbook)
         {
             var listOfHeaders = new List<string>();
+
             if (groupedItems.DisplayNames.DisplayNameDate != null)
             {
-                ++CountColumnsOfFirstSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameDate);
             }
 
             if (groupedItems.DisplayNames.DisplayNameClient != null)
             {
-                ++CountColumnsOfFirstSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameClient);
             }
 
             if (groupedItems.DisplayNames.DisplayNameProject != null)
             {
-                ++CountColumnsOfFirstSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameProject);
             }
 
             if (groupedItems.DisplayNames.DisplayNameMember != null)
             {
-                ++CountColumnsOfFirstSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameMember);
             }
 
             listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTask);
             if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
             {
-                ++CountColumnsOfFirstSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeFrom);
             }
 
             if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
             {
-                ++CountColumnsOfSecondSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeTo);
             }
 
             listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeActual);
             if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
             {
-                ++CountColumnsOfSecondSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeEstimated);
             }
 
             if (groupedItems.DisplayNames.DisplayNameNotes != null)
             {
-                ++CountColumnsOfThirdSize;
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameNotes);
             }
 
@@ -239,180 +270,200 @@ namespace CoralTime.BL.Services.Reports.Export
             {
                 var cellHeader = rowListOfHeaders.CreateCell(i);
                 cellHeader.SetCellValue(listOfHeaders[i]);
-
-                SetFontToCell(cellHeader, CreateFontToBold(workbook));
-            }
-
-            // Set width for each type of column
-            for (var i = 0; i < CountColumnsOfFirstSize; i++)
-            {
-                sheet.SetColumnWidth(i, WideColumnsFirstSize);
-            }
-
-            for (var i = 0; i < CountColumnsOfSecondSize; i++)
-            {
-                sheet.SetColumnWidth(i, WideColumnsSecondSize);
-            }
-
-            for (var i = 0; i < CountColumnsOfThirdSize; i++)
-            {
-                sheet.SetColumnWidth(i, WideColumnsThirdSize);
+                cellHeader.CellStyle = CreateHeadersStyle(workbook);
             }
         }
 
         private void CreateRowOfItems(ReportTotalView reportTotalView, ReportTotalForGroupTypeView groupedItems, ReportItemsView groupedItem, ISheet sheet, XSSFWorkbook workbook)
         {
-            var listOfValues = new List<string>();
+            var rowListOfValues = sheet.CreateRow(RowIndex);
+            var cellIndex = 0;
 
             if (groupedItems.DisplayNames.DisplayNameDate != null)
             {
-                listOfValues.Add(ConvertModelToView.UpdateDateFormat(groupedItem.Date, reportTotalView.DateFormatId));
+                var cellValue = ConvertModelToView.UpdateDateFormat(groupedItem.Date, reportTotalView.DateFormatId);
+
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, cellValue, CreateDefaultFont(workbook));
             }
 
             if (groupedItems.DisplayNames.DisplayNameClient != null)
             {
-                listOfValues.Add(groupedItem.ClientName);
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.ClientName, CreateDefaultFont(workbook));
             }
 
             if (groupedItems.DisplayNames.DisplayNameProject != null)
             {
-                listOfValues.Add(groupedItem.ProjectName);
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.ProjectName, CreateDefaultFont(workbook));
             }
 
             if (groupedItems.DisplayNames.DisplayNameMember != null)
             {
-                listOfValues.Add(groupedItem.MemberName);
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.MemberName, CreateDefaultFont(workbook));
             }
 
-            listOfValues.Add(groupedItem.TaskName);
+            CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.TaskName, CreateDefaultFont(workbook));
+            
+            // 1
             if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
             {
-                listOfValues.Add(groupedItem.TimeValues.TimeFrom == 0
+                var cellValue = groupedItem.TimeValues.TimeFrom == 0
                     ? null
-                    : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeFrom.ToString()));
-            }
+                    : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeFrom.ToString());
 
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, cellValue, CreateDefaultFont(workbook));
+            }
+            // 2
             if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
             {
-                listOfValues.Add(groupedItem.TimeValues.TimeTo == 0
+                var cellValue = groupedItem.TimeValues.TimeTo == 0
                     ? null
-                    : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeTo.ToString()));
+                    : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeTo.ToString());
+
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, cellValue, CreateDefaultFont(workbook));
             }
 
-            listOfValues.Add(ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeActual.ToString()));
+            // 3
+            var cellActValue =  ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeActual.ToString());
+            CreateCellItem(workbook, rowListOfValues, ref cellIndex, cellActValue, CreateDefaultFont(workbook));
+
+            // 4 
             if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
             {
-                listOfValues.Add(groupedItem.TimeValues.TimeEstimated == 0
+                var cellValue = groupedItem.TimeValues.TimeEstimated == 0
                     ? null
-                    : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeEstimated.ToString()));
+                    : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeEstimated.ToString());
+
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, cellValue, CreateDefaultFont(workbook));
             }
 
             if (groupedItems.DisplayNames.DisplayNameNotes != null)
             {
-                listOfValues.Add(groupedItem.Notes);
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.Notes, CreateDefaultFont(workbook));
             }
+        }
 
-            var rowListOfValues = sheet.CreateRow(RowIndex);
-            for (var i = 0; i < listOfValues.Count; i++)
-            {
-                rowListOfValues.CreateCell(i).SetCellValue(listOfValues[i]);
-            }
+        private void CreateCellItem(XSSFWorkbook workbook, IRow rowListOfValues, ref int cellIndex, string cellValue, IFont font)
+        {
+            var cellListOfValues = rowListOfValues.CreateCell(cellIndex);
+            cellListOfValues.SetCellValue(cellValue);
+            cellListOfValues.CellStyle = CreateTimeFormatStyle(workbook, font);
+
+            ++cellIndex;
         }
 
         private void CreateRowOfTotalFor(ISheet sheet, ReportTotalForGroupTypeView groupedItems, XSSFWorkbook workbook)
         {
-            var indexCellTotalFor = 0;
+            sheet.AddMergedRegion(new CellRangeAddress(RowIndex, RowIndex, 0, 1));
 
             var rowTotalFor = sheet.CreateRow(RowIndex);
-            var cellTotalFor = rowTotalFor.CreateCell(indexCellTotalFor);
-            cellTotalFor.SetCellValue(groupedItems.TimeTotalFor.DisplayNameTimeActualTotalFor.ToUpper() + groupedItems.GroupByType.GroupByTypeDisplayNameValue?.ToUpper());
-            SetFontToCell(cellTotalFor, CreateFontColorToAqua(workbook));
+            var cellIndex = 0;
+
+            var cellValueTotalFor = groupedItems.TimeTotalFor.DisplayNameTimeActualTotalFor.ToUpper() + groupedItems.GroupByType.GroupByTypeDisplayNameValue?.ToUpper();
+            CreateCellItem(workbook, rowTotalFor, ref cellIndex, cellValueTotalFor, CreateFontColorAqua(workbook));
 
             if (groupedItems.DisplayNames.DisplayNameDate != null || groupedItems.GroupByTypeId == (int)Constants.ReportsGroupBy.Date)
             {
-                rowTotalFor.CreateCell(++indexCellTotalFor).SetCellValue(string.Empty);
+                rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
 
-            rowTotalFor.CreateCell(++indexCellTotalFor).SetCellValue(string.Empty);
-            rowTotalFor.CreateCell(++indexCellTotalFor).SetCellValue(string.Empty);
+            rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
+            rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
             if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
             {
-                rowTotalFor.CreateCell(++indexCellTotalFor).SetCellValue(string.Empty);
+                rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
 
             if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
             {
-                rowTotalFor.CreateCell(++indexCellTotalFor).SetCellValue(string.Empty);
+                rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
 
-            var actTotalForValues = ConvertModelToView.UpdateTimeFormatForValue(groupedItems.TimeTotalFor.TimeActualTotalFor.ToString());
-            var cellTotalForActTime = rowTotalFor.CreateCell(++indexCellTotalFor);
-            cellTotalForActTime.SetCellValue(actTotalForValues);
-            cellTotalForActTime.CellStyle = CreateTimeFormatStyle(workbook, CreateFontToBold(workbook));
+            // 1
+            var cellValueActTotal = ConvertModelToView.UpdateTimeFormatForValue(groupedItems.TimeTotalFor.TimeActualTotalFor.ToString());
+            CreateCellItem(workbook, rowTotalFor, ref cellIndex, cellValueActTotal, CreateFontBold(workbook));
 
+            // 2
             if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
             {
-                var totalForEst = groupedItems.TimeTotalFor.TimeEstimatedTotalFor == 0
+                var cellValueEstTotal = groupedItems.TimeTotalFor.TimeEstimatedTotalFor == 0
                     ? null
                     : ConvertModelToView.UpdateTimeFormatForValue(groupedItems.TimeTotalFor.TimeEstimatedTotalFor.ToString());
 
-                var cellTotalForEstTime = rowTotalFor.CreateCell(++indexCellTotalFor);
-                cellTotalForEstTime.SetCellValue(totalForEst);
-                cellTotalForEstTime.CellStyle = CreateTimeFormatStyle(workbook, CreateFontToBold(workbook));
+                CreateCellItem(workbook, rowTotalFor, ref cellIndex, cellValueEstTotal, CreateFontBold(workbook));
             }
 
             if (groupedItems.DisplayNames.DisplayNameNotes != null)
             {
-                rowTotalFor.CreateCell(++indexCellTotalFor).SetCellValue(string.Empty);
+                rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
         }
 
         private void CreateRowOfTotal(ReportTotalView reportTotalView, ISheet sheet, XSSFWorkbook workbook)
         {
-            var indexCellTotal = 0;
-
             var rowTotal = sheet.CreateRow(RowIndex);
-            var cellTotal = rowTotal.CreateCell(indexCellTotal);
-            cellTotal.SetCellValue(reportTotalView.TimeTotal.DisplayNameTimeActualTotal);
+            var cellIndex = 0;
 
-            SetFontToCell(cellTotal, CreateFontColorToAqua(workbook));
+            var cellValueTotal = reportTotalView.TimeTotal.DisplayNameTimeActualTotal.ToUpper();
+            CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueTotal, CreateFontColorAqua(workbook));
 
             if (reportTotalView.DisplayNames.DisplayNameDate != null || reportTotalView.GroupByTypeId == (int) Constants.ReportsGroupBy.Date)
             {
-                rowTotal.CreateCell(++indexCellTotal).SetCellValue(string.Empty);
+                rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
 
-            rowTotal.CreateCell(++indexCellTotal).SetCellValue(string.Empty);
-            rowTotal.CreateCell(++indexCellTotal).SetCellValue(string.Empty);
+            rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
+            rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
             if (reportTotalView.DisplayNames.DisplayNameTimeFrom != null)
             {
-                rowTotal.CreateCell(++indexCellTotal).SetCellValue(string.Empty);
+                rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
 
             if (reportTotalView.DisplayNames.DisplayNameTimeTo != null)
             {
-                rowTotal.CreateCell(++indexCellTotal).SetCellValue(string.Empty);
+                rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
 
-            var actualTotalValue = ConvertModelToView.UpdateTimeFormatForValue(reportTotalView.TimeTotal.TimeActualTotal.ToString());
-            var cellTotalAct = rowTotal.CreateCell(++indexCellTotal);
-            cellTotalAct.SetCellValue(actualTotalValue);
-            cellTotalAct.CellStyle = CreateTimeFormatStyle(workbook, CreateFontToBold(workbook));
+            // 1 
+            var cellValueActTotal= ConvertModelToView.UpdateTimeFormatForValue(reportTotalView.TimeTotal.TimeActualTotal.ToString());
+            CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueActTotal, CreateFontBold(workbook));
 
+            // 2
             if (reportTotalView.DisplayNames.DisplayNameTimeEstimated != null)
             {
-                var totalEst = reportTotalView.TimeTotal.TimeEstimatedTotal == 0
+                var cellValueEstTotal = reportTotalView.TimeTotal.TimeEstimatedTotal == 0
                     ? null
                     : ConvertModelToView.UpdateTimeFormatForValue(reportTotalView.TimeTotal.TimeEstimatedTotal.ToString());
 
-                var cellTotalEst = rowTotal.CreateCell(++indexCellTotal);
-                cellTotalEst.SetCellValue(totalEst);
-                cellTotalEst.CellStyle = CreateTimeFormatStyle(workbook, CreateFontToBold(workbook));
+                CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueEstTotal, CreateFontBold(workbook));
             }
 
             if (reportTotalView.DisplayNames.DisplayNameNotes != null)
             {
-                rowTotal.CreateCell(++indexCellTotal).SetCellValue(string.Empty);
+                rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
+            }
+        }
+
+        private void SetWidthForEachTypeOfColumn(ISheet sheet, int сountColumnsOfFirstSize, int сountColumnsOfSecondSize, int сountColumnsOfThirdSize)
+        {
+            // Set width for each type of column
+            var startIndexFirtsColumns = 0;
+            var endIndexFirtsColumns = startIndexFirtsColumns + (сountColumnsOfFirstSize == 1 ? 0 : сountColumnsOfFirstSize);
+            SetColumnWidthByRange(sheet, startIndexFirtsColumns, endIndexFirtsColumns, WideColumnsFirstSize);
+
+            var startIndexSecondColumns = сountColumnsOfFirstSize + 1;
+            var endIndexSecondColumns = startIndexSecondColumns + (сountColumnsOfSecondSize == 1 ? 0 : сountColumnsOfSecondSize);
+            SetColumnWidthByRange(sheet, startIndexSecondColumns, endIndexSecondColumns, WideColumnsSecondSize);
+
+            var startIndexThirdColumns = endIndexSecondColumns + 1;
+            var endIndexThirdColumns = startIndexThirdColumns + (сountColumnsOfThirdSize == 1 ? 0 : сountColumnsOfThirdSize);
+            SetColumnWidthByRange(sheet, startIndexThirdColumns, endIndexThirdColumns, WideColumnsThirdSize);
+        }
+
+        private void SetColumnWidthByRange(ISheet sheet, int start, int finish, int size)
+        {
+            for (var i = start; i <= finish; i++)
+            {
+                sheet.SetColumnWidth(i, size);
             }
         }
 
