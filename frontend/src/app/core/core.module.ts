@@ -1,21 +1,20 @@
-import { HttpModule, BrowserXhr } from '@angular/http';
+import { HttpModule } from '@angular/http';
 import { NgModule, ErrorHandler } from '@angular/core';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { LoadingBarService } from '@ngx-loading-bar/core';
 import { ODataServiceFactory, ODataConfiguration } from './../services/odata';
-import { CustomHttp } from './custom-http';
 import { ConstantService } from './constant.service';
 import { AuthGuard } from './auth/auth-guard.service';
 import { AuthService } from './auth/auth.service';
 import { NotificationService } from './notification.service';
 import * as ODataConfig from './odata-config.factory';
 import { NotAuthGuard } from './auth/not-auth-guard.service';
-import { LoadingIndicatorService } from './loading-indicator.service';
-import { CustomBrowserXhr } from './custom-browser-xhr';
 import { AclService } from './auth/acl.service';
 import { CustomErrorHandler } from './raven-error-handler';
 import { UserPicService } from '../services/user-pic.service';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ApplyTokenInterceptor } from './apply-token.interceptor';
 import { RefreshTokenInterceptor } from './refresh-token.interceptor';
+import { LoadingBarInterceptor } from './loading-bar.interceptor';
 
 @NgModule({
 	imports: [
@@ -23,7 +22,8 @@ import { RefreshTokenInterceptor } from './refresh-token.interceptor';
 		HttpClientModule
 	],
 	exports: [
-		HttpModule
+		HttpModule,
+		HttpClientModule
 	],
 	providers: [
 		{
@@ -44,17 +44,20 @@ import { RefreshTokenInterceptor } from './refresh-token.interceptor';
 			useClass: RefreshTokenInterceptor,
 			multi: true
 		},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: LoadingBarInterceptor,
+			multi: true
+		},
 		AclService,
 		AuthService,
 		AuthGuard,
 		ConstantService,
-		CustomHttp,
-		HttpClientModule,
-		LoadingIndicatorService,
 		NotAuthGuard,
 		NotificationService,
 		ODataServiceFactory,
-		UserPicService
+		UserPicService,
+		LoadingBarService
 	]
 })
 

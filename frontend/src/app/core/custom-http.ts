@@ -49,7 +49,6 @@ export class CustomHttp extends Http {
 			}
 
 			if (!this.refreshInProgress) {
-				console.log(2);
 				this.refreshInProgress = true;
 				this.tokenSubject.next(null);
 				let authService = this.injector.get(AuthService);

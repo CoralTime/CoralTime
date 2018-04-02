@@ -39,11 +39,11 @@ export class ProjectsComponent implements OnInit {
 	private dialogUserRef: MatDialogRef<ProjectUsersComponent>;
 	private dialogSettingsRef: MatDialogRef<ProjectSettingsFormComponent>;
 
-	constructor(public dialog: MatDialog,
-	            private authService: AuthService,
+	constructor(private authService: AuthService,
+	            private dialog: MatDialog,
+	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private projectsService: ProjectsService,
-	            private impersonationService: ImpersonationService,
 	            private router: Router) {
 		this.impersonationService.checkImpersonationRole('projects');
 	}

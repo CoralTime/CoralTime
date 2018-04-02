@@ -1,15 +1,13 @@
-import { HttpClient, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import { Injectable, Injector } from '@angular/core';
 import { Subscriber } from 'rxjs/Subscriber';
 import { AuthService } from './auth/auth.service';
-import { ImpersonationService } from '../services/impersonation.service';
 import { NotificationService } from 'app/core/notification.service';
-import { RequestOptionsArgs } from '@angular/http';
 
 interface CallerRequest {
-	subscriber: Subscriber<any>;
 	failedRequest: HttpRequest<any>;
+	subscriber: Subscriber<any>;
 }
 
 @Injectable()
@@ -20,9 +18,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 	private requests: CallerRequest[] = [];
 
 	constructor(private injector: Injector,
-	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService) {
-		console.log('RefreshTokenInterceptor created');
 	}
 
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -42,10 +38,20 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 						subscriber.next(response);
 					},
 					(err) => {
-						if (err.status === 401) {
-							this.handleUnauthorizedError(subscriber, req);
-						} else {
-							subscriber.error(err);
+						switch (err.status) {
+							case 401 :
+								// if (!this.isTokenExpired(err)) {
+								// 	this.navigateToLogin();
+								// 	return Observable.throw(err);
+								// }
+
+								this.handleUnauthorizedError(subscriber, req);
+								break;
+							case 403 :
+								this.notificationService.danger('You don\'t have permission for this action');
+								break;
+							default:
+								subscriber.error(err);
 						}
 					},
 					() => {
@@ -71,7 +77,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 				.subscribe((authHeader) =>
 						this.repeatFailedRequests(),
 					() => {
-						this.authService.logout();
+						this.navigateToLogin();
 					});
 		}
 	}
@@ -107,33 +113,6 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 			return true;
 		}
 		return false;
-	}
-
-	private removeExtendedHeaders(url: string | Request, options: RequestOptionsArgs = {}): void {
-		let headers = url instanceof Request ? url.headers : options.headers;
-		headers.delete('Authorization');
-	}
-
-	private extendHeaders(headers?: HttpHeaders): HttpHeaders {
-		if (!headers.has('Authorization')) {
-			let authUser = this.authService.getAuthUser();
-			if (authUser && authUser.accessToken) {
-				headers.set('Authorization', 'Bearer ' + authUser.accessToken);
-			}
-		}
-
-		// headers = this.impersonate(headers);
-		return headers;
-	}
-
-	private impersonate(headers: Headers): Headers {
-		if (!headers.has('Impersonate') && this.impersonationService.impersonationMember) {
-			headers.set('Impersonate', this.impersonationService.impersonationMember);
-		}
-		if (headers.has('Impersonate') && !this.impersonationService.impersonationMember) {
-			headers.delete('Impersonate');
-		}
-		return headers;
 	}
 
 	private navigateToLogin(): void {

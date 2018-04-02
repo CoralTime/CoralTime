@@ -34,11 +34,11 @@ export class ClientsComponent implements OnInit {
 
 	@ViewChild('pageContainer') pageContainer: ElementRef;
 
-	constructor(public dialog: MatDialog,
-	            private aclService: AclService,
+	constructor(private aclService: AclService,
 	            private clientsService: ClientsService,
-	            private notificationService: NotificationService,
-	            private impersonationService: ImpersonationService) {
+	            private dialog: MatDialog,
+	            private impersonationService: ImpersonationService,
+	            private notificationService: NotificationService) {
 		this.impersonationService.checkImpersonationRole('clients');
 	}
 

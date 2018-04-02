@@ -25,8 +25,8 @@ export class EntryTimeComponent implements OnDestroy {
 
 	private dialogRef: MatDialogRef<ConfirmationComponent>;
 
-	constructor(private dialog: MatDialog,
-	            private calendarService: CalendarService,
+	constructor(private calendarService: CalendarService,
+	            private dialog: MatDialog,
 	            private elementRef: ElementRef) {
 	}
 

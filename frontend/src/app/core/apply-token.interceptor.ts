@@ -1,17 +1,16 @@
 import { Injectable, Injector } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpClient } from '@angular/common/http';
+import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Rx';
 import { AuthService } from './auth/auth.service';
-import { LoadingIndicatorService } from './loading-indicator.service';
+import { ImpersonationService } from '../services/impersonation.service';
 
 @Injectable()
 export class ApplyTokenInterceptor implements HttpInterceptor {
 	private http: HttpClient;
 	private authService: AuthService;
-	private loadingService: LoadingIndicatorService;
 
-	constructor(private injector: Injector) {
-		console.log('ApplyTokenInterceptor created');
+	constructor(private impersonationService: ImpersonationService,
+	            private injector: Injector) {
 	}
 
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -21,23 +20,38 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 		if (!this.authService) {
 			this.authService = this.injector.get(AuthService);
 		}
-		if (!this.loadingService) {
-			this.loadingService = this.injector.get(LoadingIndicatorService);
-		}
 
 		if (!req.url.includes('api/')) {
 			return next.handle(req);
 		}
 
 		const authReq = req.clone({
-			headers: req.headers.set('Authorization', 'Bearer ' + this.authService.getAuthUser().accessToken)
+			headers: this.extendHeaders(req.headers)
 		});
 
-		console.log('Sending request with new header now ...', authReq);
+		return next.handle(authReq)
+	}
 
-		this.loadingService.start();
-		return next.handle(authReq).finally(() => {
-			this.loadingService.complete();
-		})
+	private extendHeaders(headers?: HttpHeaders): HttpHeaders {
+		if (!headers.has('Authorization')) {
+			let authUser = this.authService.getAuthUser();
+			if (authUser && authUser.accessToken) {
+				headers = headers.set('Authorization', 'Bearer ' + authUser.accessToken);
+			}
+		}
+
+		headers = this.impersonate(headers);
+		return headers;
+	}
+
+	private impersonate(headers: HttpHeaders): HttpHeaders {
+		if (!headers.has('Impersonate') && this.impersonationService.impersonationMember) {
+			headers = headers.set('Impersonate', this.impersonationService.impersonationMember);
+		}
+		if (headers.has('Impersonate') && !this.impersonationService.impersonationMember) {
+			headers = headers.delete('Impersonate');
+		}
+
+		return headers;
 	}
 }
