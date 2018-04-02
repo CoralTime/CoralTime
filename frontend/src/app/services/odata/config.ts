@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { PagedResult } from './query';
 
 export class KeyConfigs {
+	expand: string = '$expand';
 	filter: string = '$filter';
-	top: string = '$top';
-	skip: string = '$skip';
 	orderBy: string = '$orderby';
 	select: string = '$select';
-	expand: string = '$expand';
+	skip: string = '$skip';
+	top: string = '$top';
 }
 
 @Injectable()

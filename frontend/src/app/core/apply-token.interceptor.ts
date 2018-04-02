@@ -2,11 +2,13 @@ import { Injectable, Injector } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Rx';
 import { AuthService } from './auth/auth.service';
+import { LoadingIndicatorService } from './loading-indicator.service';
 
 @Injectable()
 export class ApplyTokenInterceptor implements HttpInterceptor {
 	private http: HttpClient;
 	private authService: AuthService;
+	private loadingService: LoadingIndicatorService;
 
 	constructor(private injector: Injector) {
 		console.log('ApplyTokenInterceptor created');
@@ -19,6 +21,9 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 		if (!this.authService) {
 			this.authService = this.injector.get(AuthService);
 		}
+		if (!this.loadingService) {
+			this.loadingService = this.injector.get(LoadingIndicatorService);
+		}
 
 		if (!req.url.includes('api/')) {
 			return next.handle(req);
@@ -30,6 +35,9 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 
 		console.log('Sending request with new header now ...', authReq);
 
-		return next.handle(authReq);
+		this.loadingService.start();
+		return next.handle(authReq).finally(() => {
+			this.loadingService.complete();
+		})
 	}
 }

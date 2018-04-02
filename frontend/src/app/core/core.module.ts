@@ -27,10 +27,6 @@ import { RefreshTokenInterceptor } from './refresh-token.interceptor';
 	],
 	providers: [
 		{
-			provide: BrowserXhr,
-			useClass: CustomBrowserXhr
-		},
-		{
 			provide: ErrorHandler,
 			useClass: CustomErrorHandler
 		},

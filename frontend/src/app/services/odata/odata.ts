@@ -1,7 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ODataConfiguration } from './config';
-import { GetOperation } from './operation';
 import { ODataQuery } from './query';
 import { NotificationService } from '../../core/notification.service';
 
@@ -15,13 +14,9 @@ export class ODataService<T> {
 		return this._typeName;
 	}
 
-	Get(key: string): GetOperation<T> {
-		return new GetOperation<T>(this._typeName, this.config, this.http, key);
-	}
-
-	Post(entity: T): Observable<Object> {
+	Post(entity: T): Observable<T> {
 		let body = JSON.stringify(entity);
-		return this.handleResponse(this.http.post(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
+		return this.handleResponse(this.http.post<T>(this.config.baseUrl + '/' + this.TypeName, body, this.config.postRequestOptions));
 	}
 
 	Patch(entity: any, key: string): Observable<Object> {
@@ -29,13 +24,13 @@ export class ODataService<T> {
 		return this.http.patch(this.getEntityUri(key), body, this.config.postRequestOptions);
 	}
 
-	Put(entity: T, key: string): Observable<Object> {
+	Put(entity: T, key: string): Observable<T> {
 		let body = JSON.stringify(entity);
-		return this.handleResponse(this.http.put(this.getEntityUri(key), body, this.config.postRequestOptions));
+		return this.handleResponse(this.http.put<T>(this.getEntityUri(key), body, this.config.postRequestOptions));
 	}
 
-	Delete(key: string): Observable<Object> {
-		return this.http.delete(this.getEntityUri(key), this.config.requestOptions);
+	Delete(key: string): Observable<T> {
+		return this.http.delete<T>(this.getEntityUri(key), this.config.requestOptions);
 	}
 
 	Query(): ODataQuery<T> {
@@ -46,7 +41,7 @@ export class ODataService<T> {
 		return this.config.getEntityUri(entityKey, this._typeName);
 	}
 
-	protected handleResponse(entity: Observable<HttpResponse<Object>>): Observable<Object> {
+	protected handleResponse(entity: Observable<HttpResponse<T>>): Observable<T> {
 		return entity.map(this.extractData)
 			.catch((err: any, caught: Observable<T>) => {
 				if (this.config.handleError) {
