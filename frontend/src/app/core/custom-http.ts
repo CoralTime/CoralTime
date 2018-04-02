@@ -63,7 +63,7 @@ export class CustomHttp extends Http {
 						}
 
 						this.tokenSubject.next({url, options});
-						console.log('1 repeat', url, (<Request>url).headers.get('Authorization'));
+						// console.log('1 repeat', url, (<Request>url).headers.get('Authorization'));
 						return this.repeatRequest(url, options);
 					})
 					.catch(err => {
@@ -80,7 +80,7 @@ export class CustomHttp extends Http {
 					.filter(res => res !== null)
 					.take(1)
 					.switchMap(res => {
-							console.log('2 repeat', (<Request>url).headers.get('Authorization'));
+							// console.log('2 repeat', (<Request>url).headers.get('Authorization'));
 							return this.repeatRequest(url, options)}
 						);
 			}

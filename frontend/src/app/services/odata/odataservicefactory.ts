@@ -1,13 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ODataService } from './odata';
 import { ODataConfiguration } from './config';
+import { ODataService } from './odata';
 import { NotificationService } from '../../core/notification.service';
-import { CustomHttp } from '../../core/custom-http';
 
 @Injectable()
 export class ODataServiceFactory {
-	constructor(private http: CustomHttp,
-	            private config: ODataConfiguration,
+	constructor(private config: ODataConfiguration,
+	            private http: HttpClient,
 	            private notificationService: NotificationService) {
 	}
 

@@ -1,12 +1,12 @@
-import { UserProject } from '../models/user-project';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { PagedResult, ODataServiceFactory, ODataService } from './odata';
+import { Observable } from 'rxjs';
+import { AuthService } from '../core/auth/auth.service';
+import { ConstantService } from '../core/constant.service';
+import { UserProject } from '../models/user-project';
 import { User } from '../models/user';
 import { Project } from '../models/project';
-import { ConstantService } from '../core/constant.service';
-import { CustomHttp } from '../core/custom-http';
-import { AuthService } from '../core/auth/auth.service';
+import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +17,7 @@ export class UsersService {
 
 	constructor(private authService: AuthService,
 	            private constantService: ConstantService,
-	            private http: CustomHttp,
+	            private http: HttpClient,
 	            private odataFactory: ODataServiceFactory) {
 		this.odata = this.odataFactory.CreateService<User>('Members');
 		if (localStorage.hasOwnProperty('USER_INFO')) {
@@ -56,6 +56,7 @@ export class UsersService {
 			roleId: roleId,
 			memberId: userId
 		});
+
 		return odata.Post(userProject);
 	}
 
@@ -66,6 +67,7 @@ export class UsersService {
 			roleId: roleId,
 			memberId: userId
 		});
+
 		return odata.Post(userProject);
 	}
 
@@ -74,6 +76,7 @@ export class UsersService {
 		let newRoleId = {
 			roleId: roleId
 		};
+
 		return odata.Patch(newRoleId, userProjectId.toString());
 	}
 
@@ -101,7 +104,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new UserProject(x));
+			res.data = res.data.map((x: Object) => new UserProject(x));
 			return res;
 		});
 	}
@@ -136,7 +139,7 @@ export class UsersService {
 		}
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new User(x));
+			res.data = res.data.map((x: Object) => new User(x));
 			return res;
 		});
 	}
@@ -162,7 +165,7 @@ export class UsersService {
 
 	getUserById(id: number): Observable<User> {
 		return this.http.get(this.constantService.apiBaseUrl + '/odata/Members(' + id + ')')
-			.map(res => new User(res.json()));
+			.map((user: Object) => new User(user));
 	}
 
 	getUserByUsername(username: string): Observable<User> {
@@ -208,7 +211,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map(x => new UserProject(x));
+			res.data = res.data.map((x: Object) => new UserProject(x));
 			return res;
 		});
 	}
@@ -237,7 +240,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Project(x));
+			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
 		});
 	}
@@ -265,7 +268,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new User(x));
+			res.data = res.data.map((x: Object) => new User(x));
 			return res;
 		});
 	}

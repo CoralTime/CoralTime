@@ -1,4 +1,4 @@
-<div pDroppable="calendarTask" (onDrop)="drop()" (onDragOver)="onDragOver()" (onDragLeave)="onDragLeave()"
+<div pDroppable="calendarTask" (onDrop)="drop()" (dragover)="onDragOver()" (onDragLeave)="onDragLeave()"
      class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter">
     <div class="ct-calendar-day-title" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
         <div class="ct-calendar-date">

@@ -182,7 +182,7 @@ export class CalendarDayComponent implements OnInit {
 
 	private isNewTrackedTimeValid(newDate: string, time: number): boolean {
 		let dayInfo = this.calendarService.getDayInfoByDate(newDate);
-		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'time');
+		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
 		return totalTrackedTimeForDay + time <= MAX_TIMER_VALUE;
 	}
 }
