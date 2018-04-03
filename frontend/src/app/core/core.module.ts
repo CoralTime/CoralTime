@@ -1,13 +1,12 @@
-import { HttpModule } from '@angular/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoadingBarService } from '@ngx-loading-bar/core';
+import * as ODataConfig from './odata-config.factory';
 import { ODataServiceFactory, ODataConfiguration } from './../services/odata';
 import { ConstantService } from './constant.service';
 import { AuthGuard } from './auth/auth-guard.service';
 import { AuthService } from './auth/auth.service';
 import { NotificationService } from './notification.service';
-import * as ODataConfig from './odata-config.factory';
 import { NotAuthGuard } from './auth/not-auth-guard.service';
 import { AclService } from './auth/acl.service';
 import { CustomErrorHandler } from './raven-error-handler';
@@ -18,11 +17,9 @@ import { LoadingBarInterceptor } from './loading-bar.interceptor';
 
 @NgModule({
 	imports: [
-		HttpModule,
 		HttpClientModule
 	],
 	exports: [
-		HttpModule,
 		HttpClientModule
 	],
 	providers: [
@@ -56,8 +53,8 @@ import { LoadingBarInterceptor } from './loading-bar.interceptor';
 		NotAuthGuard,
 		NotificationService,
 		ODataServiceFactory,
-		UserPicService,
-		LoadingBarService
+		LoadingBarService,
+		UserPicService
 	]
 })
 

@@ -1,6 +1,6 @@
+import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
-import { Injectable, Injector } from '@angular/core';
 import { Subscriber } from 'rxjs/Subscriber';
 import { AuthService } from './auth/auth.service';
 import { NotificationService } from 'app/core/notification.service';
@@ -40,10 +40,10 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 					(err) => {
 						switch (err.status) {
 							case 401 :
-								// if (!this.isTokenExpired(err)) {
-								// 	this.navigateToLogin();
-								// 	return Observable.throw(err);
-								// }
+								if (!this.isTokenExpired(err)) {
+									this.navigateToLogin();
+									return Observable.throw(err);
+								}
 
 								this.handleUnauthorizedError(subscriber, req);
 								break;
@@ -66,7 +66,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 		return observable;
 	}
 
-	private handleUnauthorizedError(subscriber: Subscriber<any>, request: HttpRequest<any>) {
+	private handleUnauthorizedError(subscriber: Subscriber<any>, request: HttpRequest<any>): void {
 		this.requests.push({subscriber, failedRequest: request});
 		if (!this.refreshInProgress) {
 			this.refreshInProgress = true;
@@ -82,7 +82,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 		}
 	}
 
-	private repeatFailedRequests() {
+	private repeatFailedRequests(): void {
 		this.requests.forEach((c) => {
 			const requestWithNewToken = c.failedRequest.clone({
 				headers: c.failedRequest.headers.set('Authorization', 'Bearer ' + this.authService.getAuthUser().accessToken)
@@ -90,10 +90,11 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 
 			this.repeatRequest(requestWithNewToken, c.subscriber);
 		});
+
 		this.requests = [];
 	}
 
-	private repeatRequest(requestWithNewToken: HttpRequest<any>, subscriber: Subscriber<any>) {
+	private repeatRequest(requestWithNewToken: HttpRequest<any>, subscriber: Subscriber<any>): void {
 		this.http.request(requestWithNewToken).subscribe((res) => {
 				subscriber.next(res);
 			},
@@ -109,10 +110,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 	}
 
 	private isTokenExpired(error: Response | any): boolean {
-		if (error.headers.has('www-authenticate') && /expired/.test(error.headers.get('www-authenticate'))) {
-			return true;
-		}
-		return false;
+		return error.headers.has('www-authenticate') && /expired/.test(error.headers.get('www-authenticate'));
 	}
 
 	private navigateToLogin(): void {

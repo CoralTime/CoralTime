@@ -20,7 +20,6 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 		if (!this.authService) {
 			this.authService = this.injector.get(AuthService);
 		}
-
 		if (!req.url.includes('api/')) {
 			return next.handle(req);
 		}
@@ -32,7 +31,7 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 		return next.handle(authReq)
 	}
 
-	private extendHeaders(headers?: HttpHeaders): HttpHeaders {
+	private extendHeaders(headers: HttpHeaders): HttpHeaders {
 		if (!headers.has('Authorization')) {
 			let authUser = this.authService.getAuthUser();
 			if (authUser && authUser.accessToken) {
@@ -40,6 +39,7 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 			}
 		}
 
+		headers = this.setDefaultHeaders(headers);
 		headers = this.impersonate(headers);
 		return headers;
 	}
@@ -50,6 +50,20 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 		}
 		if (headers.has('Impersonate') && !this.impersonationService.impersonationMember) {
 			headers = headers.delete('Impersonate');
+		}
+
+		return headers;
+	}
+
+	private setDefaultHeaders(headers: HttpHeaders): HttpHeaders {
+		if (!headers.has('Cache-control')) {
+			headers = headers.append('Cache-control', 'no-cache,no-store');
+		}
+		if (!headers.has('Expires')) {
+			headers = headers.append('Expires', '0');
+		}
+		if (!headers.has('Pragma')) {
+			headers = headers.append('Pragma', 'no-cache');
 		}
 
 		return headers;

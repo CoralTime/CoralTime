@@ -1,13 +1,10 @@
+import { Injectable, EventEmitter } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { Http, Headers, Response } from '@angular/http';
-import { Injectable, EventEmitter } from '@angular/core';
-import { URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 const AUTH_USER_STORAGE_KEY = 'APPLICATION_USER';
 
@@ -32,79 +29,79 @@ export class AuthService {
 		this.adminOrManagerParameterOnChange.emit();
 	}
 
-	constructor(private http: Http,
+	constructor(private http: HttpClient,
 	            private impersonateService: ImpersonationService,
 	            private matDialog: MatDialog,
 	            private router: Router) {
 		if (localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
 			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
-			// this.authUser.accessToken = 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjA2RDNFNDZFOTEwNzNDNUQ0QkMyQzk5ODNCRTlGRjQ0OENGNjQwRDQiLCJ0eXAiOiJKV1QiLCJ4NXQiOiJCdFBrYnBFSFBGMUx3c21ZTy1uX1JJejJRTlEifQ.eyJuYmYiOjE0OTg0MjQ4MDIsImV4cCI6MTQ5ODUxMTIwMiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NTAwMC9yZXNvdXJjZXMiLCJXZWJBUEkiXSwiY2xpZW50X2lkIjoiY29yYWx0aW1lYXBwIiwic3ViIjoiM2Q2M2NkOTItMjA0Ny00MzdhLTlhNzAtM2U1Y2FhNTQyN2JmIiwiYXV0aF90aW1lIjoxNDk4NDI0ODAxLCJpZHAiOiJsb2NhbCIsIm5hbWUiOiJBZG1pbiIsInJvbGUiOiJhZG1pbiIsIm5pY2tuYW1lIjoiVGVzdCBBZG1pbjEiLCJlbWFpbCI6ImNvcmFsdGltZWFkbWluQGNvcmFsdGVxLmNvbSIsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJyb2xlcyIsIldlYkFQSSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJjdXN0b20iXX0.k5d0SWmdFOMUxkVVihxNqaArT8N2CjoRXqDp_0_Xy3PQWcRKV_AxQjGfH8teT3fgAyLro5zUBWH7RPMd1QzdZbOMR0u7flMfk2BHS9m0Yeua8O9NtET3ssVRcw45CfVOKEDZQunQQKVNyi5LjIEmMk6eWkgSwkrIykyYLQ0Ph0_V7xYmbcsaTvyZ1iAv7d5GO5VXUtn120tY4GxlYDNBYHzBBZm0wDEmeMsbiU2d4Q-Mukje8BH7gCJAftrRQAqKaMzFhhjjvMozC94IpM2rQAX9XHM7dET0VKWj3IIM3f_VOWmKOAjf6dC6Q4_PivKVnjOF93jgqxwMKT-Wl5ps4Q'
 		}
 	}
 
 	login(username: string, password: string): Observable<boolean> {
-		let headers = new Headers();
-		headers.append('Content-Type', 'application/x-www-form-urlencoded');
+		let headers = {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		};
+		let params = {
+			'client_id': this.clientId,
+			'client_secret': this.clientSecret,
+			'grant_type': 'password',
+			'username': username,
+			'password': password,
+			'scope': this.scope
+		};
+		let body = this.objectToString(params);
 
-		let params = new URLSearchParams();
-		params.append('client_id', this.clientId);
-		params.append('client_secret', this.clientSecret);
-		params.append('grant_type', 'password');
-		params.append('username', username);
-		params.append('password', password);
-		params.append('scope', this.scope);
-
-		let body = params.toString();
-
-		return this.http.post('/connect/token', body, {
-			headers: headers
-		}).map(response => {
-			this.setAuthUser(new AuthUser(response.json(), false));
-			return true;
-		});
+		return this.http.post('/connect/token', body, {headers: headers})
+			.map(response => {
+				this.setAuthUser(new AuthUser(response, false));
+				return true;
+			});
 	}
 
 	loginSSO(id_token: string): Observable<boolean> {
-		let headers = new Headers();
-		headers.append('Content-Type', 'application/x-www-form-urlencoded');
-		let params = new URLSearchParams();
-		params.append('grant_type', 'azureAuth');
-		params.append('id_token', id_token);
-		params.append('scope', this.scope);
-		params.append('client_id', this.clientIdSSO);
-		params.append('client_secret', this.clientSecret);
-		let body = params.toString();
-		return this.http.post('/connect/token', body, {
-			headers: headers
-		}).map(response => {
-			this.setAuthUser(new AuthUser(response.json(), true));
-			return true;
-		}).catch(() => this.router.navigate(['/error']));
+		let headers = {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		};
+		let params = {
+			'client_id': this.clientIdSSO,
+			'client_secret': this.clientSecret,
+			'id_token': id_token,
+			'grant_type': 'azureAuth',
+			'scope': this.scope
+		};
+		let body = this.objectToString(params);
+
+		return this.http.post('/connect/token', body, {headers: headers})
+			.map(response => {
+				this.setAuthUser(new AuthUser(response, true));
+				return true;
+			}).catch(() => this.router.navigate(['/error']));
 	}
 
-	refreshToken(): Observable<Response> {
+	refreshToken(): Observable<Object> {
 		if (!localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
-			console.log(222);
 			return Observable.throw(new Error('User data not found.'));
 		}
 
-		let headers = new Headers();
-		headers.append('Content-Type', 'application/x-www-form-urlencoded');
-
-		let params = new URLSearchParams();
+		let headers = {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		};
 		this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
 		let headerClientId = this.authUser.isSso ? this.clientIdSSO : this.clientId;
-		params.append('client_id', headerClientId);
-		params.append('client_secret', this.clientSecret);
-		params.append('grant_type', 'refresh_token');
-		params.append('refresh_token', this.authUser.refreshToken);
-		params.append('scope', this.scope);
+		let params = {
+			'client_id': headerClientId,
+			'client_secret': this.clientSecret,
+			'grant_type': 'refresh_token',
+			'refresh_token': this.authUser.refreshToken,
+			'scope': this.scope
+		};
+		let body = this.objectToString(params);
 
-		let body = params.toString();
 		return this.http.post('/connect/token', body, {headers: headers})
-			.flatMap((response: Response) => {
+			.flatMap((response: Object) => {
 				if (response) {
-					this.setAuthUser(new AuthUser(response.json(), this.authUser.isSso));
+					this.setAuthUser(new AuthUser(response, this.authUser.isSso));
 					return Observable.of(response);
 				}
 
@@ -127,17 +124,21 @@ export class AuthService {
 		this.onChange.emit(null);
 	}
 
-	private setAuthUser(authUser: AuthUser): void {
-		this.authUser = authUser;
-		localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(this.authUser));
-		this.onChange.emit(this.authUser);
-	}
-
 	getAuthUser(): AuthUser {
 		return this.authUser;
 	}
 
 	isLoggedIn(): boolean {
 		return !!this.getAuthUser();
+	}
+
+	private objectToString(params: Object): string {
+		return Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&');
+	}
+
+	private setAuthUser(authUser: AuthUser): void {
+		this.authUser = authUser;
+		localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(this.authUser));
+		this.onChange.emit(this.authUser);
 	}
 }
