@@ -268,17 +268,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private Client CreateWithOutClientInstance()
         {
-            var getAdminUserById = Uow.UserRepository.LinkedCacheGetList().FirstOrDefault(x => x.Id == "038d14e5-27ef-4b07-89b5-39ea8ed0cbf7");
-
             var withoutClient = new Client
             {
                 Id = WithoutClient.Id,
                 Name = WithoutClient.Name,
-                Creator = getAdminUserById,
-                LastEditor = getAdminUserById,
                 CreationDate = DateTime.Now,
-                CreatorId = getAdminUserById.Id,
-                LastEditorUserId = getAdminUserById.Id,
                 LastUpdateDate = DateTime.Now,
             };
 

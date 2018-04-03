@@ -59,8 +59,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
 
-            var projectsOfClients = new List<Project>();
-            var clientsFromProjectOfClients = new List<Client>();
+            var projects = new List<Project>();
+            var clients = new List<Client>();
             var members = Uow.MemberRepository.LinkedCacheGetList();
 
             #region GetProjects allProjectsForAdmin or projectsWithAssignUsersAndPublicProjects.
@@ -68,14 +68,14 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             if (member.User.IsAdmin)
             {
                 var allProjectsForAdmin = Uow.ProjectRepository.LinkedCacheGetList().ToList();
-                projectsOfClients = allProjectsForAdmin;
+                projects = allProjectsForAdmin;
             }
             else
             {
                 var projectsWithAssignUsersAndPublicProjects = Uow.ProjectRepository.LinkedCacheGetList()
                     .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(member.Id) || !x.IsPrivate).ToList();
 
-                projectsOfClients.AddRange(projectsWithAssignUsersAndPublicProjects);
+                projects = projectsWithAssignUsersAndPublicProjects;
             }
 
             #endregion
@@ -83,17 +83,23 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             #region Get Clients from Projects of clients.
 
             // 1. Get all clients from targeted projects where project is assign to client.
-            var clientsWithProjects = projectsOfClients.Where(x => x.Client != null).Select(x => x.Client).Distinct().ToList();
+            var clientsWithProjects = projects.Where(project => project.Client != null)
+                .Select(project => project.Client)
+                .Distinct()
+                .Select(client => new Client
+                {
+                    Id = client.Id,
+                    Name = client.Name,
+                    Email = client.Email,
+                    IsActive = client.IsActive,
+                    Description = client.Description,
+                    Projects = new List<Project>(client.Projects.Where(projectOfClient => projects.Select(project => project.Id).Contains(projectOfClient.Id)).ToList())
+                }).ToList();
 
-            foreach (var client in clientsWithProjects)
-            {
-                client.Projects = client.Projects.Where(proj => projectsOfClients.Select(pc => pc.Id).Contains(proj.Id)).ToList();
-            }
-
-            clientsFromProjectOfClients.AddRange(clientsWithProjects);
+            clients.AddRange(clientsWithProjects);
 
             // 2. Get all projects where project is not assign to client and create client "WithoutClients" that we add projects to it.
-            var hasClientsWithoutProjects = projectsOfClients.Where(x => x.Client == null).Any();
+            var hasClientsWithoutProjects = projects.Where(x => x.Client == null).Any();
             if (hasClientsWithoutProjects)
             {
                 var clientWithoutProjects = new Client
@@ -101,17 +107,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     Id = Constants.WithoutClient.Id,
                     Name = Constants.WithoutClient.Name,
                     IsActive = true,
-                    Projects = projectsOfClients.Where(x => x.Client == null).ToList()
+                    Projects = new List<Project>(projects.Where(x => x.Client == null).ToList())
                 };
 
-                clientsFromProjectOfClients.Add(clientWithoutProjects);
+                clients.Add(clientWithoutProjects);
             }
 
             #endregion
 
             var reportClientView = new List<ReportClientView>();
 
-            foreach (var client in clientsFromProjectOfClients)
+            foreach (var client in clients)
             {
                 var reportProjectViewByUserId = new List<ReportProjectView>();
 
