@@ -1,8 +1,8 @@
 import '../vendors'
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { Http } from '@angular/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -13,7 +13,6 @@ import { ProjectRolesService } from './services/project-roles.service';
 import { CoreModule } from './core/core.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClient } from '@angular/common/http';
 import { LayoutModule } from './pages/layout/layout.module';
 import { ProjectsService } from './services/projects.service';
 import { TasksService } from './services/tasks.service';
@@ -41,9 +40,9 @@ export function httpFactory(http: HttpClient) {
 			loader: {
 				provide: TranslateLoader,
 				useFactory: httpFactory,
-				deps: [Http]
+				deps: [HttpClient]
 			}
-		}),
+		})
 	],
 	bootstrap: [AppComponent],
 	providers: [

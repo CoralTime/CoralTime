@@ -1,4 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { LoadingBarService } from '@ngx-loading-bar/core';
 import { ReportsService, } from '../../services/reposts.service';
 import {
 	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
@@ -9,14 +12,11 @@ import { ArrayUtils } from '../../core/object-utils';
 import { AuthService } from '../../core/auth/auth.service';
 import { DateUtils } from '../../models/calendar';
 import { DatePeriod, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
-import { ActivatedRoute } from '@angular/router';
 import { User } from '../../models/user';
-import { MatDialog, MatDialogRef } from '@angular/material';
 import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
 import { NotificationService } from '../../core/notification.service';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
-import { LoadingIndicatorService } from '../../core/loading-indicator.service';
 import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
 import { ReportGridData } from './reports-data/reports-grid.component';
 import * as moment from 'moment';
@@ -80,10 +80,10 @@ export class ReportsComponent implements OnInit {
 	private reportsQueryRef: MatDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MatDialogRef<ReportsSendComponent>;
 
-	constructor(public dialog: MatDialog,
-	            private authService: AuthService,
+	constructor(private authService: AuthService,
+	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
-	            private loadingIndicatorService: LoadingIndicatorService,
+	            private loadingBarService: LoadingBarService,
 	            private notificationService: NotificationService,
 	            private rangeDatepickerService: RangeDatepickerService,
 	            private reportsService: ReportsService,
@@ -256,11 +256,11 @@ export class ReportsComponent implements OnInit {
 		if (!this.isGridLoading && !this.isAllGridRowsShown(this.gridData)
 			&& window.scrollY > this.scrollContainer.nativeElement.offsetHeight - window.innerHeight - 20) {
 			this.isGridLoading = true;
-			this.loadingIndicatorService.start();
+			this.loadingBarService.start();
 
 			setTimeout(() => {
 				this.getNextGridDataPage(this.reportsGridData.groupedItems, this.gridData);
-				this.loadingIndicatorService.complete();
+				this.loadingBarService.complete();
 				this.isGridLoading = false;
 			}, 0);
 		}

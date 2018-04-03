@@ -1,7 +1,6 @@
-import { Response } from '@angular/http';
-import { CustomHttp } from '../core/custom-http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ConstantService } from '../core/constant.service';
 import * as moment from 'moment';
 
@@ -92,40 +91,34 @@ export const NOT_FULL_WEEK_DAYS = [
 
 @Injectable()
 export class ProfileService {
-	constructor(private http: CustomHttp,
-	            private constantService: ConstantService) {
+	constructor(private constantService: ConstantService,
+	            private http: HttpClient) {
 	}
 
 	getDateFormats(): Observable<DateFormat[]> {
 		return this.http.get(this.constantService.profileApi + '/DateFormats')
-			.map((res: Response) => res.json().map(x => new DateFormat(x)));
+			.map((res: Object[]) => res.map(x => new DateFormat(x)));
 	}
 
 	getProjects(): Observable<ProfileProjects[]> {
 		return this.http.get(this.constantService.profileApi + '/Projects')
-			.map((res: Response) => {
-				let projects = res.json();
-				return projects ? projects.map(x => new ProfileProjects(x)) : [];
-			});
+			.map((res: Object[]) => res ? res.map(x => new ProfileProjects(x)) : []);
 	}
 
 	getProjectMembers(projectId: number): Observable<ProfileProjectMember[]> {
 		return this.http.get(this.constantService.profileApi + '/ProjectMembers/' + projectId)
-			.map((res: Response) => res.json().map(x => new ProfileProjectMember(x)));
+			.map((res: Object[]) => res.map(x => new ProfileProjectMember(x)));
 	}
 
 	submitNotifications(obj: any, userId: number): Observable<any> {
-		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/Notifications', obj)
-			.map((res: Response) => res.json());
+		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/Notifications', obj);
 	}
 
 	submitPreferences(obj: any, userId: number): Observable<any> {
-		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/Preferences', obj)
-			.map((res: Response) => res.json());
+		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/Preferences', obj);
 	}
 
 	submitPersonalInfo(obj: any, userId: number): Observable<any> {
-		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/PersonalInfo', obj)
-			.map((res: Response) => res.json());
+		return this.http.patch(this.constantService.profileApi + '/Member(' + userId + ')/PersonalInfo', obj);
 	}
 }

@@ -1,11 +1,10 @@
-import { Response, URLSearchParams } from '@angular/http';
-import { CustomHttp } from '../core/custom-http';
 import { Observable } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
 import { TimeEntry, CalendarDay, DateUtils } from '../models/calendar';
 import { ArrayUtils } from '../core/object-utils';
 import { ConstantService } from '../core/constant.service';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class CalendarService {
@@ -21,36 +20,37 @@ export class CalendarService {
 	calendar: CalendarDay[] = [];
 
 	constructor(private constantService: ConstantService,
-	            private http: CustomHttp) {
+	            private http: HttpClient) {
 	}
 
 	getTimeEntries(dateFrom: string, dif?: number): Observable<TimeEntry[]> {
 		let dateTo = moment(this.moveDate(dateFrom, dif || 1)).toDate();
 		let newDateTo = DateUtils.formatDateToString(dateTo.setDate(dateTo.getDate() - 1));
 
-		let params = new URLSearchParams();
-		params.set('dateBegin', dateFrom + 'T00:00:00Z');
-		params.set('dateEnd', newDateTo + 'T23:59:59Z');
+		let params = {
+			'dateBegin': dateFrom + 'T00:00:00Z',
+			'dateEnd': newDateTo + 'T23:59:59Z'
+		};
 
-		return this.http.get(this.constantService.timeEntriesApi, {search: params})
-			.map((res: Response) => {
-				let timeEntries = this.sortTimeEntries(res.json());
+		return this.http.get(this.constantService.timeEntriesApi, {params: params})
+			.map((res: TimeEntry[]) => {
+				let timeEntries = this.sortTimeEntries(res);
 				return timeEntries.map((x: any) => new TimeEntry(x));
 			});
 	}
 
-	Delete(id: string): Observable<Response> {
+	Delete(id: string): Observable<any> {
 		return this.http.delete(this.constantService.timeEntriesApi + id);
 	}
 
-	Post(obj: TimeEntry): Observable<any> {
+	Post(obj: TimeEntry): Observable<TimeEntry> {
 		return this.http.post(this.constantService.timeEntriesApi, obj)
-			.map((res: Response) => res.json());
+			.map((res: Object) =>  new TimeEntry(res));
 	}
 
-	Put(obj: TimeEntry, id: string): Observable<TimeEntry[]> {
+	Put(obj: TimeEntry, id: string): Observable<TimeEntry> {
 		return this.http.put(this.constantService.timeEntriesApi + id, obj)
-			.map((res: Response) => res.json());
+			.map((res: Object) =>  new TimeEntry(res));
 	}
 
 	getDayInfoByDate(timeEntryDate: string): CalendarDay {

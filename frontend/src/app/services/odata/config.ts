@@ -1,14 +1,14 @@
+import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { RequestOptions, Headers, Response } from '@angular/http';
 import { PagedResult } from './query';
 
 export class KeyConfigs {
+	expand: string = '$expand';
 	filter: string = '$filter';
-	top: string = '$top';
-	skip: string = '$skip';
 	orderBy: string = '$orderby';
 	select: string = '$select';
-	expand: string = '$expand';
+	skip: string = '$skip';
+	top: string = '$top';
 }
 
 @Injectable()
@@ -17,7 +17,6 @@ export class ODataConfiguration {
 	keys: KeyConfigs = new KeyConfigs();
 
 	getEntityUri(entityKey: string, _typeName: string): string {
-
 		// check if string is a GUID (UUID) type
 		if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(entityKey)) {
 			return this.baseUrl + '/' + _typeName + '(' + entityKey + ')';
@@ -34,37 +33,38 @@ export class ODataConfiguration {
 		console.warn('OData error: ', err, caught);
 	};
 
-	get requestOptions(): RequestOptions {
-		return new RequestOptions({body: ''});
+	get requestOptions() {
+		return {headers: new HttpHeaders()};
 	};
 
-	get postRequestOptions(): RequestOptions {
-		let headers = new Headers({'Content-Type': 'application/json; charset=utf-8'});
-		return new RequestOptions({headers: headers});
+	get postRequestOptions() {
+		let headers = new HttpHeaders()
+			.append('Content-Type', 'application/json; charset=utf-8');
+
+		return {headers: headers, observe: 'response' as 'response'};
 	}
 
-	extractQueryResultData<T>(res: Response): T[] {
+	extractQueryResultData<T>(res: HttpResponse<T>): T[] {
 		if (res.status < 200 || res.status >= 300) {
 			throw new Error('Bad response status: ' + res.status);
 		}
-		let body = res.json();
-		let entities: T[] = body.value;
+
+		let entities: T[] = res['value'];
 		return entities;
 	}
 
-	extractQueryResultDataWithCount<T>(res: Response): PagedResult<T> {
+	extractQueryResultDataWithCount<T>(res: HttpResponse<T>): PagedResult<T> {
 		let pagedResult = new PagedResult<T>();
 
 		if (res.status < 200 || res.status >= 300) {
 			throw new Error('Bad response status: ' + res.status);
 		}
-		let body = res.json();
-		let entities: T[] = body.value;
+		let entities: T[] = res['value'];
 
 		pagedResult.data = entities;
 
 		try {
-			let count = parseInt(body['@odata.count'], 10) || entities.length;
+			let count = parseInt(res['@odata.count'], 10) || entities.length;
 			pagedResult.count = count;
 		} catch (error) {
 			console.warn('Cannot determine OData entities count. Falling back to collection length...');
