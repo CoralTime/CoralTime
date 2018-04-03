@@ -50,10 +50,10 @@ import { LoadingBarInterceptor } from './loading-bar.interceptor';
 		AuthService,
 		AuthGuard,
 		ConstantService,
+		LoadingBarService,
 		NotAuthGuard,
 		NotificationService,
 		ODataServiceFactory,
-		LoadingBarService,
 		UserPicService
 	]
 })

@@ -35,6 +35,10 @@ export class AuthService {
 	            private router: Router) {
 		if (localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
 			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
+
+			if (this.isRefreshTokenExpired()) {
+				this.logout();
+			}
 		}
 	}
 
@@ -130,6 +134,14 @@ export class AuthService {
 
 	isLoggedIn(): boolean {
 		return !!this.getAuthUser();
+	}
+
+	isRefreshTokenExpired(): boolean {
+		if (!this.authUser) {
+			return false
+		}
+
+		return new Date().getTime() > this.authUser.refreshTokenExpiration;
 	}
 
 	private objectToString(params: Object): string {

@@ -6,8 +6,8 @@ import { ImpersonationService } from '../services/impersonation.service';
 
 @Injectable()
 export class ApplyTokenInterceptor implements HttpInterceptor {
-	private http: HttpClient;
 	private authService: AuthService;
+	private http: HttpClient;
 
 	constructor(private impersonationService: ImpersonationService,
 	            private injector: Injector) {
