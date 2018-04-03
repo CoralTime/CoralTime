@@ -15,7 +15,7 @@ namespace CoralTime.DAL.Repositories
             return LinkedCacheGetList().FirstOrDefault(p => p.UserName == userName);
         }
 
-        public ApplicationUser GetRelatedUserByName(string userName)
+        public ApplicationUser LinkedCacheGetByUserNameAndCheck(string userName)
         {
             var relatedUserByName = LinkedCacheGetByName(userName);
             if (relatedUserByName == null)

@@ -15,13 +15,14 @@ namespace CoralTime.DAL.Repositories
     public partial class UnitOfWork
     {
         private readonly UserManager<ApplicationUser> _userManager;
+
         private readonly AppDbContext _context;
         private readonly IMemoryCache _memoryCache;
 
-        public readonly string UserNameCurrent;
-        public readonly string UserNameImpersonated;
-
         private readonly string _userId;
+
+        public readonly string CurrentUserName;
+        public readonly string ImpersonatedUserName;
 
         public UnitOfWork(UserManager<ApplicationUser> userManager, AppDbContext context, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
         {
@@ -29,35 +30,41 @@ namespace CoralTime.DAL.Repositories
             _context = context;
             _memoryCache = memoryCache;
 
-            UserNameCurrent = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
-            UserNameImpersonated = GetUserNameWithImpersonation(httpContextAccessor);
+            CurrentUserName = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
+            ImpersonatedUserName = GetUserNameWithImpersonation(httpContextAccessor);
 
             _userId = httpContextAccessor?.HttpContext?.User.Claims?.FirstOrDefault(c=> c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
         }
 
+        #region Get and check ApplicationUser and Member by Current and Impersonated roles;  
+
         public ApplicationUser GetUserCurrent()
         {
-            return UserRepository.GetRelatedUserByName(UserNameCurrent);
+            return UserRepository.LinkedCacheGetByUserNameAndCheck(CurrentUserName);
         }
 
         public ApplicationUser GetUserImpersonated()
         {
-            return UserRepository.GetRelatedUserByName(UserNameImpersonated);
+            return UserRepository.LinkedCacheGetByUserNameAndCheck(ImpersonatedUserName);
         }
 
-        public Member GetMemberByUserIdCurrent()
+        public Member GetMemberCurrent()
         {
-            var userCurrentd = GetUserCurrent();
-            var meberByUserCurrent = MemberRepository.GetQueryByUserId(userCurrentd.Id);
-            return meberByUserCurrent;
+            var userCurrent = GetUserCurrent();
+            var memberCurrent = MemberRepository.LinkedCacheGetByUserId(userCurrent.Id);
+
+            return memberCurrent;
         }
 
-        public Member GetMemberByUserIdImpersonated()
+        public Member GetMemberImpersonated()
         {
             var userImpersonated = GetUserImpersonated();
-            var meberByImpersonatedUser = MemberRepository.GetQueryByUserId(userImpersonated.Id);
-            return meberByImpersonatedUser;
+            var memberImpersonated = MemberRepository.LinkedCacheGetByUserId(userImpersonated.Id);
+
+            return memberImpersonated;
         }
+
+        #endregion
 
         public int Save()
         {

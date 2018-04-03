@@ -42,7 +42,7 @@ namespace CoralTime.BL.Services
         {
             var globalActiveProjCount = Uow.ProjectRepository.LinkedCacheGetList().Where(x => !x.IsPrivate && x.IsActive).Select(x => x.Id).ToArray();
 
-            var allMembers = GetAllMembersCommon(InpersonatedUserName);
+            var allMembers = GetAllMembersCommon(ImpersonatedUserName);
 
             var allMembersView = allMembers.Select(p => p.GetViewWithGlobalProjectsCount(globalActiveProjCount, Mapper, _avatarService.GetUrlIcon(p.Id))).ToList();
             foreach (var member in allMembersView)

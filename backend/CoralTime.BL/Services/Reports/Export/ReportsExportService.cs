@@ -56,20 +56,16 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private string ContentType { get; set; } = string.Empty;
 
-        private DateTime DateFrom { get; set; }
-
-        private DateTime DateTo { get; set; }
-
         #endregion
 
         #region Export Excel, CSV, PDF. 
 
-        public async Task<FileResult> ExportFileGroupedByTypeAsync(ReportsGridView reportsGridData, HttpContext httpContext)
+        public async Task<FileResult> ExportFileReportsGridAsync(ReportsGridView reportsGridData, HttpContext httpContext)
         {
-            var groupByType = _reportService.GetReportsGroupingBy(reportsGridData);
+            var groupByType = _reportService.GetReportsGrid(reportsGridData);
 
-            var fileOfBytes = await CreateReportsFileOfBytesAsync(reportsGridData, groupByType);
-            var fileStreamResult = SaveFileToFileStreamResult(httpContext, fileOfBytes);
+            var fileOfBytes = await CreateFileOfBytesReportsGridAsync(reportsGridData, groupByType);
+            var fileStreamResult = SaveFileOfBytesToFileStreamResult(httpContext, fileOfBytes);
 
             return fileStreamResult;
         }
@@ -78,14 +74,12 @@ namespace CoralTime.BL.Services.Reports.Export
 
         #region Export Excel, CSV, PDF. (Common methods)
 
-        private async Task<byte[]> CreateReportsFileOfBytesAsync(ReportsGridView reportsGridView, ReportTotalView reportTotalView)
+        private async Task<byte[]> CreateFileOfBytesReportsGridAsync(ReportsGridView reportsGridView, ReportTotalView reportTotalView)
         {
-            DateFrom = _reportService.DateFrom;
-            DateTo = _reportService.DateTo;
-
             var fileOfBytes = new byte[0];
-
-            UpdateFileName();
+            
+            // TODO Check!
+            UpdateFileName((DateTime) reportsGridView.CurrentQuery.DateFrom, (DateTime) reportsGridView.CurrentQuery.DateTo);
 
             switch (reportsGridView.FileTypeId ?? 0)
             {
@@ -120,7 +114,7 @@ namespace CoralTime.BL.Services.Reports.Export
             return fileOfBytes;
         }
 
-        private FileStreamResult SaveFileToFileStreamResult(HttpContext httpContext, byte[] fileByte)
+        private FileStreamResult SaveFileOfBytesToFileStreamResult(HttpContext httpContext, byte[] fileByte)
         {
             httpContext.Response.ContentType = ContentType;
 
@@ -132,15 +126,15 @@ namespace CoralTime.BL.Services.Reports.Export
             return fileStreamResult;
         }
         
-        private void UpdateFileName()
+        private void UpdateFileName(DateTime dateFrom, DateTime dateTo)
         {
             if (!string.IsNullOrEmpty(_reportService.SingleFilteredProjectName))
             {
-                FileName = FileName + " " + _reportService.SingleFilteredProjectName + " " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
+                FileName = FileName + " " + _reportService.SingleFilteredProjectName + " " + GetAbbreviatedMonthName(dateFrom) + " - " + GetAbbreviatedMonthName(dateTo);
             }
             else
             {
-                FileName = FileName + " Reports " + GetAbbreviatedMonthName(DateFrom) + " - " + GetAbbreviatedMonthName(DateTo);
+                FileName = FileName + " Reports " + GetAbbreviatedMonthName(dateFrom) + " - " + GetAbbreviatedMonthName(dateTo);
             }
         }
 

@@ -27,10 +27,10 @@ namespace CoralTime.BL.Services
         // Tab "Projects - Grid". Return projects for manager where it has "manager" role only!
         public IEnumerable<ProjectView> ManageProjectsOfManager()
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (user == null)
             {
-                throw new CoralTimeEntityNotFoundException($"User with userName {InpersonatedUserName} not found.");
+                throw new CoralTimeEntityNotFoundException($"User with userName {ImpersonatedUserName} not found.");
             }
 
             var getAllProjects = Uow.ProjectRepository.LinkedCacheGetList();
@@ -73,10 +73,10 @@ namespace CoralTime.BL.Services
         // Tab "TimeTracker -> All Projects"
         public IEnumerable<ProjectView> TimeTrackerAllProjects()
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (user == null)
             {
-                throw new CoralTimeEntityNotFoundException("User with userName " + $"{InpersonatedUserName} not found");
+                throw new CoralTimeEntityNotFoundException("User with userName " + $"{ImpersonatedUserName} not found");
             }
 
             var getAllProjects = Uow.ProjectRepository.LinkedCacheGetList();
@@ -90,7 +90,7 @@ namespace CoralTime.BL.Services
 
             if (user.IsAdmin)
             {
-                return getAllProjects.Select(p => p.GetViewTimeTrackerAllProjects(Mapper, GetCacheMembersActiveCount(), InpersonatedUserName, getGlobalTasks));
+                return getAllProjects.Select(p => p.GetViewTimeTrackerAllProjects(Mapper, GetCacheMembersActiveCount(), ImpersonatedUserName, getGlobalTasks));
             }
 
             #endregion Constrain for: admin: return all projects. Tab "TimeTracker -> All Projects".
@@ -99,12 +99,12 @@ namespace CoralTime.BL.Services
 
             var getGlobalProjects = getAllProjects
                 .Where(x => !x.IsPrivate)
-                .Select(z => z.GetViewProjectFromProjMemberRole(Mapper, InpersonatedUserName, getGlobalTasks));
+                .Select(z => z.GetViewProjectFromProjMemberRole(Mapper, ImpersonatedUserName, getGlobalTasks));
 
             var memberId = Uow.MemberRepository.LinkedCacheGetByName(user.UserName).Id;
 
             // Get All projs for Member.
-            var getProjectsForMember = GetProjectsForMember(memberId, InpersonatedUserName);
+            var getProjectsForMember = GetProjectsForMember(memberId, ImpersonatedUserName);
 
             foreach (var project in getGlobalProjects)
             {
@@ -130,7 +130,7 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"Project with id = {id} not found.");
             }
 
-            return projectById.GetViewTimeTrackerAllProjects(Mapper, GetCacheMembersActiveCount(), InpersonatedUserName);
+            return projectById.GetViewTimeTrackerAllProjects(Mapper, GetCacheMembersActiveCount(), ImpersonatedUserName);
         }
 
         public IEnumerable<MemberView> GetMembers(int projectId)
@@ -289,7 +289,6 @@ namespace CoralTime.BL.Services
             {
                 Uow.ProjectRepository.Update(projectById);
                 Uow.Save();
-
                 Uow.ProjectRepository.LinkedCacheClear();
             }
             catch (Exception e)

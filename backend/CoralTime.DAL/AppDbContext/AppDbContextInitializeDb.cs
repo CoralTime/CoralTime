@@ -617,7 +617,7 @@ namespace CoralTime.DAL
 
         private static int ConvertNumberOfDayToDayOfThisWeek(int timeEntryDayNumberOfWeek)
         {
-            CommonHelpers.SetRangeOfWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, DateTime.Today);
+            CommonHelpers.SetRangeOfThisWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, DateTime.Today);
             var dayOfThisWeek = weekByTodayFirstDate.AddDays(timeEntryDayNumberOfWeek).Day;
             return dayOfThisWeek;
         }

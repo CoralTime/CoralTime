@@ -16,7 +16,7 @@ namespace CoralTime.Api.v1.Reports
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetReportsDropdowns() => new JsonResult(_service.ReportsDropDowns());
+        public IActionResult GetReportsDropdowns() => new JsonResult(_service.GetReportsDropDowns());
 
         [HttpPost]
         public IActionResult GetReportsGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
@@ -32,9 +32,9 @@ namespace CoralTime.Api.v1.Reports
                 NullValueHandling = NullValueHandling.Ignore
             };
 
-            var reportsGroupingBy = _service.GetReportsGroupingBy(reportsGridView);
+            var reportsGrid = _service.GetReportsGrid(reportsGridView);
 
-            return new JsonResult(reportsGroupingBy, jsonSerializatorSettings);
+            return new JsonResult(reportsGrid, jsonSerializatorSettings);
         }
     }
 }

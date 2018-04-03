@@ -17,7 +17,7 @@ namespace CoralTime.Api.v1.Reports.Export
         [HttpPost]
         public async Task<IActionResult> ReportsExportFileAsync([FromBody] ReportsGridView reportsGridData)
         {
-            var result = await _service.ExportFileGroupedByTypeAsync(reportsGridData, HttpContext);
+            var result = await _service.ExportFileReportsGridAsync(reportsGridData, HttpContext);
 
             if (result == null)
             {

@@ -1,4 +1,5 @@
 ﻿using CoralTime.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,19 +11,40 @@ namespace CoralTime.DAL.Repositories
         public ReportsSettingsRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        public List<ReportsSettings> GetEntitiesFromContex_ByMemberid(int memberId)
+        public override IQueryable<ReportsSettings> GetIncludes(IQueryable<ReportsSettings> query)
         {
-            return GetQueryWithIncludes().Where(x => x.MemberId == memberId).ToList();
+            return query
+                .Include(x => x.Member);
         }
 
-        public ReportsSettings GetEntityFromContex_ByMemberidQueryname(int memberId, string queryName)
+        public List<ReportsSettings> GetEntityOutOfContex_ByMemberId(int memberId)
+        {
+            return GetQueryAsNoTrackingWithIncludes().Where(x => x.MemberId == memberId).ToList();
+        }
+
+        public ReportsSettings GetEntityOutOfContex_ByMemberIdQueryId(int memberId, int? queryId)
+        {
+            return GetQueryAsNoTrackingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
+        }
+
+        public ReportsSettings GetEntityOutOfContex_ByMemberIdQueryName(int memberId, string queryName)
+        {
+            return GetQueryAsNoTrackingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
+        }
+
+        public ReportsSettings GetEntity_ByMemberIdQueryName(int memberId, string queryName)
         {
             return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
         }
 
-        public ReportsSettings GetEntityOutOfContex_ByMemberidQueryId(int memberId, int? queryId)
+        public List<ReportsSettings> LinkedCacheGetByMemberId(int memberId)
         {
-            return GetQueryAsNoTrakingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
+            return LinkedCacheGetList().Where(x => x.MemberId == memberId).ToList();
+        }
+
+        public ReportsSettings LinkedCacheGetByMemberIdQueryName(int memberId, string queryName)
+        {
+            return LinkedCacheGetList().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
         }
     }
 }

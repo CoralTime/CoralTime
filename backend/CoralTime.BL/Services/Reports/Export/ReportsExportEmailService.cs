@@ -3,7 +3,6 @@ using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Emails;
 using MimeKit;
 using System.Threading.Tasks;
-using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
@@ -11,7 +10,7 @@ namespace CoralTime.BL.Services.Reports.Export
     {
         public async Task<object> ExportEmailGroupedByType(ReportsExportEmailView reportsExportEmailView)
         {
-            var groupByProjects = _reportService.GetReportsGroupingBy(reportsExportEmailView);
+            var groupByProjects = _reportService.GetReportsGrid(reportsExportEmailView);
              
             await SendReportWithGroupingAsync(reportsExportEmailView, groupByProjects);
 
@@ -20,7 +19,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private async Task SendReportWithGroupingAsync(ReportsExportEmailView emailData, ReportTotalView groupedList)
         {
-            var fileByte = await CreateReportsFileOfBytesAsync(emailData, groupedList);
+            var fileByte = await CreateFileOfBytesReportsGridAsync(emailData, groupedList);
 
             #region Create and send message with file Attachment.
 
@@ -37,8 +36,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
             var emailSender = new EmailSender(_configuration);
 
-            emailSender.CreateSimpleMessage(emailData.ToEmail, multipart, emailData.Subject ?? FileName,
-                emailData.CcEmails, emailData.BccEmails);
+            emailSender.CreateSimpleMessage(emailData.ToEmail, multipart, emailData.Subject ?? FileName, emailData.CcEmails, emailData.BccEmails);
 
             await emailSender.SendMessageAsync();
 

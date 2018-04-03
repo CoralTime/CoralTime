@@ -52,7 +52,7 @@ namespace CoralTime.DAL.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public virtual IQueryable<T> GetQueryAsNoTrakingWithIncludes()
+        public virtual IQueryable<T> GetQueryAsNoTrackingWithIncludes()
         {
             return GetIncludes(GetQueryAsNoTraking());
         }
@@ -89,7 +89,7 @@ namespace CoralTime.DAL.Repositories
                         items = CacheManager.CachedListGet<T>(key);
                         if (items == null)
                         {
-                            items = GetQueryAsNoTrakingWithIncludes().ToList();
+                            items = GetQueryAsNoTrackingWithIncludes().ToList();
                             CacheManager.LinkedPutList(key, items);
                         }
                     }

@@ -361,7 +361,7 @@ namespace CoralTime.BL.Services.Reports.Export
             var cellValueTotalFor = groupedItems.TimeTotalFor.DisplayNameTimeActualTotalFor.ToUpper() + groupedItems.GroupByType.GroupByTypeDisplayNameValue?.ToUpper();
             CreateCellItem(workbook, rowTotalFor, ref cellIndex, cellValueTotalFor, CreateFontColorAqua(workbook));
 
-            if (groupedItems.DisplayNames.DisplayNameDate != null || groupedItems.GroupByTypeId == (int)Constants.ReportsGroupBy.Date)
+            if (groupedItems.DisplayNames.DisplayNameDate != null || groupedItems.GroupByTypeId == (int)Constants.ReportsGroupByIds.Date)
             {
                 rowTotalFor.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
@@ -406,7 +406,7 @@ namespace CoralTime.BL.Services.Reports.Export
             var cellValueTotal = reportTotalView.TimeTotal.DisplayNameTimeActualTotal.ToUpper();
             CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueTotal, CreateFontColorAqua(workbook));
 
-            if (reportTotalView.DisplayNames.DisplayNameDate != null || reportTotalView.GroupByTypeId == (int) Constants.ReportsGroupBy.Date)
+            if (reportTotalView.DisplayNames.DisplayNameDate != null || reportTotalView.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
             {
                 rowTotal.CreateCell(++cellIndex).SetCellValue(string.Empty);
             }
@@ -471,29 +471,29 @@ namespace CoralTime.BL.Services.Reports.Export
         {
             switch (groupById)
             {
-                case (int) Constants.ReportsGroupBy.Project:
+                case (int) Constants.ReportsGroupByIds.Project:
                 {
-                    return Constants.ReportsGroupBy.Project.ToString();
+                    return Constants.ReportsGroupByIds.Project.ToString();
                 }
 
-                case (int) Constants.ReportsGroupBy.Member:
+                case (int) Constants.ReportsGroupByIds.Member:
                 {
-                    return Constants.ReportsGroupBy.Member.ToString();
+                    return Constants.ReportsGroupByIds.Member.ToString();
                 }
 
-                case (int) Constants.ReportsGroupBy.Date:
+                case (int) Constants.ReportsGroupByIds.Date:
                 {
-                    return Constants.ReportsGroupBy.Date.ToString();
+                    return Constants.ReportsGroupByIds.Date.ToString();
                 }
 
-                case (int) Constants.ReportsGroupBy.Client:
+                case (int) Constants.ReportsGroupByIds.Client:
                 {
-                    return Constants.ReportsGroupBy.Client.ToString();
+                    return Constants.ReportsGroupByIds.Client.ToString();
                 }
 
                 default:
                 {
-                    return Constants.ReportsGroupBy.UnknownGrouping.ToString();
+                    return Constants.ReportsGroupByIds.UnknownGrouping.ToString();
                 }
             }
         }

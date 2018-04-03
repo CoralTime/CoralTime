@@ -21,6 +21,8 @@ namespace CoralTime.DAL.Models
 
         public DateTime? DateTo { get; set; }
 
+        public int? DateStaticId { get; set; }
+
         public int? GroupById { get; set; }
 
         public string FilterClientIds { get; set; }

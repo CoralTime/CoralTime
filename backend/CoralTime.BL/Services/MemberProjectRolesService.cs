@@ -30,7 +30,7 @@ namespace CoralTime.BL.Services
         {
             var memberProjectRoleView = new List<MemberProjectRoleView>();
 
-            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
 
             // Get MemberProjectRoles from DB.
             var allMemberProjectRoles = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -205,15 +205,15 @@ namespace CoralTime.BL.Services
 
         public MemberProjectRoleView Create(MemberProjectRoleView memberProjectRoleView)
         {
-            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (currentMember == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {InpersonatedUserName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {ImpersonatedUserName} not found.");
             }
 
             if (!currentMember.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {InpersonatedUserName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {ImpersonatedUserName} is not active.");
             }
 
             var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -254,15 +254,15 @@ namespace CoralTime.BL.Services
 
         public MemberProjectRoleView Update(dynamic projectRole)
         {
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (memberByUserName == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} not found.");
             }
 
             if (!memberByUserName.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} is not active.");
             }
 
             var memberProjectRoleById = Uow.MemberProjectRoleRepository.GetById((int)projectRole.Id);
@@ -305,15 +305,15 @@ namespace CoralTime.BL.Services
 
         public MemberProjectRoleView Patch(MemberProjectRoleView projectRole)
         {
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (memberByUserName == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} not found.");
             }
 
             if (!memberByUserName.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} is not active.");
             }
 
             var memberProjectRoleById = Uow.MemberProjectRoleRepository.GetById(projectRole.Id);
@@ -345,10 +345,10 @@ namespace CoralTime.BL.Services
 
         public void Delete(int id)
         {
-            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var member = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (member == null || !member.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {InpersonatedUserName} not found or is not active");
+                throw new CoralTimeEntityNotFoundException($"Member with userName {ImpersonatedUserName} not found or is not active");
             }
 
             var projectRole = Uow.MemberProjectRoleRepository.GetById(id);

@@ -16,7 +16,6 @@ namespace CoralTime.DAL.Repositories
         {
             return query
                 .Include(m => m.User)
-                //.Include(m => m.User).ThenInclude(x => x.Claims)
                 .Include(m => m.MemberProjectRoles).ThenInclude(m => m.Project)
                 .Include(m => m.Creator)
                 .Include(m => m.TimeEntries);

@@ -46,16 +46,16 @@ namespace CoralTime.BL.Services
 
         public List<ProfileProjectView> GetMemberProjects()
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (user == null || !user.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"User with userName {InpersonatedUserName} not found or is not active");
+                throw new CoralTimeEntityNotFoundException($"User with userName {ImpersonatedUserName} not found or is not active");
             }
 
-            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var member = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (member == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with user with userName {InpersonatedUserName} not found");
+                throw new CoralTimeEntityNotFoundException($"Member with user with userName {ImpersonatedUserName} not found");
             }
 
             var projects = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -96,16 +96,16 @@ namespace CoralTime.BL.Services
 
         public IEnumerable<ProjectMembersView> GetProjectMembers(int projectId)
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var user = Uow.UserRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (user == null || !user.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"The user with userName {InpersonatedUserName} not found or is not active");
+                throw new CoralTimeEntityNotFoundException($"The user with userName {ImpersonatedUserName} not found or is not active");
             }
 
-            var member = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var member = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
             if (member == null)
             {
-                throw new CoralTimeEntityNotFoundException($"The member with userName {InpersonatedUserName} not found");
+                throw new CoralTimeEntityNotFoundException($"The member with userName {ImpersonatedUserName} not found");
             }
 
             var project = Uow.ProjectRepository.LinkedCacheGetById(projectId);
@@ -120,7 +120,7 @@ namespace CoralTime.BL.Services
 
             if (!userHaveAccess)
             {
-                throw new CoralTimeForbiddenException($"User with userName {InpersonatedUserName} has no access to project with id {projectId}");
+                throw new CoralTimeForbiddenException($"User with userName {ImpersonatedUserName} has no access to project with id {projectId}");
             }
 
             var projectMembers = new List<Member>();
@@ -143,8 +143,8 @@ namespace CoralTime.BL.Services
 
         public MemberView PatchNotifications(MemberNotificationView memberNotificationView)
         {
-            CheckRelatedEntities(InpersonatedUserName, out var memberByName);
-            memberByName = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName);
+            CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
+            memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
             memberByName.SendEmailTime = memberNotificationView.SendEmailTime;
             memberByName.SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(memberNotificationView.SendEmailDays);
             memberByName.IsWeeklyTimeEntryUpdatesSend = memberNotificationView.IsWeeklyTimeEntryUpdatesSend;
@@ -162,8 +162,8 @@ namespace CoralTime.BL.Services
 
         public MemberView PatchPreferences(MemberPreferencesView memberPreferencesView)
         {
-            CheckRelatedEntities(InpersonatedUserName, out var memberByName);
-            memberByName = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName);
+            CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
+            memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
             memberByName.DefaultProjectId = memberPreferencesView.DefaultProjectId;
             memberByName.DefaultTaskId = memberPreferencesView.DefaultTaskId;
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;
@@ -193,8 +193,8 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeForbiddenException("Full name can't be changed on demo site");
             }
 
-            CheckRelatedEntities(InpersonatedUserName, out var memberByName);
-            memberByName = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName);
+            CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
+            memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
             memberByName.FullName = memberPreferencesView.FullName;
           
             Uow.MemberRepository.Update(memberByName);

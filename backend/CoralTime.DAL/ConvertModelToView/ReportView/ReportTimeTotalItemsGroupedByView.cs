@@ -59,12 +59,12 @@ namespace CoralTime.DAL.ConvertModelToView
             reportItemsView.TaskId = timeEntry.TaskType.Id;
             reportItemsView.TaskName = timeEntry.TaskType.Name;
 
-            reportItemsView.ClientName = reportItemsView.GroupByTypeId == (int)ReportsGroupBy.Client
+            reportItemsView.ClientName = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Client
                 ? null
                 : timeEntry.Project.Client == null ? WithoutClient.Name : timeEntry.Project.Client.Name;
-            reportItemsView.ProjectName = reportItemsView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : timeEntry.Project.Name;
-            reportItemsView.MemberName = reportItemsView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : timeEntry.Member.FullName;
-            reportItemsView.Date = reportItemsView.GroupByTypeId == (int)ReportsGroupBy.Date
+            reportItemsView.ProjectName = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Project ? null : timeEntry.Project.Name;
+            reportItemsView.MemberName = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Member ? null : timeEntry.Member.FullName;
+            reportItemsView.Date = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Date
                 ? null
                 : reportItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowDate)
                     ? (DateTime?)timeEntry.Date
@@ -201,10 +201,10 @@ namespace CoralTime.DAL.ConvertModelToView
 
         private static void HideDisplayNamesByGroupingAndShowColumnsIds(ReportTotalView reportTotalView)
         {
-            reportTotalView.DisplayNames.DisplayNameProject = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Project ? null : reportTotalView.DisplayNames.DisplayNameProject;
-            reportTotalView.DisplayNames.DisplayNameMember = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Member ? null : reportTotalView.DisplayNames.DisplayNameMember;
-            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Date ? null : reportTotalView.DisplayNames.DisplayNameDate;
-            reportTotalView.DisplayNames.DisplayNameClient = reportTotalView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTotalView.DisplayNames.DisplayNameClient;
+            reportTotalView.DisplayNames.DisplayNameProject = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Project ? null : reportTotalView.DisplayNames.DisplayNameProject;
+            reportTotalView.DisplayNames.DisplayNameMember = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Member ? null : reportTotalView.DisplayNames.DisplayNameMember;
+            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Date ? null : reportTotalView.DisplayNames.DisplayNameDate;
+            reportTotalView.DisplayNames.DisplayNameClient = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Client ? null : reportTotalView.DisplayNames.DisplayNameClient;
 
             reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowDate) ? reportTotalView.DisplayNames.DisplayNameDate : null;
             reportTotalView.DisplayNames.DisplayNameNotes = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowNotes) ? reportTotalView.DisplayNames.DisplayNameNotes : null;

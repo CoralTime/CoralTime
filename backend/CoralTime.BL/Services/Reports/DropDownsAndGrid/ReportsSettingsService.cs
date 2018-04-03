@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
-using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
@@ -9,15 +10,32 @@ using CoralTime.ViewModels.Reports.Request.Grid;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
-    public class ReportsSettingsService : BaseService, IReportsSettingsService, IReportBaseService
+    public class ReportsSettingsService : BaseService, IReportsSettingsService
     {
         public ReportsSettingsService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
+        public ReportsSettingsView GetCurrentOrDefaultQuery()
+        {
+            var reportsSettings = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(MemberImpersonated.Id).FirstOrDefault(x => x.IsCurrentQuery);
+
+            ReportsSettingsView reportsSettingsView;
+
+            if (reportsSettings == null)
+            {
+                reportsSettingsView = new ReportsSettingsView().GetViewWithDefaultValues();
+            }
+            else
+            {
+                reportsSettingsView = reportsSettings.GetView();
+            }
+
+            return reportsSettingsView;
+        }
+
         public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView)
         {
-            Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName).Id;
+            var memberId = MemberImpersonated.Id;
 
             if (IsDefaultQuery(reportsSettingsView.QueryName))
             {
@@ -25,28 +43,31 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
             else
             {
-                var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
-                if(queryFromReportsSettings != null && !queryFromReportsSettings.IsCurrentQuery)
+                var reportsSettings = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
+                if(reportsSettings != null && !reportsSettings.IsCurrentQuery)
                 {
-                    ResetIsCustomQueryForAllQueries(memberId);
+                    //ResetIsCustomQueryForAllQueries(memberId);
+                    var allQueries = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberId(memberId);
+                    if (allQueries != null || allQueries.Count > 0)
+                    {
+                        allQueries.ForEach(query => query.IsCurrentQuery = false);
 
-                    SetIsCurrentQueryTrue(queryFromReportsSettings);
+                        Uow.ReportsSettingsRepository.UpdateRange(allQueries);
+                        //Uow.Save();
+                    }
 
-                    Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
+                    reportsSettings.IsCurrentQuery = true;
+
+                    Uow.ReportsSettingsRepository.Update(reportsSettings);
                     Uow.Save();
+                    Uow.ReportsSettingsRepository.LinkedCacheClear();
                 }
             }
         }
 
-        private void SetIsCurrentQueryTrue(ReportsSettings queryFromReportsSettings)
-        {
-            queryFromReportsSettings.IsCurrentQuery = true;
-        }
-
         public void SaveCustomQuery(ReportsSettingsView reportsSettingsView)
         {
-            Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName).Id;
+            var memberId = MemberImpersonated.Id;
 
             if (!IsDefaultQuery(reportsSettingsView.QueryName))
             {
@@ -54,19 +75,21 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        public void DeleteCustomQuery(int id)
+        public void DeleteCustomQuery(int queryId)
         {
-            Uow.UserRepository.GetRelatedUserByName(InpersonatedUserName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(InpersonatedUserName).Id;
+            Uow.UserRepository.LinkedCacheGetByUserNameAndCheck(ImpersonatedUserName);
+            var memberId = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName).Id;
 
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberidQueryId(memberId: memberId, queryId: id);
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberIdQueryId(memberId, queryId);
 
-            CheckCustomQueryForThisMember(id, getReportsSettingsByid);
+            CheckCustomQueryForThisMember(queryId, getReportsSettingsByid);
 
             if (!IsDefaultQuery(getReportsSettingsByid.QueryName))
             {
-                Uow.ReportsSettingsRepository.Delete(id);
+                Uow.ReportsSettingsRepository.Delete(queryId);
                 Uow.Save();
+
+                Uow.ReportsSettingsRepository.LinkedCacheClear();
             }
             else
             {
@@ -81,44 +104,34 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private void SaveQuery(ReportsSettingsView reportsSettingsView, int memberId)
         {
-            ResetIsCustomQueryForAllQueries(memberId);
-            SaveQueryToReportsSettings(reportsSettingsView, memberId);
-        }
-
-        private void ResetIsCustomQueryForAllQueries(int memberId)
-        {
-            var allQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberid(memberId);
-            if (allQueries != null)
+            // ResetIsCustomQueryForAllQueries(memberId);
+            var allQueries = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberId(memberId);
+            if (allQueries != null && allQueries.Count > 0)
             {
                 allQueries.ForEach(query => query.IsCurrentQuery = false);
 
                 Uow.ReportsSettingsRepository.UpdateRange(allQueries);
-                Uow.Save();
+                //Uow.Save();
             }
-        }
 
-        private void SaveQueryToReportsSettings(ReportsSettingsView reportsSettingsView, int memberId)
-        {
-            var queryFromReportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberidQueryname(memberId, reportsSettingsView.QueryName);
-        
-            if (queryFromReportsSettings == null)
+            // InsertOrUpdateCurrentQueryToDb(reportsSettingsView, memberId);
+            var reportsSettings = Uow.ReportsSettingsRepository.GetEntity_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
+
+            if (reportsSettings == null)
             {
-                queryFromReportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
-                queryFromReportsSettings.GroupById = SetGroupByOrDefaultGrouping(queryFromReportsSettings.GroupById);
-                SetIsCurrentQueryTrue(queryFromReportsSettings);
+                reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
 
-                Uow.ReportsSettingsRepository.Insert(queryFromReportsSettings);
+                Uow.ReportsSettingsRepository.Insert(reportsSettings);
             }
             else
             {
-                queryFromReportsSettings.GetModel(reportsSettingsView, memberId);
-                queryFromReportsSettings.GroupById = SetGroupByOrDefaultGrouping(queryFromReportsSettings.GroupById);
-                SetIsCurrentQueryTrue(queryFromReportsSettings);
+                reportsSettings.GetModel(reportsSettingsView, memberId);
 
-                Uow.ReportsSettingsRepository.Update(queryFromReportsSettings);
+                Uow.ReportsSettingsRepository.Update(reportsSettings);
             }
 
             Uow.Save();
+            Uow.ReportsSettingsRepository.LinkedCacheClear();
         }
 
         private void CheckCustomQueryForThisMember(int? id, ReportsSettings reportsSettings)
@@ -127,11 +140,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 throw new CoralTimeEntityNotFoundException($"There is no record for this member by id = {id}");
             }
-        }
-
-        public int SetGroupByOrDefaultGrouping(int? groupById)
-        {
-            return groupById ?? (int) Constants.ReportsGroupBy.Date;
         }
     }
 }

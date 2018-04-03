@@ -8,6 +8,8 @@ namespace CoralTime.ViewModels.Reports
 
         DateTime? DateTo { get; set; }
 
+        int? DateStaticId { get; set; }
+
         int? GroupById { get; set; }
 
         int?[] ClientIds { get; set; }

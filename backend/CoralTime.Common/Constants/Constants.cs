@@ -1,7 +1,7 @@
 ﻿using CoralTime.ViewModels.DateFormat;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System;
 using System.Collections.Generic;
-using CoralTime.ViewModels.Reports;
 
 namespace CoralTime.Common.Constants
 {
@@ -105,7 +105,7 @@ namespace CoralTime.Common.Constants
 
         };
 
-        public enum ReportsGroupBy
+        public enum ReportsGroupByIds
         {
             Project = 1,
             Member = 2,
@@ -122,29 +122,18 @@ namespace CoralTime.Common.Constants
             ShowStartFinish = 4
         }
 
-        public static readonly ReportShowColumnModel[] showColumnsInfo222 =
+        public enum DatesStaticIds
         {
-            new ReportShowColumnModel
-            {
-                Id = (int) ShowColumnModelIds.ShowEstimatedTime,
-                Description = "Show Estimated Hours"
-            },
-            new ReportShowColumnModel
-            {
-                Id = (int) ShowColumnModelIds.ShowDate,
-                Description = "Show Date"
-            },
-            new ReportShowColumnModel
-            {
-                Id = (int) ShowColumnModelIds.ShowNotes,
-                Description = "Show Notes"
-            },
-            new ReportShowColumnModel
-            {
-                Id = (int) ShowColumnModelIds.ShowStartFinish,
-                Description = "Show Start/Finish Time"
-            }
-        };
+            Today = 1,
+            ThisWeek = 2,
+            ThisMonth = 3,
+            ThisYear = 4,
+
+            Yesterday = 5,
+            LastWeek = 6,
+            LastMonth = 7,
+            LastYear = 9
+        }
 
         #region DayOfWeek (BitMask).
 

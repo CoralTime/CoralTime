@@ -116,7 +116,7 @@ namespace CoralTime.BL.Services
 
         public string UploadImage(IFormFile uploadedFile)
         {
-            var member = Uow.GetMemberByUserIdImpersonated();
+            var member = MemberImpersonated;
 
             CheckFileNameAndSize(uploadedFile);
 
