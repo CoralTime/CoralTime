@@ -58,15 +58,16 @@ namespace CoralTime
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            // Add MySQL support (At first create DB on MySQL server.)
-            //var sqlConnectionString = (Configuration.GetConnectionString("DefaultConnectionMySQL"));
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseMySQL(
-            //        sqlConnectionString,
-            //        b => b.MigrationsAssembly("CoralTime")));
-
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            if (bool.Parse(Configuration["UseMySql"]))
+            {
+                // Add MySQL support (At first create DB on MySQL server.)
+                //services.AddDbContext<AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnectionMySQL"), b => b.MigrationsAssembly("CoralTime")));
+            }
+            else
+            {
+                // Sql Server
+                services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            }
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
@@ -85,16 +86,12 @@ namespace CoralTime
             });
 
             AddApplicationServices(services);
-       
             services.AddMemoryCache();
-
             services.AddAutoMapper();
-
             services.AddMvc();
 
             // Add OData
             services.AddOData();
-
             services.AddMvcCore(options =>
             {
                 foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
@@ -106,9 +103,7 @@ namespace CoralTime
                     inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
                 }
             });
-
             SetupIdentity(services);
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
