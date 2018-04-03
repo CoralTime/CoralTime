@@ -17,8 +17,8 @@ const ERRORS_EMAIL_SENDING = [
 export class EnterEmailFormComponent implements OnInit, OnDestroy {
 	@Output() emailSubmitted: EventEmitter<EmailSendingStatus> = new EventEmitter<EmailSendingStatus>();
 
-	email: string;
 	activationCodeIsValid: boolean = true;
+	email: string;
 	isEmailValid: boolean = true;
 
 	emailPattern = EMAIL_PATTERN;
@@ -39,13 +39,15 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 		if (!this.email) {
 			this.errorMessage = 'A valid email address is required.';
 		} else if (this.isEmailValid) {
-			this.enterEmailService.sendEmail(this.email).then((emailResponse) => {
+			this.enterEmailService.sendEmail(this.email).subscribe((emailResponse) => {
 				this.errorMessage = null;
+
 				if (emailResponse.isSentEmail) {
 					this.emailSubmitted.emit(emailResponse);
 				} else {
 					this.errorCode = emailResponse.message;
 					this.errorMessage = ERRORS_EMAIL_SENDING[this.errorCode];
+
 					if (this.errorCode === 1) {
 						this.errorMessage = 'This email isn\'t in our system. Make sure you typed your address correctly, or contact support.';
 					}
