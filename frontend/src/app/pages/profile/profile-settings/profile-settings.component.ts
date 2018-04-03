@@ -137,7 +137,7 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	resetPassword(): void {
-		this.enterEmailService.sendEmail(this.userModel.email).then(
+		this.enterEmailService.sendEmail(this.userModel.email).subscribe(
 			(emailResponse) => {
 				if (emailResponse.isSentEmail) {
 					this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ODataConfiguration } from '../../../services/odata/config';
+import { Observable } from 'rxjs/Observable';
 
 export class EmailSendingStatus {
 	isSentEmail: boolean;
@@ -13,12 +14,9 @@ export class EnterEmailService {
 	            private http: HttpClient) {
 	}
 
-	sendEmail(email): Promise<boolean | EmailSendingStatus> {
+	sendEmail(email): Observable<EmailSendingStatus> {
 		let url = '/api/v1/Password/sendforgotemail/';
-		return this.http.get<EmailSendingStatus>(url + email)
-			.toPromise()
-			.then(res => res)
-			.catch((err) => false);
+		return this.http.get<EmailSendingStatus>(url + email);
 	}
 }
 
