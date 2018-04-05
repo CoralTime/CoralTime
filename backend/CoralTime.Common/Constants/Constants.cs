@@ -29,6 +29,7 @@ namespace CoralTime.Common.Constants
         #endregion
 
         public const string JwtIsManagerClaimType = "isManager";
+        public const string JwtRefreshTokenLifeTimeClaimType = "refreshTokenLifeTime";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
         public const string HeaderNameAuthorization = "Authorization";

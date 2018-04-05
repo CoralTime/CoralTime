@@ -4,6 +4,7 @@ using IdentityModel;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -15,11 +16,16 @@ namespace CoralTime.Services
     {
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> _claimsFactory;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _config;
 
-        public IdentityWithAdditionalClaimsProfileService(UserManager<ApplicationUser> userManager, IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory)
+        public IdentityWithAdditionalClaimsProfileService(
+            UserManager<ApplicationUser> userManager,
+            IUserClaimsPrincipalFactory<ApplicationUser> claimsFactory,
+            IConfiguration config)
         {
             _userManager = userManager;
             _claimsFactory = claimsFactory;
+            _config = config;
         }
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
@@ -32,7 +38,8 @@ namespace CoralTime.Services
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).Distinct().ToList();
 
-            claims.Add(new Claim(type:Constants.JwtIsManagerClaimType, value:user.IsManager.ToString().ToLower()));
+            claims.Add(new Claim(type: Constants.JwtIsManagerClaimType, value: user.IsManager.ToString().ToLower()));
+            claims.Add(new Claim(type: Constants.JwtRefreshTokenLifeTimeClaimType, value: _config["RefreshTokenLifetime"]));
 
             var resultClaims = new List<Claim>();
             foreach (var claim in claims)
