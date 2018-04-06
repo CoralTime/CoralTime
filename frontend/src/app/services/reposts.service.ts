@@ -31,7 +31,7 @@ export class ReportsService {
 	exportAs(filters: any): Observable<void> {
 		let options = {
 			observe: 'response' as 'response',
-			responseType: 'text' as 'blob'
+			responseType: 'blob' as 'blob'
 		};
 
 		return this.http.post(this.constantService.reportsApi + 'ExportFile', filters, options)
@@ -43,7 +43,7 @@ export class ReportsService {
 					filename = cdHeader.replace(/(.*filename=")(.*)(";.*)/, '$2');
 				}
 
-				importedSaveAs(new Blob([data]), filename);
+				importedSaveAs(data.body, filename);
 			});
 	}
 
