@@ -161,6 +161,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		this.projectsService.clearProject();
 		this.calendarService.isAltPressed = false;
 		this.calendarService.dragEffect = 'move';
+		this.subscriptionImpersonation.unsubscribe();
 	}
 
 	private formatDate(date: string): string {

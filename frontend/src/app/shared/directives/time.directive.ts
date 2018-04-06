@@ -64,7 +64,6 @@ export class TimeDirective {
 	}
 
 	private limitTime(time: number): number {
-		let limitedTime = time % (60 * 24);
-		return limitedTime >= 0 ? limitedTime : limitedTime + (60 * 24);
+		return time >= 0 ? time : time + (60 * 24);
 	}
 }
