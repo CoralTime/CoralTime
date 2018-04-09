@@ -154,7 +154,7 @@
                 <td style="text-align: left;">
                     <span class="spanCommonEntityHeaders">@groupedItems.TimeTotalFor.DisplayNameTimeActualTotalFor.ToUpper()@groupedItems.GroupByType.GroupByTypeDisplayNameValue.ToUpper()</span>
                 </td>
-                @if (groupedItems.DisplayNames.DisplayNameDate != null || groupedItems.GroupByTypeId == (int) Constants.ReportsGroupBy.Date)
+                @if (groupedItems.DisplayNames.DisplayNameDate != null || groupedItems.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
                 {
                     <td></td>
                 }
@@ -192,7 +192,7 @@
             <td style="text-align: left;">
                 <span>@Model.ReportTotalView.TimeTotal.DisplayNameTimeActualTotal</span>
             </td>
-            @if (Model.ReportTotalView.DisplayNames.DisplayNameDate != null || Model.ReportTotalView.GroupByTypeId == (int) Constants.ReportsGroupBy.Date)
+            @if (Model.ReportTotalView.DisplayNames.DisplayNameDate != null || Model.ReportTotalView.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
             {
                 <td></td>
             }
