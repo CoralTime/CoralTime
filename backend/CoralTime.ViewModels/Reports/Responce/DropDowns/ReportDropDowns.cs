@@ -16,6 +16,6 @@ namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
 
         public ReportCommonDropDownsView[] ShowColumns { get; set; }
 
-        public ReportCommonDropDownsView[] DateStatic { get; set; }
+        public ReportDropDownsDateStaticView[] DateStatic { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CoralTime.Common.Exceptions;
-using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
@@ -89,15 +88,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             if (currentQuery.DateStaticId != currentQueryFromCache.DateStaticId ||
                 currentQuery.DateFrom != currentQueryFromCache.DateFrom ||
                 currentQuery.DateTo != currentQueryFromCache.DateTo ||
-                currentQuery.ClientIds != currentQueryFromCache.ClientIds ||
                 currentQuery.GroupById != currentQueryFromCache.GroupById ||
-                currentQuery.MemberIds != currentQueryFromCache.MemberIds ||
-                currentQuery.ProjectIds != currentQueryFromCache.ProjectIds ||
-                currentQuery.QueryId != currentQueryFromCache.QueryId || //TODO need?
+
+                /*currentQuery.ClientIds != currentQueryFromCache.ClientIds ||*/ currentQuery.ClientIds.Length > 0 ||
+                /*currentQuery.MemberIds != currentQueryFromCache.MemberIds ||*/ currentQuery.MemberIds.Length > 0 || 
+                /*currentQuery.ProjectIds != currentQueryFromCache.ProjectIds || */ currentQuery.ProjectIds.Length > 0 ||
+
+                //currentQuery.QueryId != currentQueryFromCache.QueryId || //TODO need?
                 currentQuery.QueryName != currentQueryFromCache.QueryName ||
-                currentQuery.ShowColumnIds != currentQueryFromCache.ShowColumnIds)
+                currentQuery.ShowColumnIds.Length != currentQueryFromCache.ShowColumnIds.Length)
             {
-                _reportsSettingsService.SaveCurrentQuery(currentQuery);
+                reportsGridView.CurrentQuery = _reportsSettingsService.SaveCurrentQuery(currentQuery);
             }
         }
 
@@ -109,8 +110,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var currentMember = MemberImpersonated; // Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
 
-            DateTime dateFrom = new DateTime();
-            DateTime dateTo = new DateTime();
+            var dateFrom = new DateTime();
+            var dateTo = new DateTime();
 
             FillDatesByDateStaticOrDateFromTo(reportsGridView, currentMember, ref dateFrom, ref dateTo);
 
@@ -150,96 +151,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 throw new CoralTimeDangerException("Wrong input conditional: to get entities by DateStaticId or Date From/To properties.");
             }
-
+            
             if (isFilledOnlyDateStaticId)
             {
-                var today = DateTime.Today.Date;
-
-                switch (dateStaticId)
+                var datesStaticInfo = CreateDatesStaticInfo(currentMember).FirstOrDefault(x => x.Id == dateStaticId);
+                if (datesStaticInfo != null)
                 {
-                    case (int) DatesStaticIds.Today:
-                    {
-                        dateFrom = dateTo = today;
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.ThisWeek:
-                    {
-                        var memberDayOfWeekStart = currentMember.WeekStart == WeekStart.Monday
-                            ? DayOfWeek.Monday
-                            : DayOfWeek.Sunday;
-
-                        CommonHelpers.SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, DateTime.Now.Date, memberDayOfWeekStart);
-
-                        dateFrom = thisWeekStart;
-                        dateTo = thisWeekEnd;
-
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.ThisMonth:
-                    {
-                        CommonHelpers.SetRangeOfThisMonthByDate(out var thisMonthByTodayFirstDate, out var thisMonthByTodayLastDate, today);
-
-                        dateFrom = thisMonthByTodayFirstDate;
-                        dateTo = thisMonthByTodayLastDate;
-
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.ThisYear:
-                    {
-                        CommonHelpers.SetRangeOfThisYearByDate(out var thisYearByTodayFirstDate, out var thisYearByTodayLastDate, today);
-
-                        dateFrom = thisYearByTodayFirstDate;
-                        dateTo = thisYearByTodayLastDate;
-
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.Yesterday:
-                    {
-                        var yesterday = DateTime.Today.Date.AddMilliseconds(-1);
-
-                        dateFrom = dateTo = yesterday;
-
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.LastWeek:
-                    {
-                        var memberDayOfWeekStart = currentMember.WeekStart == WeekStart.Monday
-                            ? DayOfWeek.Monday
-                            : DayOfWeek.Sunday;
-
-                        CommonHelpers.SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, DateTime.Now.Date,
-                            memberDayOfWeekStart);
-
-                        dateFrom = lastWeekStart;
-                        dateTo = lastWeekEnd;
-
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.LastMonth:
-                    {
-                        CommonHelpers.SetRangeOfLastMonthByDate(out var lastMonthByTodayFirstDate, out var lastMonthByTodayLastDate, today);
-
-                        dateFrom = lastMonthByTodayFirstDate;
-                        dateTo = lastMonthByTodayLastDate;
-
-                        break;
-                    }
-
-                    case (int) DatesStaticIds.LastYear:
-                    {
-                        CommonHelpers.SetRangeOfLastYearByDate(out var lastYearByTodayFirstDate, out var lastYearByTodayLastDate, today);
-
-                        dateFrom = lastYearByTodayFirstDate;
-                        dateTo = lastYearByTodayLastDate;
-
-                        break;
-                    }
+                    dateFrom = datesStaticInfo.DateFrom;
+                    dateTo = datesStaticInfo.DateTo;
+                }
+                else
+                {
+                    throw new CoralTimeDangerException($"Incorrect DateStaticId = { dateStaticId }");
                 }
             }
 

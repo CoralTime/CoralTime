@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertModelToView;
@@ -7,6 +6,7 @@ using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Reports.Request.Grid;
+using System.Linq;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -25,7 +25,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             if (reportsSettings == null)
             {
                 reportsSettingsView = new ReportsSettingsView().GetViewWithDefaultValues();
-
                 reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberImpersonatedId);
 
                 Uow.ReportsSettingsRepository.Insert(reportsSettings);
@@ -38,61 +37,22 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return reportsSettingsView;
         }
 
-        public void SaveCurrentQuery(ReportsSettingsView reportsSettingsView)
+        public ReportsSettingsView SaveCurrentQuery(ReportsSettingsView reportsSettingsView)
         {
-            var memberId = MemberImpersonated.Id;
-
-            if (IsDefaultQuery(reportsSettingsView.QueryName))
-            {
-                SaveQuery(reportsSettingsView, memberId);
-            }
-            else
-            {
-                // Save Custom qry with changed values
-                var allQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberId(memberId);
-                if (allQueries != null && allQueries.Count > 0)
-                {
-                    allQueries.ForEach(query => query.IsCurrentQuery = false);
-
-                    Uow.ReportsSettingsRepository.UpdateRange(allQueries);
-                    Uow.Save();
-
-                    // InsertOrUpdateCurrentQueryToDb(reportsSettingsView, memberId);
-                    var reportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContext_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
-                    if (reportsSettings != null)
-                    {
-                        reportsSettings.GetModel(reportsSettingsView, memberId);
-
-                        Uow.ReportsSettingsRepository.Update(reportsSettings);
-                    }
-                    else // For save custom qry
-                    {
-                        reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
-                        Uow.ReportsSettingsRepository.Insert(reportsSettings);
-                    }
-
-                    Uow.Save();
-                    Uow.ReportsSettingsRepository.LinkedCacheClear();
-                }
-            }
+            return SaveQuery(reportsSettingsView, MemberImpersonated.Id);
         }
 
         public void SaveCustomQuery(ReportsSettingsView reportsSettingsView)
         {
-            var memberId = MemberImpersonated.Id;
-
             if (!IsDefaultQuery(reportsSettingsView.QueryName))
             {
-                SaveQuery(reportsSettingsView, memberId);
+                SaveQuery(reportsSettingsView, MemberImpersonated.Id);
             }
         }
 
         public void DeleteCustomQuery(int queryId)
         {
-            Uow.UserRepository.LinkedCacheGetByUserNameAndCheck(ImpersonatedUserName);
-            var memberId = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName).Id;
-
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberIdQueryId(memberId, queryId);
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberIdQueryId(MemberImpersonated.Id, queryId);
 
             CheckCustomQueryForThisMember(queryId, getReportsSettingsByid);
 
@@ -114,36 +74,34 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return string.IsNullOrEmpty(queryName);
         }
 
-        private void SaveQuery(ReportsSettingsView reportsSettingsView, int memberId)
+        private ReportsSettingsView SaveQuery(ReportsSettingsView reportsSettingsView, int memberId)
         {
-            //TODO Transaction!!!! set to down
             // ResetIsCustomQueryForAllQueries(memberId);
             var allQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberId(memberId);
             if (allQueries != null && allQueries.Count > 0)
             {
                 allQueries.ForEach(query => query.IsCurrentQuery = false);
-
                 Uow.ReportsSettingsRepository.UpdateRange(allQueries);
-                Uow.Save();
-
-                // InsertOrUpdateCurrentQueryToDb(reportsSettingsView, memberId);
-                var reportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContext_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
-                if (reportsSettings != null)
-                {
-                    reportsSettings.GetModel(reportsSettingsView, memberId);
-
-                    Uow.ReportsSettingsRepository.Update(reportsSettings);
-                }
-                else // For save custom qry
-                {
-                    reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
-                    Uow.ReportsSettingsRepository.Insert(reportsSettings);
-                }
-
-                Uow.Save();
-
-                Uow.ReportsSettingsRepository.LinkedCacheClear();
             }
+
+            // InsertOrUpdateCurrentQueryToDb(reportsSettingsView, memberId);
+            var reportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContext_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
+            if (reportsSettings == null)
+            {
+                reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
+                Uow.ReportsSettingsRepository.Insert(reportsSettings);
+            }
+            else // For save custom qry
+            {
+                reportsSettings.GetModel(reportsSettingsView, memberId);
+                Uow.ReportsSettingsRepository.Update(reportsSettings);
+            }
+
+            Uow.Save();
+            Uow.ReportsSettingsRepository.LinkedCacheClear();
+
+            reportsSettingsView = reportsSettings.GetView();
+            return reportsSettingsView;
         }
 
         private void CheckCustomQueryForThisMember(int? id, ReportsSettings reportsSettings)

@@ -1,4 +1,5 @@
-﻿using CoralTime.Common.Constants;
+﻿using System;
+using CoralTime.Common.Constants;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports.Request.Grid;
@@ -6,12 +7,13 @@ using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System.Collections.Generic;
 using System.Linq;
+using CoralTime.Common.Helpers;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportsService
     {
-        #region values of groupByInfo, showColumnsInfo, datesStaticInfo.
+        #region Values of groupByInfo, showColumnsInfo, datesStaticInfo.
 
         private readonly ReportCommonDropDownsView[] groupByInfo =
         {
@@ -64,64 +66,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         };
 
-        private readonly ReportCommonDropDownsView[] datesStaticInfo =
-        {
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.Today,
-                Description = "Today"
-            },
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.ThisWeek,
-                Description = "This Week"
-            },
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.ThisMonth,
-                Description = "This Month"
-            },
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.ThisYear,
-                Description = "This Year"
-            },
-
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.Yesterday,
-                Description = "Yesterday"
-            },
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.LastWeek,
-                Description = "Last Week"
-            },
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.LastMonth,
-                Description = "Last Month"
-            },
-            new ReportCommonDropDownsView
-            {
-                Id = (int) Constants.DatesStaticIds.LastYear,
-                Description = "Last Year"
-            }
-        };
-
         #endregion
 
         public ReportDropDownView GetReportsDropDowns()
         {
             var currentQuery = _reportsSettingsService.GetCurrentOrCreateDefaultQuery();
 
-            var reportDropDowns = new ReportDropDownView
+            return new ReportDropDownView
             {
-                Values = CreateDropDownValues(MemberImpersonated),
-                CurrentQuery = currentQuery
+                CurrentQuery = currentQuery,
+                Values = CreateDropDownValues(MemberImpersonated)
             };
-
-            return reportDropDowns;
         }
 
         private ReportDropDownValues CreateDropDownValues(Member memberImpersonated)
@@ -129,9 +84,24 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
 
+            var clients = CreateClients(memberImpersonated, out var members);
+
+            return new ReportDropDownValues
+            {
+                Filters = CreateReportClientViews(memberImpersonated, clients, managerRoleId, members, memberRoleId),
+                UserDetails = CreateUserDetails(memberImpersonated),
+                CustomQueries = CreateValuesCustomQueries(memberImpersonated).OrderBy(x => x.QueryName).ToList(),
+                GroupBy = groupByInfo,
+                ShowColumns = showColumnsInfo,
+                DateStatic = CreateDatesStaticInfo(memberImpersonated)
+            };
+        }
+
+        private List<Client> CreateClients(Member memberImpersonated, out List<Member> members)
+        {
             var projects = new List<Project>();
             var clients = new List<Client>();
-            var members = Uow.MemberRepository.LinkedCacheGetList();
+            members = Uow.MemberRepository.LinkedCacheGetList();
 
             #region GetProjects allProjectsForAdmin or projectsWithAssignUsersAndPublicProjects.
 
@@ -143,7 +113,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             else
             {
                 var projectsWithAssignUsersAndPublicProjects = Uow.ProjectRepository.LinkedCacheGetList()
-                    .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(memberImpersonated.Id) || !x.IsPrivate).ToList();
+                    .Where(x => x.MemberProjectRoles.Select(z => z.MemberId).Contains(memberImpersonated.Id) || !x.IsPrivate)
+                    .ToList();
 
                 projects = projectsWithAssignUsersAndPublicProjects;
             }
@@ -163,7 +134,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     Email = client.Email,
                     IsActive = client.IsActive,
                     Description = client.Description,
-                    Projects = new List<Project>(client.Projects.Where(projectOfClient => projects.Select(project => project.Id).Contains(projectOfClient.Id)).ToList())
+                    Projects = new List<Project>(client.Projects.Where(projectOfClient =>
+                        projects.Select(project => project.Id).Contains(projectOfClient.Id)).ToList())
                 }).ToList();
 
             clients.AddRange(clientsWithProjects);
@@ -185,39 +157,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             #endregion
 
-            var dropDownValues = new ReportDropDownValues
-            {
-                Filters = CreateReportClientViews(memberImpersonated, clients, managerRoleId, members, memberRoleId),
-                GroupBy = groupByInfo,
-                ShowColumns = showColumnsInfo,
-                UserDetails = CreateUserDetails(memberImpersonated),
-                CustomQueries = CreateValuesCustomQueries(memberImpersonated).OrderBy(x => x.QueryName).ToList(),
-                DateStatic = datesStaticInfo
-            };
-
-            return dropDownValues;
+            return clients;
         }
 
-        private List<ReportsSettingsView> CreateValuesCustomQueries(Member memberImpersonated)
-        {
-            var valuesCustomQueries = new List<ReportsSettingsView>();
-
-            var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(memberImpersonated.Id)
-                .Where(x => x.QueryName != null);
-            foreach (var reportSettings in customQueries)
-            {
-                var reportsSettingsView = reportSettings.GetView();
-
-                valuesCustomQueries.Add(reportsSettingsView);
-            }
-
-            return valuesCustomQueries;
-        }
-
-        private List<ReportClientView> CreateReportClientViews(Member memberImpersonated, List<Client> clients, int managerRoleId, List<Member> members,
-            int memberRoleId)
+        private List<ReportClientView> CreateReportClientViews(Member memberImpersonated, List<Client> clients, int managerRoleId, List<Member> members, int memberRoleId)
         {
             var reportClientView = new List<ReportClientView>();
+
             foreach (var client in clients)
             {
                 var reportProjectViewByUserId = new List<ReportProjectView>();
@@ -228,28 +174,22 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     {
                         ProjectId = project.Id,
                         ProjectName = project.Name,
-                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == memberImpersonated.Id)?.RoleId ??
-                                 0,
+                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == memberImpersonated.Id)?.RoleId ?? 0,
                         IsProjectActive = project.IsActive,
                     };
 
                     #region Set all users at Project constrain only for: Admin, Manager at this project.
 
-                    var isManagerOnProject =
-                        project.MemberProjectRoles.Exists(r =>
-                            r.MemberId == memberImpersonated.Id && r.RoleId == managerRoleId);
+                    var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == memberImpersonated.Id && r.RoleId == managerRoleId);
 
                     if (memberImpersonated.User.IsAdmin || isManagerOnProject)
                     {
-                        var usersDetailsView = project.MemberProjectRoles
-                            .Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
+                        var usersDetailsView = project.MemberProjectRoles.Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
 
                         // Add members, that is not assigned to this project directly.
                         if (!project.IsPrivate)
                         {
-                            var notAssignedMembersAtProjView = members
-                                .Where(x => project.MemberProjectRoles.Select(y => y.MemberId).All(mi => x.Id != mi))
-                                .Select(u => u.GetViewReportUsers(memberRoleId, Mapper));
+                            var notAssignedMembersAtProjView = members.Where(x => project.MemberProjectRoles.Select(y => y.MemberId).All(mi => x.Id != mi)).Select(u => u.GetViewReportUsers(memberRoleId, Mapper));
                             usersDetailsView.AddRange(notAssignedMembersAtProjView);
                         }
 
@@ -279,14 +219,120 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportUserDetails CreateUserDetails(Member memberImpersonated)
         {
-            var userDetails = new ReportUserDetails
+            return new ReportUserDetails
             {
                 CurrentUserFullName = memberImpersonated.FullName,
                 CurrentUserId = memberImpersonated.Id,
                 IsAdminCurrentUser = memberImpersonated.User.IsAdmin,
                 IsManagerCurrentUser = memberImpersonated.User.IsManager,
             };
-            return userDetails;
+        }
+
+        private List<ReportsSettingsView> CreateValuesCustomQueries(Member memberImpersonated)
+        {
+            var valuesCustomQueries = new List<ReportsSettingsView>();
+
+            var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(memberImpersonated.Id).Where(x => x.QueryName != null);
+
+            foreach (var reportSettings in customQueries)
+            {
+                var reportsSettingsView = reportSettings.GetView();
+
+                valuesCustomQueries.Add(reportsSettingsView);
+            }
+
+            return valuesCustomQueries;
+        }
+
+        private ReportDropDownsDateStaticView[] CreateDatesStaticInfo(Member memberImpersonated)
+        {
+            var today = DateTime.Today.Date;
+            var yesterday = today.AddMilliseconds(-1);
+
+            var memberDayOfWeekStart = memberImpersonated.WeekStart == Constants.WeekStart.Monday
+                ? DayOfWeek.Monday
+                : DayOfWeek.Sunday;
+
+            CommonHelpers.SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, DateTime.Now.Date, memberDayOfWeekStart);
+
+            CommonHelpers.SetRangeOfThisMonthByDate(out var thisMonthByTodayFirstDate, out var thisMonthByTodayLastDate, today);
+
+            CommonHelpers.SetRangeOfThisYearByDate(out var thisYearByTodayFirstDate, out var thisYearByTodayLastDate, today);
+
+            CommonHelpers.SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, DateTime.Now.Date, memberDayOfWeekStart);
+
+            CommonHelpers.SetRangeOfLastMonthByDate(out var lastMonthByTodayFirstDate, out var lastMonthByTodayLastDate, today);
+
+            CommonHelpers.SetRangeOfLastYearByDate(out var lastYearByTodayFirstDate, out var lastYearByTodayLastDate, today);
+
+            ReportDropDownsDateStaticView[] datesStaticInfo =
+            {
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.Today,
+                    Description = "Today",
+                    DateFrom = today,
+                    DateTo = today
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.ThisWeek,
+                    Description = "This Week",
+                    DateFrom = thisWeekStart,
+                    DateTo = thisWeekEnd
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.ThisMonth,
+                    Description = "This Month",
+                    DateFrom = thisMonthByTodayFirstDate,
+                    DateTo = thisMonthByTodayLastDate
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.ThisYear,
+                    Description = "This Year",
+                    DateFrom = thisYearByTodayFirstDate,
+                    DateTo = thisYearByTodayLastDate
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.Yesterday,
+                    Description = "Yesterday",
+                    DateFrom = yesterday,
+                    DateTo = yesterday
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.LastWeek,
+                    Description = "Last Week",
+                    DateFrom = lastWeekStart,
+                    DateTo = lastWeekEnd
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.LastMonth,
+                    Description = "Last Month",
+                    DateFrom = lastMonthByTodayFirstDate,
+                    DateTo = lastMonthByTodayLastDate
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) Constants.DatesStaticIds.LastYear,
+                    Description = "Last Year",
+                    DateFrom = lastYearByTodayFirstDate,
+                    DateTo = lastYearByTodayLastDate
+                }
+            };
+
+            return datesStaticInfo;
         }
     }
 }

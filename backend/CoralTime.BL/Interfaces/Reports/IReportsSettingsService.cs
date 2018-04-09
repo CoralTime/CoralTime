@@ -5,8 +5,8 @@ namespace CoralTime.BL.Interfaces.Reports
     public interface IReportsSettingsService
     {
         ReportsSettingsView GetCurrentOrCreateDefaultQuery();
-        
-        void SaveCurrentQuery(ReportsSettingsView reportsSettings);
+
+        ReportsSettingsView SaveCurrentQuery(ReportsSettingsView reportsSettings);
 
         void SaveCustomQuery(ReportsSettingsView reportsSettings);
 
