@@ -48,6 +48,6 @@ export class ReportsService {
 	}
 
 	sendReports(filters: SendReportsFormModel): Observable<any> {
-		return this.http.post(this.constantService.reportsApi + 'ExportEmail', filters);
+		return this.http.post(this.constantService.reportsApi + 'ExportEmail', filters, {observe: 'response'});
 	}
 }

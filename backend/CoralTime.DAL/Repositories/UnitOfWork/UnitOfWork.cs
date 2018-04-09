@@ -20,6 +20,11 @@ namespace CoralTime.DAL.Repositories
         private readonly IMemoryCache _memoryCache;
 
         private readonly string _userId;
+        
+        public ApplicationUser ApplicationUserCurrent { get; }
+        public ApplicationUser ApplicationUserImpersonated { get; }
+        public Member MemberCurrent { get; }
+        public Member MemberImpersonated { get; }
 
         public readonly string CurrentUserName;
         public readonly string ImpersonatedUserName;
@@ -33,33 +38,38 @@ namespace CoralTime.DAL.Repositories
             CurrentUserName = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;            
             ImpersonatedUserName = GetUserNameWithImpersonation(httpContextAccessor);
 
-            _userId = httpContextAccessor?.HttpContext?.User.Claims?.FirstOrDefault(c=> c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
+            _userId = httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c=> c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
+
+            ApplicationUserCurrent = GetUserCurrent();
+            ApplicationUserImpersonated = GetUserImpersonated();
+            MemberCurrent = GetMemberCurrent();
+            MemberImpersonated = GetMemberImpersonated();
         }
 
         #region Get and check ApplicationUser and Member by Current and Impersonated roles;  
 
-        public ApplicationUser GetUserCurrent()
+        private ApplicationUser GetUserCurrent()
         {
             return UserRepository.LinkedCacheGetByUserNameAndCheck(CurrentUserName);
         }
 
-        public ApplicationUser GetUserImpersonated()
+        private ApplicationUser GetUserImpersonated()
         {
             return UserRepository.LinkedCacheGetByUserNameAndCheck(ImpersonatedUserName);
         }
 
-        public Member GetMemberCurrent()
+        private Member GetMemberCurrent()
         {
             var userCurrent = GetUserCurrent();
-            var memberCurrent = MemberRepository.LinkedCacheGetByUserId(userCurrent.Id);
+            var memberCurrent = MemberRepository.LinkedCacheGetByUserId(userCurrent?.Id);
 
             return memberCurrent;
         }
 
-        public Member GetMemberImpersonated()
+        private Member GetMemberImpersonated()
         {
             var userImpersonated = GetUserImpersonated();
-            var memberImpersonated = MemberRepository.LinkedCacheGetByUserId(userImpersonated.Id);
+            var memberImpersonated = MemberRepository.LinkedCacheGetByUserId(userImpersonated?.Id);
 
             return memberImpersonated;
         }
@@ -88,25 +98,24 @@ namespace CoralTime.DAL.Repositories
 
         private string GetUserNameWithImpersonation(IHttpContextAccessor httpContextAccessor)
         {
-            if (HasAuthorizationHeader(httpContextAccessor))
+            if (!HasAuthorizationHeader(httpContextAccessor)) 
+                return string.Empty;
+            
+            var currentUserClaims = httpContextAccessor?.HttpContext?.User?.Claims;
+
+            if (HasImpersonationHeader(httpContextAccessor, out var headerImpersonatedUserName))
             {
-                var currentUserClaims = httpContextAccessor?.HttpContext?.User?.Claims;
-
-                if (HasImpersonationHeader(httpContextAccessor, out var headerImpersonatedUserName))
+                if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.ApplicationRoleAdmin)
                 {
-                    if (currentUserClaims.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Role)?.Value != Constants.ApplicationRoleAdmin)
-                    {
-                        throw new CoralTimeForbiddenException($"You can not impersonate user with userName {headerImpersonatedUserName}");
-                    }
-
-                    return headerImpersonatedUserName;
+                    throw new CoralTimeForbiddenException($"You can not impersonate user with userName {headerImpersonatedUserName}");
                 }
 
-                var headerAuthorizationUserName = currentUserClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name).Value;
-                return headerAuthorizationUserName;
+                return headerImpersonatedUserName;
             }
 
-            return string.Empty;
+            var headerAuthorizationUserName = currentUserClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Name).Value;
+            return headerAuthorizationUserName;
+
         }
 
         private static bool HasAuthorizationHeader(IHttpContextAccessor httpContextAccessor)

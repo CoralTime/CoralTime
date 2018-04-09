@@ -99,6 +99,7 @@ $fieldHeight: 30px;
   .ct-query-block {
     position: relative;
     float: left;
+    bottom: 2px;
 
     > * {
       vertical-align: middle;
@@ -151,6 +152,7 @@ $fieldHeight: 30px;
       display: none;
       margin-left: -10px;
       font-size: 14px;
+      line-height: 19px;
     }
 
     .ct-query-text:hover + .ct-close, .ct-close:hover {
@@ -422,7 +424,7 @@ $fieldHeight: 30px;
     }
 
     .ct-cell-date {
-      width: 100px;
+      width: 105px;
     }
 
     .ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {

@@ -6,15 +6,18 @@ namespace CoralTime.BL.Services
 {
     public class BaseService
     {
-        //TODO delete this string and use from UnitOfWork.cs finished entityes CurrentMember, ImpersonatedMember, ImpersonatedApplicationUser, CurrentApplicationUser
         protected readonly string CurrentUserName;
         protected readonly string ImpersonatedUserName;
 
-        public ApplicationUser ApplicationUserCurrent { get; }
-        public ApplicationUser ApplicationUserImpersonated { get; }
+        protected UnitOfWork Uow { get; set; }
 
-        public Member MemberCurrent { get; }
-        public Member MemberImpersonated { get; }
+        protected IMapper Mapper { get; set; }
+        
+        protected ApplicationUser ApplicationUserCurrent => Uow.ApplicationUserCurrent;
+        protected ApplicationUser ApplicationUserImpersonated => Uow.ApplicationUserImpersonated;
+
+        protected Member MemberCurrent => Uow.MemberCurrent;
+        protected Member MemberImpersonated => Uow.MemberImpersonated;
 
         public BaseService(UnitOfWork uow, IMapper mapper)
         {
@@ -23,16 +26,6 @@ namespace CoralTime.BL.Services
 
             CurrentUserName = Uow.CurrentUserName;
             ImpersonatedUserName = Uow.ImpersonatedUserName;
-
-            ApplicationUserCurrent = Uow.GetUserCurrent();
-            ApplicationUserImpersonated = Uow.GetUserImpersonated();
-
-            MemberCurrent = Uow.GetMemberCurrent();
-            MemberImpersonated = Uow.GetMemberImpersonated();
         }
-        
-        protected UnitOfWork Uow { get; set; }
-
-        protected IMapper Mapper { get; set; }
     }
 }
