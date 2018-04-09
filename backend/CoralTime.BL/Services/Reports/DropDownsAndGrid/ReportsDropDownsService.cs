@@ -113,7 +113,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public ReportDropDownView GetReportsDropDowns()
         {
-            var currentQuery = _reportsSettingsService.GetCurrentOrDefaultQuery();
+            var currentQuery = _reportsSettingsService.GetCurrentOrCreateDefaultQuery();
 
             var reportDropDowns = new ReportDropDownView
             {
@@ -185,8 +185,39 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             #endregion
 
-            var reportClientView = new List<ReportClientView>();
+            var dropDownValues = new ReportDropDownValues
+            {
+                Filters = CreateReportClientViews(memberImpersonated, clients, managerRoleId, members, memberRoleId),
+                GroupBy = groupByInfo,
+                ShowColumns = showColumnsInfo,
+                UserDetails = CreateUserDetails(memberImpersonated),
+                CustomQueries = CreateValuesCustomQueries(memberImpersonated).OrderBy(x => x.QueryName).ToList(),
+                DateStatic = datesStaticInfo
+            };
 
+            return dropDownValues;
+        }
+
+        private List<ReportsSettingsView> CreateValuesCustomQueries(Member memberImpersonated)
+        {
+            var valuesCustomQueries = new List<ReportsSettingsView>();
+
+            var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(memberImpersonated.Id)
+                .Where(x => x.QueryName != null);
+            foreach (var reportSettings in customQueries)
+            {
+                var reportsSettingsView = reportSettings.GetView();
+
+                valuesCustomQueries.Add(reportsSettingsView);
+            }
+
+            return valuesCustomQueries;
+        }
+
+        private List<ReportClientView> CreateReportClientViews(Member memberImpersonated, List<Client> clients, int managerRoleId, List<Member> members,
+            int memberRoleId)
+        {
+            var reportClientView = new List<ReportClientView>();
             foreach (var client in clients)
             {
                 var reportProjectViewByUserId = new List<ReportProjectView>();
@@ -197,22 +228,28 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     {
                         ProjectId = project.Id,
                         ProjectName = project.Name,
-                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == memberImpersonated.Id)?.RoleId ?? 0,
+                        RoleId = project.MemberProjectRoles.FirstOrDefault(r => r.MemberId == memberImpersonated.Id)?.RoleId ??
+                                 0,
                         IsProjectActive = project.IsActive,
                     };
 
                     #region Set all users at Project constrain only for: Admin, Manager at this project.
 
-                    var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == memberImpersonated.Id && r.RoleId == managerRoleId);
+                    var isManagerOnProject =
+                        project.MemberProjectRoles.Exists(r =>
+                            r.MemberId == memberImpersonated.Id && r.RoleId == managerRoleId);
 
                     if (memberImpersonated.User.IsAdmin || isManagerOnProject)
                     {
-                        var usersDetailsView = project.MemberProjectRoles.Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
+                        var usersDetailsView = project.MemberProjectRoles
+                            .Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
 
                         // Add members, that is not assigned to this project directly.
                         if (!project.IsPrivate)
                         {
-                            var notAssignedMembersAtProjView = members.Where(x => project.MemberProjectRoles.Select(y => y.MemberId).All(mi => x.Id != mi)).Select(u => u.GetViewReportUsers(memberRoleId, Mapper));
+                            var notAssignedMembersAtProjView = members
+                                .Where(x => project.MemberProjectRoles.Select(y => y.MemberId).All(mi => x.Id != mi))
+                                .Select(u => u.GetViewReportUsers(memberRoleId, Mapper));
                             usersDetailsView.AddRange(notAssignedMembersAtProjView);
                         }
 
@@ -237,6 +274,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 reportClientView.Add(reportClientViewlocal);
             }
 
+            return reportClientView;
+        }
+
+        private ReportUserDetails CreateUserDetails(Member memberImpersonated)
+        {
             var userDetails = new ReportUserDetails
             {
                 CurrentUserFullName = memberImpersonated.FullName,
@@ -244,28 +286,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 IsAdminCurrentUser = memberImpersonated.User.IsAdmin,
                 IsManagerCurrentUser = memberImpersonated.User.IsManager,
             };
-
-            var valuesCustomQueries = new List<ReportsSettingsView>();
-
-            var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(memberImpersonated.Id).Where(x => x.QueryName != null);
-            foreach (var reportSettings in customQueries)
-            {
-                var reportsSettingsView = reportSettings.GetView();
-
-                valuesCustomQueries.Add(reportsSettingsView);
-            }
-
-            var dropDownValues = new ReportDropDownValues
-            {
-                Filters = reportClientView,
-                GroupBy = groupByInfo,
-                ShowColumns = showColumnsInfo,
-                UserDetails = userDetails,
-                CustomQueries = valuesCustomQueries.OrderBy(x => x.QueryName).ToList(),
-                DateStatic = datesStaticInfo
-            };
-
-            return dropDownValues;
+            return userDetails;
         }
     }
 }

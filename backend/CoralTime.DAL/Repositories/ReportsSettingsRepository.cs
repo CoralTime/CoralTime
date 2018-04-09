@@ -22,6 +22,11 @@ namespace CoralTime.DAL.Repositories
             return GetQueryAsNoTrackingWithIncludes().Where(x => x.MemberId == memberId).ToList();
         }
 
+        public List<ReportsSettings> GetEntitiesFromContex_ByMemberId(int memberId)
+        {
+            return GetQueryWithIncludes().Where(x => x.MemberId == memberId).ToList();
+        }
+
         public ReportsSettings GetEntityOutOfContex_ByMemberIdQueryId(int memberId, int? queryId)
         {
             return GetQueryAsNoTrackingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
@@ -32,7 +37,7 @@ namespace CoralTime.DAL.Repositories
             return GetQueryAsNoTrackingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
         }
 
-        public ReportsSettings GetEntity_ByMemberIdQueryName(int memberId, string queryName)
+        public ReportsSettings GetEntityFromContext_ByMemberIdQueryName(int memberId, string queryName)
         {
             return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
         }

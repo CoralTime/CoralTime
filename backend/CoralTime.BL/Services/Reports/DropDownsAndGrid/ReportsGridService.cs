@@ -83,7 +83,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView)
         {
             var currentQuery = reportsGridView.CurrentQuery;
-            var currentQueryFromCache = _reportsSettingsService.GetCurrentOrDefaultQuery();
+            var currentQueryFromCache = _reportsSettingsService.GetCurrentOrCreateDefaultQuery();
 
             // TODO realize comparing two objects!
             if (currentQuery.DateStaticId != currentQueryFromCache.DateStaticId ||
@@ -98,8 +98,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 currentQuery.ShowColumnIds != currentQueryFromCache.ShowColumnIds)
             {
                 _reportsSettingsService.SaveCurrentQuery(currentQuery);
-
-                reportsGridView.CurrentQuery = currentQuery;
             }
         }
 
