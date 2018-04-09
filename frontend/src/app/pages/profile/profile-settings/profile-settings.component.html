@@ -123,49 +123,49 @@
                     </form>
                 </div>
 
-                <div class="ct-form-block">
-                    <div class="ct-form-header" (click)="toggleForm(2)">
-                        <a class="ct-add-button">
-                            <i class="material-icons">{{isFormShownArray[2] ? "keyboard_arrow_up" : "add"}}</i>
-                        </a>
-                        <span class="ct-link-text">{{isFormShownArray[2] ? "Hide Notifications" : "Show Notifications"}}</span>
-                    </div>
+                <!--<div class="ct-form-block">-->
+                    <!--<div class="ct-form-header" (click)="toggleForm(2)">-->
+                        <!--<a class="ct-add-button">-->
+                            <!--<i class="material-icons">{{isFormShownArray[2] ? "keyboard_arrow_up" : "add"}}</i>-->
+                        <!--</a>-->
+                        <!--<span class="ct-link-text">{{isFormShownArray[2] ? "Hide Notifications" : "Show Notifications"}}</span>-->
+                    <!--</div>-->
 
-                    <form class="ct-form" [hidden]="!isFormShownArray[2]" #notificationForm="ngForm" (submit)="submitNotifications()">
-                        <div>
-                            <label class="ct-form-label">Notifications</label>
-                        </div>
+                    <!--<form class="ct-form" [hidden]="!isFormShownArray[2]" #notificationForm="ngForm" (submit)="submitNotifications()">-->
+                        <!--<div>-->
+                            <!--<label class="ct-form-label">Notifications</label>-->
+                        <!--</div>-->
 
-                        <div>
-                            <label class="ct-form-label">If i haven't logged hours, email me at</label>
-                            <ct-select [name]="'sendEmailTime'" #select
-                                       [(ngModel)]="sendEmailTimeModel"
-                                       (change)="sendEmailTimeOnChange(select)"
-                                       [options]="sendEmailTimeArray">
-                            </ct-select>
-                        </div>
+                        <!--<div>-->
+                            <!--<label class="ct-form-label">If i haven't logged hours, email me at</label>-->
+                            <!--<ct-select [name]="'sendEmailTime'" #select-->
+                                       <!--[(ngModel)]="sendEmailTimeModel"-->
+                                       <!--(change)="sendEmailTimeOnChange(select)"-->
+                                       <!--[options]="sendEmailTimeArray">-->
+                            <!--</ct-select>-->
+                        <!--</div>-->
 
-                        <div>
-                            <label class="ct-form-label">On the following days:</label>
-                            <mat-checkbox *ngFor="let day of sendEmailDaysArray; let i = index"
-                                         [name]="'sendEmailDay-' + i"
-                                         [(ngModel)]="sendEmailDays[day.dayNumber]"
-                                         (change)="sendEmailDayOnChange()">
-                                {{day.name}}
-                            </mat-checkbox>
-                        </div>
+                        <!--<div>-->
+                            <!--<label class="ct-form-label">On the following days:</label>-->
+                            <!--<mat-checkbox *ngFor="let day of sendEmailDaysArray; let i = index"-->
+                                         <!--[name]="'sendEmailDay-' + i"-->
+                                         <!--[(ngModel)]="sendEmailDays[day.dayNumber]"-->
+                                         <!--(change)="sendEmailDayOnChange()">-->
+                                <!--{{day.name}}-->
+                            <!--</mat-checkbox>-->
+                        <!--</div>-->
 
-                        <div>
-                            <mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
-                                Send weekly time entry updates
-                            </mat-checkbox>
-                        </div>
+                        <!--<div>-->
+                            <!--<mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">-->
+                                <!--Send weekly time entry updates-->
+                            <!--</mat-checkbox>-->
+                        <!--</div>-->
 
-                        <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!notificationForm.valid">
-                            Save Notifications
-                        </button>
-                    </form>
-                </div>
+                        <!--<button mat-raised-button class="ct-button ct-blue-button" [disabled]="!notificationForm.valid">-->
+                            <!--Save Notifications-->
+                        <!--</button>-->
+                    <!--</form>-->
+                <!--</div>-->
             </div>
         </div>
     </div>
