@@ -15,10 +15,12 @@ export class NotAuthGuard implements CanActivate {
 
 	checkLogin(url: string): boolean {
 		if (!this.authService.isLoggedIn()) {
+			this.authService.logout(true);
 			return true;
 		}
 
 		this.router.navigate(['/calendar']);
+		this.authService.onChange.emit(this.authService.authUser);
 
 		return false;
 	}

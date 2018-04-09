@@ -312,7 +312,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		let isNewTimeEntry: boolean;
 
 		this.currentTimeEntry.timeOptions.isFromToShow = this.currentTimeEntry.timeOptions.isFromToShow && this.isFromToFormValueValid();
-		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.getAuthUser().id;
+		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.authUser.id;
 
 		if (this.currentTimeEntry.id) {
 			submitObservable = this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
@@ -505,7 +505,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private removeNonActiveProjects(projectList: Project[]): Project[] {
-		let isUserAdmin = this.authService.getAuthUser().role === Roles.admin;
+		let isUserAdmin = this.authService.isLoggedIn() && this.authService.authUser.role === Roles.admin;
 		if (isUserAdmin) {
 			return projectList.filter(project => project.isActive === true);
 		} else {

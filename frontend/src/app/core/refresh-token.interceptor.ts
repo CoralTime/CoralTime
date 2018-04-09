@@ -38,21 +38,24 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 						subscriber.next(response);
 					},
 					(err) => {
-						switch (err.status) {
-							case 401 :
-								if (!this.isTokenExpired(err)) {
-									this.navigateToLogin();
-									return Observable.throw(err);
-								}
+						if (err.status === 401) {
+							if (!this.isTokenExpired(err)) {
+								this.authService.logout(false, true);
+								return;
+							}
 
-								this.handleUnauthorizedError(subscriber, req);
-								break;
-							case 403 :
-								this.notificationService.danger('You don\'t have permission for this action');
-								break;
-							default:
-								subscriber.error(err);
+							return this.handleUnauthorizedError(subscriber, req);
 						}
+
+						if (err.status === 403) {
+							this.notificationService.danger('You don\'t have permission for this action');
+						}
+
+						if (err.status === 500) {
+							this.notificationService.danger('Server error. Try again later.');
+						}
+
+						subscriber.error(err);
 					},
 					() => {
 						subscriber.complete();
@@ -67,6 +70,11 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 	}
 
 	private handleUnauthorizedError(subscriber: Subscriber<any>, request: HttpRequest<any>): void {
+		if (!this.authService.isLoggedIn()) {
+			this.requests = [];
+			return;
+		}
+
 		this.requests.push({subscriber, failedRequest: request});
 		if (!this.refreshInProgress) {
 			this.refreshInProgress = true;
@@ -74,10 +82,11 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 				.finally(() => {
 					this.refreshInProgress = false;
 				})
-				.subscribe((authHeader) =>
-						this.repeatFailedRequests(),
+				.subscribe((authHeader) => {
+						this.repeatFailedRequests();
+					},
 					() => {
-						this.navigateToLogin();
+						this.authService.logout(false, true);
 					});
 		}
 	}
@@ -85,7 +94,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 	private repeatFailedRequests(): void {
 		this.requests.forEach((c) => {
 			const requestWithNewToken = c.failedRequest.clone({
-				headers: c.failedRequest.headers.set('Authorization', 'Bearer ' + this.authService.getAuthUser().accessToken)
+				headers: c.failedRequest.headers.set('Authorization', 'Bearer ' + this.authService.authUser.accessToken)
 			});
 
 			this.repeatRequest(requestWithNewToken, c.subscriber);
@@ -100,7 +109,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 			},
 			(err) => {
 				if (err.status === 401) {
-					this.authService.logout();
+					this.authService.logout(false, true);
 				}
 				subscriber.error(err);
 			},
@@ -111,12 +120,5 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 
 	private isTokenExpired(error: Response | any): boolean {
 		return error.headers.has('www-authenticate') && /expired/.test(error.headers.get('www-authenticate'));
-	}
-
-	private navigateToLogin(): void {
-		if (this.authService.isLoggedIn()) {
-			this.notificationService.danger('Your session is expired.');
-			this.authService.logout();
-		}
 	}
 }

@@ -116,7 +116,7 @@ export class UsersFormComponent implements OnInit {
 	            private userService: UsersService) { }
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
+		this.authUser = this.authService.authUser;
 		this.impersonateUser = this.impersonationService.impersonationUser;
 
 		let user = this.user;

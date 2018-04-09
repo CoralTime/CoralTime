@@ -49,7 +49,7 @@ export class ProjectsComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
+		this.authUser = this.authService.authUser;
 		// TODO: fix string to bool
 		if (this.authUser.role !== 1 && this.authUser.isManager !== 'true') {
 			this.router.navigate(['/calendar']);
