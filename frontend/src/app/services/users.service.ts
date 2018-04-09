@@ -25,7 +25,7 @@ export class UsersService {
 		}
 
 		this.authService.onChange.subscribe(() => {
-			if (!this.authService.getAuthUser()) {
+			if (!this.authService.isLoggedIn()) {
 				this.setUserInfo(null);
 			}
 		})
