@@ -34,6 +34,9 @@ namespace CoralTime.DAL.ConvertViewToModel
             }
             else
             {
+                reportsSettings.DateFrom = null;
+                reportsSettings.DateTo = null;
+                
                 reportsSettings.DateStaticId = reportsSettingsView.DateStaticId;
             }
 
