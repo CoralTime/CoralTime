@@ -11,7 +11,7 @@ export class UserInfoResolve implements Resolve<User> {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Promise<User> {
-		return this.usersService.getUserInfo(this.authService.getAuthUser().id)
+		return this.usersService.getUserInfo(this.authService.authUser.id)
 			.then((user: User) => {
 				return user;
 			});

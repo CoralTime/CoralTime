@@ -44,7 +44,7 @@ export class UsersComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.currentUserId = this.authService.getAuthUser().id;
+		this.currentUserId = this.authService.authUser.id;
 		this.impersonateUserId = this.impersonationService.impersonationId;
 		this.getUsers();
 	}
@@ -109,6 +109,11 @@ export class UsersComponent implements OnInit {
 	}
 
 	openUserDialog(user: User = null): void {
+		if (!this.authService.isLoggedIn()) {
+			this.authService.logout();
+			return;
+		}
+
 		this.dialogRef = this.dialog.open(UsersFormComponent);
 		this.dialogRef.componentInstance.user = user;
 		this.dialogRef.componentInstance.onSaved.subscribe((response) => {

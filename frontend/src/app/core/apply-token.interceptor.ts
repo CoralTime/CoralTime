@@ -32,8 +32,8 @@ export class ApplyTokenInterceptor implements HttpInterceptor {
 	}
 
 	private extendHeaders(headers: HttpHeaders): HttpHeaders {
-		if (!headers.has('Authorization')) {
-			let authUser = this.authService.getAuthUser();
+		if (!headers.has('Authorization') && this.authService.isLoggedIn()) {
+			let authUser = this.authService.authUser;
 			if (authUser && authUser.accessToken) {
 				headers = headers.set('Authorization', 'Bearer ' + authUser.accessToken);
 			}

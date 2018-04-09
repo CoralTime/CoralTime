@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
-
-const AUTH_USER_STORAGE_KEY = 'APPLICATION_USER';
+import { NotificationService } from '../notification.service';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +13,6 @@ export class AuthService {
 	private readonly clientIdSSO: string = 'coraltimeazure';
 	private readonly clientSecret: string = 'secret';
 	private readonly scope: string = 'WebAPI offline_access openid profile roles';
-	private authUser: AuthUser;
 	private _isUserAdminOrManager: boolean = false;
 
 	public adminOrManagerParameterOnChange: EventEmitter<void> = new EventEmitter<void>();
@@ -32,14 +30,20 @@ export class AuthService {
 	constructor(private http: HttpClient,
 	            private impersonateService: ImpersonationService,
 	            private matDialog: MatDialog,
+	            private notificationService: NotificationService,
 	            private router: Router) {
-		if (localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
-			this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
-
-			if (this.isRefreshTokenExpired()) {
-				this.logout();
-			}
+		if (this.isRefreshTokenExpired()) {
+			this.logout();
 		}
+	}
+
+	get authUser(): AuthUser {
+		return JSON.parse(localStorage.getItem('APPLICATION_USER'));
+	}
+
+	set authUser(authUser: AuthUser) {
+		localStorage.setItem('APPLICATION_USER', JSON.stringify(authUser));
+		this.onChange.emit(authUser);
 	}
 
 	login(username: string, password: string): Observable<boolean> {
@@ -58,7 +62,7 @@ export class AuthService {
 
 		return this.http.post('/connect/token', body, {headers: headers})
 			.map(response => {
-				this.setAuthUser(new AuthUser(response, false));
+				this.authUser = new AuthUser(response, false);
 				return true;
 			});
 	}
@@ -78,20 +82,19 @@ export class AuthService {
 
 		return this.http.post('/connect/token', body, {headers: headers})
 			.map(response => {
-				this.setAuthUser(new AuthUser(response, true));
+				this.authUser = new AuthUser(response, true);
 				return true;
 			}).catch(() => this.router.navigate(['/error']));
 	}
 
 	refreshToken(): Observable<Object> {
-		if (!localStorage.hasOwnProperty(AUTH_USER_STORAGE_KEY)) {
+		if (!this.isLoggedIn()) {
 			return Observable.throw(new Error('User data not found.'));
 		}
 
 		let headers = {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		};
-		this.authUser = JSON.parse(localStorage.getItem(AUTH_USER_STORAGE_KEY));
 		let headerClientId = this.authUser.isSso ? this.clientIdSSO : this.clientId;
 		let params = {
 			'client_id': headerClientId,
@@ -105,7 +108,7 @@ export class AuthService {
 		return this.http.post('/connect/token', body, {headers: headers})
 			.flatMap((response: Object) => {
 				if (response) {
-					this.setAuthUser(new AuthUser(response, this.authUser.isSso));
+					this.authUser = new AuthUser(response, this.authUser.isSso);
 					return Observable.of(response);
 				}
 
@@ -117,23 +120,24 @@ export class AuthService {
 			})
 	}
 
-	logout(ignoreRedirect?: boolean): void {
-		this.impersonateService.stopImpersonation(true);
-		this.authUser = null;
+	logout(ignoreRedirect?: boolean, isSessionExpired?: boolean): void {
 		this.matDialog.closeAll();
-		localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+		localStorage.removeItem('APPLICATION_USER');
+		this.onChange.emit(null);
+
 		if (!ignoreRedirect) {
 			this.router.navigate(['/login']);
 		}
-		this.onChange.emit(null);
-	}
-
-	getAuthUser(): AuthUser {
-		return this.authUser;
+		if (isSessionExpired) {
+			this.notificationService.danger('Your session is expired.');
+		}
+		setTimeout(() => {
+			this.impersonateService.stopImpersonation(true);
+		}, 0);
 	}
 
 	isLoggedIn(): boolean {
-		return !!this.getAuthUser();
+		return localStorage.hasOwnProperty('APPLICATION_USER');
 	}
 
 	isRefreshTokenExpired(): boolean {
@@ -146,11 +150,5 @@ export class AuthService {
 
 	private objectToString(params: Object): string {
 		return Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&');
-	}
-
-	private setAuthUser(authUser: AuthUser): void {
-		this.authUser = authUser;
-		localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(this.authUser));
-		this.onChange.emit(this.authUser);
 	}
 }
