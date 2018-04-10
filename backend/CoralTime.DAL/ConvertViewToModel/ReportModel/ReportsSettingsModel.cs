@@ -27,9 +27,16 @@ namespace CoralTime.DAL.ConvertViewToModel
         {
             MapViewToModel(reportsSettings, reportsSettingsView, memberId);
 
-            if (reportsSettings.DateFrom == null && reportsSettings.DateTo == null && reportsSettingsView.DateStaticId == null)
+            if (reportsSettingsView.DateFrom == null && reportsSettingsView.DateTo == null && reportsSettingsView.DateStaticId == null)
             {
-                reportsSettingsView.DateStaticId = (int) Constants.DatesStaticIds.Today;
+                reportsSettings.DateStaticId = (int) Constants.DatesStaticIds.Today;
+            }
+            else
+            {
+                reportsSettings.DateFrom = null;
+                reportsSettings.DateTo = null;
+                
+                reportsSettings.DateStaticId = reportsSettingsView.DateStaticId ?? (int)Constants.DatesStaticIds.Today;
             }
 
             return reportsSettings;

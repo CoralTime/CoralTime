@@ -58,7 +58,8 @@ namespace CoralTime
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            if (bool.Parse(Configuration["UseMySql"]))
+            bool.TryParse(Configuration["UseMySql"], out var useMySql);
+            if (useMySql)
             {
                 // Add MySQL support (At first create DB on MySQL server.)
                 //services.AddDbContext<AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnectionMySQL"), b => b.MigrationsAssembly("CoralTime")));
