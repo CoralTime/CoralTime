@@ -62,14 +62,16 @@ namespace CoralTime
             if (useMySql)
             {
                 // Add MySQL support (At first create DB on MySQL server.)
-                //services.AddDbContext<AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnectionMySQL"), b => b.MigrationsAssembly("CoralTime")));
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseMySql(Configuration.GetConnectionString("DefaultConnectionMySQL"),
+                    b => b.MigrationsAssembly("CoralTime.MySqlMigrations")));
             }
             else
             {
                 // Sql Server
                 services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             }
-
+            
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
@@ -185,6 +187,7 @@ namespace CoralTime
             services.AddSingleton<IConfiguration>(sp => Configuration);
 
             services.AddScoped<BaseService>();
+            
             services.AddScoped<UnitOfWork>();
             services.AddScoped<IPersistedGrantDbContext, AppDbContext>();
 

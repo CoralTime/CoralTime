@@ -12,20 +12,17 @@ namespace CoralTime.DAL.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        protected int CurrentClientId;
-        private DbContext _db;
+        private readonly DbContext _db;
         private readonly DbSet<T> _dbSet;
-        private readonly IMemoryCache _memoryCache;
-        protected readonly ICacheManager CacheManager;
+        private readonly ICacheManager _cacheManager;
         private static readonly object LockObject = new object();
-        protected readonly string _userId;
+        private readonly string _userId;
 
         protected BaseRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
         {
             _db = context;
             _dbSet = _db.Set<T>();
-            _memoryCache = memoryCache;
-            CacheManager = CacheMemoryFactory.CreateCacheMemory(_memoryCache);
+            _cacheManager = CacheMemoryFactory.CreateCacheMemory(memoryCache);
 
             _userId = userId;
         }
@@ -81,16 +78,16 @@ namespace CoralTime.DAL.Repositories
             try
             {
                 var key = GenerateCacheKey();
-                var items = CacheManager.CachedListGet<T>(key);
+                var items = _cacheManager.CachedListGet<T>(key);
                 if (items == null)
                 {
                     lock (LockObject)
                     {
-                        items = CacheManager.CachedListGet<T>(key);
+                        items = _cacheManager.CachedListGet<T>(key);
                         if (items == null)
                         {
                             items = GetQueryAsNoTrackingWithIncludes().ToList();
-                            CacheManager.LinkedPutList(key, items);
+                            _cacheManager.LinkedPutList(key, items);
                         }
                     }
                 }
@@ -105,7 +102,7 @@ namespace CoralTime.DAL.Repositories
 
         public virtual void LinkedCacheClear()
         {
-            CacheManager.LinkedCacheClear<T>();
+            _cacheManager.LinkedCacheClear<T>();
         }
 
         #endregion
@@ -137,7 +134,7 @@ namespace CoralTime.DAL.Repositories
         public void ClearEntityCache()
         {
             var key = GenerateCacheKey();
-            CacheManager.Remove(key);
+            _cacheManager.Remove(key);
         }
 
         #endregion
@@ -188,8 +185,6 @@ namespace CoralTime.DAL.Repositories
         {
             if (entity is ILogChanges entityILogChange)
             {
-                //var t = Db.ChangeTracker.Entries().Where(x => x.State == EntityState.Modified);
-                //var canWrite = t.Any(x => ((DateTime)x.CurrentValues["LastUpdateDate"]).ToString("G") > ((DateTime)x.OriginalValues["LastUpdateDate"]).ToString("G"));
                 entityILogChange.LastEditorUserId = _userId;
                 entityILogChange.LastUpdateDate = DateTime.Now;
 
