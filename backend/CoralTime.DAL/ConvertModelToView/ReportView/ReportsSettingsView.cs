@@ -9,6 +9,7 @@ namespace CoralTime.DAL.ConvertModelToView
     {
         public static ReportsSettingsView GetViewWithDefaultValues(this ReportsSettingsView reportsSettingsView)
         {
+            reportsSettingsView.DateStaticId = (int)Constants.DatesStaticIds.Today;
             reportsSettingsView.GroupById = (int) Constants.ReportsGroupByIds.Date;
             reportsSettingsView.ShowColumnIds =
                 new[]
@@ -18,37 +19,28 @@ namespace CoralTime.DAL.ConvertModelToView
                     (int) Constants.ShowColumnModelIds.ShowNotes,
                     (int) Constants.ShowColumnModelIds.ShowStartFinish
                 };
-            reportsSettingsView.DateStaticId = (int) Constants.DatesStaticIds.Today;
 
             return reportsSettingsView;
         }
 
         public static ReportsSettingsView GetView(this ReportsSettings reportsSettings)
         {
-            var reportsSettingsView = new ReportsSettingsView();
-
-            reportsSettingsView.GroupById = reportsSettings?.GroupById ?? (int) Constants.ReportsGroupByIds.Date;
-            reportsSettingsView.ShowColumnIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterShowColumnIds);
-
-            if (reportsSettings.DateFrom == null && reportsSettings.DateTo == null)
+            return new ReportsSettingsView
             {
-                reportsSettingsView.DateStaticId = reportsSettings.DateStaticId;
-            }
-            else
-            {
-                reportsSettingsView.DateStaticId = null;
-                reportsSettingsView.DateFrom = reportsSettings.DateFrom;
-                reportsSettingsView.DateTo = reportsSettings.DateTo;
-            }
+                GroupById = reportsSettings?.GroupById,
+                ShowColumnIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterShowColumnIds),
 
-            reportsSettingsView.ClientIds = CommonHelpers.ConvertStringToArrayOfNullableInts(reportsSettings.FilterClientIds);
-            reportsSettingsView.ProjectIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterProjectIds);
-            reportsSettingsView.MemberIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterMemberIds);
+                DateStaticId = reportsSettings.DateStaticId,
+                DateFrom = reportsSettings.DateFrom,
+                DateTo = reportsSettings.DateTo,
 
-            reportsSettingsView.QueryName = reportsSettings.QueryName;
-            reportsSettingsView.QueryId = reportsSettings.Id;
+                ClientIds = CommonHelpers.ConvertStringToArrayOfNullableInts(reportsSettings.FilterClientIds),
+                ProjectIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterProjectIds),
+                MemberIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterMemberIds),
 
-            return reportsSettingsView;
+                QueryName = reportsSettings.QueryName,
+                QueryId = reportsSettings.Id,
+            };
         }
     }
 }

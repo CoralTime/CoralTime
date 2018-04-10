@@ -19,11 +19,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             CheckAndSaveCurrentQuery(reportsGridView);
 
-            var groupById = reportsGridView.CurrentQuery.GroupById;
-            var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
-
             var dateFrom = reportsGridView.CurrentQuery.DateFrom;
             var dateTo = reportsGridView.CurrentQuery.DateTo;
+
+            var groupById = reportsGridView.CurrentQuery.GroupById;
+            var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
 
             var dateFormatId = reportsGridView.DateFormatId;
 
@@ -81,24 +81,29 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView)
         {
+            var queryDateFrom = reportsGridView.CurrentQuery.DateFrom;
+            var queryDateTo = reportsGridView.CurrentQuery.DateTo;
+
+            var memberImpersonatedId = MemberImpersonated.Id;
             var currentQuery = reportsGridView.CurrentQuery;
-            var currentQueryFromCache = _reportsSettingsService.GetCurrentOrCreateDefaultQuery();
+            var currentQueryFromCache = GetCurrentQuery(memberImpersonatedId);
 
-            // TODO realize comparing two objects!
+            // TODO best result if you can realize comparing two objects by fields in class!
             if (currentQuery.DateStaticId != currentQueryFromCache.DateStaticId ||
-                currentQuery.DateFrom != currentQueryFromCache.DateFrom ||
-                currentQuery.DateTo != currentQueryFromCache.DateTo ||
                 currentQuery.GroupById != currentQueryFromCache.GroupById ||
-
-                /*currentQuery.ClientIds != currentQueryFromCache.ClientIds ||*/ currentQuery.ClientIds.Length > 0 ||
-                /*currentQuery.MemberIds != currentQueryFromCache.MemberIds ||*/ currentQuery.MemberIds.Length > 0 || 
-                /*currentQuery.ProjectIds != currentQueryFromCache.ProjectIds || */ currentQuery.ProjectIds.Length > 0 ||
-
-                //currentQuery.QueryId != currentQueryFromCache.QueryId || //TODO need?
+                currentQuery.ClientIds.Length > 0 || currentQuery.MemberIds.Length > 0 || currentQuery.ProjectIds.Length > 0 ||
                 currentQuery.QueryName != currentQueryFromCache.QueryName ||
                 currentQuery.ShowColumnIds.Length != currentQueryFromCache.ShowColumnIds.Length)
             {
-                reportsGridView.CurrentQuery = _reportsSettingsService.SaveCurrentQuery(currentQuery);
+                reportsGridView.CurrentQuery = _reportsSettingsService.UpdateCurrentQuery(currentQuery, memberImpersonatedId);
+            }
+
+            var calculateByStaticIdDateFrom = reportsGridView.CurrentQuery.DateFrom;
+            var calculateByStaticIdDateTo = reportsGridView.CurrentQuery.DateTo;
+
+            if (queryDateFrom != calculateByStaticIdDateFrom && queryDateTo != calculateByStaticIdDateTo)
+            {
+                throw new CoralTimeDangerException("DateFrom, DateTo from query not equals new DateFrom, DateTo that calculated by DateStaticId");
             }
         }
 
@@ -108,15 +113,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private List<TimeEntry> GetFilteredTimeEntries(ReportsGridView reportsGridView)
         {
-            var currentMember = MemberImpersonated; // Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
+            var memberImpersonated = MemberImpersonated;
 
             var dateFrom = new DateTime();
             var dateTo = new DateTime();
 
-            FillDatesByDateStaticOrDateFromTo(reportsGridView, currentMember, ref dateFrom, ref dateTo);
+            FillDatesByDateStaticOrDateFromTo(reportsGridView, ref dateFrom, ref dateTo);
 
             // By Dates (default grouping, i.e. "Group by None"; direct order).
-            var timeEntriesByDateOfUser = GetTimeEntryByDate(currentMember, dateFrom, dateTo);
+            var timeEntriesByDateOfUser = GetTimeEntryByDate(memberImpersonated, dateFrom, dateTo);
 
             // By Projects.
             if (reportsGridView.CurrentQuery?.ProjectIds != null && reportsGridView.CurrentQuery.ProjectIds.Length > 0)
@@ -141,7 +146,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return timeEntriesByDateOfUser.ToList();
         }
 
-        private void FillDatesByDateStaticOrDateFromTo(ReportsGridView reportsGridView, Member currentMember, ref DateTime dateFrom, ref DateTime dateTo)
+        private void FillDatesByDateStaticOrDateFromTo(ReportsGridView reportsGridView, ref DateTime dateFrom, ref DateTime dateTo)
         {
             var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
             var isFilledOnlyDateStaticId = dateStaticId != null && reportsGridView.CurrentQuery?.DateFrom == null && reportsGridView.CurrentQuery?.DateTo == null;
@@ -154,16 +159,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             
             if (isFilledOnlyDateStaticId)
             {
-                var datesStaticInfo = CreateDatesStaticInfo(currentMember).FirstOrDefault(x => x.Id == dateStaticId);
-                if (datesStaticInfo != null)
-                {
-                    dateFrom = datesStaticInfo.DateFrom;
-                    dateTo = datesStaticInfo.DateTo;
-                }
-                else
-                {
-                    throw new CoralTimeDangerException($"Incorrect DateStaticId = { dateStaticId }");
-                }
+                var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
+
+                dateFrom = dateStaticExtend.DateFrom;
+                dateTo = dateStaticExtend.DateTo;
             }
 
             if (isFilledOnlyDateFromDateTo)
@@ -189,7 +188,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .Include(x => x.Project).ThenInclude(x => x.Client)
                 .Include(x => x.Member.User)
                 .Include(x => x.TaskType)
-                .Where(t => t.Date.Date >= dateFrom.Date && t.Date.Date <= dateTo.Date);
+                .Where(t => t.Date.Date >= dateFrom.Date && t.Date.Date <= dateTo.Date && t.TimeTimerStart <= 0); // TODO update logic to set values for start/stop timer in TimeEntry create method!
 
             #region Constrain for Admin: return all TimeEntries.
 

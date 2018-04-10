@@ -8,6 +8,8 @@ using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System.Collections.Generic;
 using System.Linq;
 using CoralTime.Common.Helpers;
+using CoralTime.Common.Exceptions;
+using CoralTime.DAL.ConvertViewToModel;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -66,16 +68,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         };
 
+        private ReportDropDownsDateStaticView[] DatesStaticInfo { get; }
+
         #endregion
 
         public ReportDropDownView GetReportsDropDowns()
         {
-            var currentQuery = _reportsSettingsService.GetCurrentOrCreateDefaultQuery();
+            var memberImpersonated = MemberImpersonated;
 
             return new ReportDropDownView
             {
-                CurrentQuery = currentQuery,
-                Values = CreateDropDownValues(MemberImpersonated)
+                CurrentQuery = GetCurrentQuery(memberImpersonated.Id) ?? CreateQueryWithDefaultValues(memberImpersonated.Id),
+                Values = CreateDropDownValues(memberImpersonated)
             };
         }
 
@@ -88,12 +92,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             return new ReportDropDownValues
             {
-                Filters = CreateReportClientViews(memberImpersonated, clients, managerRoleId, members, memberRoleId),
+                Filters = CreateFilters(memberImpersonated, clients, managerRoleId, members, memberRoleId),
                 UserDetails = CreateUserDetails(memberImpersonated),
-                CustomQueries = CreateValuesCustomQueries(memberImpersonated).OrderBy(x => x.QueryName).ToList(),
+                CustomQueries = GetCustomQueries(memberImpersonated).OrderBy(x => x.QueryName).ToList(),
                 GroupBy = groupByInfo,
                 ShowColumns = showColumnsInfo,
-                DateStatic = CreateDatesStaticInfo(memberImpersonated)
+                DateStatic = DatesStaticInfo
             };
         }
 
@@ -160,7 +164,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return clients;
         }
 
-        private List<ReportClientView> CreateReportClientViews(Member memberImpersonated, List<Client> clients, int managerRoleId, List<Member> members, int memberRoleId)
+        private List<ReportClientView> CreateFilters(Member memberImpersonated, List<Client> clients, int managerRoleId, List<Member> members, int memberRoleId)
         {
             var reportClientView = new List<ReportClientView>();
 
@@ -228,28 +232,38 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             };
         }
 
-        private List<ReportsSettingsView> CreateValuesCustomQueries(Member memberImpersonated)
+        private List<ReportsSettingsView> GetCustomQueries(Member memberImpersonated)
         {
-            var valuesCustomQueries = new List<ReportsSettingsView>();
-
             var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(memberImpersonated.Id).Where(x => x.QueryName != null);
 
-            foreach (var reportSettings in customQueries)
-            {
-                var reportsSettingsView = reportSettings.GetView();
-
-                valuesCustomQueries.Add(reportsSettingsView);
-            }
-
-            return valuesCustomQueries;
+            return customQueries.Select(x => x.GetView()).ToList();
         }
 
-        private ReportDropDownsDateStaticView[] CreateDatesStaticInfo(Member memberImpersonated)
+        private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
+        {
+            var dateStaticInfo = DatesStaticInfo.FirstOrDefault(x => x.Id == dateStaticId);
+            if (dateStaticInfo != null)
+            {
+                var dateStaticExtend = new ReportDropDownsDateStaticExtendView
+                {
+                    DateStatic = DatesStaticInfo,
+
+                    DateFrom = dateStaticInfo.DateFrom,
+                    DateTo = dateStaticInfo.DateTo
+                };
+
+                return dateStaticExtend;
+            }
+
+            throw new CoralTimeDangerException($"Incorrect DateStaticId = { dateStaticId }");
+        }
+
+        private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
         {
             var today = DateTime.Today.Date;
             var yesterday = today.AddMilliseconds(-1);
 
-            var memberDayOfWeekStart = memberImpersonated.WeekStart == Constants.WeekStart.Monday
+            var memberDayOfWeekStart = MemberImpersonated.WeekStart == Constants.WeekStart.Monday
                 ? DayOfWeek.Monday
                 : DayOfWeek.Sunday;
 
@@ -333,6 +347,32 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             };
 
             return datesStaticInfo;
+        }
+
+        private ReportsSettingsView GetCurrentQuery(int memberImpersonatedId)
+        {
+            var reportsSettings = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(memberImpersonatedId).FirstOrDefault(x => x.IsCurrentQuery);
+
+            return reportsSettings?.GetView();
+        }
+
+        private ReportsSettingsView CreateQueryWithDefaultValues(int memberImpersonatedId)
+        {
+            var reportsSettingsView = new ReportsSettingsView().GetViewWithDefaultValues();
+
+            var dateStaticExtend = CreateDateStaticExtend(reportsSettingsView.DateStaticId);
+            reportsSettingsView.DateFrom = dateStaticExtend.DateFrom;
+            reportsSettingsView.DateTo = dateStaticExtend.DateTo;
+
+            var reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberImpersonatedId);
+
+            Uow.ReportsSettingsRepository.Insert(reportsSettings);
+            Uow.Save();
+            Uow.ReportsSettingsRepository.LinkedCacheClear();
+
+            reportsSettingsView = reportsSettings.GetView();
+
+            return reportsSettingsView;
         }
     }
 }
