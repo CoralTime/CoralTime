@@ -12,6 +12,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             : base(uow, mapper)
         {
             _reportsSettingsService = reportsSettingsService;
+
+            DatesStaticInfo = GetDatesStaticInfo();
         }
 
         public string SingleFilteredProjectName { get; private set; } = null;
