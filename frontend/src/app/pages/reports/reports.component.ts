@@ -5,13 +5,13 @@ import { LoadingBarService } from '@ngx-loading-bar/core';
 import { ReportsService, } from '../../services/reposts.service';
 import {
 	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn
+	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn, DateStatic
 } from '../../models/reports';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
 import { ArrayUtils } from '../../core/object-utils';
 import { AuthService } from '../../core/auth/auth.service';
 import { DateUtils } from '../../models/calendar';
-import { DatePeriod, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
+import { DatePeriod, DateResponse, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
 import { User } from '../../models/user';
 import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
 import { NotificationService } from '../../core/notification.service';
@@ -67,10 +67,10 @@ export class ReportsComponent implements OnInit {
 	canToggleDatepicker: boolean = true;
 	dateFormat: string;
 	dateFormatId: number;
-	datePeriod: DatePeriod;
+	dateResponse: DateResponse;
 	dateString: string = 'This Week';
 	firstDayOfWeek: number;
-	oldDatePeriod: DatePeriod;
+	oldDateResponse: DateResponse;
 	oldDateString: string;
 	userInfo: User;
 
@@ -96,7 +96,7 @@ export class ReportsComponent implements OnInit {
 			this.dateFormat = this.userInfo.dateFormat;
 			this.dateFormatId = this.userInfo.dateFormatId;
 			this.firstDayOfWeek = this.userInfo.weekStart;
-			this.rangeDatepickerService.setDatePeriodList(this.userInfo.weekStart);
+			this.rangeDatepickerService.dateStaticList = data.reportFilters.values.dateStatic;
 			this.setReportDropdowns(data.reportFilters);
 		});
 		this.isUsersFilterShown = this.authService.isUserAdminOrManager;
@@ -125,12 +125,14 @@ export class ReportsComponent implements OnInit {
 		this.reportFilters = new ReportFilters(reportFilters);
 		this.showColumnIds = this.reportFilters.showColumnIds || [];
 
-		if (reportFilters.dateFrom && reportFilters.dateTo) {
-			this.datePeriodOnChange(new DatePeriod(moment(reportFilters.dateFrom), moment(reportFilters.dateTo)));
-		} else {
-			this.datePeriod = this.rangeDatepickerService.getDatePeriodList()['This Week'];
-			this.datePeriodOnChange(this.datePeriod);
+		let p: DateStatic;
+		if (reportFilters.dateStaticId > 0) {
+			p = this.reportDropdowns.values.dateStatic.find((dateStatic) => dateStatic.id === reportFilters.dateStaticId);
 		}
+		this.datePeriodOnChange({
+			datePeriod: new DatePeriod(moment(reportFilters.dateFrom || p.dateFrom), moment(reportFilters.dateTo  || p.dateTo)),
+			dateStaticId: reportFilters.dateStaticId
+		});
 	}
 
 	private setReportsQueryItems(reportDropdowns: ReportDropdowns): void {
@@ -145,9 +147,9 @@ export class ReportsComponent implements OnInit {
 	// GRID DISPLAYING
 
 	getReportGrid(isCustomQuery?: boolean): void {
-		this.reportFilters.dateFrom = this.convertMomentToString(this.datePeriod.dateFrom);
-		this.reportFilters.dateTo = this.convertMomentToString(this.datePeriod.dateTo)
-			|| this.convertMomentToString(this.datePeriod.dateFrom);
+		this.reportFilters.dateFrom = this.convertMomentToString(this.dateResponse.datePeriod.dateFrom);
+		this.reportFilters.dateTo = this.convertMomentToString(this.dateResponse.datePeriod.dateTo);
+		this.reportFilters.dateStaticId = this.dateResponse.dateStaticId;
 		if (!isCustomQuery) {
 			this.reportFilters.queryId = null;
 			this.reportFilters.queryName = null;
@@ -313,7 +315,7 @@ export class ReportsComponent implements OnInit {
 
 	cancelUpdatingReportGrid(): void {
 		this.dateString = this.oldDateString;
-		this.datePeriod = this.oldDatePeriod;
+		this.dateResponse = this.oldDateResponse;
 		this.closeRangeDatepicker();
 	}
 
@@ -324,7 +326,7 @@ export class ReportsComponent implements OnInit {
 
 	openRangeDatepicker(): void {
 		this.oldDateString = this.dateString;
-		this.oldDatePeriod = this.datePeriod;
+		this.oldDateResponse = this.dateResponse;
 		this.isDatepickerShown = true;
 		setTimeout(() => this.isDatepickerAnimating = true, 300);
 	}
@@ -344,30 +346,30 @@ export class ReportsComponent implements OnInit {
 		this.changeToggleParameter();
 	}
 
-	datePeriodOnChange(datePeriod: DatePeriod): void {
-		this.datePeriod = datePeriod;
-		this.setDateString(datePeriod);
+	datePeriodOnChange(dateResponse: DateResponse): void {
+		this.dateResponse = dateResponse;
+		this.setDateString(dateResponse.datePeriod);
 	}
 
 	getNewPeriod(isNext: boolean = true): void {
-		let dateFrom = this.datePeriod.dateFrom;
-		let dateTo = this.datePeriod.dateTo;
+		let dateFrom = this.dateResponse.datePeriod.dateFrom;
+		let dateTo = this.dateResponse.datePeriod.dateTo;
 
-		if (this.rangeDatepickerService.isIntegerNumberOfMonths(this.datePeriod)) {
+		if (this.rangeDatepickerService.isIntegerNumberOfMonths(this.dateResponse.datePeriod)) {
 			let monthInPeriod = isNext ? dateTo.diff(dateFrom, 'month') + 1 : -(dateTo.diff(dateFrom, 'month') + 1);
-			this.datePeriod = new DatePeriod(
+			this.dateResponse.datePeriod = new DatePeriod(
 				moment().year(dateFrom.year()).month(dateFrom.month() + monthInPeriod).date(1),
 				moment().year(dateTo.year()).month(dateTo.month() + monthInPeriod + 1).date(0)
 			);
 		} else {
 			let daysInPeriod = isNext ? dateTo.diff(dateFrom, 'days') + 1 : -(dateTo.diff(dateFrom, 'days') + 1);
-			this.datePeriod = new DatePeriod(
+			this.dateResponse.datePeriod = new DatePeriod(
 				moment().year(dateFrom.year()).month(dateFrom.month()).date(dateFrom.date() + daysInPeriod),
 				moment().year(dateTo.year()).month(dateTo.month()).date(dateTo.date() + daysInPeriod)
 			);
 		}
 
-		this.setDateString(this.datePeriod);
+		this.setDateString(this.dateResponse.datePeriod);
 		this.getReportGrid();
 	}
 
@@ -476,7 +478,12 @@ export class ReportsComponent implements OnInit {
 	resetFilters(): void {
 		this.queryModel = null;
 		this.reportFilters = new ReportFilters({});
-		this.datePeriodOnChange(this.rangeDatepickerService.getDatePeriodList()['This Week']);
+		let period = this.reportDropdowns.values.dateStatic[1];
+		let dateResponse = {
+			datePeriod: new DatePeriod(moment(period.dateFrom), moment(period.dateTo)),
+			dateStaticId: 2
+		};
+		this.datePeriodOnChange(dateResponse);
 		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
 		this.toggleClient(this.reportFilters.clientIds);
 	}

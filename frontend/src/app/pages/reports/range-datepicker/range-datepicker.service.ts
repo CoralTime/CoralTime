@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CalendarService } from '../../../services/calendar.service';
-import { DateUtils } from '../../../models/calendar';
+import { DateStatic } from '../../../models/reports';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -14,39 +13,23 @@ export class DatePeriod {
 	}
 }
 
+export interface DateResponse {
+	datePeriod: DatePeriod;
+	dateStaticId: number
+}
+
 @Injectable()
 export class RangeDatepickerService {
-	private DATE_PERIOD: any;
-	private currentDay: Date = moment().startOf('day').toDate();
-
-	constructor(private service: CalendarService) {
-	}
-
-	getDatePeriodList(): any {
-		return this.DATE_PERIOD;
-	}
-
-	setDatePeriodList(firstDayOfWeek: number): void {
-		this.DATE_PERIOD = {
-			'Today': this.getToday(),
-			'This Week': this.getCurrentWeek(firstDayOfWeek),
-			'This Month': this.getCurrentMonth(),
-			'This Year': this.getCurrentYear(),
-			'Yesterday': this.getYesterday(),
-			'Last Week': this.getLastWeek(firstDayOfWeek),
-			'Last Month': this.getLastMonth(),
-			'Last Year': this.getLastYear()
-		};
-	}
+	dateStaticList: DateStatic[];
 
 	setDateStringPeriod(period: DatePeriod): string {
-		for (let prop in this.DATE_PERIOD) {
-			if (this.isDatePeriodEqual(period, this.DATE_PERIOD[prop])) {
-				return prop;
+		for (let dateStatic of this.dateStaticList) {
+			if (this.isDatePeriodEqual(period, dateStatic)) {
+				return dateStatic.description;
 			}
 		}
 
-		if (this.isFromPeriod(period, 'This Week')) {
+		if (this.isFromPeriod(period, 1)) {
 			let weekDayFrom = period.dateFrom.toDate().toLocaleString('en-us', {weekday: 'short'});
 			let weekDayTo = period.dateTo.toDate().toLocaleString('en-us', {weekday: 'short'});
 
@@ -60,7 +43,7 @@ export class RangeDatepickerService {
 
 		if (this.isFromOneMonth(period)) {
 			dateString = monthNameFrom + ' ' + this.uniteDays(period);
-			return this.isFromPeriod(period, 'This Year') ? dateString : dateString + ' ' + yearFrom;
+			return this.isFromPeriod(period, 3) ? dateString : dateString + ' ' + yearFrom;
 		}
 
 		monthFormat = this.isIntegerNumberOfMonths(period) ? 'long' : 'short';
@@ -71,7 +54,7 @@ export class RangeDatepickerService {
 
 		if (this.isFromOneYear(period)) {
 			dateString = monthNameFrom + ' ' + monthDayFrom + ' - ' + monthNameTo + ' ' + monthDayTo;
-			return this.isFromPeriod(period, 'This Year') ? dateString : dateString + ', ' + period.dateFrom.year();
+			return this.isFromPeriod(period, 4) ? dateString : dateString + ', ' + period.dateFrom.year();
 		}
 
 		let yearTo = period.dateTo.year();
@@ -79,15 +62,9 @@ export class RangeDatepickerService {
 		return monthNameFrom + ' ' + monthDayFrom + ', ' + yearFrom + ' - ' + monthNameTo + ' ' + monthDayTo + ', ' + yearTo;
 	}
 
-	isDatePeriodEqual(a: DatePeriod, b: DatePeriod): boolean {
-		if (
-			a.dateFrom.toDate().toDateString() === b.dateFrom.toDate().toDateString()
-			&& a.dateTo.toDate().toDateString() === b.dateTo.toDate().toDateString()
-		) {
-			return true;
-		}
-
-		return false;
+	isDatePeriodEqual(a: DatePeriod, b: DateStatic): boolean {
+		return a.dateFrom.toDate().toDateString() === new Date(b.dateFrom).toDateString()
+			&& a.dateTo.toDate().toDateString() === new Date(b.dateTo).toDateString()
 	}
 
 	isIntegerNumberOfMonths(period: DatePeriod): boolean {
@@ -95,65 +72,9 @@ export class RangeDatepickerService {
 		return period.dateFrom.date() === 1 && nextDay.getDate() === 1;
 	}
 
-	private getToday(): DatePeriod {
-		return new DatePeriod(moment().startOf('day'));
-	}
-
-	private getCurrentWeek(firstDayOfWeek: number): DatePeriod {
-		let weekBeginDay: string = this.service.getWeekBeginning(DateUtils.formatDateToString(new Date()), firstDayOfWeek);
-		let weekEndDay: string = DateUtils.formatDateToString(moment(weekBeginDay).toDate().getTime() + 86400 * 6 * 1000);
-
-		return new DatePeriod(moment(weekBeginDay), moment(weekEndDay));
-	}
-
-	private getCurrentMonth(): DatePeriod {
-		let monthBeginDay: Date = new Date(this.currentDay.getFullYear(), this.currentDay.getMonth(), 1);
-		let monthEndDay: Date = new Date(this.currentDay.getFullYear(), this.currentDay.getMonth() + 1, 0);
-
-		return new DatePeriod(moment(monthBeginDay), moment(monthEndDay));
-	}
-
-	private getCurrentYear(): DatePeriod {
-		let yearBeginDay: Date = new Date(this.currentDay.getFullYear(), 0, 1);
-		let yearEndDay: Date = new Date(this.currentDay.getFullYear() + 1, 0, 0);
-
-		return new DatePeriod(moment(yearBeginDay), moment(yearEndDay));
-	}
-
-	private getYesterday(): DatePeriod {
-		let yesterday = (d => new Date(d.setDate(d.getDate() - 1)))(new Date);
-		return new DatePeriod(moment(yesterday).startOf('day'));
-	}
-
-	private getLastWeek(firstDayOfWeek: number): DatePeriod {
-		let currentWeekBeginDay: Date = DateUtils.formatStringToDate(this.service.getWeekBeginning(DateUtils.formatDateToString(this.getToday().dateFrom), firstDayOfWeek));
-		let weekBeginDay: Date = new Date(currentWeekBeginDay.getTime() - 86400 * 7 * 1000);
-		let weekEndDay: Date = new Date(weekBeginDay.getTime() + 86400 * 6 * 1000);
-
-		return new DatePeriod(moment(weekBeginDay), moment(weekEndDay));
-	}
-
-	private getLastMonth(): DatePeriod {
-		let monthBeginDay: Date = new Date(this.currentDay.getFullYear(), this.currentDay.getMonth() - 1, 1);
-		let monthEndDay: Date = new Date(this.currentDay.getFullYear(), this.currentDay.getMonth(), 0);
-
-		return new DatePeriod(moment(monthBeginDay), moment(monthEndDay));
-	}
-
-	private getLastYear(): DatePeriod {
-		let yearBeginDay: Date = new Date(this.currentDay.getFullYear() - 1, 0, 1);
-		let yearEndDay: Date = new Date(this.currentDay.getFullYear(), 0, 0);
-
-		return new DatePeriod(moment(yearBeginDay), moment(yearEndDay));
-	}
-
-	private isSingleDay(period: DatePeriod): boolean {
-		return period.dateFrom.toDate().toDateString() === period.dateTo.toDate().toDateString();
-	}
-
-	private isFromPeriod(period: DatePeriod, periodName: string): boolean {
-		return period.dateFrom.toDate().getTime() >= this.DATE_PERIOD[periodName].dateFrom.toDate().getTime() &&
-			period.dateTo.toDate().getTime() <= this.DATE_PERIOD[periodName].dateTo.toDate().getTime();
+	private isFromPeriod(period: DatePeriod, periodId: number): boolean {
+		return period.dateFrom.toDate().getTime() >= new Date(this.dateStaticList[periodId].dateFrom).getTime() &&
+			period.dateTo.toDate().getTime() <= new Date(this.dateStaticList[periodId].dateTo).getTime();
 	}
 
 	private isFromOneMonth(period: DatePeriod): boolean {
@@ -172,6 +93,10 @@ export class RangeDatepickerService {
 
 		return period.dateFrom.toDate().getTime() >= yearBeginDay.getTime() &&
 			period.dateTo.toDate().getTime() <= yearEndDay.getTime();
+	}
+
+	private isSingleDay(period: DatePeriod): boolean {
+		return period.dateFrom.toDate().toDateString() === period.dateTo.toDate().toDateString();
 	}
 
 	private uniteDays(period: DatePeriod): string {
