@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using System.Linq;
 using CoralTime.Common.Exceptions;
+using IdentityServer4.Extensions;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -17,6 +18,11 @@ namespace CoralTime.DAL.Repositories
 
         public ApplicationUser LinkedCacheGetByUserNameAndCheck(string userName)
         {
+            if (userName.IsNullOrEmpty())
+            {
+                return null;
+            }
+
             var relatedUserByName = LinkedCacheGetByName(userName);
             if (relatedUserByName == null)
             {
