@@ -54,7 +54,7 @@ export class RangeDatepickerService {
 
 		if (this.isFromOneYear(period)) {
 			dateString = monthNameFrom + ' ' + monthDayFrom + ' - ' + monthNameTo + ' ' + monthDayTo;
-			return this.isFromPeriod(period, 4) ? dateString : dateString + ', ' + period.dateFrom.year();
+			return this.isFromPeriod(period, 3) ? dateString : dateString + ', ' + period.dateFrom.year();
 		}
 
 		let yearTo = period.dateTo.year();
