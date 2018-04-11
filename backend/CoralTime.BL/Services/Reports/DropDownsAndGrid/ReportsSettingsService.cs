@@ -50,11 +50,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     Uow.Save();
                     Uow.ReportsSettingsRepository.LinkedCacheClear();
                 }
-                
-                throw new CoralTimeDangerException("You try to save existed custom query");
+                else
+                {
+                    throw new CoralTimeDangerException("You try to save existed custom query");
+                }
             }
-
-            throw new CoralTimeDangerException("You try to save not custom query");
+            else
+            {
+                throw new CoralTimeDangerException("You try to save not custom query");
+            }
         }
 
         public void DeleteCustomQuery(int queryId)
