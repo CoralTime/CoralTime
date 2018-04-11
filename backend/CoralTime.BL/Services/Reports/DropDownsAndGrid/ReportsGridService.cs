@@ -145,15 +145,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private void FillDatesByDateStaticOrDateFromTo(ReportsGridView reportsGridView, ref DateTime dateFrom, ref DateTime dateTo)
         {
             var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
-            var isFilledOnlyDateStaticId = dateStaticId != null && reportsGridView.CurrentQuery?.DateFrom == null && reportsGridView.CurrentQuery?.DateTo == null;
+            var isFilledDateStaticIdAndDateFromDateTo = dateStaticId != null && reportsGridView.CurrentQuery?.DateFrom != null && reportsGridView.CurrentQuery?.DateTo != null;
             var isFilledOnlyDateFromDateTo = dateStaticId == null && reportsGridView.CurrentQuery?.DateFrom != null && reportsGridView.CurrentQuery?.DateTo != null;
 
-            if (!isFilledOnlyDateStaticId && !isFilledOnlyDateFromDateTo)
+            if (!isFilledDateStaticIdAndDateFromDateTo && !isFilledOnlyDateFromDateTo)
             {
                 throw new CoralTimeDangerException("Wrong input conditional: to get entities by DateStaticId or Date From/To properties.");
             }
             
-            if (isFilledOnlyDateStaticId)
+            if (isFilledDateStaticIdAndDateFromDateTo)
             {
                 var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
 
