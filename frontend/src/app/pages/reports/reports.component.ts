@@ -125,12 +125,8 @@ export class ReportsComponent implements OnInit {
 		this.reportFilters = new ReportFilters(reportFilters);
 		this.showColumnIds = this.reportFilters.showColumnIds || [];
 
-		let p: DateStatic;
-		if (reportFilters.dateStaticId > 0) {
-			p = this.reportDropdowns.values.dateStatic.find((dateStatic) => dateStatic.id === reportFilters.dateStaticId);
-		}
 		this.datePeriodOnChange({
-			datePeriod: new DatePeriod(moment(reportFilters.dateFrom || p.dateFrom), moment(reportFilters.dateTo  || p.dateTo)),
+			datePeriod: new DatePeriod(moment(reportFilters.dateFrom), moment(reportFilters.dateTo)),
 			dateStaticId: reportFilters.dateStaticId
 		});
 	}
@@ -150,6 +146,7 @@ export class ReportsComponent implements OnInit {
 		this.reportFilters.dateFrom = this.convertMomentToString(this.dateResponse.datePeriod.dateFrom);
 		this.reportFilters.dateTo = this.convertMomentToString(this.dateResponse.datePeriod.dateTo);
 		this.reportFilters.dateStaticId = this.dateResponse.dateStaticId;
+
 		if (!isCustomQuery) {
 			this.reportFilters.queryId = null;
 			this.reportFilters.queryName = null;
