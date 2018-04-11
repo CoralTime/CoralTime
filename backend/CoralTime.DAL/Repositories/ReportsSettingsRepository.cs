@@ -17,24 +17,14 @@ namespace CoralTime.DAL.Repositories
                 .Include(x => x.Member);
         }
 
-        public List<ReportsSettings> GetEntityOutOfContex_ByMemberId(int memberId)
-        {
-            return GetQueryAsNoTrackingWithIncludes().Where(x => x.MemberId == memberId).ToList();
-        }
-
         public List<ReportsSettings> GetEntitiesFromContex_ByMemberId(int memberId)
         {
             return GetQueryWithIncludes().Where(x => x.MemberId == memberId).ToList();
         }
 
-        public ReportsSettings GetEntityOutOfContex_ByMemberIdQueryId(int memberId, int? queryId)
+        public ReportsSettings GetEntityFromContex_ByMemberIdQueryId(int memberId, int? queryId)
         {
-            return GetQueryAsNoTrackingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
-        }
-
-        public ReportsSettings GetEntityOutOfContex_ByMemberIdQueryName(int memberId, string queryName)
-        {
-            return GetQueryAsNoTrackingWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
+            return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
         }
 
         public ReportsSettings GetEntityFromContext_ByMemberIdQueryName(int memberId, string queryName)
@@ -45,11 +35,6 @@ namespace CoralTime.DAL.Repositories
         public List<ReportsSettings> LinkedCacheGetByMemberId(int memberId)
         {
             return LinkedCacheGetList().Where(x => x.MemberId == memberId).ToList();
-        }
-
-        public ReportsSettings LinkedCacheGetByMemberIdQueryName(int memberId, string queryName)
-        {
-            return LinkedCacheGetList().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
         }
     }
 }

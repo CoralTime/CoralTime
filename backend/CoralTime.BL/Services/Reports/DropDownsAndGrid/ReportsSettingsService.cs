@@ -63,13 +63,16 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public void DeleteCustomQuery(int queryId)
         {
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityOutOfContex_ByMemberIdQueryId(MemberImpersonated.Id, queryId);
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberIdQueryId(MemberImpersonated.Id, queryId);
 
-            CheckCustomQueryForThisMember(queryId, getReportsSettingsByid);
+            if (getReportsSettingsByid == null)
+            {
+                throw new CoralTimeEntityNotFoundException($"There is no record for this member by id = {queryId}");
+            }
 
             if (!IsDefaultQuery(getReportsSettingsByid.QueryName))
             {
-                Uow.ReportsSettingsRepository.Delete(queryId);
+                Uow.ReportsSettingsRepository.Delete(getReportsSettingsByid);
                 Uow.Save();
 
                 Uow.ReportsSettingsRepository.LinkedCacheClear();
@@ -93,14 +96,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 allQueries.ForEach(query => query.IsCurrentQuery = false);
                 Uow.ReportsSettingsRepository.UpdateRange(allQueries);
             }
-        }
-
-        private void CheckCustomQueryForThisMember(int? id, ReportsSettings reportsSettings)
-        {
-            if (reportsSettings == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"There is no record for this member by id = {id}");
-            }
-        }
+        }      
     }
 }
