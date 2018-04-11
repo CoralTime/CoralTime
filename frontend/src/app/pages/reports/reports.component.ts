@@ -375,6 +375,11 @@ export class ReportsComponent implements OnInit {
 		setTimeout(() => this.canToggleDatepicker = true, 300);
 	}
 
+	private checkIsFromStaticDates(): void {
+		let dateStatic = this.reportDropdowns.values.dateStatic.find((dateStatic) => dateStatic.description === this.dateString);
+		this.dateResponse.dateStaticId = dateStatic ? dateStatic.id : null;
+	}
+
 	private convertMomentToString(moment: Moment): string {
 		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
 	}
@@ -382,6 +387,7 @@ export class ReportsComponent implements OnInit {
 	private setDateString(period: DatePeriod): void {
 		let selectedRange = new DatePeriod(period.dateFrom, period.dateTo);
 		this.dateString = this.rangeDatepickerService.setDateStringPeriod(selectedRange);
+		this.checkIsFromStaticDates();
 	}
 
 	// SEND REPORTS

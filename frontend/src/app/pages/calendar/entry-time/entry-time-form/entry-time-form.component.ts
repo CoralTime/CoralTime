@@ -196,7 +196,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private isTimerValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid(true)) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
 			return false;
 		}
 
@@ -237,7 +237,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 					return null;
 				},
 				error => {
-					this.notificationService.danger('Error changing Timer status');
+					this.notificationService.danger('Error changing Timer status.');
 					return error;
 				});
 	}
@@ -345,11 +345,28 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.isRequestLoading = false;
 
 				if (!this.currentTimeEntry.id) {
-					this.notificationService.danger('Error creating Time Entry');
+					this.notificationService.danger('Error creating Time Entry.');
 				} else {
-					this.notificationService.danger('Error changing Time Entry');
+					this.notificationService.danger('Error changing Time Entry.');
 				}
 			});
+	}
+
+	private isCurrentTrackedTimeValid(isStrongValidation?: boolean): boolean {
+		this.setDayInfo();
+		if (isStrongValidation) {
+			return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
+				+ this.currentTimeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+		} else {
+			return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
+				+ this.currentTimeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
+		}
+	}
+
+	private isEstimatedTimeValid(): boolean {
+		this.setDayInfo();
+		return this.totalEstimatedTimeForDay - this.timeEntry.timeValues.timeEstimated
+			+ this.currentTimeEntry.timeValues.timeEstimated < MAX_TIMER_VALUE;
 	}
 
 	private isFromToTimeValid(): boolean {
@@ -361,17 +378,26 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			});
 	}
 
+	private isFromToTimeValid2(): boolean {
+		return this.currentTimeEntry.timeValues.timeFrom > 0
+			&& this.currentTimeEntry.timeValues.timeTo < MAX_TIMER_VALUE;
+	}
+
 	private isSubmitDataValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid()) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
 			return false;
 		}
 		if (!this.isEstimatedTimeValid()) {
-			this.notificationService.danger('Total planned time can\'t be more than 24 hours');
+			this.notificationService.danger('Total planned time can\'t be more than 24 hours.');
 			return false;
 		}
 		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid()) {
-			this.notificationService.danger('Selected time period already exists');
+			this.notificationService.danger('Selected time period already exists.');
+			return false;
+		}
+		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid2()) {
+			this.notificationService.danger('Selected time period should be within one day.');
 			return false;
 		}
 
@@ -382,23 +408,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		if (this.timerSubscription) {
 			this.timerSubscription.unsubscribe();
 		}
-	}
-
-	isCurrentTrackedTimeValid(isStrongValidation?: boolean): boolean {
-		this.setDayInfo();
-		if (isStrongValidation) {
-			return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
-				+ this.currentTimeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
-		} else {
-			return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
-				+ this.currentTimeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
-		}
-	}
-
-	isEstimatedTimeValid(): boolean {
-		this.setDayInfo();
-		return this.totalEstimatedTimeForDay - this.timeEntry.timeValues.timeEstimated
-			+ this.currentTimeEntry.timeValues.timeEstimated < MAX_TIMER_VALUE;
 	}
 
 	private getFormHeight(): void {
