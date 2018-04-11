@@ -28,7 +28,8 @@
                     </div>
                     <ct-range-datepicker *ngIf="isDatepickerShown"
                                          [class.ct-datepicker-opened]="isDatepickerAnimating"
-                                         [datePeriod]="datePeriod"
+                                         [dateResponse]="dateResponse"
+                                         [datePeriodList]="reportDropdowns?.values.dateStatic"
                                          [firstDayOfWeek]="firstDayOfWeek"
                                          (clickOutside)="toggleRangeDatepicker($event)"
                                          (onPeriodChanged)="datePeriodOnChange($event)"
@@ -124,8 +125,8 @@
             </div>
         </div>
 
-        <div *ngIf="datePeriod.dateFrom && datePeriod.dateTo" class="ct-period-for-print ct-print-mode">
-            Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}
+        <div *ngIf="dateResponse.datePeriod" class="ct-period-for-print ct-print-mode">
+            Period: {{formatDate(dateResponse.datePeriod.dateFrom)}} - {{formatDate(dateResponse.datePeriod.dateTo)}}
         </div>
         <div class="ct-reports-data" #scrollContainer>
             <ct-reports-grid *ngFor="let grid of gridData"

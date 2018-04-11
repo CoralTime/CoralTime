@@ -32,6 +32,10 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 			return next.handle(req);
 		}
 
+		if (this.authService.isRefreshTokenExpired()) {
+			this.authService.logout(false, true);
+		}
+
 		let observable = new Observable<HttpEvent<any>>((subscriber) => {
 			let originalRequestSubscription = next.handle(req)
 				.subscribe((response) => {
