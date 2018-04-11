@@ -52,7 +52,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 						}
 
 						if (err.status === 403) {
-							this.notificationService.danger('You don\'t have permission for this action');
+							this.notificationService.danger('You don\'t have permission for this action.');
 						}
 
 						if (err.status === 500) {
