@@ -260,20 +260,20 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
         {
-            var today = DateTime.Today.Date;
+            var today = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).Date;
             var yesterday = today.AddDays(-1);
 
             var memberDayOfWeekStart = MemberImpersonated.WeekStart == Constants.WeekStart.Monday
                 ? DayOfWeek.Monday
                 : DayOfWeek.Sunday;
 
-            CommonHelpers.SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, DateTime.Now.Date, memberDayOfWeekStart);
+            CommonHelpers.SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, today, memberDayOfWeekStart);
 
             CommonHelpers.SetRangeOfThisMonthByDate(out var thisMonthByTodayFirstDate, out var thisMonthByTodayLastDate, today);
 
             CommonHelpers.SetRangeOfThisYearByDate(out var thisYearByTodayFirstDate, out var thisYearByTodayLastDate, today);
 
-            CommonHelpers.SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, DateTime.Now.Date, memberDayOfWeekStart);
+            CommonHelpers.SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, today, memberDayOfWeekStart);
 
             CommonHelpers.SetRangeOfLastMonthByDate(out var lastMonthByTodayFirstDate, out var lastMonthByTodayLastDate, today);
 
