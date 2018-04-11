@@ -86,32 +86,21 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             var memberImpersonatedId = MemberImpersonated.Id;
             var currentQuery = reportsGridView.CurrentQuery;
-            //var currentQueryFromCache = GetCurrentQuery(memberImpersonatedId);
 
-            //// TODO best result if you can realize comparing two objects by fields in class!
-            //if (currentQuery.DateStaticId != currentQueryFromCache.DateStaticId ||
-            //    currentQuery.GroupById != currentQueryFromCache.GroupById ||
-            //    currentQuery.ClientIds.Length == currentQueryFromCache.ClientIds.Length || 
-            //    currentQuery.MemberIds.Length == currentQueryFromCache.MemberIds.Length ||
-            //    currentQuery.MemberIds.Length == currentQueryFromCache.ProjectIds.Length ||
-            //    currentQuery.QueryName != currentQueryFromCache.QueryName ||
-            //    currentQuery.ShowColumnIds.Length != currentQueryFromCache.ShowColumnIds.Length)
+            var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
+            if (dateStaticId != null)
             {
-                var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
-                if (dateStaticId != null)
+                var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
+                var calculateByStaticIdDateFrom = dateStaticExtend.DateFrom;
+                var calculateByStaticIdDateTo = dateStaticExtend.DateTo;
+
+                if (queryDateFrom != calculateByStaticIdDateFrom && queryDateTo != calculateByStaticIdDateTo)
                 {
-                    var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
-                    var calculateByStaticIdDateFrom = dateStaticExtend.DateFrom;
-                    var calculateByStaticIdDateTo = dateStaticExtend.DateTo;
-
-                    if (queryDateFrom != calculateByStaticIdDateFrom && queryDateTo != calculateByStaticIdDateTo)
-                    {
-                        throw new CoralTimeDangerException("DateFrom, DateTo from query not equals new DateFrom, DateTo that calculated by DateStaticId");
-                    }
+                    throw new CoralTimeDangerException("DateFrom, DateTo from query not equals new DateFrom, DateTo that calculated by DateStaticId");
                 }
-
-                _reportsSettingsService.UpdateCurrentQuery(currentQuery, memberImpersonatedId);
             }
+
+            _reportsSettingsService.UpdateCurrentQuery(currentQuery, memberImpersonatedId);
         }
 
         #endregion
