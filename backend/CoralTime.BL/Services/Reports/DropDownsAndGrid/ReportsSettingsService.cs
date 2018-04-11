@@ -27,8 +27,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 Uow.Save();
                 Uow.ReportsSettingsRepository.LinkedCacheClear();
             }
-
-            throw new CoralTimeDangerException("You cann't to save unexisted query");
+            else
+            {
+                throw new CoralTimeDangerException("You cann't to save unexisted query");
+            }
         }
 
         public void SaveCustomQuery(ReportsSettingsView reportsSettingsView)
