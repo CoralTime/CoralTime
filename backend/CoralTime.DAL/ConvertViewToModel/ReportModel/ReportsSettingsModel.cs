@@ -16,6 +16,7 @@ namespace CoralTime.DAL.ConvertViewToModel
             reportsSettings.GroupById = reportsSettingsView.GroupById;
             reportsSettings.DateFrom = reportsSettingsView.DateFrom;
             reportsSettings.DateTo = reportsSettingsView.DateTo;
+            reportsSettings.DateStaticId = reportsSettingsView.DateStaticId;
 
             reportsSettings.FilterProjectIds = CommonHelpers.ConvertFromArrayOfIntsToString(reportsSettingsView.ProjectIds);
             reportsSettings.FilterMemberIds = CommonHelpers.ConvertFromArrayOfIntsToString(reportsSettingsView.MemberIds);
