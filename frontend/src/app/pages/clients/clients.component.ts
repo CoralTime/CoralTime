@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { PagedResult } from './../../services/odata';
 import { NotificationService } from '../../core/notification.service';
@@ -29,16 +29,16 @@ export class ClientsComponent implements OnInit {
 	private lastEvent: any;
 	private subject = new Subject<any>();
 
-	private dialogRef: MdDialogRef<ClientFormComponent>;
-	private dialogProjectAssignmentRef: MdDialogRef<ClientProjectAssignmentComponent>;
+	private dialogRef: MatDialogRef<ClientFormComponent>;
+	private dialogProjectAssignmentRef: MatDialogRef<ClientProjectAssignmentComponent>;
 
 	@ViewChild('pageContainer') pageContainer: ElementRef;
 
-	constructor(public dialog: MdDialog,
-	            private aclService: AclService,
+	constructor(private aclService: AclService,
 	            private clientsService: ClientsService,
-	            private notificationService: NotificationService,
-	            private impersonationService: ImpersonationService) {
+	            private dialog: MatDialog,
+	            private impersonationService: ImpersonationService,
+	            private notificationService: NotificationService) {
 		this.impersonationService.checkImpersonationRole('clients');
 	}
 

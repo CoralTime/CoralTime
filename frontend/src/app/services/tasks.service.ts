@@ -26,7 +26,7 @@ export class TasksService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
 	}
@@ -54,7 +54,7 @@ export class TasksService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
 	}
@@ -81,7 +81,7 @@ export class TasksService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
 	}
@@ -127,7 +127,7 @@ export class TasksService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
 	}

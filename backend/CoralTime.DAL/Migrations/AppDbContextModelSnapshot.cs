@@ -146,8 +146,6 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("TimeFormat");
 
-                    b.Property<string>("TimeZone");
-
                     b.Property<string>("UserId");
 
                     b.Property<int>("WeekStart");
@@ -163,19 +161,21 @@ namespace CoralTime.DAL.Migrations
                     b.ToTable("Members");
                 });
 
-            modelBuilder.Entity("CoralTime.DAL.Models.MemberAvatar", b =>
+            modelBuilder.Entity("CoralTime.DAL.Models.MemberImage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<byte[]>("AvatarFile");
+                    b.Property<byte[]>("ByteArrayAvatar");
 
-                    b.Property<string>("AvatarFileName")
-                        .HasMaxLength(200);
+                    b.Property<byte[]>("ByteArrayIcon");
 
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("CreatorId");
+
+                    b.Property<string>("FileNameImage")
+                        .HasMaxLength(200);
 
                     b.Property<string>("LastEditorUserId");
 
@@ -183,17 +183,16 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("MemberId");
 
-                    b.Property<byte[]>("ThumbnailFile");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("LastEditorUserId");
 
-                    b.HasIndex("MemberId");
+                    b.HasIndex("MemberId")
+                        .IsUnique();
 
-                    b.ToTable("MemberAvatars");
+                    b.ToTable("MemberImages");
                 });
 
             modelBuilder.Entity("CoralTime.DAL.Models.MemberProjectRole", b =>
@@ -310,6 +309,8 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<DateTime?>("DateFrom");
 
+                    b.Property<int?>("DateStaticId");
+
                     b.Property<DateTime?>("DateTo");
 
                     b.Property<string>("FilterClientIds");
@@ -416,13 +417,13 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("MemberId");
 
-                    b.Property<int>("PlannedTime");
-
                     b.Property<int>("ProjectId");
 
                     b.Property<int>("TaskTypesId");
 
-                    b.Property<int>("Time");
+                    b.Property<int>("TimeActual");
+
+                    b.Property<int>("TimeEstimated");
 
                     b.Property<int>("TimeFrom");
 
@@ -624,7 +625,7 @@ namespace CoralTime.DAL.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("CoralTime.DAL.Models.MemberAvatar", b =>
+            modelBuilder.Entity("CoralTime.DAL.Models.MemberImage", b =>
                 {
                     b.HasOne("CoralTime.DAL.Models.ApplicationUser", "Creator")
                         .WithMany()
@@ -635,8 +636,8 @@ namespace CoralTime.DAL.Migrations
                         .HasForeignKey("LastEditorUserId");
 
                     b.HasOne("CoralTime.DAL.Models.Member", "Member")
-                        .WithMany()
-                        .HasForeignKey("MemberId")
+                        .WithOne("MemberImage")
+                        .HasForeignKey("CoralTime.DAL.Models.MemberImage", "MemberId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

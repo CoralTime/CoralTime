@@ -1,33 +1,25 @@
 ﻿using AutoMapper;
+using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 
 namespace CoralTime.BL.Services
 {
     public class BaseService
     {
-        protected readonly string CurrentUserName;
-        protected readonly string InpersonatedUserName;
+        protected UnitOfWork Uow { get; }
+        protected IMapper Mapper { get; }
+        
+        protected ApplicationUser ApplicationUserCurrent => Uow.ApplicationUserCurrent;
+        protected ApplicationUser ApplicationUserImpersonated => Uow.ApplicationUserImpersonated;
+        protected Member MemberCurrent => Uow.MemberCurrent;
+        protected Member MemberImpersonated => Uow.MemberImpersonated;
+        protected string CurrentUserName => Uow.CurrentUserName;
+        protected string ImpersonatedUserName => Uow.ImpersonatedUserName;
 
         public BaseService(UnitOfWork uow, IMapper mapper)
         {
             Uow = uow;
             Mapper = mapper;
-            CurrentUserName = Uow.CurrentUserName;
-            InpersonatedUserName = Uow.InpersonatedUserName;
-        }
-        
-        protected UnitOfWork Uow { get; set; }
-
-        protected IMapper Mapper { get; set; }
-
-        public void CheckCurrentUser()
-        {
-            CheckUserByUserName(Uow.CurrentUserName);
-        }
-
-        public void CheckUserByUserName(string userName)
-        {
-            Uow.UserRepository.GetRelatedUserByName(userName);
         }
     }
 }

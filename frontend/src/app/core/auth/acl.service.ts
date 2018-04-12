@@ -8,9 +8,7 @@ export class AclService {
 	}
 
 	isGranted(role: string): boolean {
-		let authUser = this.authService.getAuthUser();
-
-		if (!authUser) {
+		if (!this.authService.isLoggedIn()) {
 			return false;
 		}
 
@@ -22,6 +20,6 @@ export class AclService {
 			return this.authService.isUserAdminOrManager;
 		}
 
-		return !!(Permissions[role] & authUser.role);
+		return !!(Permissions[role] & this.authService.authUser.role);
 	}
 }

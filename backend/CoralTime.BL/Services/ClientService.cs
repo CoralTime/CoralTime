@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 
 namespace CoralTime.BL.Services
 {
@@ -91,7 +91,6 @@ namespace CoralTime.BL.Services
             {
                 Uow.ClientRepository.Update(client);
                 Uow.Save();
-
                 Uow.ClientRepository.LinkedCacheClear();
             }
             catch (Exception e)
@@ -152,6 +151,5 @@ namespace CoralTime.BL.Services
         }
 
         #endregion help methods
-
     }
 }

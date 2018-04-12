@@ -1,4 +1,4 @@
-<div pDroppable="calendarTask" (onDrop)="drop()" (onDragOver)="onDragOver()" (onDragLeave)="onDragLeave()"
+<div pDroppable="calendarTask" (onDrop)="drop()" (dragover)="onDragOver()" (onDragLeave)="onDragLeave()"
      class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter">
     <div class="ct-calendar-day-title" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
         <div class="ct-calendar-date">
@@ -7,8 +7,8 @@
         </div>
 
         <div class="ct-calendar-day-hours">
-            <div class="ct-calendar-day-hours-tracked" title="Tracked time">{{calcTime('time')}}</div>
-            <div class="ct-calendar-day-hours-planned" title="Planned time">{{calcTime('plannedTime')}}</div>
+            <div class="ct-calendar-day-hours-tracked" title="Tracked time">{{calcTime('timeActual')}}</div>
+            <div class="ct-calendar-day-hours-planned" title="Planned time">{{calcTime('timeEstimated')}}</div>
         </div>
     </div>
 

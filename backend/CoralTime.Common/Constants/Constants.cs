@@ -1,4 +1,5 @@
 ﻿using CoralTime.ViewModels.DateFormat;
+using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +7,6 @@ namespace CoralTime.Common.Constants
 {
     public static class Constants
     {
-
         public const string UserTypeAdmins = "Admins";
         public const string UserTypeMembers = "Members";
 
@@ -29,6 +29,7 @@ namespace CoralTime.Common.Constants
         #endregion
 
         public const string JwtIsManagerClaimType = "isManager";
+        public const string JwtRefreshTokenLifeTimeClaimType = "refreshTokenLifeTime";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
         public const string HeaderNameAuthorization = "Authorization";
@@ -104,14 +105,34 @@ namespace CoralTime.Common.Constants
 
         };
 
-        public enum ReportsGroupBy
+        public enum ReportsGroupByIds
         {
-            None = 0,
             Project = 1,
-            User = 2,
+            Member = 2,
             Date = 3,
             Client = 4,
             UnknownGrouping = 5
+        }
+
+        public enum ShowColumnModelIds
+        {
+            ShowEstimatedTime = 1,
+            ShowDate = 2,
+            ShowNotes = 3,
+            ShowStartFinish = 4
+        }
+
+        public enum DatesStaticIds
+        {
+            Today = 1,
+            ThisWeek = 2,
+            ThisMonth = 3,
+            ThisYear = 4,
+
+            Yesterday = 5,
+            LastWeek = 6,
+            LastMonth = 7,
+            LastYear = 9
         }
 
         #region DayOfWeek (BitMask).
@@ -155,11 +176,17 @@ namespace CoralTime.Common.Constants
         public static class Folders
         {
             public static string IconFolder => "Icons";
+
             public static string AvatarFolder => "Avatars";
+
             public static string StaticFilesFolder => "StaticFiles";
         }
 
-        public static string DefaultIconFileName => "userpic.svg"; 
+        public const string ImageTypeAvatar = "ImageTypeAvatar";
+        public const string ImageTypeIcon = "ImageTypeIcon";
+
+        public const string ImageTypeSizeIcon = "40";
+        public const string ImageTypeSizeAvatar = "200";
 
         #endregion
     }

@@ -10,14 +10,14 @@
             </div>
             <i *ngIf="icon" class="fa ct-users-project-edit-role fa-{{icon}}"></i>
         </div>
-        <md-list class="ct-select-options-list" [style.maxHeight.px]="maxHeight" #mdList>
+        <mat-list class="ct-select-options-list" [style.maxHeight.px]="maxHeight" #matList>
             <div class="ct-select-options-wrapper" #slimScroll="slimScroll" slimScroll [style.maxHeight.px]="maxHeight">
-                <md-list-item class="ct-select-option" role="option" *ngFor="let option of options; let i = index"
+                <mat-list-item class="ct-select-option" role="option" *ngFor="let option of options; let i = index"
                               (click)="selectOption(option)"
                               [ngClass]="{ 'ct-select-option-selected': isOptionSelected(option), 'ct-select-option-disabled': option?.disabled }">
                     <label class="ct-label-item">{{getDisplayedName(option)}}</label>
-                </md-list-item>
+                </mat-list-item>
             </div>
-        </md-list>
+        </mat-list>
     </div>
 </div>

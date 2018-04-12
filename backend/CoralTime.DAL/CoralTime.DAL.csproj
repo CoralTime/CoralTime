@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <Compile Remove="Migrations\20180213100954_Set unique %27Name%27 for Clients, ProjectRoles.cs" />
+    <Compile Remove="Migrations\20180321155042_ Rename TimeEnties Time2.cs" />
   </ItemGroup>
 
   <ItemGroup>

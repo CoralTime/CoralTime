@@ -13,7 +13,7 @@ namespace CoralTime.Common.Helpers
             {
                 case LockTimePeriod.Week:
                 {
-                    SetRangeOfWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, today);
+                    SetRangeOfThisWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, today);
 
                     var lockDateLastDate = weekByTodayFirstDate.AddDays(daysAfterLock);
 
@@ -24,14 +24,14 @@ namespace CoralTime.Common.Helpers
 
                     var editingWeekDay = isTodayInLockPeriodAtThisWeek ? todayDateAtPreviousWeek : todayDateAtThisWeek;
 
-                    SetRangeOfWeekByDate(out var editingWeekFirstDate, out var editingWeekLastDate, editingWeekDay);
+                    SetRangeOfThisWeekByDate(out var editingWeekFirstDate, out var editingWeekLastDate, editingWeekDay);
 
                     return timeEntryDateEditing <= editingWeekLastDate;
                 }
 
                 case LockTimePeriod.Month:
                 {
-                    SetRangeOfMonthByDate(out var monthByTodayFirstDate, out var monthByTodayLastDate, today);
+                    SetRangeOfThisMonthByDate(out var monthByTodayFirstDate, out var monthByTodayLastDate, today);
 
                     var lockDateLastDate = monthByTodayFirstDate.AddDays(daysAfterLock);
 
@@ -42,7 +42,7 @@ namespace CoralTime.Common.Helpers
 
                     var editingMonthDay = isInLockPeriod ? todayDateAtPreviousMonth : todayDateAtThisMonth;
 
-                    SetRangeOfMonthByDate(out var editingMonthFirstDate, out var editingMonthLastDate, editingMonthDay);
+                    SetRangeOfThisMonthByDate(out var editingMonthFirstDate, out var editingMonthLastDate, editingMonthDay);
 
                     return timeEntryDateEditing <= editingMonthLastDate;
                 }

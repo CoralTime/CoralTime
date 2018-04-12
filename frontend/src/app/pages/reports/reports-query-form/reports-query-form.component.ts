@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { ReportFilters, ReportsService } from '../../../services/reposts.service';
 import { NgForm } from '@angular/forms';
+import { ReportsService } from '../../../services/reposts.service';
+import { ReportFilters } from '../../../models/reports';
 
 @Component({
 	selector: 'ct-reports-query-form',

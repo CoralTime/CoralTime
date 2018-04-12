@@ -1,15 +1,15 @@
 <div class="ct-grid-header clearfix">
     <div *ngIf="groupById == 1 && gridData.items.length">
-        Project: <span>{{gridData?.projectName}}</span>
+        Project: <span>{{gridData?.groupByType.projectName}}</span>
     </div>
     <div *ngIf="groupById == 2 && gridData?.items.length">
-        User: <span>{{gridData?.memberName}}</span>
+        User: <span>{{gridData?.groupByType.memberName}}</span>
     </div>
     <div *ngIf="groupById == 3 && gridData?.items.length">
-        Date: <span>{{formatDate(gridData?.date)}}</span>
+        Date: <span>{{formatDate(gridData?.groupByType.date)}}</span>
     </div>
     <div *ngIf="groupById == 4 && gridData?.items.length">
-        <label *ngIf="gridData.clientId !== 0">Client: </label><span>{{gridData?.clientName}}</span>
+        <label *ngIf="gridData.groupByType.clientId !== 0">Client: </label><span>{{gridData?.groupByType.clientName}}</span>
     </div>
 </div>
 
@@ -30,32 +30,32 @@
 
     <p-column *ngIf="showColumnIds.indexOf(4) > -1" styleClass="ct-cell-start" field="timeFrom" header="Start">
         <ng-template let-item="rowData" pTemplate="body">
-            <span>{{getTimeString(item.timeFrom)}}</span>
+            <span>{{getTimeString(item.timeValues.timeFrom)}}</span>
         </ng-template>
     </p-column>
 
     <p-column *ngIf="showColumnIds.indexOf(4) > -1" styleClass="ct-cell-finish" field="timeTo" header="Finish">
         <ng-template let-item="rowData" pTemplate="body">
-            <span>{{getTimeString(item.timeTo)}}</span>
+            <span>{{getTimeString(item.timeValues.timeTo)}}</span>
         </ng-template>
     </p-column>
 
-    <p-column styleClass="ct-cell-actual" field="actualTime" header="Act. hours">
+    <p-column styleClass="ct-cell-actual" field="timeActual" header="Act. hours">
         <ng-template let-item="rowData" pTemplate="body">
-            <span>{{getTimeString(item.actualTime)}}</span>
+            <span>{{getTimeString(item.timeValues.timeActual)}}</span>
         </ng-template>
     </p-column>
 
-    <p-column *ngIf="showColumnIds.indexOf(1) > -1" styleClass="ct-cell-estimated" field="estimatedTime" header="Est. hours">
+    <p-column *ngIf="showColumnIds.indexOf(1) > -1" styleClass="ct-cell-estimated" field="timeEstimated" header="Est. hours">
         <ng-template let-item="rowData" pTemplate="body">
-            <span>{{getTimeString(item.estimatedTime)}}</span>
+            <span>{{getTimeString(item.timeValues.timeEstimated)}}</span>
         </ng-template>
     </p-column>
 
-    <p-column *ngIf="showColumnIds.indexOf(3) > -1" field="description" header="Notes" styleClass="ct-column-description">
+    <p-column *ngIf="showColumnIds.indexOf(3) > -1" field="notes" header="Notes" styleClass="ct-column-description">
         <ng-template let-col let-item="rowData" pTemplate="body" let-index="rowIndex">
             <div class="ct-grid-description">
-                <ct-read-more [text]="item.description"></ct-read-more>
+                <ct-read-more [text]="item.notes"></ct-read-more>
             </div>
         </ng-template>
     </p-column>
@@ -64,7 +64,8 @@
 <div class="ct-grid-container ct-total-time-container" *ngIf="groupById != 0 && gridData?.items.length > 0">
     <label>
         Total for
-        <span>{{gridData?.projectName || gridData?.memberName || formatDate(gridData?.date) || gridData?.clientName}}</span>
+        <span>{{gridData?.groupByType.projectName || gridData?.groupByType.memberName
+            || formatDate(gridData?.groupByType.date) || gridData?.groupByType.clientName}}</span>
     </label>
     <div class="ui-datatable-tablewrapper">
         <table>
@@ -78,14 +79,14 @@
                 <td *ngIf="showColumnIds.indexOf(4) > -1" class="ct-cell-finish"></td>
 
                 <td class="ct-cell-actual">
-                    <div class="ct-total-hours-tracked">
-                        <span>{{getTimeString(gridData?.totalActualTime, true)}}</span>
+                    <div class="ct-total-hours-tracked" *ngIf="gridData.timeTotalFor">
+                        <span>{{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}</span>
                     </div>
                 </td>
 
                 <td *ngIf="showColumnIds.indexOf(1) > -1" class="ct-cell-estimated">
-                    <div class="ct-total-hours-planned" *ngIf="showColumnIds.indexOf(1) > -1">
-                        <span>{{getTimeString(gridData?.totalEstimatedTime)}}</span>
+                    <div class="ct-total-hours-planned" *ngIf="gridData.timeTotalFor">
+                        <span>{{getTimeString(gridData.timeTotalFor.timeEstimatedTotalFor)}}</span>
                     </div>
                 </td>
 

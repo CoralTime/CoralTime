@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { DateUtils, TimeEntry } from '../../../../models/calendar';
-import { Time } from '../entry-time-form/entry-time-form.component';
+import { DateUtils, Time, TimeEntry } from '../../../../models/calendar';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -11,8 +10,8 @@ import Moment = moment.Moment;
 
 export class MultipleDatepickerComponent {
 	@Input() firstDayOfWeek: number;
-	@Input() actualTime: Time;
-	@Input() plannedTime: Time;
+	@Input() timeActual: Time;
+	@Input() timeEstimated: Time;
 	@Input() timeEntry: TimeEntry;
 
 	@Output() onSubmit: EventEmitter<string[]> = new EventEmitter();

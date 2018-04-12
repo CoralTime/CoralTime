@@ -18,49 +18,73 @@ export class CalendarDay {
 	}
 }
 
+export class Time {
+	hours: string;
+	minutes: string;
+	seconds: string;
+
+	constructor(hours: string, minutes: string, seconds?: string) {
+		this.hours = hours;
+		this.minutes = minutes;
+		this.seconds = seconds;
+	}
+}
+
+export interface TimeOptions {
+	isFromToShow: boolean;
+	timeTimerStart: number;
+}
+
+export interface TimeValues {
+	timeActual: number;
+	timeEstimated: number;
+	timeFrom: number;
+	timeTo: number;
+}
+
 export class TimeEntry {
 	color: number;
 	date: string;
 	description: string;
 	id: number;
-	isFromToShow: boolean;
 	isLocked: boolean;
 	isProjectActive: boolean;
 	isTaskTypeActive: boolean;
 	isUserManagerOnProject: boolean;
 	memberId: number;
 	memberName: string;
-	plannedTime: number;
 	projectId: number;
 	projectName: string;
 	taskName: string;
 	taskTypesId: number;
-	time: number;
-	timeFrom: number;
-	timeTimerStart: number;
-	timeTo: number;
+	timeOptions: TimeOptions;
+	timeValues: TimeValues;
 
 	constructor(data = null) {
-		this.color = data ? (data.color ? data.color : 0) : 0;
-		this.date = data ? data.date : null;
-		this.description = data ? data.description : null;
-		this.id = data ? data.id : null;
-		this.isFromToShow = data ? data.isFromToShow : null;
-		this.isLocked = data ? data.isLocked : null;
-		this.isProjectActive = data ? data.isProjectActive : null;
-		this.isTaskTypeActive = data ? data.isTaskTypeActive : null;
-		this.isUserManagerOnProject = data ? data.isUserManagerOnProject : null;
-		this.memberId = data ? data.memberId : null;
-		this.memberName = data ? data.memberName : null;
-		this.plannedTime = data ? (data.plannedTime ? data.plannedTime : 0) : 0;
-		this.projectId = data ? data.projectId : null;
-		this.projectName = data ? data.projectName : null;
-		this.taskName = data ? data.taskName : null;
-		this.taskTypesId = data ? data.taskTypesId : null;
-		this.time = data ? (data.time ? data.time : 1) : 1;
-		this.timeFrom = data ? (data.timeFrom >= 0 ? data.timeFrom : null) : null;
-		this.timeTo = data ? (data.timeTo >= 0 ? data.timeTo : null) : null;
-		this.timeTimerStart = data ? (data.timeTimerStart ? data.timeTimerStart : 0) : 0;
+		this.color = data && data.color || 0;
+		this.date = data && data.date;
+		this.description = data && data.description;
+		this.id = data && data.id;
+		this.isLocked = data && data.isLocked;
+		this.isProjectActive = data && data.isProjectActive;
+		this.isTaskTypeActive = data && data.isTaskTypeActive;
+		this.isUserManagerOnProject = data && data.isUserManagerOnProject;
+		this.memberId = data && data.memberId;
+		this.memberName = data && data.memberName;
+		this.projectId = data && data.projectId;
+		this.projectName = data && data.projectName;
+		this.taskName = data && data.taskName;
+		this.taskTypesId = data && data.taskTypesId;
+		this.timeOptions = {
+			isFromToShow: data && data.timeOptions && data.timeOptions.isFromToShow,
+			timeTimerStart: data && data.timeOptions && data.timeOptions.timeTimerStart || 0
+		};
+		this.timeValues = {
+			timeActual: data && data.timeValues && data.timeValues.timeActual || 1,
+			timeEstimated: data && data.timeValues && data.timeValues.timeEstimated || 0,
+			timeFrom: data && data.timeValues && data.timeValues.timeFrom,
+			timeTo: data && data.timeValues && data.timeValues.timeTo
+		};
 	}
 }
 

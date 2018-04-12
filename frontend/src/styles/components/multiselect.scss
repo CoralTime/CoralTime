@@ -4,33 +4,9 @@ $linkColor: #0099cf;
 .ct-search-filter {
   position: relative;
 
-  .mat-float.mat-input-placeholder:not(.mat-empty),
-  .mat-focused .mat-float.mat-input-placeholder {
-    display: none;
-  }
-
-  .mat-input-container {
-    width: 100%;
-  }
-
-  .mat-input-wrapper {
-    margin: 0;
-    padding-bottom: 0;
-    background: #f2f2f2;
-  }
-
-  .mat-input-placeholder-wrapper {
-    line-height: $searchInputHeight;
-    margin: 0 10px;
-  }
-
-  .mat-input-underline {
-    margin: 0;
-    border-color: transparent;
-  }
-
   input {
     height: $searchInputHeight;
+    width: 100%;
     padding: 0 50px 0 10px;
     background: #fff;
     border: 1px solid $form-border;
@@ -59,20 +35,6 @@ $linkColor: #0099cf;
   }
 }
 
-.ct-multiselect-label-block {
-  cursor: pointer;
-  color: $nav-background;
-
-  > span:nth-child(2) {
-    display: inline-block;
-    max-width: 275px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    position: relative;
-    top: 1px;
-  }
-}
-
 .ui-multiselect-panel {
   width: 380px;
   border: 0;
@@ -93,32 +55,38 @@ $linkColor: #0099cf;
   .ui-multiselect-item {
     height: 32px;
     padding: 0 0 10px 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    cursor: pointer;
 
     &:not(.ui-state-highlight):hover {
       background: none;
-      border: none;
       color: inherit;
     }
 
-    .ct-archived-option {
-      color: $gray-text;
-    }
-  }
+    label {
+      display: inline-block;
+      max-width: 275px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      top: 1px;
+      cursor: pointer;
 
-  .ui-multiselect-items-wrapper {
-    padding: 0 10px;
-    li {
-      padding-left: 0;
-      label {
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        cursor: pointer;
+      &.ct-archived-option {
+        color: $gray-text;
       }
     }
   }
+
+  .ui-chkbox-box {
+    &.ui-state-focus {
+      box-shadow: none;
+
+      .ui-chkbox-icon {
+        border-color: $linkColor;
+      }
+    }
+  }
+
   .ui-chkbox-icon {
     width: 18px;
     height: 18px;
@@ -139,6 +107,7 @@ $linkColor: #0099cf;
       }
     }
   }
+
   .ct-multiselect-panel-footer {
     border-top: 1px solid $form-border;
     padding-top: 20px;
@@ -156,6 +125,7 @@ $linkColor: #0099cf;
       float: right;
     }
   }
+
   .ui-multiselect-select-all-container {
     padding: 20px 0;
     font-family: inherit;
@@ -187,15 +157,12 @@ $linkColor: #0099cf;
 .ct-multiselect {
   font-family: inherit;
 
-  .mat-select-trigger {
+  .ct-select label {
+    display: block;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     font-size: 14px;
-  }
-
-  .mat-select-value-text {
-    color: $nav-background;
   }
 }
 

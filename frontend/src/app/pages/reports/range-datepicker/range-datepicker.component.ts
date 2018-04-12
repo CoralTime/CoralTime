@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output, Input, AfterContentInit } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 import { DateUtils } from '../../../models/calendar';
-import { DatePeriod, RangeDatepickerService } from './range-datepicker.service';
+import { DateStatic } from '../../../models/reports';
+import { DatePeriod, DateResponse } from './range-datepicker.service';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -12,42 +13,30 @@ import Moment = moment.Moment;
 	}
 })
 
-export class RangeDatepickerComponent implements AfterContentInit {
+export class RangeDatepickerComponent {
 	@Input() firstDayOfWeek: number;
+	@Input() datePeriodList: DateStatic[];
 
-	@Input('datePeriod')
-	set assignedDatePeriod(datePeriod: DatePeriod) {
-		this.dateFrom = datePeriod.dateFrom;
-		this.dateTo = datePeriod.dateTo;
+	@Input('dateResponse')
+	set assignedDatePeriod(dateResponse: DateResponse) {
+		this.oldDateResponse = dateResponse;
+		this.dateFrom = DateUtils.convertMomentToUTCMoment(dateResponse.datePeriod.dateFrom);
+		this.dateTo = DateUtils.convertMomentToUTCMoment(dateResponse.datePeriod.dateTo);
+		this.displayDate = this.dateFrom;
+		this.selectedRange = this.getRangeBetweenDates(this.dateFrom.toDate(), this.dateTo.toDate());
 	}
 
 	@Output() closed: EventEmitter<void> = new EventEmitter<void>();
-	@Output() onPeriodChanged: EventEmitter<DatePeriod> = new EventEmitter();
+	@Output() onPeriodChanged: EventEmitter<DateResponse> = new EventEmitter();
 
-	datePeriod: DatePeriod;
 	displayDate: Moment;
 	selectedRange: Moment[] = [];
-	DATE_PERIOD = this.rangeDatepickerService.getDatePeriodList();
 
 	private clickedDay: Moment;
 	private dateFrom: Moment;
 	private dateTo: Moment;
 	private daySelectedNumber: number = 0;
-	private oldDatePeriod: DatePeriod;
-
-	constructor(private rangeDatepickerService: RangeDatepickerService) {
-	}
-
-	ngAfterContentInit() {
-		if (this.dateFrom || this.dateTo) {
-			this.daySelectedNumber = 2;
-			this.dateFrom = DateUtils.convertMomentToUTCMoment(this.dateFrom);
-			this.dateTo = this.dateTo ? DateUtils.convertMomentToUTCMoment(this.dateTo) : DateUtils.convertMomentToUTCMoment(this.dateFrom);
-			this.displayDate = this.dateFrom;
-			this.selectedRange = this.getRangeBetweenDates(this.dateFrom.toDate(), this.dateTo.toDate());
-		}
-		this.oldDatePeriod = new DatePeriod(this.dateFrom, this.dateTo);
-	}
+	private oldDateResponse: DateResponse;
 
 	dateOnClick(day: Moment): void {
 		this.clickedDay = day;
@@ -77,20 +66,25 @@ export class RangeDatepickerComponent implements AfterContentInit {
 			}
 		}
 
-		this.datePeriod = new DatePeriod(this.dateFrom, this.dateTo);
 		this.displayDate = this.clickedDay;
-		this.onPeriodChanged.emit(this.datePeriod);
+		this.onPeriodChanged.emit({
+			datePeriod: new DatePeriod(this.dateFrom, this.dateTo),
+			dateStaticId: null
+		});
 	}
 
-	setPeriod(period: DatePeriod): void {
-		this.selectedRange = this.getRangeBetweenDates(period.dateFrom.toDate(), period.dateTo.toDate());
-		this.onPeriodChanged.emit(period);
+	setPeriod(period: DateStatic): void {
+		this.selectedRange = this.getRangeBetweenDates(new Date(period.dateFrom), new Date(period.dateTo));
+		this.onPeriodChanged.emit({
+			datePeriod: new DatePeriod(moment(period.dateFrom), moment(period.dateTo)),
+			dateStaticId: period.id
+		});
 		this.closed.emit();
 	}
 
 	onKeyDown(event: KeyboardEvent): void {
 		if (event.key === 'Escape') {
-			this.onPeriodChanged.emit(this.oldDatePeriod);
+			this.onPeriodChanged.emit(this.oldDateResponse);
 			this.closed.emit();
 		}
 	}

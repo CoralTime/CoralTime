@@ -13,14 +13,10 @@ import { ValidateRestoreCodeResolve } from './enter-new-password/validate-activa
 			{
 				path: '',
 				component: ForgotPasswordComponent,
-				data: {
-					title: 'Forgot password'
-				},
 				children: [
 					{
 						path: '',
-						component: EnterEmailComponent,
-						resolve: {}
+						component: EnterEmailComponent
 					},
 					{
 						path: 'enter-new-password',

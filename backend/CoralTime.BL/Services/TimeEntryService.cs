@@ -3,7 +3,7 @@ using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.TimeEntries;
@@ -22,20 +22,20 @@ namespace CoralTime.BL.Services
 
         public IEnumerable<TimeEntryView> GetAllTimeEntries(DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
-            var relatedMemberByName = GetRelatedMemberByUserName(InpersonatedUserName);
+            var relatedMemberByName = GetRelatedMemberByUserName(ImpersonatedUserName);
 
             var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQueryWithIncludes()
                 .Where(tEntry => tEntry.MemberId == relatedMemberByName.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
                 .ToList();
 
-            return timeEntriesByMemberIdAndDates.Select(x => x.GetViewTimeEntry(InpersonatedUserName, Mapper));
+            return timeEntriesByMemberIdAndDates.Select(x => x.GetViewTimeEntry(ImpersonatedUserName, Mapper));
         }
 
         public TimeEntryView GetById(int id)
         {
             var timeEntryById = GetRelatedTimeEntryById(id);
 
-            return timeEntryById.GetViewTimeEntry(InpersonatedUserName, Mapper);
+            return timeEntryById.GetViewTimeEntry(ImpersonatedUserName, Mapper);
         }
 
         public TimeEntryView Create(TimeEntryView timeEntryView)
@@ -43,13 +43,13 @@ namespace CoralTime.BL.Services
             var timeEntry = new TimeEntry();
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntry, InpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntry, ImpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
 
             // Check correct timing values from TimeEntryView.
-            CheckCorrectTimingValues(timeEntryView.TimeFrom, timeEntryView.TimeTo, timeEntryView.Time);
+            CheckCorrectTimingValues(timeEntryView.TimeValues.TimeFrom, timeEntryView.TimeValues.TimeTo, timeEntryView.TimeValues.TimeActual);
 
             // Check that total time per day is not grater than 24 hours.
             CheckTotalTimeAtDay(relatedMemberByName, timeEntryView, timeEntry);
@@ -65,7 +65,7 @@ namespace CoralTime.BL.Services
                 Uow.Save();
 
                 var timeEntryWithUpdateRelatedEntities = Uow.TimeEntryRepository.LinkedCacheGetById(timeEntry.Id);
-                return timeEntryWithUpdateRelatedEntities.GetViewTimeEntry(InpersonatedUserName, Mapper);
+                return timeEntryWithUpdateRelatedEntities.GetViewTimeEntry(ImpersonatedUserName, Mapper);
             }
             catch (Exception e)
             {
@@ -80,13 +80,13 @@ namespace CoralTime.BL.Services
             var timeEntryById = GetRelatedTimeEntryById(timeEntryView.Id);
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, InpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntryById, ImpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
 
             // Check correct timing values from TimeEntryView.
-            CheckCorrectTimingValues(timeEntryView.TimeFrom, timeEntryView.TimeTo, timeEntryView.Time);
+            CheckCorrectTimingValues(timeEntryView.TimeValues.TimeFrom, timeEntryView.TimeValues.TimeTo, timeEntryView.TimeValues.TimeActual);
 
             // Check that total time per day is not grater than 24 hours.
             CheckTotalTimeAtDay(relatedMemberByName, timeEntryView, timeEntryById);
@@ -101,7 +101,7 @@ namespace CoralTime.BL.Services
                 Uow.TimeEntryRepository.Update(timeEntryById);
                 Uow.Save();
 
-                return timeEntryById.GetViewTimeEntry(InpersonatedUserName, Mapper);
+                return timeEntryById.GetViewTimeEntry(ImpersonatedUserName, Mapper);
             }
             catch (Exception e)
             {
@@ -124,7 +124,7 @@ namespace CoralTime.BL.Services
             };
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, InpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntryById, ImpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
@@ -241,7 +241,7 @@ namespace CoralTime.BL.Services
 
         private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, string userName, out Member relatedMemberByName, out Project relatedProjectById)
         {
-            var relatedUserByName = Uow.UserRepository.GetRelatedUserByName(userName); 
+            var relatedUserByName = Uow.UserRepository.LinkedCacheGetByUserNameAndCheck(userName); 
             relatedMemberByName = GetRelatedMemberByUserName(userName);
 
             IsOnlyMemberAtProject = !IsAdminOrManagerOfProject(relatedUserByName.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
@@ -278,13 +278,13 @@ namespace CoralTime.BL.Services
         {
             var totalTimeForDay = Uow.TimeEntryRepository.GetQueryWithIncludes()
                 .Where(tEntry => tEntry.MemberId == memberByName.Id && tEntry.Date.Date == timeEntryView.Date.Date)
-                .Sum(tEntry => tEntry.Time);
+                .Sum(tEntry => tEntry.TimeActual);
 
-            var newTime = timeEntryView.Time;
+            var newTime = timeEntryView.TimeValues.TimeActual;
             var newDate = timeEntryView.Date;
             if (timeEntryById != null)
             {
-                var oldTime = timeEntryById.Time;
+                var oldTime = timeEntryById.TimeActual;
                 var oldDate = timeEntryById.Date;
 
                 if (oldDate != newDate)
@@ -307,22 +307,52 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private void CheckCorrectTimingValues(int? timeFrom, int? timeTo, int time)
+        private void CheckCorrectTimingValues(int? timeFrom, int? timeTo, int timeActual)
         {
             var isNullTimeFrom = timeFrom == null;
             var isNullTimeTo = timeTo == null;
 
             var isPositiveTimeFrom = !isNullTimeFrom && timeFrom >= 0;
             var isPositiveTimeTo = !isNullTimeTo && timeTo >= 0;
-            var isPositiveTime = time >= 0;
+            var isPositiveTimeActual = timeActual >= 0;
 
             // Available cases for set timings:
 
             // 1. Only actual time.
-            var isSetOnlyActualTime = isNullTimeFrom && isNullTimeTo && isPositiveTime;
+            var isSetOnlyActualTime = isNullTimeFrom && isNullTimeTo && isPositiveTimeActual;
 
             // 2. All at once properties.
-            var isSetTimeFromTimeToActualTime = isPositiveTimeFrom && isPositiveTimeTo && isPositiveTime && timeFrom <= timeTo;
+            var isSetTimeFromTimeToActualTime = isPositiveTimeFrom && isPositiveTimeTo && isPositiveTimeActual;
+
+            // 3. from To 
+            if (!isNullTimeFrom && !isNullTimeTo)
+            {
+                var isTimeToLessThan24h = timeTo < 86400;
+                var isTimeFromLessThan24h = timeFrom < 86400;
+                var isTomeFromLessThanTomeTo = timeFrom <= timeTo;
+
+                if (!isTomeFromLessThanTomeTo || !isTimeToLessThan24h || !isTimeFromLessThan24h)
+                {
+                    var errorMessage = "";
+
+                    if (!isTimeToLessThan24h)
+                    {
+                        errorMessage += "TimeTo Less Than 24 hours.";
+                    }
+
+                    if (!isTimeFromLessThan24h)
+                    {
+                        errorMessage += "TimeFrom Less Than 24 hours.";
+                    }
+
+                    if (!isTomeFromLessThanTomeTo)
+                    {
+                        errorMessage += "TimeFrom must be Less Than Time To.";
+                    }
+
+                    throw new CoralTimeDangerException(errorMessage);
+                }
+            }
 
             if (!isSetOnlyActualTime && !isSetTimeFromTimeToActualTime)
             {
@@ -373,14 +403,14 @@ namespace CoralTime.BL.Services
 
             timeEntry.Date = timeEntryView.Date.Date;
 
-            timeEntry.Time = timeEntryView.Time;
-            timeEntry.PlannedTime = timeEntryView.PlannedTime ?? 0;
-            timeEntry.TimeFrom = timeEntryView.TimeFrom ?? 0;
-            timeEntry.TimeTo = timeEntryView.TimeTo ?? 0;
-            timeEntry.TimeTimerStart = timeEntryView.TimeTimerStart;
+            timeEntry.TimeActual = timeEntryView.TimeValues.TimeActual;
+            timeEntry.TimeEstimated = timeEntryView.TimeValues.TimeEstimated ?? 0;
+            timeEntry.TimeFrom = timeEntryView.TimeValues.TimeFrom ?? 0;
+            timeEntry.TimeTo = timeEntryView.TimeValues.TimeTo ?? 0;
+            timeEntry.TimeTimerStart = timeEntryView.TimeOptions.TimeTimerStart;
 
             timeEntry.Description = timeEntryView.Description;
-            timeEntry.IsFromToShow = timeEntryView.IsFromToShow;
+            timeEntry.IsFromToShow = timeEntryView.TimeOptions.IsFromToShow;
 
             #endregion
         }

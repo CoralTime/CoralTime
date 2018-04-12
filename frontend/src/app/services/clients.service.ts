@@ -20,7 +20,7 @@ export class ClientsService {
 		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.Exec().map(res => res.map((x: any) => new Client(x)));
+		return query.Exec().map(res => res.map((x: Object) => new Client(x)));
 	}
 
 	getClientsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Client>> {
@@ -44,7 +44,7 @@ export class ClientsService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Client(x));
+			res.data = res.data.map((x: Object) => new Client(x));
 			return res;
 		});
 	}
@@ -72,7 +72,7 @@ export class ClientsService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Client(x));
+			res.data = res.data.map((x: Object) => new Client(x));
 			return res;
 		});
 	}

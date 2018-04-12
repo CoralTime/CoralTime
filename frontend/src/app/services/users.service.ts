@@ -1,20 +1,52 @@
-import { UserProject } from '../models/user-project';
+import { HttpClient } from '@angular/common/http';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { PagedResult, ODataServiceFactory, ODataService } from './odata';
+import { AuthService } from '../core/auth/auth.service';
+import { ConstantService } from '../core/constant.service';
+import { UserProject } from '../models/user-project';
 import { User } from '../models/user';
 import { Project } from '../models/project';
-import { ConstantService } from '../core/constant.service';
-import { CustomHttp } from '../core/custom-http';
+import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 
 @Injectable()
 export class UsersService {
 	readonly odata: ODataService<User>;
 
-	constructor(private constantService: ConstantService,
-	            private http: CustomHttp,
+	onChange: EventEmitter<User> = new EventEmitter<User>();
+	private userInfo: User;
+
+	constructor(private authService: AuthService,
+	            private constantService: ConstantService,
+	            private http: HttpClient,
 	            private odataFactory: ODataServiceFactory) {
 		this.odata = this.odataFactory.CreateService<User>('Members');
+		if (localStorage.hasOwnProperty('USER_INFO')) {
+			this.userInfo = JSON.parse(localStorage.getItem('USER_INFO'));
+		}
+
+		this.authService.onChange.subscribe(() => {
+			if (!this.authService.isLoggedIn()) {
+				this.setUserInfo(null);
+			}
+		})
+	}
+
+	getUserInfo(userId: number): Promise<User> {
+		if (this.userInfo) {
+			return Promise.resolve(this.userInfo);
+		}
+
+		return this.getUserById(userId).toPromise()
+			.then((user: User) => {
+				this.setUserInfo(user);
+				return this.userInfo;
+			});
+	}
+
+	setUserInfo(obj: any): void {
+		this.userInfo = (obj && this.userInfo) ? Object.assign(this.userInfo, obj) : obj;
+		localStorage.setItem('USER_INFO', JSON.stringify(this.userInfo));
+		this.onChange.emit(this.userInfo);
 	}
 
 	assignProjectToUser(userId: number, projectId: number, roleId: number): Observable<any> {
@@ -24,6 +56,7 @@ export class UsersService {
 			roleId: roleId,
 			memberId: userId
 		});
+
 		return odata.Post(userProject);
 	}
 
@@ -34,6 +67,7 @@ export class UsersService {
 			roleId: roleId,
 			memberId: userId
 		});
+
 		return odata.Post(userProject);
 	}
 
@@ -42,6 +76,7 @@ export class UsersService {
 		let newRoleId = {
 			roleId: roleId
 		};
+
 		return odata.Patch(newRoleId, userProjectId.toString());
 	}
 
@@ -69,7 +104,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new UserProject(x));
+			res.data = res.data.map((x: Object) => new UserProject(x));
 			return res;
 		});
 	}
@@ -104,7 +139,7 @@ export class UsersService {
 		}
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new User(x));
+			res.data = res.data.map((x: Object) => new User(x));
 			return res;
 		});
 	}
@@ -130,7 +165,7 @@ export class UsersService {
 
 	getUserById(id: number): Observable<User> {
 		return this.http.get(this.constantService.apiBaseUrl + '/odata/Members(' + id + ')')
-			.map(res => new User(res.json()));
+			.map((user: Object) => new User(user));
 	}
 
 	getUserByUsername(username: string): Observable<User> {
@@ -176,7 +211,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map(x => new UserProject(x));
+			res.data = res.data.map((x: Object) => new UserProject(x));
 			return res;
 		});
 	}
@@ -205,7 +240,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Project(x));
+			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
 		});
 	}
@@ -233,7 +268,7 @@ export class UsersService {
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new User(x));
+			res.data = res.data.map((x: Object) => new User(x));
 			return res;
 		});
 	}

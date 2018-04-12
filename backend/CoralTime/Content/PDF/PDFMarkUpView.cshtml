@@ -1,8 +1,6 @@
-﻿@using CoralTime.BL.Services.Reports.Export
-@using CoralTime.Common.Constants @*todo @Constants.ReportsGroupBy.Clients.ToString()*@
-@using RazorLight
-
-@model CoralTime.ViewModels.Reports.PDF.ReportsPDFCommonView
+﻿@using CoralTime.Common.Constants
+@using CoralTime.DAL.ConvertModelToView
+@model CoralTime.ViewModels.Reports.Responce.Export.ReportExportPDFView
 
 <!DOCTYPE html>
 <html>
@@ -11,109 +9,218 @@
     <link rel="stylesheet" type="text/css" href="@Model.PatchCssStyle">
 </head>
 <body>
+<div class="divIncludeTable">
+    <table class="tableEntityHeaders">
+        <tr>
+            <td>
+                <span>@Model.ReportTotalView.PeriodCell.DisplayNamePeriod</span>
+                <span>@Model.ReportTotalView.PeriodCell.DisplayNamePeriodValue</span>
+            </td>
+        </tr>
+    </table>
+</div>
+@foreach (var groupedItems in Model.ReportTotalView.GroupedItems)
+{
     <div class="divIncludeTable">
         <table class="tableEntityHeaders">
-            <tr>
-                <td>
-                    <span>@Model.PeriodCell.NameDisplay</span>
-                    <span>@Model.PeriodCell.Value</span>
-                </td>
-                @if (Model.GroupById != (int)Constants.ReportsGroupBy.None)
-                {
-                    foreach (var grandHeader in Model.PDFGrandModel.GrandHeaders)
+            <thead>
+                <tr class="rowCommonEntityHeaders containerFlex">
+                    <td class="columnCommonEntityHeaders childFlexLeft">
+                        <span class="spanCommonEntityHeaders">@groupedItems.GroupByType.GroupByTypeDisplayName?.ToUpper()@groupedItems.GroupByType.GroupByTypeDisplayNameValue?.ToUpper()</span>
+                    </td>
+                </tr>
+            </thead>
+        </table>
+        <table class="tableNestedHeaders">
+            <thead>
+                <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
+                    @if (groupedItems.DisplayNames.DisplayNameDate != null)
                     {
-                        <td style="text-align: right;">
-                            <span>@grandHeader.NameDisplay</span>
-                            <span>@grandHeader.Value</span>
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameDate</span>
+                    </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameClient != null)
+                    {
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameClient</span>
+                    </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameProject != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameProject</span>
                         </td>
                     }
+                    @if (groupedItems.DisplayNames.DisplayNameMember != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameMember</span>
+                        </td>
+                    }
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameTask</span>
+                    </td>
+                    @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameTimeFrom</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameTimeTo</span>
+                        </td>
+                    }
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameTimeActual</span>
+                    </td>
+                    @if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameTimeEstimated</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameNotes != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameNotes</span>
+                        </td>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var groupedItem in groupedItems.Items)
+            {
+                <tr style="max-width: 500px;">
+                    @if (groupedItems.DisplayNames.DisplayNameDate != null)
+                    {
+                        <td>
+                            <span>@ConvertModelToView.UpdateDateFormat(groupedItem.Date, Model.ReportTotalView.DateFormatId)</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameClient != null)
+                    {
+                        <td>
+                            <span>@groupedItem.ClientName</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameProject != null)
+                    {
+                        <td>
+                            <span>@groupedItem.ProjectName</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameMember != null)
+                    {
+                        <td>
+                            <span>@groupedItem.MemberName</span>
+                        </td>
+                    }
+                    <td>
+                        <span>@groupedItem.TaskName</span>
+                    </td>
+                    @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
+                    {
+                        <td>
+                            <span>@(groupedItem.TimeValues.TimeFrom == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeFrom.ToString()))</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
+                    {
+                        <td>
+                            <span>@(groupedItem.TimeValues.TimeTo == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeTo.ToString()))</span>
+                        </td>
+                    }
+                    <td>
+                        <span>@ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeActual.ToString())</span>
+                    </td>
+                    @if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
+                    {
+                        <td>
+                            <span>@(groupedItem.TimeValues.TimeEstimated == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(groupedItem.TimeValues.TimeEstimated.ToString()))</span>
+                        </td>
+                    }
+                    @if (groupedItems.DisplayNames.DisplayNameNotes != null)
+                    {
+                        <td>
+                            <span>@groupedItem.Notes</span>
+                        </td>
+                    }
+                </tr>
+            }
+            <tr>
+                <td style="text-align: left;">
+                    <span class="spanCommonEntityHeaders">@groupedItems.TimeTotalFor.DisplayNameTimeActualTotalFor.ToUpper()@groupedItems.GroupByType.GroupByTypeDisplayNameValue.ToUpper()</span>
+                </td>
+                @if (groupedItems.DisplayNames.DisplayNameDate != null || groupedItems.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
+                {
+                    <td></td>
+                }
+                <td></td>
+                <td></td>
+                @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
+                {
+                    <td></td>
+                }
+                @if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
+                {
+                    <td></td>
+                }
+                <td>
+                    <span>@ConvertModelToView.UpdateTimeFormatForValue(groupedItems.TimeTotalFor.TimeActualTotalFor.ToString())</span>
+                </td>
+                @if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
+                {
+                    <td>
+                        <span>@(groupedItems.TimeTotalFor.TimeEstimatedTotalFor == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(groupedItems.TimeTotalFor.TimeEstimatedTotalFor.ToString()))</span>
+                    </td>
+                }
+                @if (groupedItems.DisplayNames.DisplayNameNotes != null)
+                {
+                    <td></td>
                 }
             </tr>
+            </tbody>
         </table>
     </div>
-    @foreach (var entity in Model.PDFGrandModel.Entities)
-    {
-        <div class="divIncludeTable">
-            <table class="tableEntityHeaders">
-                <thead>
-                    <tr class="rowCommonEntityHeaders containerFlex">
-                        @foreach (var entityHeader in entity.TotalHeaders)
-                        {
-                            if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString() || entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
-                            {
-                                if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalActualTime.ToString())
-                                {
-                                    <td class="columnCommonEntityHeaders childFlexRight2">
-                                        <span>@entityHeader.NameDisplay</span>
-                                        <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
-                                    </td>
-                                }
-                                else if (entityHeader.NameDefault == ReportsExportService.ExternalProperties.TotalEstimatedTime.ToString())
-                                {
-                                    <td class="columnCommonEntityHeaders childFlexRight2">
-                                        <span>@entityHeader.NameDisplay</span>
-                                        <span class="spanCommonEntityHeaders">@entityHeader.Value</span>
-                                    </td>
-                                }
-                            }
-                            else
-                            {
-                                if (Model.GroupById != (int)Constants.ReportsGroupBy.None)
-                                {
-                                    <td class="columnCommonEntityHeaders childFlexLeft">
-                                        @if (entityHeader.NameDisplay != string.Empty)
-                                        {<span>@entityHeader.NameDisplay</span>}<span class="spanCommonEntityHeaders">@entityHeader.Value</span>
-                                    </td>
-                                }
-                            }
-                        }
-                    </tr>
-                </thead>
-            </table>
-            <table class="tableNestedHeaders">
-                <thead>
-                    <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
-                        @foreach (var entityHeaders in entity.EntityHeaders)
-                        {
-                            if (entityHeaders.Value == ReportsExportService.NameDisplays.Notes.ToString())
-                            {
-                                <td class="columnNestedEntityRows">
-                                    <span>@entityHeaders.NameDisplay</span>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                    <span>@entityHeaders.NameDisplay</span>
-                                </td>
-                            }
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var entityRows in entity.EntityRows)
-                    {
-                        <tr style="max-width: 500px;">
-                            @foreach (var entityRow in entityRows)
-                            {
-                                if (entityRow.NameDefault == ReportsExportService.InternalProperties.Description.ToString())
-                                {
-                                    <td class="columnNestedEntityRows">
-                                        <span>@entityRow.Value</span>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>
-                                        <span>@entityRow.Value</span>
-                                    </td>
-                                }
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+}
+<div class="divIncludeTable">
+    <table class="tableEntityHeaders">
+        <tr>
+            <td style="text-align: left;">
+                <span>@Model.ReportTotalView.TimeTotal.DisplayNameTimeActualTotal</span>
+            </td>
+            @if (Model.ReportTotalView.DisplayNames.DisplayNameDate != null || Model.ReportTotalView.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
+            {
+                <td></td>
+            }
+            <td></td>
+            <td></td>
+            @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeFrom != null)
+            {
+                <td></td>
+            }
+            @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeTo != null)
+            {
+                <td></td>
+            }
+            <td>
+                <span>@ConvertModelToView.UpdateTimeFormatForValue(Model.ReportTotalView.TimeTotal.TimeActualTotal.ToString())</span>
+            </td>
+            @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeEstimated != null)
+            {
+                <td>
+                    <span>@(Model.ReportTotalView.TimeTotal.TimeEstimatedTotal == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(Model.ReportTotalView.TimeTotal.TimeEstimatedTotal.ToString()))</span>
+                </td>
+            }
+            @if (Model.ReportTotalView.DisplayNames.DisplayNameNotes != null)
+            {
+                <td></td>
+            }
+        </tr>
+    </table>
+</div>
 </body>
 </html>

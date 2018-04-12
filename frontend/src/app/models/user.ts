@@ -5,7 +5,6 @@ export class User {
 	defaultTaskId: number;
 	email: string;
 	fullName: string;
-	iconUrl: string;
 	id: number;
 	isActive: boolean;
 	isAdmin: boolean;
@@ -17,7 +16,7 @@ export class User {
 	sendEmailTime: number;
 	sendInvitationEmail: boolean;
 	timeFormat: number;
-	timeZone: string;
+	urlIcon: string;
 	userName: string;
 	weekStart: number;
 
@@ -29,7 +28,6 @@ export class User {
 			this.defaultTaskId = data.defaultTaskId;
 			this.email = data.email;
 			this.fullName = data.fullName;
-			this.iconUrl = data.iconUrl;
 			this.id = data.id;
 			this.isAdmin = data.isAdmin;
 			this.isActive = data.isActive;
@@ -41,7 +39,7 @@ export class User {
 			this.sendEmailTime = data.sendEmailTime;
 			this.sendInvitationEmail = data.sendInvitationEmail;
 			this.timeFormat = data.timeFormat;
-			this.timeZone = data.timeZone;
+			this.urlIcon = data.urlIcon;
 			this.userName = data.userName;
 			this.weekStart = data.weekStart;
 		}

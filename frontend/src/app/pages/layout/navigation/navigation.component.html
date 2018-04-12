@@ -6,7 +6,7 @@
                 <ul>
                     <li *ngFor="let item of items" [routerLink]="item.routerLink" routerLinkActive="active">
                         <a [routerLink]="item.routerLink">
-                            <md-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></md-icon>
+                            <mat-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></mat-icon>
                             <span>{{item.label}}</span>
                         </a>
                     </li>
@@ -15,7 +15,7 @@
                         [ngClass]="{'ct-nav-manage-item-show': showManageMenu, active: isManageMenuOpen || manageLinkActive.isActive}"
                         (click)="toggleManageMenu(manageMenu)">
                         <a>
-                            <md-icon><i class="ct-nav-icon ct-manage-icon" aria-hidden="true"></i></md-icon>
+                            <mat-icon><i class="ct-nav-icon ct-manage-icon" aria-hidden="true"></i></mat-icon>
                             <span>Manage</span>
                         </a>
                     </li>
@@ -26,7 +26,7 @@
                         <ng-template ngFor let-item [ngForOf]="items">
                             <li *ngIf="isMobileView()" class="ct-menu-item ct-only-mobile" routerLinkActive="active">
                                 <a [routerLink]="item.routerLink">
-                                    <md-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></md-icon>
+                                    <mat-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></mat-icon>
                                     <span>{{item.label}}</span>
                                 </a>
                             </li>
@@ -35,7 +35,7 @@
                             <li class="ct-menu-item" *ctIsGranted="item.permission" routerLinkActive="active"
                                 (click)="manageMenu.closeMenu()">
                                 <a [routerLink]="item.routerLink">
-                                    <md-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></md-icon>
+                                    <mat-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></mat-icon>
                                     <span>{{item.label}}</span>
                                 </a>
                             </li>
@@ -51,7 +51,7 @@
                         <a title="View Profile" [routerLink]="['/profile']">{{impersonationUser?.fullName || userInfo?.fullName}}</a>
                     </div>
                     <a [routerLink]="['/profile']" title="View Profile" class="ct-userpic">
-                        <ct-user-pic [iconUrl]='impersonationUser?.iconUrl || userInfo?.iconUrl'></ct-user-pic>
+                        <ct-user-pic [urlIcon]="impersonationUser?.urlIcon || userInfo?.urlIcon"></ct-user-pic>
                     </a>
                     <i class="fa" [ngClass]="isProfileNavMenuOpen ? 'fa-caret-up' : 'fa-caret-down'"
                        (click)="toggleProfileNavMenu(profileNavMenu)"></i>
@@ -60,19 +60,19 @@
                 <ct-menu #profileNavMenu class="ct-nav-drop-menu" xPosition="before" (closed)="isProfileNavMenuOpen = false">
                     <ct-menu-item class="ct-menu-item">
                         <a [routerLink]="['/profile/settings']" title="Profile Settings">
-                            <md-icon>settings</md-icon>
+                            <mat-icon>settings</mat-icon>
                             <span>Settings</span>
                         </a>
                     </ct-menu-item>
-                    <ct-menu-item class="ct-menu-item">
-                        <a>
-                            <md-icon>help</md-icon>
-                            <span>Help</span>
-                        </a>
-                    </ct-menu-item>
+                    <!--<ct-menu-item class="ct-menu-item">-->
+                        <!--<a>-->
+                            <!--<mat-icon>help</mat-icon>-->
+                            <!--<span>Help</span>-->
+                        <!--</a>-->
+                    <!--</ct-menu-item>-->
                     <ct-menu-item class="ct-menu-item" (click)="signOut()">
                         <a>
-                            <md-icon>power_settings_new</md-icon>
+                            <mat-icon>power_settings_new</mat-icon>
                             <span>Logout</span>
                         </a>
                     </ct-menu-item>

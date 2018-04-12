@@ -4,10 +4,8 @@ using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Clients;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.MemberProjectRoles;
-using CoralTime.ViewModels.Profiles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
-using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
 using CoralTime.ViewModels.Settings;
 using CoralTime.ViewModels.Tasks;
@@ -22,10 +20,10 @@ namespace CoralTime.DAL.Mapper
         {
             CreateMap<Member, MemberView>().ConvertUsing(new MemberToMemberViewConverter());
             CreateMap<MemberView, Member>().ConvertUsing(new MemberViewToMemberConverter());
-            CreateMap<MemberAvatarView, MemberAvatar>();
-            CreateMap<MemberAvatar, MemberAvatarView>();
+
             CreateMap<MemberProjectRoleView, MemberProjectRole>();
             CreateMap<MemberProjectRole, MemberProjectRoleView>().ConvertUsing(new MemberProjectRoleToMemberProjectRoleViewConverter());
+
             CreateMap<Member, ReportUsersView>()
                 .ForMember(x => x.IsUserActive, x => x.MapFrom(m => m.User.IsActive))
                 .ForMember(x => x.UserId, x => x.MapFrom(m => m.Id))
@@ -51,24 +49,18 @@ namespace CoralTime.DAL.Mapper
                 .ForMember(x => x.MemberName, x => x.MapFrom(m => m.Member.FullName))
                 .ForMember(x => x.TaskName, x => x.MapFrom(m => m.TaskType.Name))
                 .ForMember(x => x.IsTaskTypeActive, x => x.MapFrom(m => m.TaskType.IsActive))
-                .ForMember(x => x.IsProjectActive, x => x.MapFrom(m => m.Project.IsActive));
+                .ForMember(x => x.IsProjectActive, x => x.MapFrom(m => m.Project.IsActive))
+                
+                .ForPath(x => x.TimeValues.TimeActual, x => x.MapFrom(m => m.TimeActual))
+                .ForPath(x => x.TimeValues.TimeEstimated, x => x.MapFrom(m => m.TimeEstimated))
+                .ForPath(x => x.TimeValues.TimeFrom, x => x.MapFrom(m => m.TimeFrom))
+                .ForPath(x => x.TimeValues.TimeTo, x => x.MapFrom(m => m.TimeTo))
+                .ForPath(x => x.TimeOptions.IsFromToShow, x => x.MapFrom(m => m.IsFromToShow))
+                .ForPath(x => x.TimeOptions.TimeTimerStart, x => x.MapFrom(m => m.TimeTimerStart));
 
-            CreateMap<TimeEntry, ReportsGridItemsView>()
-                .ForMember(x => x.ClientId, x => x.MapFrom(m => m.Project.Client.Id))
-                .ForMember(x => x.ClientName, x => x.MapFrom(m => m.Project.Client.Name))
-                .ForMember(x => x.ProjectId, x => x.MapFrom(m => m.Project.Id))
-                .ForMember(x => x.ProjectName, x => x.MapFrom(m => m.Project.Name))
-                .ForMember(x => x.MemberId, x => x.MapFrom(m => m.Member.Id))
-                .ForMember(x => x.MemberName, x => x.MapFrom(m => m.Member.FullName))
-                //.ForMember(x => x.IsMemberActive, x => x.MapFrom(m => m.Member.User.IsActive))
-                .ForMember(x => x.Date, x => x.MapFrom(m => m.Date))
-                .ForMember(x => x.Description, x => x.MapFrom(m => m.Description))
-                .ForMember(x => x.TaskId, x => x.MapFrom(m => m.TaskType.Id))
-                .ForMember(x => x.TaskName, x => x.MapFrom(m => m.TaskType.Name))
-                .ForMember(x => x.TimeFrom, x => x.MapFrom(m => m.TimeFrom))
-                .ForMember(x => x.TimeTo, x => x.MapFrom(m => m.TimeTo))
-                .ForMember(x => x.ActualTime, x => x.MapFrom(m => m.Time))
-                .ForMember(x => x.EstimatedTime, x => x.MapFrom(m => m.PlannedTime));
+            CreateMap<Member, ProjectMembersView>()
+                .ForMember(x => x.MemberId, x => x.MapFrom(z => z.Id))
+                .ForMember(x => x.MemberName, x => x.MapFrom(z => z.FullName));
 
             CreateMap<SettingsView, Setting>();
             CreateMap<Setting, SettingsView>();
@@ -98,7 +90,6 @@ namespace CoralTime.DAL.Mapper
                     DateFormatId = source.DateFormatId,
                     DateFormat = new GetDateFormat().GetDateFormatById(source.DateFormatId),
                     SendEmailDays = ConverterBitMask.DayOfWeekIntToString(source.SendEmailDays),
-                    TimeZone =  source.TimeZone,
                     TimeFormat = source.TimeFormat,
                     SendEmailTime = source.SendEmailTime,
                     WeekStart =  (int)source.WeekStart
@@ -116,7 +107,6 @@ namespace CoralTime.DAL.Mapper
                     DefaultProjectId = source.DefaultProjectId,
                     FullName = source.FullName,
                     DateFormatId = source.DateFormatId,
-                    TimeZone = source.TimeZone,
                     WeekStart = (WeekStart)source.WeekStart,
                     IsWeeklyTimeEntryUpdatesSend = source.IsWeeklyTimeEntryUpdatesSend,
                     SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(source.SendEmailDays),

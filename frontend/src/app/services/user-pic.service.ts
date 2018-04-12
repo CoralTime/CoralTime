@@ -1,25 +1,25 @@
-import { Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { EventEmitter, Injectable } from '@angular/core';
 import { ConstantService } from '../core/constant.service';
-import { CustomHttp } from '../core/custom-http';
-
-export interface Avatar {
-	avatarFileName: string;
-	avatarUrl: string;
-	memberId: number;
-}
 
 @Injectable()
 export class UserPicService {
-	onUserPicChange: EventEmitter<string> = new EventEmitter<string>();
-
-	constructor(private http: CustomHttp,
+	constructor(private http: HttpClient,
 	            private constantService: ConstantService) {
 	}
 
-	loadUserPicture(userId: number, isAvatar: boolean): Observable<Avatar> {
-		return this.http.get((isAvatar ? this.constantService.userAvatarApi : this.constantService.userIconApi) + userId)
-			.map((res: Response) => res.json());
+	loadUserPicture(userId: number): Observable<string> {
+		return this.http.get(
+			this.constantService.profileApi + '/Member(' + userId + ')/UrlAvatar',
+			{responseType: 'text'}
+		);
+	}
+
+	uploadUserPicture(fileToUpload: File): Observable<string> {
+		let input = new FormData();
+		input.append('file', fileToUpload, fileToUpload.name);
+
+		return this.http.put(this.constantService.profileApi + '/UploadImage', input, {responseType: 'text'});
 	}
 }

@@ -2,13 +2,13 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core';
 
 @Component({
 	selector: 'ct-user-pic',
-	template: '<img [src]="iconUrl">'
+	template: '<img src="{{urlIcon}}">'
 })
 
 export class UserPicComponent implements OnInit {
-	@Input() userId: number;
-	@Input() iconUrl: string;
 	@Input() fullSize: boolean = false;
+	@Input() urlIcon: string;
+	@Input() userId: number;
 	@HostBinding('class.ct-user-pic-avatar') addClass: boolean = false;
 
 	ngOnInit() {

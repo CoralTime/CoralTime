@@ -99,6 +99,7 @@ $fieldHeight: 30px;
   .ct-query-block {
     position: relative;
     float: left;
+    bottom: 2px;
 
     > * {
       vertical-align: middle;
@@ -151,6 +152,7 @@ $fieldHeight: 30px;
       display: none;
       margin-left: -10px;
       font-size: 14px;
+      line-height: 19px;
     }
 
     .ct-query-text:hover + .ct-close, .ct-close:hover {
@@ -389,14 +391,14 @@ $fieldHeight: 30px;
 
     .ct-total-hours-tracked {
       &:before {
-        background: url(/assets/icons/tasktile.time.actual.svg) no-repeat center center;
+        background: url(./assets/icons/tasktile.time.actual.svg) no-repeat center center;
         background-size: 23px 23px;
       }
     }
 
     .ct-total-hours-planned {
       &:before {
-        background: url(/assets/icons/tasktile.time.estimated.svg) no-repeat center center;
+        background: url(./assets/icons/tasktile.time.estimated.svg) no-repeat center center;
         background-size: 23px 23px;
       }
     }
@@ -422,7 +424,7 @@ $fieldHeight: 30px;
     }
 
     .ct-cell-date {
-      width: 100px;
+      width: 105px;
     }
 
     .ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {
@@ -448,6 +450,8 @@ $fieldHeight: 30px;
     position: absolute;
     top: 100%;
     right: 210px;
+    width: 280px;
+    text-align: center;
     background: #fff;
     box-shadow: none;
     border: 1px solid $form-border;

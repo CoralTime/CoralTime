@@ -1,14 +1,12 @@
 <div class="ct-dialog ct-data-dialog">
     <div class="ct-dialog-title">
         <span>Project assignment for</span><span>{{user?.fullName}}</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
-            <md-input-container class="full-width">
-                <input #gb mdInput placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
-            </md-input-container>
+            <input class="ct-input-element" #gb placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
             <i class="fa fa-search"></i>
         </div>
     </div>

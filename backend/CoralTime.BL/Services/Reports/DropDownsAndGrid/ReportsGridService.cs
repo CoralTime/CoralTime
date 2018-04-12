@@ -1,6 +1,5 @@
 ﻿using CoralTime.Common.Exceptions;
-using CoralTime.Common.Helpers;
-using CoralTime.DAL.ConvertersOfViewModels;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Grid;
@@ -14,199 +13,159 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportsService
     {
-        #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients.
+        #region Get DropDowns and Grid. Filtration By / Grouping By: Projects, Users, Dates, Clients.
 
-        public ReportsGrandGridTimeEntryView ReportsGridGroupByNone(ReportsGridView reportsGridData)
+        public ReportTotalView GetReportsGrid(ReportsGridView reportsGridView)
         {
-            var reportsGridTimeEntry = new ReportsGrandGridTimeEntryView
+            CheckAndSaveCurrentQuery(reportsGridView);
+
+            var dateFrom = reportsGridView.CurrentQuery.DateFrom;
+            var dateTo = reportsGridView.CurrentQuery.DateTo;
+
+            var groupById = reportsGridView.CurrentQuery.GroupById;
+            var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
+
+            var dateFormatId = reportsGridView.DateFormatId;
+
+            var reportTotalView = new ReportTotalView(groupById, showColumnIds, dateFormatId, dateFrom, dateTo);
+
+            var filteredTimeEntries = GetFilteredTimeEntries(reportsGridView);
+            if (filteredTimeEntries.Any())
             {
-                ReportsGridView = new List<ReportGridTimeEntryView>
+                switch (reportsGridView.CurrentQuery.GroupById)
                 {
-                    new ReportGridTimeEntryView
+                    case (int) ReportsGroupByIds.Project:
                     {
-                        Items = new List<ReportsGridItemsView>()
+                        var timeEntriesGroupByProjects = filteredTimeEntries
+                            .GroupBy(i => i.Project)
+                            .OrderBy(x => x.Key.Name)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        return reportTotalView.GetView(timeEntriesGroupByProjects);
+                    }
+
+                    case (int) ReportsGroupByIds.Member:
+                    {
+                        var timeEntriesGroupByMembers = filteredTimeEntries
+                            .GroupBy(i => i.Member)
+                            .OrderBy(x => x.Key.FullName)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        return reportTotalView.GetView(timeEntriesGroupByMembers);
+                    }
+
+                    case (int) ReportsGroupByIds.Date:
+                    {
+                        var timeEntriesGroupByDate = filteredTimeEntries
+                            .GroupBy(i => i.Date)
+                            .OrderBy(x => x.Key)
+                            .ToDictionary(key => key.Key, key => key.OrderBy(x => x.Date).ToList());
+
+                        return reportTotalView.GetView(timeEntriesGroupByDate);
+                    }
+
+                    case (int) ReportsGroupByIds.Client:
+                    {
+                        var timeEntriesGroupByClients = filteredTimeEntries
+                            .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
+                            .OrderBy(x => x.Key.Name)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        return reportTotalView.GetView(timeEntriesGroupByClients);
                     }
                 }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridTimeEntry;
             }
 
-            var timeEntriesGroupByNone = timeEntriesForGrouping.ToList()
-                .GroupBy(x => x.Id)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridTimeEntry.GetViewReportsGrandGridTimeEntries(timeEntriesGroupByNone, Mapper);
-
-            return result;
+            return reportTotalView;
         }
 
-        public ReportsGrandGridProjectsView ReportsGridGroupByProjects(ReportsGridView reportsGridData)
+        private void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView)
         {
-            var reportsGridProjects = new ReportsGrandGridProjectsView
-            {
-                ReportsGridView = new List<ReportGridProjectView>
-                {
-                    new ReportGridProjectView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
+            var queryDateFrom = reportsGridView.CurrentQuery.DateFrom;
+            var queryDateTo = reportsGridView.CurrentQuery.DateTo;
 
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
+            var memberImpersonatedId = MemberImpersonated.Id;
+            var currentQuery = reportsGridView.CurrentQuery;
+
+            var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
+            if (dateStaticId != null)
             {
-                return reportsGridProjects;
+                var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
+                var calculateByStaticIdDateFrom = dateStaticExtend.DateFrom;
+                var calculateByStaticIdDateTo = dateStaticExtend.DateTo;
+
+                if (queryDateFrom != calculateByStaticIdDateFrom && queryDateTo != calculateByStaticIdDateTo)
+                {
+                    throw new CoralTimeDangerException("DateFrom, DateTo from query not equals new DateFrom, DateTo that calculated by DateStaticId");
+                }
             }
 
-            var timeEntriesGroupByProjects = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Project)
-                .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridProjects.GetViewReportsGrandGridClients(timeEntriesGroupByProjects, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridMembersView ReportsGridGroupByUsers(ReportsGridView reportsGridData)
-        {
-            var reportsGridUsers = new ReportsGrandGridMembersView
-            {
-                ReportsGridView = new List<ReportGridMemberView>
-                {
-                    new ReportGridMemberView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridUsers;
-            }
-
-            var timeEntriesGroupByUsers = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Member)
-                .OrderBy(x => x.Key.FullName)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridUsers.GetViewReportsGrandGridClients(timeEntriesGroupByUsers, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridDatesView ReportsGridGroupByDates(ReportsGridView reportsGridData)
-        {
-            var reportsGridDates = new ReportsGrandGridDatesView
-            {
-                ReportsGridView = new List<ReportGridDateView>
-                {
-                    new ReportGridDateView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridDates;
-            }
-
-            var timeEntriesGroupByDate = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Date)
-                .OrderBy(x => x.Key.Date)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridDates.GetViewReportsGrandGridClients(timeEntriesGroupByDate, Mapper);
-
-            return result;
-        }
-
-        public ReportsGrandGridClients ReportsGridGroupByClients(ReportsGridView reportsGridData)
-        {
-            var reportsGridClients = new ReportsGrandGridClients
-            {
-                ReportsGridView = new List<ReportGridClientView>
-                {
-                    new ReportGridClientView
-                    {
-                        Items = new List<ReportsGridItemsView>()
-                    }
-                }
-            };
-
-            var timeEntriesForGrouping = GetTimeEntriesForGrouping(reportsGridData);
-            if (!timeEntriesForGrouping.Any())
-            {
-                return reportsGridClients;
-            }
-
-            var timeEntriesGroupByClients = timeEntriesForGrouping.ToList()
-                .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
-                .OrderBy(x => x.Key.Name)
-                .ToDictionary(key => key.Key, key => key.OrderBy(value => value.Date).AsEnumerable());
-
-            var result = reportsGridClients.GetViewReportsGrandGridClients(timeEntriesGroupByClients, Mapper);
-
-            return result;
+            _reportsSettingsService.UpdateCurrentQuery(currentQuery, memberImpersonatedId);
         }
 
         #endregion
 
-        #region Get DropDowns and Grid. Filtration By / Grouping By: None, Projects, Users, Dates, Clients. (Common methods)
+        #region Get DropDowns and Grid. Filtration By / Grouping By: Projects, Users, Dates, Clients. (Common methods)
 
-        private IQueryable<TimeEntry> GetTimeEntriesForGrouping(ReportsGridView reportsGridData)
+        private List<TimeEntry> GetFilteredTimeEntries(ReportsGridView reportsGridView)
         {
-            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(InpersonatedUserName);
+            var memberImpersonated = MemberImpersonated;
 
-            if (currentMember == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} not found.");
-            }
+            var dateFrom = new DateTime();
+            var dateTo = new DateTime();
 
-            if (!currentMember.User.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {InpersonatedUserName} is not active.");
-            }
-
-            CommonHelpers.SetRangeOfWeekByDate(out var weekStart, out var weekEnd, DateTime.Now);
-
-            DateFrom = reportsGridData.CurrentQuery?.DateFrom ?? weekStart;
-            DateTo = reportsGridData.CurrentQuery?.DateTo ?? weekEnd;
+            FillDatesByDateStaticOrDateFromTo(reportsGridView, ref dateFrom, ref dateTo);
 
             // By Dates (default grouping, i.e. "Group by None"; direct order).
-            var timeEntriesByDateOfUser = GetTimeEntryByDate(currentMember, DateFrom, DateTo);
+            var timeEntriesByDateOfUser = GetTimeEntryByDate(memberImpersonated, dateFrom, dateTo);
 
             // By Projects.
-            if (reportsGridData.CurrentQuery?.ProjectIds != null && reportsGridData.CurrentQuery.ProjectIds.Length > 0)
+            if (reportsGridView.CurrentQuery?.ProjectIds != null && reportsGridView.CurrentQuery.ProjectIds.Length > 0)
             {
-                CheckAndSetIfInFilterChooseSingleProject(reportsGridData, timeEntriesByDateOfUser);
+                CheckAndSetIfInFilterChooseSingleProject(reportsGridView, timeEntriesByDateOfUser);
 
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.CurrentQuery.ProjectIds.Contains(x.ProjectId));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridView.CurrentQuery.ProjectIds.Contains(x.ProjectId));
             }
 
             // By Members.
-            if (reportsGridData.CurrentQuery?.MemberIds != null && reportsGridData.CurrentQuery.MemberIds.Length > 0)
+            if (reportsGridView.CurrentQuery?.MemberIds != null && reportsGridView.CurrentQuery.MemberIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.CurrentQuery.MemberIds.Contains(x.MemberId));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridView.CurrentQuery.MemberIds.Contains(x.MemberId));
             }
 
             // By Clients that has Projects.
-            if (reportsGridData.CurrentQuery?.ClientIds != null && reportsGridData.CurrentQuery.ClientIds.Length > 0)
+            if (reportsGridView.CurrentQuery?.ClientIds != null && reportsGridView.CurrentQuery.ClientIds.Length > 0)
             {
-                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridData.CurrentQuery.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridData.CurrentQuery.ClientIds.Contains(WithoutClient.Id));
+                timeEntriesByDateOfUser = timeEntriesByDateOfUser.Where(x => reportsGridView.CurrentQuery.ClientIds.Contains(x.Project.ClientId) || x.Project.ClientId == null && reportsGridView.CurrentQuery.ClientIds.Contains(WithoutClient.Id));
             }
 
-            return timeEntriesByDateOfUser;
+            return timeEntriesByDateOfUser.ToList();
+        }
+
+        private void FillDatesByDateStaticOrDateFromTo(ReportsGridView reportsGridView, ref DateTime dateFrom, ref DateTime dateTo)
+        {
+            var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
+            var isFilledDateStaticIdAndDateFromDateTo = dateStaticId != null && reportsGridView.CurrentQuery?.DateFrom != null && reportsGridView.CurrentQuery?.DateTo != null;
+            var isFilledOnlyDateFromDateTo = dateStaticId == null && reportsGridView.CurrentQuery?.DateFrom != null && reportsGridView.CurrentQuery?.DateTo != null;
+
+            if (!isFilledDateStaticIdAndDateFromDateTo && !isFilledOnlyDateFromDateTo)
+            {
+                throw new CoralTimeDangerException("Wrong input conditional: to get entities by DateStaticId or Date From/To properties.");
+            }
+            
+            if (isFilledDateStaticIdAndDateFromDateTo)
+            {
+                var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
+
+                dateFrom = dateStaticExtend.DateFrom;
+                dateTo = dateStaticExtend.DateTo;
+            }
+
+            if (isFilledOnlyDateFromDateTo)
+            {
+                dateFrom = (DateTime) reportsGridView.CurrentQuery?.DateFrom;
+                dateTo = (DateTime) reportsGridView.CurrentQuery?.DateTo;
+            }
         }
 
         private void CheckAndSetIfInFilterChooseSingleProject(ReportsGridView reportsGridData, IQueryable<TimeEntry> timeEntriesByDateOfUser)
@@ -225,7 +184,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 .Include(x => x.Project).ThenInclude(x => x.Client)
                 .Include(x => x.Member.User)
                 .Include(x => x.TaskType)
-                .Where(t => t.Date.Date >= dateFrom.Date && t.Date.Date <= dateTo.Date);
+                .Where(t => t.Date.Date >= dateFrom.Date && t.Date.Date <= dateTo.Date && t.TimeTimerStart <= 0); // TODO update logic to set values for start/stop timer in TimeEntry create method!
 
             #region Constrain for Admin: return all TimeEntries.
 
@@ -268,15 +227,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private Client CreateWithOutClientInstance()
         {
-            var withoutClient = new Client
+            return new Client
             {
                 Id = WithoutClient.Id,
                 Name = WithoutClient.Name,
                 CreationDate = DateTime.Now,
                 LastUpdateDate = DateTime.Now,
             };
-
-            return withoutClient;
         }
 
         #endregion

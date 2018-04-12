@@ -28,7 +28,8 @@
                     </div>
                     <ct-range-datepicker *ngIf="isDatepickerShown"
                                          [class.ct-datepicker-opened]="isDatepickerAnimating"
-                                         [datePeriod]="datePeriod"
+                                         [dateResponse]="dateResponse"
+                                         [datePeriodList]="reportDropdowns?.values.dateStatic"
                                          [firstDayOfWeek]="firstDayOfWeek"
                                          (clickOutside)="toggleRangeDatepicker($event)"
                                          (onPeriodChanged)="datePeriodOnChange($event)"
@@ -38,13 +39,13 @@
                             <span class="ct-export-button" (click)="menu.toggleMenu()" title="Export reports"></span>
                             <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu">
                                 <ct-menu-item>
-                                    <a md-ripple (click)="exportAs(0)">Export as Excel</a>
+                                    <a mat-ripple (click)="exportAs(0)">Export as Excel</a>
                                 </ct-menu-item>
+                                <!--<ct-menu-item>-->
+                                    <!--<a mat-ripple (click)="exportAs(1)">Export as CSV</a>-->
+                                <!--</ct-menu-item>-->
                                 <ct-menu-item>
-                                    <a md-ripple (click)="exportAs(1)">Export as CSV</a>
-                                </ct-menu-item>
-                                <ct-menu-item>
-                                    <a md-ripple (click)="exportAs(2)">Export as PDF</a>
+                                    <a mat-ripple (click)="exportAs(2)">Export as PDF</a>
                                 </ct-menu-item>
                             </ct-menu>
                         </div>
@@ -124,8 +125,8 @@
             </div>
         </div>
 
-        <div *ngIf="datePeriod.dateFrom && datePeriod.dateTo" class="ct-period-for-print ct-print-mode">
-            Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}
+        <div *ngIf="dateResponse.datePeriod" class="ct-period-for-print ct-print-mode">
+            Period: {{formatDate(dateResponse.datePeriod.dateFrom)}} - {{formatDate(dateResponse.datePeriod.dateTo)}}
         </div>
         <div class="ct-reports-data" #scrollContainer>
             <ct-reports-grid *ngFor="let grid of gridData"
@@ -135,12 +136,12 @@
                              [rowsNumber]="grid.rows"
                              [showColumnIds]="showColumnIds"></ct-reports-grid>
 
-            <div *ngIf="reportsGridData?.reportsGridView.length == 0" class="ct-nodata">
+            <div *ngIf="reportsGridData?.groupedItems.length == 0" class="ct-nodata">
                 Sorry, you don't have any reports at this time period.
             </div>
         </div>
 
-        <div *ngIf="reportsGridData?.grandActualTime > 0" class="ct-grid-container ct-total-time-container">
+        <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-time-container">
             <label>Total</label>
             <div class="ui-datatable-tablewrapper">
                 <table>
@@ -155,13 +156,13 @@
 
                         <td class="ct-cell-actual">
                             <div class="ct-total-hours-tracked">
-                                <span>{{getTimeString(reportsGridData?.grandActualTime, true)}}</span>
+                                <span>{{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
                             </div>
                         </td>
 
                         <td *ngIf="showColumnIds?.indexOf(1) > -1" class="ct-cell-estimated">
                             <div class="ct-total-hours-planned" *ngIf="showColumnIds?.indexOf(1) > -1">
-                                <span>{{getTimeString(reportsGridData?.grandEstimatedTime)}}</span>
+                                <span>{{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
                             </div>
                         </td>
 

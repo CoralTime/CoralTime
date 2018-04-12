@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Bounds, CropperSettings, ImageCropperComponent } from 'ng2-img-cropper';
-import { ProfileService } from '../../../../services/profile.service';
 import { NotificationService } from '../../../../core/notification.service';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { UserPicService } from '../../../../services/user-pic.service';
 
 @Component({
@@ -20,8 +19,7 @@ export class ProfilePhotoComponent {
 	@ViewChild(ImageCropperComponent) cropper: ImageCropperComponent;
 
 	constructor(private notificationService: NotificationService,
-	            private mdDialog: MdDialog,
-	            private profileService: ProfileService,
+	            private matDialog: MatDialog,
 	            private userPicService: UserPicService) {
 		this.cropperSettings = new CropperSettings();
 		this.cropperSettings.width = 200;
@@ -51,17 +49,15 @@ export class ProfilePhotoComponent {
 	}
 
 	changeProfileImg(base64String: string): void {
-		this.profileService
-			.upload(this.createCroppedImg(base64String))
-			.subscribe((avatar: any) => {
-					let avatarUrl = avatar.json().avatarUrl;
-					this.userPicService.onUserPicChange.emit(avatarUrl);
+		this.userPicService.uploadUserPicture(this.createCroppedImg(base64String))
+			.subscribe((avatar: string) => {
+					let avatarUrl = avatar;
 					this.notificationService.success('Your profile photo was changed.');
 					this.onSubmit.emit(avatarUrl);
 				},
 				error => {
 					this.notificationService.danger('Error changing profile photo.');
-					this.mdDialog.closeAll();
+					this.matDialog.closeAll();
 				});
 	}
 
@@ -107,6 +103,6 @@ export class ProfilePhotoComponent {
 	}
 
 	private sliceCoding(base64String: string): string {
-		return base64String.slice(base64String.indexOf('base64,') + 7)
+		return base64String.slice(base64String.indexOf('base64,') + 7);
 	}
 }

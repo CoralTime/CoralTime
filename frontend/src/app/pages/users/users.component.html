@@ -1,7 +1,5 @@
 <div class="ct-grid-search-filter">
-    <md-input-container class="full-width">
-        <input #gb mdInput placeholder="Search user..." [(ngModel)]="filterStr">
-    </md-input-container>
+    <input class="ct-input-element" #gb placeholder="Search user..." [(ngModel)]="filterStr">
     <i class="fa fa-search"></i>
 </div>
 
@@ -29,7 +27,7 @@
             <p-column field="fullName" header="Full Name" [sortable]="true">
                 <ng-template let-col let-user="rowData" pTemplate="body">
                     <span (click)="openUserDialog(user)" class="ct-grid-userpic">
-                    <ct-user-pic [iconUrl]="user.iconUrl"></ct-user-pic>
+                    <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>
                     </span>
                     <span (click)="openUserDialog(user)" class="ct-grid-link-text" title="{{user.userName}}">
                         {{user.fullName}}

@@ -7,7 +7,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { AuthGuard } from '../../../core/auth/auth-guard.service';
 import { MenuComponent } from '../../../shared/menu/menu.component';
 import { ImpersonationService } from '../../../services/impersonation.service';
-import { UserInfoService } from '../../../core/auth/user-info.service';
+import { UsersService } from '../../../services/users.service';
 import { User } from '../../../models/user';
 
 interface MenuItem {
@@ -70,16 +70,17 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	            private auth: AuthGuard,
 	            private impersonationService: ImpersonationService,
 	            private projectsService: ProjectsService,
-	            private userInfoService: UserInfoService) { }
+	            private usersService: UsersService) {
+	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
+		this.authUser = this.authService.authUser;
 
 		this.getUserInfo();
 		this.onResize();
 		this.updateManageMenuVisibility();
 
-		this.subscriptionUserInfo = this.userInfoService.onChange.subscribe((userInfo: User) => {
+		this.subscriptionUserInfo = this.usersService.onChange.subscribe((userInfo: User) => {
 			this.userInfo = userInfo;
 		});
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
@@ -105,7 +106,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	}
 
 	getUserInfo(): void {
-		this.userInfoService.getUserInfo(this.authUser.id).then((userInfo: User) => {
+		this.usersService.getUserInfo(this.authUser.id).then((userInfo: User) => {
 			this.userInfo =  userInfo;
 		});
 	}

@@ -5,18 +5,17 @@ import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
 import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
-import {
-	DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, TimeZone, WeekDay
-} from '../../../services/profile.service';
+import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } from '../../../services/profile.service';
 import { EnterEmailService } from '../../forgot-password/enter-email/enter-email.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { NotificationService } from '../../../core/notification.service';
-import { UserInfoService } from '../../../core/auth/user-info.service';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 import { SelectComponent } from '../../../shared/form/select/select.component';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ActivatedRoute } from '@angular/router';
+import { UserPicService } from '../../../services/user-pic.service';
+import { UsersService } from '../../../services/users.service';
 
 const STANDART_TIME_ARRAY = [
 	'0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
@@ -57,14 +56,12 @@ export class ProfileSettingsComponent implements OnInit {
 	taskModel: Task;
 	timeFormats: TimeFormat[] = [new TimeFormat(12), new TimeFormat(24)];
 	timeFormatModel: TimeFormat = this.timeFormats[1];
-	timeZones: TimeZone[];
-	timeZoneModel: TimeZone;
 	weekStartDays: string[] = ['Sunday', 'Monday'];
 	weekStartDayModel: string;
 
-	private dialogRef: MdDialogRef<ProfilePhotoComponent>;
+	private dialogRef: MatDialogRef<ProfilePhotoComponent>;
 
-	constructor(private dialog: MdDialog,
+	constructor(private dialog: MatDialog,
 	            private enterEmailService: EnterEmailService,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
@@ -72,7 +69,8 @@ export class ProfileSettingsComponent implements OnInit {
 	            private profileService: ProfileService,
 	            private route: ActivatedRoute,
 	            private tasksService: TasksService,
-	            private userInfoService: UserInfoService) {
+	            private userPicService: UserPicService,
+	            private usersService: UsersService) {
 	}
 
 	ngOnInit() {
@@ -80,12 +78,11 @@ export class ProfileSettingsComponent implements OnInit {
 			this.userModel = new User(this.impersonationService.impersonationUser || data.user);
 		});
 
-		this.avatarUrl = this.userModel.iconUrl.replace('Icons', 'Avatars');
-		this.timeZones = this.profileService.getTimeZones();
+		this.avatarUrl = this.userModel.urlIcon.replace('Icons', 'Avatars');
 		this.timeFormatModel = this.userModel.timeFormat ? new TimeFormat(this.userModel.timeFormat) : this.timeFormats[1];
-		this.timeZoneModel = this.timeZones.find((timeZone: TimeZone) => timeZone.name === this.userModel.timeZone);
 		this.weekStartDayModel = this.weekStartDays[this.userModel.weekStart];
 
+		this.getAvatar();
 		this.getDateFormats();
 		this.getProjects();
 		this.setSendEmailTimeData(this.userModel.timeFormat);
@@ -93,6 +90,12 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	// GENERAL
+
+	getAvatar(): void {
+		this.userPicService.loadUserPicture(this.userModel.id).subscribe((avatarUrl: string) => {
+			this.avatarUrl = avatarUrl;
+		});
+	}
 
 	openPhotoDialog(): void {
 		this.dialogRef = this.dialog.open(ProfilePhotoComponent);
@@ -106,14 +109,14 @@ export class ProfileSettingsComponent implements OnInit {
 	onSubmitPhotoDialog(avatarUrl: string): void {
 		this.avatarUrl = avatarUrl;
 		let iconObject = {
-			iconUrl: avatarUrl.replace('Avatars', 'Icons')
+			urlIcon: avatarUrl.replace('Avatars', 'Icons')
 		};
 
 		if (this.impersonationService.impersonationId) {
 			let impersonateUser = Object.assign(this.impersonationService.impersonationUser, iconObject);
 			this.impersonationService.setStorage(impersonateUser);
 		} else {
-			this.userInfoService.setUserInfo(iconObject);
+			this.usersService.setUserInfo(iconObject);
 		}
 	}
 
@@ -134,7 +137,7 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	resetPassword(): void {
-		this.enterEmailService.sendEmail(this.userModel.email).then(
+		this.enterEmailService.sendEmail(this.userModel.email).subscribe(
 			(emailResponse) => {
 				if (emailResponse.isSentEmail) {
 					this.resetPasswordMessage = 'Email to reset password sent to ' + this.userModel.email;
@@ -185,7 +188,7 @@ export class ProfileSettingsComponent implements OnInit {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, notificationsObject);
 						this.impersonationService.setStorage(impersonateUser);
 					} else {
-						this.userInfoService.setUserInfo(notificationsObject);
+						this.usersService.setUserInfo(notificationsObject);
 					}
 
 					this.notificationService.success('Profile settings has been successfully changed.');
@@ -213,13 +216,13 @@ export class ProfileSettingsComponent implements OnInit {
 						this.impersonationService.setStorage(impersonateUser);
 						this.impersonationService.onChange.emit(impersonateUser);
 					} else {
-						this.userInfoService.setUserInfo(personalInfoObject);
+						this.usersService.setUserInfo(personalInfoObject);
 					}
 
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
-				error => {
-					if (!error) {
+				errResponse => {
+					if (errResponse.error.includes('Duplicate email.')) {
 						this.showWrongEmailMessage = true;
 					}
 
@@ -234,7 +237,6 @@ export class ProfileSettingsComponent implements OnInit {
 			dateFormat: this.userModel.dateFormat,
 			dateFormatId: this.userModel.dateFormatId,
 			timeFormat: this.userModel.timeFormat,
-			timeZone: this.userModel.timeZone,
 			weekStart: this.userModel.weekStart
 		};
 
@@ -244,7 +246,7 @@ export class ProfileSettingsComponent implements OnInit {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
 						this.impersonationService.setStorage(impersonateUser);
 					} else {
-						this.userInfoService.setUserInfo(preferencesObject);
+						this.usersService.setUserInfo(preferencesObject);
 					}
 
 					this.notificationService.success('Profile settings has been successfully changed.');
