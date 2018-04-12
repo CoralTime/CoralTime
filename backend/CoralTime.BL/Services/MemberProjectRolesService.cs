@@ -74,9 +74,7 @@ namespace CoralTime.BL.Services
                     .Select(x => x.ProjectId)
                     .ToArray();
 
-                allMemberProjectRoles = allMemberProjectRoles
-                    .Where(x => targetedProjectIds.Contains(x.ProjectId))
-                    .ToList();
+                allMemberProjectRoles = allMemberProjectRoles.Where(x => targetedProjectIds.Contains(x.ProjectId)).ToList();
 
                 #endregion Get All projects ids where this member(not this user) has "manager role" at projects.
 
@@ -88,7 +86,7 @@ namespace CoralTime.BL.Services
                      2. but dont add MemberProjectRoles with members from DB to result if it exist yet.
                 */
 
-                var addGlobalProjectsRoles = AddGlobalProjectsRoles(memberProjectRoleView).Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.MemberId)));
+                var addGlobalProjectsRoles = AddGlobalProjectsRoles(memberProjectRoleView).Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.Member.Id)));
                 memberProjectRoleView.AddRange(addGlobalProjectsRoles);
 
                 return memberProjectRoleView;
@@ -132,12 +130,14 @@ namespace CoralTime.BL.Services
                     {
                         if (!memberProjRole.Any(x => x.MemberId == member.Id && x.ProjectId == project.Id))
                         {
-                            customMemberProjectRole.Add(new MemberProjectRole
+                            var z = new MemberProjectRole
                             {
                                 Member = member,
                                 Project = project,
                                 Role = getMemberRole
-                            });
+                            };
+
+                            customMemberProjectRole.Add(z);
                         }
                     }
                 }
