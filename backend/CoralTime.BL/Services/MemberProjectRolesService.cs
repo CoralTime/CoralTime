@@ -87,7 +87,7 @@ namespace CoralTime.BL.Services
                 */
 
                 var addGlobalProjectsRoles = AddGlobalProjectsRoles(memberProjectRoleView).Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.Member.Id)));
-                memberProjectRoleView.AddRange(addGlobalProjectsRoles);
+                    memberProjectRoleView.AddRange(addGlobalProjectsRoles);
 
                 return memberProjectRoleView;
             }
@@ -102,7 +102,7 @@ namespace CoralTime.BL.Services
                 .ToList();
 
             // Get Global Projects. Add members to Global Projects. Add to result Global Projects.
-            resultForMember.AddRange(AddGlobalProjectsRoles(resultForMember).Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.MemberId))));
+            resultForMember.AddRange(AddGlobalProjectsRoles(resultForMember).Select(x => x.GetViewWithGlobalProjects(Mapper, _avatarService.GetUrlIcon(x.Member.Id))));
 
             return resultForMember;
 
@@ -130,14 +130,12 @@ namespace CoralTime.BL.Services
                     {
                         if (!memberProjRole.Any(x => x.MemberId == member.Id && x.ProjectId == project.Id))
                         {
-                            var z = new MemberProjectRole
+                            customMemberProjectRole.Add(new MemberProjectRole
                             {
                                 Member = member,
                                 Project = project,
                                 Role = getMemberRole
-                            };
-
-                            customMemberProjectRole.Add(z);
+                            });
                         }
                     }
                 }
