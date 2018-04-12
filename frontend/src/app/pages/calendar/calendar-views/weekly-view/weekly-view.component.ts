@@ -6,6 +6,7 @@ import { Project } from '../../../../models/project';
 import { Subscription } from 'rxjs';
 import { ImpersonationService } from '../../../../services/impersonation.service';
 import { User } from '../../../../models/user';
+import { AuthService } from '../../../../core/auth/auth.service';
 import * as moment from 'moment';
 
 @Component({
@@ -30,9 +31,10 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	private subscriptionImpersonation: Subscription;
 	private timeEntriesSubscription: Subscription;
 
-	constructor(private route: ActivatedRoute,
+	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
-	            private impersonationService: ImpersonationService) {
+	            private impersonationService: ImpersonationService,
+	            private route: ActivatedRoute) {
 	}
 
 	ngOnInit() {
@@ -54,7 +56,9 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 				this.getTimeEntries(this.projectIds);
 			});
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			this.getTimeEntries(this.projectIds);
+			if (this.authService.isLoggedIn()) {
+				this.getTimeEntries(this.projectIds);
+			}
 		});
 	}
 
