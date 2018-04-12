@@ -124,6 +124,7 @@ export class AuthService {
 		this.matDialog.closeAll();
 		localStorage.removeItem('APPLICATION_USER');
 		this.onChange.emit(null);
+		this.impersonateService.stopImpersonation(true);
 
 		if (!ignoreRedirect) {
 			this.router.navigate(['/login']);
@@ -131,9 +132,6 @@ export class AuthService {
 		if (isSessionExpired) {
 			this.notificationService.danger('Your session is expired.');
 		}
-		setTimeout(() => {
-			this.impersonateService.stopImpersonation(true);
-		}, 0);
 	}
 
 	isLoggedIn(): boolean {
