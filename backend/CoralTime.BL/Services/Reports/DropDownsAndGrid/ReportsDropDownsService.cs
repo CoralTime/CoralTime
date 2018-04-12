@@ -138,8 +138,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     Email = client.Email,
                     IsActive = client.IsActive,
                     Description = client.Description,
-                    Projects = new List<Project>(client.Projects.Where(projectOfClient =>
-                        projects.Select(project => project.Id).Contains(projectOfClient.Id)).ToList())
+                    Projects = new List<Project>(client.Projects.Where(projectOfClient => projects.Select(project => project.Id).Contains(projectOfClient.Id)).ToList())
                 }).ToList();
 
             clients.AddRange(clientsWithProjects);
