@@ -1,5 +1,5 @@
 import {
-	Component, Input, Output, EventEmitter, forwardRef, ViewChild, OnChanges, SimpleChanges, HostListener
+	Component, Input, Output, EventEmitter, forwardRef, ViewChild, HostListener
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SelectItem } from 'primeng/components/common/api';
@@ -32,7 +32,6 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
 })
 
 export class MultiSelectComponent extends MultiSelect {
-	@Input() ngModel: number[];
 	@Input() extraActionTitle: string;
 	@Input() showSubmitButton: boolean = false;
 	@Input() showFilterSearch: boolean = true;
@@ -44,7 +43,6 @@ export class MultiSelectComponent extends MultiSelect {
 	@ViewChild('slimScroll') slimScroll: any;
 
 	isSubmitted: boolean = false;
-	filter: boolean;
 	oldValue: any[];
 
 	show(): void {
@@ -76,22 +74,16 @@ export class MultiSelectComponent extends MultiSelect {
 		this.redrowSlimScroll();
 	}
 
-	selectAll(): void {
-		let opts = this.getVisibleOptions();
-		if (opts) {
-			this.value = [];
-			for (let i = 0; i < opts.length; i++) {
-				this.value.push(opts[i].value);
-			}
-		}
-		this.onModelChange(this.value);
-		this.onChange.emit({originalEvent: event, value: this.value});
+	selectAll(event: MouseEvent): void {
+		super.toggleAll(event, {
+			checked: false
+		});
 	}
 
-	selectNone(): void {
-		this.value = [];
-		this.onModelChange(this.value);
-		this.onChange.emit({originalEvent: event, value: this.value});
+	selectNone(event: MouseEvent): void {
+		super.toggleAll(event, {
+			checked: true
+		});
 	}
 
 	doExtraAction(event): void {

@@ -22,8 +22,8 @@
             </div>
             <div class="ui-multiselect-select-all-container" *ngIf="showActionsPanel">
                 <ul>
-                    <li *ngIf="value?.length"><a (click)="selectNone()">Deselect All</a></li>
-                    <li *ngIf="!value?.length"><a (click)="selectAll()">Select All</a></li>
+                    <li *ngIf="value?.length"><a (click)="selectNone($event)">Deselect All</a></li>
+                    <li *ngIf="!value?.length"><a (click)="selectAll($event)">Select All</a></li>
                     <li *ngIf="extraActionTitle"><a (click)="doExtraAction($event)">{{extraActionTitle}}</a></li>
                 </ul>
             </div>
