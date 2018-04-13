@@ -221,8 +221,8 @@ export class ProfileSettingsComponent implements OnInit {
 
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
-				error => {
-					if (!error) {
+				errResponse => {
+					if (errResponse.error.includes('Duplicate email.')) {
 						this.showWrongEmailMessage = true;
 					}
 

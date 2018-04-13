@@ -141,7 +141,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		this.currentTimeEntry.date = date[0] ? DateUtils.formatDateToString(date[0]) : this.currentTimeEntry.date;
 		if (!this.isNewTrackedTimeValid(this.currentTimeEntry.date)) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
 			this.closeAllMenus();
 			return;
 		}
@@ -155,7 +155,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				this.closeEntryTimeForm.emit();
 			},
 			error => {
-				this.notificationService.danger('Error moving Time Entry');
+				this.notificationService.danger('Error moving Time Entry.');
 			});
 		this.closeAllMenus();
 	}
@@ -169,7 +169,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		let observable: Observable<any>;
 
 		if (dateList.some((date: string) => !this.isNewTrackedTimeValid(date))) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
 			return;
 		}
 
@@ -183,7 +183,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 					this.calendarService.timeEntriesUpdated.emit();
 				},
 				error => {
-					this.notificationService.danger('Error dublicating Time Entry');
+					this.notificationService.danger('Error dublicating Time Entry.');
 				});
 		});
 	}
@@ -274,11 +274,11 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				this.timeEntry.timeOptions = timeEntry.timeOptions;
 
 				this.form.closeTimeEntryForm();
-				this.notificationService.danger('Total actual time can\'t be more than 24 hours. Timer has stopped');
+				this.notificationService.danger('Total actual time can\'t be more than 24 hours. Timer has stopped.');
 				return null;
 			},
 			error => {
-				this.notificationService.danger('Error changing Timer status');
+				this.notificationService.danger('Error changing Timer status.');
 				return error;
 			});
 	}
@@ -315,7 +315,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 					return null;
 				},
 				error => {
-					this.notificationService.danger('Error changing Timer status');
+					this.notificationService.danger('Error changing Timer status.');
 					return error;
 				});
 	}

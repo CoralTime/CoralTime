@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
@@ -46,6 +47,21 @@ namespace CoralTime.Common.Middlewares
                     _logger.LogWarning($"CoralTimeSafeException, {ex.Message} , {ex.StackTrace}");
                     code = HttpStatusCode.BadRequest;
                     message = exception.Message;
+                    var sb = new StringBuilder();
+
+                    if (ex.errors.Count > 0)
+                    {
+                        foreach (var errorView in ex.errors)
+                        {
+                            //sb.Append(errorView.Details);
+                            //sb.Append(errorView.Source);
+                            sb.Append(errorView.Title);
+                            sb.Append(". ");
+                        }
+                    }
+
+                    message = sb.ToString();
+
                     break;
                 }
                 case CoralTimeAlreadyExistsException ex:

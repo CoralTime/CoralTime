@@ -8,6 +8,7 @@ export interface ReportDropdowns {
 export class ReportFilters {
 	clientIds: number[];
 	dateFrom: string;
+	dateStaticId: number;
 	dateTo: string;
 	groupById: number;
 	memberIds: number[];
@@ -19,6 +20,7 @@ export class ReportFilters {
 	constructor(obj: any) {
 		this.clientIds = obj.clientIds || [];
 		this.dateFrom = obj.dateFrom;
+		this.dateStaticId = obj.dateStaticId;
 		this.dateTo = obj.dateTo;
 		this.groupById = obj.groupById || 3;
 		this.memberIds = obj.memberIds || [];
@@ -31,6 +33,7 @@ export class ReportFilters {
 
 export interface ReportDropdownsDetails {
 	customQueries: ReportFilters[];
+	dateStatic: DateStatic[];
 	filters: ClientDetail[];
 	groupBy: GroupByItem[];
 	showColumns: ShowColumn[];
@@ -109,6 +112,13 @@ export interface ReportItem {
 	taskId: number;
 	taskName: string;
 	timeValues: TimeValues;
+}
+
+export interface DateStatic {
+	id: number;
+	dateFrom: string;
+	dateTo: string;
+	description: string;
 }
 
 export interface GroupByItem {

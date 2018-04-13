@@ -2,9 +2,9 @@
     <div class="ct-page-container">
         <div class="ct-gray-devider"></div>
 
-        <div *ngIf="datePeriod.dateFrom && datePeriod.dateTo" class="ct-period-for-print ct-print-mode">
-            Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}
-        </div>
+        <!--<div *ngIf="datePeriod.dateFrom && datePeriod.dateTo" class="ct-period-for-print ct-print-mode">-->
+            <!--Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}-->
+        <!--</div>-->
 
         <div>
             <div class="ct-reports-chart-container">
@@ -82,19 +82,20 @@
                                         <a class="ct-prev" (click)="getNewPeriod(false)"></a>
                                         <div>
                                             <i class="fa fa-calendar"></i>
-                                            <span class="ct-default-text" (click)="toggleRangeDatepicker()">{{dateString}}</span>
+                                            <span (click)="toggleRangeDatepicker()">{{dateString}}</span>
                                             <i *ngIf="isDatepickerShown" class="fa fa-times" (click)="cancelUpdatingReportGrid()"></i>
                                             <i *ngIf="!isDatepickerShown" class="fa fa-sort-desc" (click)="toggleRangeDatepicker()"></i>
                                         </div>
                                         <a class="ct-next" (click)="getNewPeriod()"></a>
                                     </div>
-                                    <!--<ct-range-datepicker *ngIf="isDatepickerShown"-->
-                                    <!--[class.ct-datepicker-opened]="isDatepickerAnimating"-->
-                                    <!--[datePeriod]="datePeriod"-->
-                                    <!--[firstDayOfWeek]="firstDayOfWeek"-->
-                                    <!--(clickOutside)="toggleRangeDatepicker($event)"-->
-                                    <!--(onPeriodChanged)="datePeriodOnChange($event)"-->
-                                    <!--(closed)="toggleRangeDatepicker()"></ct-range-datepicker>-->
+                                    <ct-range-datepicker *ngIf="isDatepickerShown"
+                                                         [class.ct-datepicker-opened]="isDatepickerAnimating"
+                                                         [dateResponse]="dateResponse"
+                                                         [datePeriodList]="reportDropdowns?.values.dateStatic"
+                                                         [firstDayOfWeek]="firstDayOfWeek"
+                                                         (clickOutside)="toggleRangeDatepicker($event)"
+                                                         (onPeriodChanged)="datePeriodOnChange($event)"
+                                                         (closed)="toggleRangeDatepicker()"></ct-range-datepicker>
                                 </div>
                             </div>
 
@@ -141,58 +142,19 @@
                                 <span class="ct-export-button" (click)="menu.toggleMenu()" title="Export reports"></span>
                                 <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu">
                                     <ct-menu-item>
-                                        <a md-ripple (click)="exportAs(0)">Export as Excel</a>
+                                        <a mat-ripple (click)="exportAs(0)">Export as Excel</a>
                                     </ct-menu-item>
                                     <!--<ct-menu-item>-->
-                                    <!--<a md-ripple (click)="exportAs(1)">Export as CSV</a>-->
+                                    <!--<a mat-ripple (click)="exportAs(1)">Export as CSV</a>-->
                                     <!--</ct-menu-item>-->
                                     <ct-menu-item>
-                                        <a md-ripple (click)="exportAs(2)">Export as PDF</a>
+                                        <a mat-ripple (click)="exportAs(2)">Export as PDF</a>
                                     </ct-menu-item>
                                 </ct-menu>
                             </div>
                             <span class="ct-print-button" (click)="checkDataAndPrintPage()" title="Print page"></span>
                             <span class="ct-send-button" (click)="openSendReportsDialog()" title="Send reports"></span>
                         </div>
-
-
-                        <!--<div class="ct-query-block">-->
-                        <!--<button class="ct-select-open-button" [class.ct-disabled]="!queryItems.length">-->
-                        <!--<i class="material-icons" (click)="querySelect.toggleSelect()">more_horiz</i>-->
-                        <!--</button>-->
-                        <!--<ct-select [name]="'query'" #querySelect-->
-                        <!--[displayName]="'queryName'" [trackBy]="'queryId'"-->
-                        <!--[(ngModel)]="queryModel"-->
-                        <!--(change)="queryOnChange(queryModel)"-->
-                        <!--[options]="queryItems">-->
-                        <!--</ct-select>-->
-                        <!--<span class="ct-query-text">{{queryModel?.queryName || 'Default query'}}</span>-->
-                        <!--<span *ngIf="!queryModel" class="ct-close" (click)="openQueryDialog()">Create</span>-->
-                        <!--<span *ngIf="queryModel" class="ct-close" (click)="deleteQuery(queryModel)">Delete</span>-->
-                        <!--</div>-->
-
-                        <!--<div class="ct-reports-settings">-->
-                        <!--<div class="ct-reports-actions-block">-->
-                        <!--<div class="ct-reports-time-period mat-button-ripple mat-ripple ct-button ct-white-button mat-raised-button">-->
-                        <!--<a class="ct-prev" (click)="getNewPeriod(false)"></a>-->
-                        <!--<div>-->
-                        <!--<i class="fa fa-calendar"></i>-->
-                        <!--<span class="ct-default-text" (click)="toggleRangeDatepicker()">{{dateString}}</span>-->
-                        <!--<i *ngIf="isDatepickerShown" class="fa fa-times" (click)="cancelUpdatingReportGrid()"></i>-->
-                        <!--<i *ngIf="!isDatepickerShown" class="fa fa-sort-desc" (click)="toggleRangeDatepicker()"></i>-->
-                        <!--</div>-->
-                        <!--<a class="ct-next" (click)="getNewPeriod()"></a>-->
-                        <!--</div>-->
-                        <!--<ct-range-datepicker *ngIf="isDatepickerShown"-->
-                        <!--[class.ct-datepicker-opened]="isDatepickerAnimating"-->
-                        <!--[datePeriod]="datePeriod"-->
-                        <!--[firstDayOfWeek]="firstDayOfWeek"-->
-                        <!--(clickOutside)="toggleRangeDatepicker($event)"-->
-                        <!--(onPeriodChanged)="datePeriodOnChange($event)"-->
-                        <!--(closed)="toggleRangeDatepicker()"></ct-range-datepicker>-->
-                        <!--</div>-->
-                        <!--</div>-->
-
 
                     </div>
                 </div>

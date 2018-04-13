@@ -307,22 +307,52 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private void CheckCorrectTimingValues(int? timeFrom, int? timeTo, int time)
+        private void CheckCorrectTimingValues(int? timeFrom, int? timeTo, int timeActual)
         {
             var isNullTimeFrom = timeFrom == null;
             var isNullTimeTo = timeTo == null;
 
             var isPositiveTimeFrom = !isNullTimeFrom && timeFrom >= 0;
             var isPositiveTimeTo = !isNullTimeTo && timeTo >= 0;
-            var isPositiveTime = time >= 0;
+            var isPositiveTimeActual = timeActual >= 0;
 
             // Available cases for set timings:
 
             // 1. Only actual time.
-            var isSetOnlyActualTime = isNullTimeFrom && isNullTimeTo && isPositiveTime;
+            var isSetOnlyActualTime = isNullTimeFrom && isNullTimeTo && isPositiveTimeActual;
 
             // 2. All at once properties.
-            var isSetTimeFromTimeToActualTime = isPositiveTimeFrom && isPositiveTimeTo && isPositiveTime && timeFrom <= timeTo;
+            var isSetTimeFromTimeToActualTime = isPositiveTimeFrom && isPositiveTimeTo && isPositiveTimeActual;
+
+            // 3. from To 
+            if (!isNullTimeFrom && !isNullTimeTo)
+            {
+                var isTimeToLessThan24h = timeTo < 86400;
+                var isTimeFromLessThan24h = timeFrom < 86400;
+                var isTomeFromLessThanTomeTo = timeFrom <= timeTo;
+
+                if (!isTomeFromLessThanTomeTo || !isTimeToLessThan24h || !isTimeFromLessThan24h)
+                {
+                    var errorMessage = "";
+
+                    if (!isTimeToLessThan24h)
+                    {
+                        errorMessage += "TimeTo Less Than 24 hours.";
+                    }
+
+                    if (!isTimeFromLessThan24h)
+                    {
+                        errorMessage += "TimeFrom Less Than 24 hours.";
+                    }
+
+                    if (!isTomeFromLessThanTomeTo)
+                    {
+                        errorMessage += "TimeFrom must be Less Than Time To.";
+                    }
+
+                    throw new CoralTimeDangerException(errorMessage);
+                }
+            }
 
             if (!isSetOnlyActualTime && !isSetTimeFromTimeToActualTime)
             {
