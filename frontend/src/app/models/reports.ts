@@ -104,6 +104,7 @@ export interface ReportItem {
 	date: Date;
 	memberId: number;
 	memberName: string;
+	projectName: string;
 	notes: string;
 	taskId: number;
 	taskName: string;

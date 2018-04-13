@@ -156,6 +156,7 @@ $linkColor: #0099cf;
 
 .ct-multiselect {
   font-family: inherit;
+  cursor: pointer;
 
   .ct-select label {
     display: block;
@@ -163,6 +164,7 @@ $linkColor: #0099cf;
     overflow: hidden;
     white-space: nowrap;
     font-size: 14px;
+    cursor: pointer !important;
   }
 }
 

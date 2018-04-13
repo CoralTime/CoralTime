@@ -18,6 +18,7 @@ import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
 import { UserPicComponent } from './user-pic/user-pic.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
+import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.component';
 
 @NgModule({
 	imports: [
@@ -38,6 +39,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
 		ReadMoreComponent,
 		LoadingBarComponent,
 		ConfirmationComponent,
+		ExpansionPanelComponent,
 		UserPicComponent
 	],
 	exports: [
@@ -59,6 +61,7 @@ import { ConfirmationComponent } from './confirmation/confirmation.component';
 		SharedFormModule,
 		UserPicComponent,
 		ConfirmationComponent,
+		ExpansionPanelComponent
 	]
 })
 

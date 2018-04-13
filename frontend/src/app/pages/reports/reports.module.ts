@@ -13,11 +13,12 @@ import { EmailsEqualValidatorDirective } from './reports-send/form/emails-equal-
 import { EmailInvalidValidatorDirective } from './reports-send/form/email-invalid-validator.directive';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
+import { ExpansionPanelComponent } from '../../shared/expansion-panel/expansion-panel.component';
 
 @NgModule({
 	imports: [
 		SharedModule,
-		ReportsRoutingModule,
+		ReportsRoutingModule
 	],
 	declarations: [
 		ReportsComponent,
@@ -32,7 +33,8 @@ import { ConfirmationComponent } from '../../shared/confirmation/confirmation.co
 	entryComponents: [
 		ReportsSendComponent,
 		ReportsQueryFormComponent,
-		ConfirmationComponent
+		ConfirmationComponent,
+		ExpansionPanelComponent
 	],
 	providers: [
 		CalendarService,
