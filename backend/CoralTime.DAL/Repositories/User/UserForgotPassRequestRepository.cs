@@ -34,8 +34,7 @@ namespace CoralTime.DAL.Repositories
 
         public UserForgotPassRequest GetRequest(string requestId)
         {
-            Guid requestUid;
-            if (!Guid.TryParse(requestId, out requestUid))
+            if (!Guid.TryParse(requestId, out Guid requestUid))
                 return null;
 
             var currentDate = DateTime.Now;

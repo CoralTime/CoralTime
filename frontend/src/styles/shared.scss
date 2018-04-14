@@ -151,7 +151,7 @@ h5 {
 .ct-nav-logo {
   height: 40px;
   width: 40px;
-  background: url(/assets/icons/ct.logo.svg) no-repeat center center;
+  background: url(./assets/icons/ct.logo.svg) no-repeat center center;
   display: inline-block;
   background-size: 100%;
 }
@@ -247,80 +247,53 @@ h5 {
 }
 
 .ct-grid-search-filter {
+  $placeholderColor: hsla(0,0%,100%,.86);
+
   position: relative;
   top: -59px;
   right: 250px;
   z-index: 997;
-  display: inline-block;
   float: right;
 
-  .mat-input-placeholder {
-    font-family: $roboto;
-    font-weight: 300;
-  }
-
-  .mat-input-placeholder.mat-empty {
-    color: rgba(255, 255, 255, 0.86);
-  }
-
-  .mat-input-container {
-    width: 180px;
-    outline: none;
-    font-family: inherit;
-    font-size: 14px;
-  }
-
-  .mat-input-wrapper {
-    margin: 0;
-    height: 28px;
-    padding-bottom: 0;
-    background: rgba(255, 255, 255, 0.23);
-    padding-right: 33px;
-    line-height: 20px;
-  }
-
-  .mat-input-wrapper:focus {
-    background: rgba(255, 255, 255, 0.38);
-  }
-
-  .mat-input-infix {
-    position: relative;
-    height: 24px;
-  }
-
-  .mat-input-placeholder {
-    left: 30px;
-    top: 10px;
-  }
-
-  .mat-input-placeholder-wrapper {
-    height: 22px;
-    font-size: $baseFont;
-  }
+  box-sizing: border-box;
+  width: 180px;
+  height: 28px;
+  background: hsla(0,0%,100%,.23);
 
   .fa-search {
     position: absolute;
     left: 10px;
-    top: 6px;
+    top: 5px;
     font-size: 16px;
     color: rgba(255, 255, 255, 0.86);
   }
 
-  .mat-float {
-    top: 5px;
-  }
-
-  .mat-input-placeholder:not(.mat-empty), .mat-focused .mat-float {
-    display: none !important;
-  }
-
-  .mat-input-element {
-    position: relative;
-    top: 5px;
-    left: 30px;
-    color: $primary-btn-text;
+  .ct-input-element {
+    box-sizing: border-box;
+    color: #fff;
+    width: 100%;
+    height: 28px;
+    padding: 0 10px 0 30px;
     font-family: $roboto;
     font-weight: 300;
+    background: none;
+    border: 0;
+
+    &::-webkit-input-placeholder {
+      color: $placeholderColor;
+    }
+
+    &::-moz-placeholder {
+      color: $placeholderColor;
+    }
+
+    &:-moz-placeholder {
+      color: $placeholderColor;
+    }
+
+    &:-ms-input-placeholder {
+      color: $placeholderColor;
+    }
   }
 }
 
@@ -374,6 +347,7 @@ h5 {
   background-color: $nav-background !important;
   right: 1px !important;
   width: 2px !important;
+  margin: -2px 0 !important;
   z-index: 2 !important;
 }
 
@@ -493,7 +467,7 @@ h5 {
 }
 
 .ct-dialog-close {
-  background: url(/assets/icons/cancel.svg) no-repeat center center;
+  background: url(./assets/icons/cancel.svg) no-repeat center center;
   position: absolute;
   display: block;
   width: 14px;

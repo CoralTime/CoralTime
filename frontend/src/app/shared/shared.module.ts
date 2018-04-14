@@ -11,14 +11,13 @@ import {
 } from 'primeng/primeng';
 import { ReadMoreComponent } from './read-more/read-more.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { SlimScrollModule } from 'ng2-slimscroll';
 import { DirectivesModule } from './directives/directives.module';
 import { LoadingBarComponent } from './loading-indicator/loading-bar.component';
 import { DatepickerModule } from './form/datepicker/datepicker.module';
 import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
-import { element } from 'protractor';
-import { UserPicModule } from './user-pic/user-pic.module';
+import { UserPicComponent } from './user-pic/user-pic.component';
+import { ConfirmationComponent } from './confirmation/confirmation.component';
 
 @NgModule({
 	imports: [
@@ -29,17 +28,17 @@ import { UserPicModule } from './user-pic/user-pic.module';
 		DialogModule,
 		DropdownModule,
 		CalendarModule,
-		SlimScrollModule,
 		DirectivesModule,
 		DatepickerModule,
 		DataTableModule,
 		MenuModule,
 		SharedFormModule,
-		UserPicModule
 	],
 	declarations: [
 		ReadMoreComponent,
-		LoadingBarComponent
+		LoadingBarComponent,
+		ConfirmationComponent,
+		UserPicComponent
 	],
 	exports: [
 		CommonModule,
@@ -53,13 +52,13 @@ import { UserPicModule } from './user-pic/user-pic.module';
 		TranslateModule,
 		LoadingBarComponent,
 		TranslateModule,
-		SlimScrollModule,
 		DirectivesModule,
 		DatepickerModule,
 		DataTableModule,
 		MenuModule,
 		SharedFormModule,
-		UserPicModule
+		UserPicComponent,
+		ConfirmationComponent,
 	]
 })
 

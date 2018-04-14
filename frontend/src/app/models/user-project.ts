@@ -11,9 +11,10 @@ export class UserProject {
 	memberUserName: string;
 	projectId: number;
 	projectName: string;
-	roleName: string;
 	roleId: number;
+	roleName: string;
 	role: ProjectRole;
+	urlIcon: string;
 
 	constructor(data = null) {
 		if (data) {
@@ -27,9 +28,10 @@ export class UserProject {
 			this.memberUserName = data.memberUserName;
 			this.projectId = data.projectId;
 			this.projectName = data.projectName;
-			this.roleName = data.roleName;
 			this.roleId = data.roleId;
+			this.roleName = data.roleName;
 			this.role = {id: data.roleId, name: data.roleName};
+			this.urlIcon = data.urlIcon;
 		}
 	}
 }

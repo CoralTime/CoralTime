@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export class PasswordChangingStatus {
@@ -12,7 +12,7 @@ export class ForgotPasswordService {
 	restoreCodeIsExpired: boolean = false;
 	private restoreCode: string;
 
-	constructor(private http: Http) {
+	constructor(private http: HttpClient) {
 	}
 
 	saveNewPassword(token: string, password: string): Promise<PasswordChangingStatus> {
@@ -23,20 +23,17 @@ export class ForgotPasswordService {
 		};
 		return this.http.post(url, body)
 			.toPromise()
-			.then(res => {
-				return res.json();
-			}).catch((err) => {
-				return null;
-			});
+			.then(res => res)
+			.catch(() => null);
 	}
 
 	validateRestoreCode(restoreCode: string): Observable<any> {
 		this.restoreCode = restoreCode;
 		let url = '/api/v1/Password/checkforgotpasswordtoken/';
+
 		return this.http.get(url + restoreCode)
 			.map(res => {
-				let result = res.json();
-				this.restoreCodeIsExpired = result['isTokenValid'];
+				this.restoreCodeIsExpired = res['isTokenValid'];
 				return this.restoreCodeIsExpired;
 			});
 	}

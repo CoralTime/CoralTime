@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
-import { TimeEntry, CalendarDay } from '../../../../models/calendar';
-import { Project } from '../../../../models/project';
-import { Subscription } from 'rxjs';
 import { ActivatedRoute, Params } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
+import { Project } from '../../../../models/project';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { CalendarService } from '../../../../services/calendar.service';
-import * as moment from 'moment';
 
 @Component({
 	templateUrl: 'daily-view.component.html',
@@ -14,32 +14,36 @@ import * as moment from 'moment';
 export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	@HostBinding('class.ct-calendar-daily-view') addClass: boolean = true;
 
-	timeEntries: TimeEntry[];
+	date: string;
 	dayInfo: CalendarDay;
+	projectIds: number[];
 	projects: Project[] = [];
 	projectTimeEntries: TimeEntry[] = [];
-	projectIds: number[];
-	date: Date;
+	timeEntries: TimeEntry[];
 
 	private timeEntriesSubscription: Subscription;
 
-	constructor(private route: ActivatedRoute,
-	            private calendarService: CalendarService) {}
+	constructor(private authService: AuthService,
+	            private calendarService: CalendarService,
+	            private route: ActivatedRoute) {
+	}
 
 	ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
 			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
-			this.date = params['date'] ? moment.utc(params['date'], 'MM-DD-YYYY').toDate() : (new Date());
+			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 			this.setDate();
-			this.getTimeEntries(this.date, this.projectIds);
+			this.getTimeEntries(this.projectIds);
 		});
 		this.timeEntriesSubscription = this.calendarService.timeEntriesUpdated
 			.subscribe(() => {
-				this.getTimeEntries(this.date, this.projectIds);
+				if (this.authService.isLoggedIn()) {
+					this.getTimeEntries(this.projectIds);
+				}
 			});
 	}
 
-	getTimeEntries(startDate: Date, projectIds?: number[]) {
+	getTimeEntries(projectIds?: number[]) {
 		this.calendarService.getTimeEntries(this.date)
 			.subscribe((res) => {
 				this.timeEntries = res;
@@ -87,23 +91,23 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		}
 
 		timeEntries.forEach((timeEntry) => {
-			time += timeEntry['time'];
+			time += timeEntry.timeValues['timeActual'];
 		});
 
 		return this.setTimeString(time);
 	}
 
-	getTotalPlannedTime(timeEntries?: TimeEntry[]): string {
-		let plannedTime = 0;
+	getTotalEstimatedTime(timeEntries?: TimeEntry[]): string {
+		let timeEstimated = 0;
 		if (!timeEntries) {
-			return this.setTimeString(plannedTime);
+			return this.setTimeString(timeEstimated);
 		}
 
 		timeEntries.forEach((timeEntry: TimeEntry) => {
-			plannedTime += timeEntry['plannedTime'];
+			timeEstimated += timeEntry.timeValues['timeEstimated'];
 		});
 
-		return this.setTimeString(plannedTime);
+		return this.setTimeString(timeEstimated);
 	}
 
 	ngOnDestroy() {

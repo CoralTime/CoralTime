@@ -10,21 +10,19 @@ const routes: Routes = [
 	{
 		path: '',
 		component: CalendarComponent,
-		canActivate: [AuthGuard],
-		data: {
-			title: 'Calendar'
-		},
 		resolve: {
 			user: UserInfoResolve
 		},
 		children: [
 			{
 				path: '',
-				component: CalendarWeeklyViewComponent
+				component: CalendarWeeklyViewComponent,
+				canActivate: [AuthGuard]
 			},
 			{
 				path: 'day',
 				component: CalendarDailyViewComponent,
+				canActivate: [AuthGuard],
 				resolve: {
 					user: UserInfoResolve
 				}
@@ -32,6 +30,7 @@ const routes: Routes = [
 			{
 				path: 'week',
 				component: CalendarWeeklyViewComponent,
+				canActivate: [AuthGuard],
 				resolve: {
 					user: UserInfoResolve
 				}

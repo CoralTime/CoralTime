@@ -57,7 +57,7 @@ namespace CoralTime
                         "WebAPI"
                     },
                     AllowOfflineAccess = true, // For refresh token.
-                },
+                 },
 
                 // Authentication client for Azure AD
                 new Client
@@ -69,7 +69,7 @@ namespace CoralTime
                     //{
                     //    new Secret("secret".Sha256())
                     //},
-                    AllowedGrantTypes = GrantTypes.List("azureAuth"),
+                    AllowedGrantTypes = {"azureAuth"},//GrantTypes.List("azureAuth"),
 
                     AllowedScopes =
                     {
@@ -91,14 +91,14 @@ namespace CoralTime
         public static void CreateAuthorizatoinOptions(AuthorizationOptions options)
         {
             // main Policies
-            options.AddPolicy(Constants.AdminRole, policy =>
+            options.AddPolicy(Constants.ApplicationRoleAdmin, policy =>
             {
-                policy.RequireClaim("role", Constants.AdminRole);
+                policy.RequireClaim("role", Constants.ApplicationRoleAdmin);
             });
 
-            options.AddPolicy(Constants.UserRole, policy =>
+            options.AddPolicy(Constants.ApplicationRoleUser, policy =>
             {
-                policy.RequireClaim("role", Constants.UserRole);
+                policy.RequireClaim("role", Constants.ApplicationRoleUser);
             });
         }
     }

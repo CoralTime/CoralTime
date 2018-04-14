@@ -6,17 +6,17 @@ namespace CoralTime.BL.Interfaces
 {
     public interface IProjectService
     {
-        IEnumerable<ProjectView> TimeTrackerAllProjects(string userName);
+        IEnumerable<ProjectView> TimeTrackerAllProjects();
 
-        IEnumerable<ProjectView> ManageProjectsOfManager(string userName);
+        IEnumerable<ProjectView> ManageProjectsOfManager();
 
-        ProjectView GetById(int id, string userName);
+        ProjectView GetById(int id);
 
-        ProjectView Update(dynamic project, string userName);
+        ProjectView Update(dynamic project);
 
-        ProjectView Create(ProjectView newProject, string userName);
+        ProjectView Create(ProjectView newProject);
 
-        ProjectView Patch(dynamic project, string userName);
+        ProjectView Patch(dynamic project);
 
         IEnumerable<MemberView> GetMembers(int projectId);
 

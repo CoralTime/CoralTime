@@ -1,23 +1,16 @@
-<!--Added to allow control be focused-->
-<input class="ct-input-hidden-control" (focus)="toggle()">
-<div class="ct-color-picker" ngDefaultControl>
-	<span *ngIf="_selectionModel.hasValue()" class="ct-color-circle ct-color-{{ triggerValue }}"></span>
-	<md-icon cdk-overlay-origin #origin="cdkOverlayOrigin" (click)="toggle()" #trigger title="Color">{{panelOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</md-icon>
+<!--Added to allow select be focused-->
+<input class="ct-input-hidden-control" (focus)="toggleControl()">
+<div class="ct-color-picker" [class.ct-control-opened]="isOpen" [canClickOverlay]="canClickOverlay"
+     (clickOutside)="closeControl()">
+    <div class="ct-color-value" (click)="toggleControl()">
+        <span class="ct-color-circle ct-color-{{ selectedColor }}"></span>
+        <mat-icon title="Color">{{isOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
+    </div>
+    <div class="ct-color-picker-popup">
+        <mat-option *ngFor="let color of options" [value]="color" role="option"
+                    (click)="selectColor(color)"
+                    [ngClass]="{ 'mat-option': true, 'mat-selected': isColorSelected(color)}">
+            <span class="ct-color-circle ct-color-{{color}}"></span>
+        </mat-option>
+    </div>
 </div>
-<ng-template
-	cdk-connected-overlay
-	hasBackdrop
-	backdropClass="cdk-overlay-transparent-backdrop"
-	[origin]="origin"
-	[open]="panelOpen"
-	(backdropClick)="close()"
-	(detach)="close()">
-	<div 
-		class="mat-select-panel ct-color-picker-popup"
-		(keydown)="_handlePanelKeydown($event)">
-		<!--<div class="mat-select-content" [@fadeInContent]="'showing'" (@fadeInContent.done)="_onFadeInDone()">-->
-		<div class="mat-select-content">
-			<ng-content></ng-content>
-		</div>
-	</div>
-</ng-template>

@@ -9,14 +9,14 @@
                [attr.maxlength]="maxlength"
                [(ngModel)]="modelValue"
                (ngModelChange)="updateModel(modelValue)">
-        <md-list class="ct-options-list" [style.maxHeight.px]="maxHeight">
+        <mat-list class="ct-options-list" [style.maxHeight.px]="maxHeight">
             <div class="ct-options-wrapper" #slimScroll="slimScroll" slimScroll [style.maxHeight.px]="maxHeight">
-                <md-list-item class="ct-option" role="option" *ngFor="let option of options; let i = index"
-                              (click)="selectOption(option)" md-ripple
+                <mat-list-item class="ct-option" role="option" *ngFor="let option of options; let i = index"
+                              (click)="selectOption(option)" mat-ripple
                               [ngClass]="{ 'ct-option-selected': isOptionSelected(option), 'ct-option-disabled': option?.disabled }">
                     <label class="ct-label-item">{{getDisplayedName(option)}}</label>
-                </md-list-item>
+                </mat-list-item>
             </div>
-        </md-list>
+        </mat-list>
     </div>
 </div>

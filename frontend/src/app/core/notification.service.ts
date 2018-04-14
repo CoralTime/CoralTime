@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { MdSnackBar, MdSnackBarConfig } from '@angular/material';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
 
 @Injectable()
 export class NotificationService {
-	private config: MdSnackBarConfig;
+	private config: MatSnackBarConfig;
 	private canShowNotification: boolean = true;
 
-	constructor(private snackBar: MdSnackBar) {
-		this.config = new MdSnackBarConfig();
+	constructor(private snackBar: MatSnackBar) {
+		this.config = new MatSnackBarConfig();
 		this.config.duration = 3000;
 	}
 

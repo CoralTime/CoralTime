@@ -1,7 +1,5 @@
 <div class="ct-grid-search-filter">
-    <md-input-container class="full-width">
-        <input #gb mdInput placeholder="Search client..." [(ngModel)]="filterStr">
-    </md-input-container>
+    <input class="ct-input-element" #gb placeholder="Search client..." [(ngModel)]="filterStr">
     <i class="fa fa-search"></i>
 </div>
 
@@ -38,7 +36,7 @@
                 </ng-template>
             </p-column>
 
-            <p-column field="description" header="Description">
+            <p-column field="description" header="Description" styleClass="ct-column-description">
                 <ng-template let-col let-client="rowData" pTemplate="body" let-index="rowIndex">
                     <div class="ct-grid-description">
                         <ct-read-more [text]="client.description"></ct-read-more>

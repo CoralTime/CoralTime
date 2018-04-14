@@ -1,45 +1,18 @@
-import { ODataConfiguration } from './odata/config';
-import { Http } from '@angular/http';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-
+import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
+import { ODataConfiguration } from './odata/config';
 import { Project } from '../models/project';
 
 @Injectable()
 export class ProjectsService {
 	readonly odata: ODataService<Project>;
 
-	constructor(private odataFactory: ODataServiceFactory,
-	            private http: Http,
+	constructor(private http: HttpClient,
+	            private odataFactory: ODataServiceFactory,
 	            private odataConfig: ODataConfiguration) {
 		this.odata = this.odataFactory.CreateService<Project>('Projects');
-	}
-
-	getProjectsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Project>> {
-		let filters = [];
-		let query = this.odata
-			.Query()
-			.Top(event.rows)
-			.Skip(event.first);
-
-		if (event.sortField) {
-			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
-		} else {
-			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
-		}
-
-		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
-		}
-
-		filters.push('IsActive eq ' + isActive);
-		query.Filter(filters.join(' and '));
-
-		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Project(x));
-			return res;
-		});
 	}
 
 	getProjects(): Observable<Project[]> {
@@ -48,7 +21,7 @@ export class ProjectsService {
 			.Query();
 
 		query.OrderBy('name asc');
-		filters.push('IsActive eq true');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.Exec().map(res => res.map((x: any) => new Project(x)));
@@ -66,7 +39,7 @@ export class ProjectsService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Name) eq \'' + name + '\'');
+		query.Filter('tolower(name) eq \'' + name + '\'');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -76,7 +49,7 @@ export class ProjectsService {
 	}
 
 	getManagerProjectsCount(): Observable<number> {
-		return this.http.get(this.odataConfig.baseUrl + '/ManagerProjects/$count').map(res => parseInt(res.json()));
+		return this.http.get(this.odataConfig.baseUrl + '/ManagerProjects/$count').map(res => parseInt(res.toString()));
 	}
 
 	getManagerProjectsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Project>> {
@@ -94,14 +67,14 @@ export class ProjectsService {
 			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Project(x));
+			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
 		});
 	}
@@ -123,18 +96,18 @@ export class ProjectsService {
 			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('ClientId eq ' + clientId);
+		filters.push('clientId eq ' + clientId);
 
 		if (isActive) {
-			filters.push('IsActive eq ' + isActive);
+			filters.push('isActive eq ' + isActive);
 		}
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Project(x));
+			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
 		});
 	}

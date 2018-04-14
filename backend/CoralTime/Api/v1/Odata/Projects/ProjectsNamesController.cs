@@ -1,23 +1,20 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Middlewares;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Logging;
 using System;
 
 namespace CoralTime.Api.v1.Odata.Projects
 {
     [Route("api/v1/odata/[controller]")]
-    [EnableQuery]
     [Authorize]
-    public class ProjectsNamesController : BaseController<ProjectsNamesController, IProjectService>
+    public class ProjectsNamesController : BaseODataController<ProjectsNamesController, IProjectService>
     {
         public ProjectsNamesController(IProjectService service, ILogger<ProjectsNamesController> logger) : base(logger, service)
         {
         }
 
-        // GET: api/v1/odata/Projects
+        // GET: api/v1/odata/ProjectsNames
         [HttpGet]
         public IActionResult Get()
         {
@@ -27,9 +24,7 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                _logger.LogWarning($"Get method {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
+                return SendErrorResponse(e);
             }
         }
     }

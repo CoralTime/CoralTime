@@ -3,8 +3,14 @@ using System;
 
 namespace CoralTime.ViewModels.TimeEntries
 {
-    public class TimeEntryView
+    public class TimeEntryView //: TimeValuesView
     {
+        public TimeEntryView()
+        {
+            TimeOptions = new TimeOptions();
+            TimeValues = new TimeValuesView();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -22,23 +28,11 @@ namespace CoralTime.ViewModels.TimeEntries
 
         public DateTime Date { get; set; }
 
-        #region Time values.
-
-        public int Time { get; set; }
-
-        public int? PlannedTime { get; set; }
-
-        public int? TimeFrom { get; set; }
-
-        public int? TimeTo { get; set; }
-        
-        public int TimeTimerStart { get; set; } // It's time in seconds after 00.00, that display time when Timer is run.
-
-        #endregion
-
         public string Description { get; set; }
 
-        public bool IsFromToShow { get; set; }
+        public TimeOptions TimeOptions { get; set; }
+
+        public TimeValuesView TimeValues { get; set; }
 
         public bool IsProjectActive { get; set; }
 

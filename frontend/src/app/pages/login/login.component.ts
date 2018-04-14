@@ -1,4 +1,3 @@
-import { Response } from '@angular/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
@@ -38,7 +37,7 @@ export class LoginComponent implements OnInit {
 		this.errorMessage = null;
 		this.authService.login(this.username, this.password)
 			.subscribe(
-				data => this.router.navigate(['/' + this.auth.url]),
+				data => this.router.navigateByUrl('/' + this.auth.url),
 				error => this.handleError(error)
 			);
 	}
@@ -48,7 +47,7 @@ export class LoginComponent implements OnInit {
 		context.login();
 	}
 
-	private handleError(error: Response | any): void {
+	private handleError(error: any): void {
 		if (this.username.length < 1 && this.password.length < 1) {
 			this.errorMessage = 'Login and password are required!';
 		} else if (this.username.length < 1 && this.password.length > 1) {

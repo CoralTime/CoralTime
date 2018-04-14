@@ -5,8 +5,10 @@ import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.comp
 import { CalendarService } from '../../services/calendar.service';
 import { User } from '../../models/user';
 import { ImpersonationService } from '../../services/impersonation.service';
-import * as moment from 'moment';
 import { Subscription } from 'rxjs/Subscription';
+import { DateUtils } from '../../models/calendar';
+import { AuthService } from '../../core/auth/auth.service';
+import * as moment from 'moment';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -18,7 +20,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 export class CalendarComponent implements OnInit, OnDestroy {
 	activePeriod: number = 7;
 	availablePeriod: number;
-	date: Date;
+	date: string;
 	isWeekViewActive: boolean = true;
 	firstDayOfWeek: number;
 	projectIds: number[] = [];
@@ -27,8 +29,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
 	private subscriptionImpersonation: Subscription;
 
-	constructor(private calendarService: CalendarService,
-	            private impersonationService: ImpersonationService,
+	constructor(public impersonationService: ImpersonationService,
+	            private authService: AuthService,
+	            private calendarService: CalendarService,
 	            private route: ActivatedRoute,
 	            private router: Router,
 	            private projectsService: CalendarProjectsService) {}
@@ -43,27 +46,30 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
 				let route = this.route.snapshot.children[0];
-				this.date = route.params['date'] ? moment(route.params['date'], 'MM-DD-YYYY').utc().toDate() : moment().startOf('day').toDate();
+				this.date = route.params['date'] ? DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 				this.projectIds = route.params['projectIds'] ? route.params['projectIds'].split(',') : [];
 				this.projectIds.forEach((id, index) => { this.projectIds[index] = +id; });
 				this.projectsService.filteredProjects = this.projectIds;
+
 				if (route.url.length) {
 					this.isWeekViewActive = route.url[0].path !== 'day';
 				} else {
 					this.isWeekViewActive = true;
 				}
+
 				this.setActivePeriod();
 			}
 		});
 
 		this.route.queryParams.subscribe((params) => {
-			let date: Date = new Date();
-			this.date = params['date'] ? new Date(params['date']) : new Date();
+			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 		});
 
 		this.loadProjects(this.showOnlyActive);
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			this.loadProjects(this.showOnlyActive);
+			if (this.authService.isLoggedIn()) {
+				this.loadProjects(this.showOnlyActive);
+			}
 		});
 
 	}
@@ -110,17 +116,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	getWeekBeginning(date: Date): Date {
+	getWeekBeginning(date: string): string {
 		return this.calendarService.getWeekBeginning(date, this.firstDayOfWeek);
-	}
-
-	moveDate(date: Date, dif: number): Date {
-		let newDate = new Date(date);
-		return new Date(newDate.setDate(date.getDate() + dif));
-	}
-
-	dateToString(date: Date): string {
-		return (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
 	}
 
 	toggleView(toggleToWeek: boolean): void {
@@ -138,7 +135,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 			this.date = this.getWeekBeginning(this.date);
 		}
 		this.date = this.moveDate(this.date, period * this.activePeriod);
-		params['date'] = this.dateToString(this.date);
+		params['date'] = this.formatDateToUrlString(this.date);
 		if (this.projectIds && this.projectIds.length) {
 			params['projectIds'] = this.projectIds.join(',');
 		}
@@ -152,14 +149,36 @@ export class CalendarComponent implements OnInit, OnDestroy {
 			params['projectIds'] = newProjectIds.join(',');
 		}
 		if (this.date) {
-			params['date'] = this.dateToString(this.date);
+			params['date'] = this.formatDateToUrlString(this.date);
 		}
 
 		this.projectsService.filteredProjects = newProjectIds;
 		this.router.navigate(['calendar', (this.activePeriod === 1) ? 'day' : 'week', params]);
 	}
 
-	loadProjects(showOnlyActive: boolean = true): void {
+	toggleArchivedProjects(): void {
+		this.showOnlyActive = !this.showOnlyActive;
+		this.loadProjects(this.showOnlyActive);
+	}
+
+	ngOnDestroy() {
+		this.projectsService.clearProject();
+		this.calendarService.isAltPressed = false;
+		this.calendarService.dragEffect = 'move';
+		this.subscriptionImpersonation.unsubscribe();
+	}
+
+	private formatDate(date: string): string {
+		let d = moment(date).toDate();
+		return MONTHS[d.getMonth()] + ' ' + (d.getDate());
+	}
+
+	private formatDateToUrlString(date: string): string {
+		let d = moment(date).toDate();
+		return (d.getMonth() + 1) + '-' + d.getDate() + '-' + d.getFullYear();
+	}
+
+	private loadProjects(showOnlyActive: boolean = true): void {
 		this.projectsService.loadProjects(showOnlyActive).subscribe((res) => {
 			this.projectIds = this.projectIds.filter(projectId => {
 				return res.find(project => {
@@ -176,19 +195,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	toggleArchivedProjects(): void {
-		this.showOnlyActive = !this.showOnlyActive;
-		this.loadProjects(this.showOnlyActive);
-	}
-
-	ngOnDestroy() {
-		this.projectsService.clearProject();
-		this.calendarService.isAltPressed = false;
-		this.calendarService.dragEffect = 'move';
-	}
-
-	private formatDate(date: Date): string {
-		return MONTHS[date.getMonth()] + ' ' + (date.getDate());
+	private moveDate(date: string, dif: number): string {
+		let newDate = moment(date).toDate();
+		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
 	}
 
 	@HostListener('document:keydown', ['$event'])

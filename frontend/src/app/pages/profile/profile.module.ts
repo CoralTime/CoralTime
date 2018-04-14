@@ -30,7 +30,6 @@ import { FileUploadModule } from 'ng2-file-upload';
 	entryComponents: [
 		ProfilePhotoComponent
 	]
-
 })
 
 export class ProfileModule {

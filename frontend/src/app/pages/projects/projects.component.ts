@@ -2,7 +2,7 @@ import { Subject } from 'rxjs/Subject';
 import { ProjectSettingsFormComponent } from './project-settings-form/project-settings-form.component';
 import { ProjectFormComponent } from './project-form/project-form.component';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { Project } from '../../models/project';
 import { ProjectsService } from '../../services/projects.service';
 import { NotificationService } from '../../core/notification.service';
@@ -34,22 +34,22 @@ export class ProjectsComponent implements OnInit {
 	private lastEvent: any;
 	private subject = new Subject<any>();
 
-	private dialogRef: MdDialogRef<ProjectFormComponent>;
-	private dialogTasksRef: MdDialogRef<ProjectTasksComponent>;
-	private dialogUserRef: MdDialogRef<ProjectUsersComponent>;
-	private dialogSettingsRef: MdDialogRef<ProjectSettingsFormComponent>;
+	private dialogRef: MatDialogRef<ProjectFormComponent>;
+	private dialogTasksRef: MatDialogRef<ProjectTasksComponent>;
+	private dialogUserRef: MatDialogRef<ProjectUsersComponent>;
+	private dialogSettingsRef: MatDialogRef<ProjectSettingsFormComponent>;
 
-	constructor(public dialog: MdDialog,
-	            private authService: AuthService,
+	constructor(private authService: AuthService,
+	            private dialog: MatDialog,
+	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private projectsService: ProjectsService,
-	            private impersonationService: ImpersonationService,
 	            private router: Router) {
 		this.impersonationService.checkImpersonationRole('projects');
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
+		this.authUser = this.authService.authUser;
 		// TODO: fix string to bool
 		if (this.authUser.role !== 1 && this.authUser.isManager !== 'true') {
 			this.router.navigate(['/calendar']);

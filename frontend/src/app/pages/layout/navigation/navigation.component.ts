@@ -7,7 +7,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { AuthGuard } from '../../../core/auth/auth-guard.service';
 import { MenuComponent } from '../../../shared/menu/menu.component';
 import { ImpersonationService } from '../../../services/impersonation.service';
-import { UserInfoService } from '../../../core/auth/user-info.service';
+import { UsersService } from '../../../services/users.service';
 import { User } from '../../../models/user';
 
 interface MenuItem {
@@ -60,10 +60,9 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	userInfo: User;
 	windowWidth: number;
 
-	impersonationName: string = null;
-	impersonationId: number = null;
+	impersonationUser: User;
 
-	private subscription: Subscription;
+	private subscriptionUserInfo: Subscription;
 	private subscriptionImpersonation: Subscription;
 
 	constructor(private authService: AuthService,
@@ -71,32 +70,22 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	            private auth: AuthGuard,
 	            private impersonationService: ImpersonationService,
 	            private projectsService: ProjectsService,
-	            private userInfoService: UserInfoService) { }
+	            private usersService: UsersService) {
+	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
-		this.updateUserName();
+		this.authUser = this.authService.authUser;
+
+		this.getUserInfo();
+		this.onResize();
 		this.updateManageMenuVisibility();
 
-		this.subscription = this.authService.onChange.subscribe(() => {
-			this.authUser = this.authService.getAuthUser();
-			this.updateManageMenuVisibility();
+		this.subscriptionUserInfo = this.usersService.onChange.subscribe((userInfo: User) => {
+			this.userInfo = userInfo;
 		});
-		this.manageItems = FULL_MANAGE_ITEMS;
-
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (this.impersonationService.impersonationMember) {
-				this.impersonationName = this.impersonationService.impersonationUser.fullName;
-				this.impersonationId = this.impersonationService.impersonationId;
-			} else {
-				this.impersonationName = null;
-				this.impersonationId = null;
-			}
 			this.updateManageMenuVisibility();
 		});
-
-		this.impersonationService.getStorage();
-		this.onResize();
 
 		this.items = [
 			{
@@ -116,12 +105,23 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		return this.windowWidth <= 700;
 	}
 
+	getUserInfo(): void {
+		this.usersService.getUserInfo(this.authUser.id).then((userInfo: User) => {
+			this.userInfo =  userInfo;
+		});
+	}
+
+	onResize(): void {
+		this.windowWidth = window.innerWidth;
+	}
+
 	updateManageMenuVisibility(): void {
+		this.impersonationUser = this.impersonationService.impersonationUser;
 		this.manageItems = FULL_MANAGE_ITEMS;
 
-		if (this.impersonationService.impersonationMember) {
-			let isManager = this.impersonationService.impersonationUser.isManager;
-			let isAdmin = this.impersonationService.impersonationUser.isAdmin;
+		if (this.impersonationUser) {
+			let isManager = this.impersonationUser.isManager;
+			let isAdmin = this.impersonationUser.isAdmin;
 			this.showManageMenu = isManager || isAdmin;
 			this.authService.isUserAdminOrManager = true;
 
@@ -145,16 +145,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	updateUserName(): void {
-		this.userInfoService.getUserInfo(this.authUser.id).then((userInfo: User) => {
-			this.userInfo = userInfo;
-		});
-
-		this.userInfoService.onChange.subscribe((userInfo: User) => {
-			this.userInfo = userInfo;
-		});
-	}
-
 	toggleManageMenu(manageMenu: MenuComponent): void {
 		manageMenu.toggleMenu();
 		this.isManageMenuOpen = !this.isManageMenuOpen;
@@ -165,17 +155,13 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		this.isProfileNavMenuOpen = !this.isProfileNavMenuOpen;
 	}
 
-	ngOnDestroy() {
-		this.subscription.unsubscribe();
-		this.subscriptionImpersonation.unsubscribe();
-	}
-
 	signOut(): void {
 		this.auth.url = 'calendar';
 		this.authService.logout();
 	}
 
-	onResize(): void {
-		this.windowWidth = window.innerWidth;
+	ngOnDestroy() {
+		this.subscriptionUserInfo.unsubscribe();
+		this.subscriptionImpersonation.unsubscribe();
 	}
 }

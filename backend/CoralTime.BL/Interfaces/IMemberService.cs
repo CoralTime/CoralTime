@@ -8,15 +8,15 @@ namespace CoralTime.BL.Interfaces
 {
     public interface IMemberService
     {
-        IEnumerable<MemberView> GetAllMembers(string userName);
+        IEnumerable<MemberView> GetAllMembers();
 
-        Member GetById(int id);
+        MemberView GetById(int id);
 
         IEnumerable<ProjectView> GetTimeTrackerAllProjects(int memberId);
 
-        Task<Member> CreateNewUser(MemberView member);
+        Task<MemberView> CreateNewUser(MemberView member, string baseUrl);
 
-        Task<MemberView> Update(string userName, MemberView memberView);
+        Task<MemberView> Update(MemberView memberView, string baseUrl);
 
         #region Password.
 
@@ -51,8 +51,6 @@ namespace CoralTime.BL.Interfaces
         #endregion
 
         #region Other Methods.
-
-        IEnumerable<Member> GetAllMembersCommon(string userName);
 
         IEnumerable<Project> GetProjects(int memberId);
 

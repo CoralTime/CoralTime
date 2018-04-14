@@ -1,9 +1,8 @@
+import '../vendors'
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { MenubarModule } from 'primeng/primeng';
-import { MaterialModule } from '@angular/material';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { Http } from '@angular/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -21,7 +20,7 @@ import { UsersService } from './services/users.service';
 import { SettingsService } from './services/settings.service';
 import { ImpersonationService } from './services/impersonation.service';
 
-export function httpFactory(http: Http) {
+export function httpFactory(http: HttpClient) {
 	return new TranslateHttpLoader(http, 'assets/translate/i18n', '.json');
 }
 
@@ -30,32 +29,30 @@ export function httpFactory(http: Http) {
 		AppComponent
 	],
 	imports: [
-		BrowserModule,
-		CoreModule,
-		BrowserAnimationsModule,
 		AppRoutingModule,
-		SharedModule,
+		BrowserModule,
+		BrowserAnimationsModule,
+		CoreModule,
+		ErrorsModule,
 		LayoutModule,
-		MenubarModule,
-		MaterialModule,
+		SharedModule,
 		TranslateModule.forRoot({
 			loader: {
 				provide: TranslateLoader,
 				useFactory: httpFactory,
-				deps: [Http]
+				deps: [HttpClient]
 			}
-		}),
-		ErrorsModule
+		})
 	],
 	bootstrap: [AppComponent],
 	providers: [
-		ProjectRolesService,
 		ClientsService,
+		ImpersonationService,
+		ProjectRolesService,
 		ProjectsService,
-		TasksService,
-		UsersService,
 		SettingsService,
-		ImpersonationService
+		TasksService,
+		UsersService
 	]
 })
 

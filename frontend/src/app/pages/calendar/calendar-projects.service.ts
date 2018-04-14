@@ -12,8 +12,8 @@ export class CalendarProjectsService {
 	readonly odata: ODataService<Project>;
 
 	defaultProject: Project;
-	projects: Project[] = [];
 	filteredProjects: number[] = [];
+	projects: Project[] = [];
 
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
@@ -53,7 +53,7 @@ export class CalendarProjectsService {
 		query.OrderBy('name asc');
 
 		if (showOnlyActive) {
-			filters.push('IsActive eq true');
+			filters.push('isActive eq true');
 		}
 
 		query.Filter(filters.join(' and '));

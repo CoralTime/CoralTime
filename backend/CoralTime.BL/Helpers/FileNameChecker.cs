@@ -5,15 +5,16 @@ namespace CoralTime.BL.Helpers
 {
     public static class FileNameChecker
     {
-        public static bool CheckFileName(string fileName, string permittedExtensions, int permittedNameLength, out string errors)
+        public static string CheckFileName(string fileName, string permittedExtensions, int permittedNameLength)
         {
-            errors = null;
-            var result = IsFileNameCorrect(fileName, permittedExtensions, permittedNameLength);
-            if (!result)
+            string errors = null;
+
+            if (!IsFileNameCorrect(fileName, permittedExtensions, permittedNameLength))
             {
                 errors = GetFileErrors(fileName, permittedExtensions, permittedNameLength);
             }
-            return result;
+
+            return errors;
         }
 
         public static bool IsDirectoryNameValid(string directoryName)

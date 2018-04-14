@@ -13,23 +13,23 @@ namespace CoralTime.DAL.Cache
         private static readonly string TimeEntryClassName = Prefix + typeof(TimeEntry).Name;
         private static readonly string MemberProjectRoleClassName = Prefix + typeof(MemberProjectRole).Name;
         private static readonly string ApplicationUserClassName = Prefix + typeof(ApplicationUser).Name;
-        private static readonly string MemberAvatarClassName = Prefix + typeof(MemberAvatar).Name;
+        private static readonly string MemberAvatarClassName = Prefix + typeof(MemberImage).Name;
+        private static readonly string ReportsSettingsClassName = Prefix + typeof(ReportsSettings).Name;
 
         public static List<string> GetCancelationTokenSourcesNames()
         {
-            var dictionary = new List<string>
+            return new List<string>
             {
-                 ProjectClassName,
-                 ClientClassName,
-                 MemberClassName,
-                 TaskTypeClassName,
-                 TimeEntryClassName,
-                 MemberProjectRoleClassName,
-                 ApplicationUserClassName,
-                 MemberAvatarClassName
+                ProjectClassName,
+                ClientClassName,
+                MemberClassName,
+                TaskTypeClassName,
+                TimeEntryClassName,
+                MemberProjectRoleClassName,
+                ApplicationUserClassName,
+                MemberAvatarClassName,
+                ReportsSettingsClassName
             };
-
-            return dictionary;
         }
 
         public static List<string> GetNamesCancelationTokenSourcesForType<T>()
@@ -73,6 +73,11 @@ namespace CoralTime.DAL.Cache
             }
 
             if (typeName == MemberAvatarClassName)
+            {
+                names.AddRange(new List<string> { typeName, MemberClassName });
+            }
+
+            if (typeName == ReportsSettingsClassName)
             {
                 names.AddRange(new List<string> { typeName, MemberClassName });
             }

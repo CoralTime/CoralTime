@@ -1,7 +1,7 @@
 <div class="ct-dialog ct-dialog-add ct-query-dialog">
     <div class="ct-dialog-title">
         <span>Create query</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
     <form #queryForm="ngForm" class="ct-form-add">
@@ -25,11 +25,11 @@
             </div>
         </div>
 
-        <div class="ct-buttons-block" md-dialog-actions>
-            <button md-raised-button class="ct-button ct-blue-button"
+        <div class="ct-buttons-block" mat-dialog-actions>
+            <button mat-raised-button class="ct-button ct-blue-button"
                     [disabled]="queryForm.invalid || isRequestLoading"
                     (click)="submit(queryForm)">Save</button>
-            <button md-dialog-close class="ct-cancel-button">Cancel</button>
+            <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>
     </form>
 </div>

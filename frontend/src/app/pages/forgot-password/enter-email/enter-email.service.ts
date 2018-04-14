@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { ODataConfiguration } from '../../../services/odata/config';
+import { Observable } from 'rxjs/Observable';
 
 export class EmailSendingStatus {
 	isSentEmail: boolean;
@@ -9,20 +10,13 @@ export class EmailSendingStatus {
 
 @Injectable()
 export class EnterEmailService {
-	constructor(private http: Http,
-	            protected config: ODataConfiguration) {
+	constructor(protected config: ODataConfiguration,
+	            private http: HttpClient) {
 	}
 
-	sendEmail(email): Promise<EmailSendingStatus> {
+	sendEmail(email): Observable<EmailSendingStatus> {
 		let url = '/api/v1/Password/sendforgotemail/';
-		return this.http.get(url + email)
-			.toPromise()
-			.then(res => {
-				return res.json();
-			})
-			.catch((err) => {
-				return false;
-			});
+		return this.http.get<EmailSendingStatus>(url + email);
 	}
 }
 

@@ -65,12 +65,7 @@ namespace CoralTime.Services
             return new Claim[]
             {
             new Claim("user_id", user.Id.ToString() ?? ""),
-            new Claim(JwtClaimTypes.Email, user.Email  ?? ""),
-
-           // new Claim(JwtClaimTypes.Name, user.UserName),
-
-            //roles
-            //new Claim(JwtClaimTypes.Role, (user.IsAdmin)? Constants.AdminRole : Constants.UserRole)
+            new Claim(JwtClaimTypes.Email, user.Email  ?? "")
             };
         }
     }

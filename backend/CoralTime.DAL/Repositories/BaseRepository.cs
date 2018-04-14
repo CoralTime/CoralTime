@@ -12,11 +12,9 @@ namespace CoralTime.DAL.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        protected int CurrentClientId;
-        private DbContext _db;
+        private readonly DbContext _db;
         private readonly DbSet<T> _dbSet;
-        private readonly IMemoryCache _memoryCache;
-        protected readonly ICacheManager CacheManager;
+        private readonly ICacheManager _cacheManager;
         private static readonly object LockObject = new object();
         private readonly string _userId;
 
@@ -24,8 +22,7 @@ namespace CoralTime.DAL.Repositories
         {
             _db = context;
             _dbSet = _db.Set<T>();
-            _memoryCache = memoryCache;
-            CacheManager = CacheMemoryFactory.CreateCacheMemory(_memoryCache);
+            _cacheManager = CacheMemoryFactory.CreateCacheMemory(memoryCache);
 
             _userId = userId;
         }
@@ -52,7 +49,7 @@ namespace CoralTime.DAL.Repositories
             return _dbSet.AsNoTracking();
         }
 
-        public virtual IQueryable<T> GetQueryAsNoTrakingWithIncludes()
+        public virtual IQueryable<T> GetQueryAsNoTrackingWithIncludes()
         {
             return GetIncludes(GetQueryAsNoTraking());
         }
@@ -81,18 +78,18 @@ namespace CoralTime.DAL.Repositories
             try
             {
                 var key = GenerateCacheKey();
-                var items = CacheManager.CachedListGet<T>(key);
-                if (items != null) 
-                    return items;
-                
-                lock (LockObject)
+                var items = _cacheManager.CachedListGet<T>(key);
+                if (items == null)
                 {
-                    var cachedItems = CacheManager.CachedListGet<T>(key);
-                    if (cachedItems != null)
-                        return cachedItems;
-                        
-                    items = GetQueryAsNoTrakingWithIncludes().ToList();
-                    CacheManager.LinkedPutList(key, items);
+                    lock (LockObject)
+                    {
+                        items = _cacheManager.CachedListGet<T>(key);
+                        if (items == null)
+                        {
+                            items = GetQueryAsNoTrackingWithIncludes().ToList();
+                            _cacheManager.LinkedPutList(key, items);
+                        }
+                    }
                 }
 
                 return items;
@@ -105,7 +102,7 @@ namespace CoralTime.DAL.Repositories
 
         public virtual void LinkedCacheClear()
         {
-            CacheManager.LinkedCacheClear<T>();
+            _cacheManager.LinkedCacheClear<T>();
         }
 
         #endregion
@@ -137,13 +134,13 @@ namespace CoralTime.DAL.Repositories
         public void ClearEntityCache()
         {
             var key = GenerateCacheKey();
-            CacheManager.Remove(key);
+            _cacheManager.Remove(key);
         }
 
         #endregion
 
         #region CRUD.
-
+        
         public virtual T GetById(object id)
         {
             return _dbSet.Find(id);
@@ -188,8 +185,6 @@ namespace CoralTime.DAL.Repositories
         {
             if (entity is ILogChanges entityILogChange)
             {
-                //var t = Db.ChangeTracker.Entries().Where(x => x.State == EntityState.Modified);
-                //var canWrite = t.Any(x => ((DateTime)x.CurrentValues["LastUpdateDate"]).ToString("G") > ((DateTime)x.OriginalValues["LastUpdateDate"]).ToString("G"));
                 entityILogChange.LastEditorUserId = _userId;
                 entityILogChange.LastUpdateDate = DateTime.Now;
 
@@ -249,16 +244,5 @@ namespace CoralTime.DAL.Repositories
         }
 
         #endregion
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing) 
-                return;
-            if (_db == null) 
-                return;
-            _db.Dispose();
-            _db = null;
-        }
-
     }
 }
