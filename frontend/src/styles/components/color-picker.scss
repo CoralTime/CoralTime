@@ -5,13 +5,11 @@ ct-color-picker {
 
 .ct-color-picker {
   margin-top: -18px;
+  position: relative;
 
-  md-icon {
+  .mat-icon {
     width: 24px;
     height: 24px;
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   .ct-color-circle {
@@ -19,22 +17,26 @@ ct-color-picker {
     height: 20px;
     display: inline-block;
     border-radius: 100%;
-
-    &.ct-color-0 {
-      border: 2px solid #dfdfdf;
-      width: 16px;
-      height: 16px;
-    }
   }
 }
 
+.ct-color-value {
+  cursor: pointer;
+}
+
 .ct-color-picker-popup {
-  &.mat-select-panel {
-    overflow: visible;
-    max-width: 170px;
-    max-height: none;
-    border: 1px solid $form-border;
-    box-sizing: border-box;
+  box-sizing: border-box;
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: none;
+  background: #fff;
+  max-width: 170px;
+  border: 1px solid $form-border;
+  z-index: 1;
+
+  .ct-control-opened & {
+    display: block;
   }
 
   .ct-color-circle {
@@ -42,19 +44,14 @@ ct-color-picker {
     height: 20px;
     display: inline-block;
     border-radius: 100%;
-
-    &.ct-color-0 {
-      border: 2px solid #dfdfdf;
-      width: 16px;
-      height: 16px;
-    }
   }
 
   .mat-option {
+    box-sizing: content-box;
     display: inline-block;
     height: 20px;
-    line-height: 20px;
     padding: 11px;
+    line-height: 20px;
     margin-bottom: -2px;
   }
 }

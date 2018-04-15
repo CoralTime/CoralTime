@@ -1,6 +1,6 @@
 import { UserProjectAssignmentComponent } from './project-assignment/project-assignment.component';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { MdDialog, MdDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { UsersFormComponent } from './form/users-form.component';
 import { User } from '../../models/user';
@@ -32,11 +32,11 @@ export class UsersComponent implements OnInit {
 	private subject = new Subject<any>();
 	private lastEvent: any;
 
-	private dialogRef: MdDialogRef<UsersFormComponent>;
-	private dialogProjectAssignmentRef: MdDialogRef<UserProjectAssignmentComponent>;
+	private dialogRef: MatDialogRef<UsersFormComponent>;
+	private dialogProjectAssignmentRef: MatDialogRef<UserProjectAssignmentComponent>;
 
 	constructor(private authService: AuthService,
-	            private dialog: MdDialog,
+	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private userService: UsersService) {
@@ -44,7 +44,7 @@ export class UsersComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.currentUserId = this.authService.getAuthUser().id;
+		this.currentUserId = this.authService.authUser.id;
 		this.impersonateUserId = this.impersonationService.impersonationId;
 		this.getUsers();
 	}
@@ -109,6 +109,11 @@ export class UsersComponent implements OnInit {
 	}
 
 	openUserDialog(user: User = null): void {
+		if (!this.authService.isLoggedIn()) {
+			this.authService.logout();
+			return;
+		}
+
 		this.dialogRef = this.dialog.open(UsersFormComponent);
 		this.dialogRef.componentInstance.user = user;
 		this.dialogRef.componentInstance.onSaved.subscribe((response) => {

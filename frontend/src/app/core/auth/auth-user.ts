@@ -9,6 +9,7 @@ export class AuthUser {
 	readonly isSso: boolean;
 	readonly nickname: string;
 	readonly refreshToken: string;
+	readonly refreshTokenExpiration: number;
 	readonly role: number;
 	readonly tokenType: string;
 
@@ -20,10 +21,11 @@ export class AuthUser {
 		this.tokenType = data.token_type;
 
 		let decodedToken = jwt_decode(data.access_token);
-		let roleName = Array.isArray(decodedToken.role) ? decodedToken.role[0] : decodedToken.role;
-		this.role = Roles[roleName];
 		this.id = +decodedToken.id;
 		this.isManager = decodedToken.isManager;
 		this.nickname = decodedToken.nickname;
+		this.refreshTokenExpiration = new Date().getTime() + decodedToken.refreshTokenLifeTime * 1000;
+		let roleName = Array.isArray(decodedToken.role) ? decodedToken.role[0] : decodedToken.role;
+		this.role = Roles[roleName];
 	}
 }

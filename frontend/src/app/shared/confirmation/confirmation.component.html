@@ -1,0 +1,13 @@
+<div class="ct-dialog">
+    <div class="ct-dialog-title">
+        <span>Confirm</span>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
+    </div>
+
+    <div class="ct-dialog-message">{{message}}</div>
+
+    <div class="ct-buttons-block" mat-dialog-actions>
+        <button mat-raised-button class="ct-button ct-blue-button" (click)="submit(true)">Ok</button>
+        <button mat-dialog-close class="ct-cancel-button" (click)="submit(false)">Cancel</button>
+    </div>
+</div>

@@ -51,7 +51,7 @@ export class ProjectUsersComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.getAuthUser();
+		this.authUser = this.authService.authUser;
 		this.getProjectRoles();
 		this.loadAssignedUsers();
 		this.loadNotAssignedUsers();

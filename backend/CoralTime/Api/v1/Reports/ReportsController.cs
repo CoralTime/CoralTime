@@ -1,12 +1,10 @@
 using CoralTime.BL.Interfaces.Reports;
-using CoralTime.Common.Constants;
-using CoralTime.Common.Middlewares;
-using CoralTime.Services;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace CoralTime.Api.v1.Reports
 {
@@ -14,78 +12,29 @@ namespace CoralTime.Api.v1.Reports
     [Route("api/v1/[controller]")]
     public class ReportsController : BaseController<ReportsController, IReportsService>
     {
-        private IReportsSettingsService _reportsSettingsService;
-
-        public ReportsController(IReportsService service, ILogger<ReportsController> logger, IReportsSettingsService reportsSettingsService)
-            : base(logger, service)
-        {
-            _reportsSettingsService = reportsSettingsService;
-        }
+        public ReportsController(IReportsService service, ILogger<ReportsController> logger)
+            : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetDropdowns()
-        {
-            try
-            {
-                return new JsonResult(_service.ReportsDropDowns(this.GetUserNameWithImpersonation()));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"GetReportsDropdowns method {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
-            }
-        }
+        public IActionResult GetReportsDropdowns() => new JsonResult(_service.GetReportsDropDowns());
 
         [HttpPost]
-        public IActionResult GetGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
+        public IActionResult GetReportsGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Model");
             }
 
-            try
+            var jsonSerializatorSettings = new JsonSerializerSettings
             {
-                var userName = this.GetUserNameWithImpersonation();
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
-                _reportsSettingsService.SaveCurrentQuery(reportsGridView.ValuesSaved, userName);
+            var reportsGrid = _service.GetReportsGrid(reportsGridView);
 
-                // 0 - Default(none), 1 - Projects, 2 - Users, 3 - Dates, 4 - Clients.
-                switch (reportsGridView.ValuesSaved.GroupById)
-                {
-                    case (int) Constants.ReportsGroupBy.Project:
-                    {
-                        return new JsonResult(_service.ReportsGridGroupByProjects(userName, reportsGridView));
-                    }
-
-                    case (int) Constants.ReportsGroupBy.User:
-                    {
-                        return new JsonResult(_service.ReportsGridGroupByUsers(userName, reportsGridView));
-                    }
-
-                    case (int) Constants.ReportsGroupBy.Date:
-                    {
-                        return new JsonResult(_service.ReportsGridGroupByDates(userName, reportsGridView));
-                    }
-
-                    case (int) Constants.ReportsGroupBy.Client:
-                    {
-                        return new JsonResult(_service.ReportsGridGroupByClients(userName, reportsGridView));
-                    }
-
-                    default:
-                    {
-                        return BadRequest("Invalid Grouping value");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"PostReportsGrid method with parameters ({reportsGridView});\n {e}");
-                var errors = ExceptionsChecker.CheckProjectsException(e);
-                return BadRequest(errors);
-            }
+            return new JsonResult(reportsGrid, jsonSerializatorSettings);
         }
     }
 }

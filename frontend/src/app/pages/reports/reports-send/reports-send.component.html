@@ -1,7 +1,7 @@
 <div class="ct-dialog ct-dialog-add ct-send-reports-dialog">
     <div class="ct-dialog-title">
         <span>Email Report</span>
-        <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
     <form #sendReportsForm="ngForm" class="ct-form-add">
         <div class="ct-form-block">
@@ -9,7 +9,7 @@
                 <label class="ct-form-label">From</label>
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" #fromEmail="ngModel"
-                           required validate-onblur autofocus
+                           required ctValidateOnblur autofocus
                            type="email" name="clientFrom" [email]="!!model.fromEmail"
                            [(ngModel)]="model.fromEmail"
                            [pattern]="emailPattern">
@@ -75,12 +75,12 @@
             </div>
         </div>
 
-        <div class="ct-buttons-block" md-dialog-actions>
-            <button md-raised-button class="ct-button ct-blue-button"
+        <div class="ct-buttons-block" mat-dialog-actions>
+            <button mat-raised-button class="ct-button ct-blue-button"
                     [disabled]="isRequestLoading"
                     (click)="submit(sendReportsForm)">Send
             </button>
-            <button md-dialog-close class="ct-cancel-button">Cancel</button>
+            <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>
     </form>
 </div>

@@ -14,6 +14,14 @@ export class ObjectUtils {
 		return newObj;
 	}
 
+	static deepEqualWithEvery(x, y) {
+		return (x && y && typeof x === 'object' && typeof y === 'object') ?
+			(Object.keys(x).length === Object.keys(y).length) &&
+			Object.keys(x).every(function(key) {
+				return ObjectUtils.deepEqualWithEvery(x[key], y[key]);
+			}, true) : (x === y);
+	}
+
 	static fillObject(outerObj, innerObj): any {
 		let newObj = outerObj;
 		if (outerObj && typeof outerObj === 'object' && innerObj && typeof innerObj === 'object') {

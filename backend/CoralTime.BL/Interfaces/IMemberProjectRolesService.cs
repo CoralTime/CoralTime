@@ -6,24 +6,24 @@ using CoralTime.ViewModels.Member;
 
 namespace CoralTime.BL.Interfaces
 {
-    public interface IMemberProjectRolesService
+    public interface IMemberProjectRoleService
     {
         IEnumerable<ProjectRoleView> GetProjectRoles();
 
-        IEnumerable<MemberProjectRoleView> GetAllProjectRoles(string userName);
+        IEnumerable<MemberProjectRoleView> GetAllProjectRoles();
 
         MemberProjectRoleView GetById(int id);
             
-        MemberProjectRoleView Create(string userName, MemberProjectRoleView projectRole);
+        MemberProjectRoleView Create(MemberProjectRoleView projectRole);
 
-        MemberProjectRoleView Update(string userName, dynamic projectRole);
+        MemberProjectRoleView Update(dynamic projectRole);
 
-        MemberProjectRoleView Patch(string userName, MemberProjectRoleView projectRole);
+        MemberProjectRoleView Patch(MemberProjectRoleView projectRole);
 
-        void Delete(string userName, int id);
+        void Delete(int id);
 
         //TODO DELETE???
-        IEnumerable<ProjectView> GetAllProjectsByManager(string userName);
+        IEnumerable<ProjectView> GetAllProjectsByManager();
         
         bool FixAllManagerRoles();
 

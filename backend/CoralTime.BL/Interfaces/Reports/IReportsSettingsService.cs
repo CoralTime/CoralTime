@@ -4,10 +4,10 @@ namespace CoralTime.BL.Interfaces.Reports
 {
     public interface IReportsSettingsService
     {
-        void SaveCurrentQuery(ReportsSettingsView reportsSettings, string userName);
+        void UpdateCurrentQuery(ReportsSettingsView reportsSettings, int memberImpersonatedId);
 
-        void SaveCustomQuery(ReportsSettingsView reportsSettings, string userName);
+        void SaveCustomQuery(ReportsSettingsView reportsSettings);
 
-        void DeleteCustomQuery(int id, string userName);
+        void DeleteCustomQuery(int id);
     }
 }

@@ -38,24 +38,6 @@ namespace CoralTime.Common.Middlewares
             };
         }
 
-        public static List<ErrorView> CheckTimesheetException(Exception e)
-        {
-            if (e is CoralTimeForbiddenException)
-            {
-                return new List<ErrorView>
-                {
-                    new ErrorView
-                    {
-                        Source = "Other",
-                        Title = "Forbidden",
-                        Details = e.Message
-                    }
-                };
-            }
-
-            return CheckException(e);
-        }
-
         public static List<ErrorView> CheckMembersException(Exception e)
         {
             if (e is CoralTimeAlreadyExistsException)
@@ -95,46 +77,6 @@ namespace CoralTime.Common.Middlewares
                 };
             }
 
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckImpersonationException(Exception e)
-        {
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckProfileException(Exception e)
-        {
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckClientsException(Exception e)
-        {
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckTimeEntriesException(Exception e)
-        {
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckProjectsException(Exception e)
-        {
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckSettingsException(Exception e)
-        {
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckTasksException(Exception e)
-        {
-           return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckRunMethodSetCommonValuesForExportException(InvalidOperationException e)
-        {
             return CheckException(e);
         }
     }

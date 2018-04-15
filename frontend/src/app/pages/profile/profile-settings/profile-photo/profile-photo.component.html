@@ -1,5 +1,5 @@
 <div class="ct-profile-photo-dialog">
-    <button class="ct-dialog-close" md-dialog-close ctClickClose></button>
+    <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
 
     <div class="ct-profile-photo-left">
         <p *ngIf="!imageData.image">Select new file to update your profile picture</p>
@@ -18,7 +18,6 @@
                  [width]="cropperSettings.croppedWidth"
                  [height]="cropperSettings.croppedHeight">
         </span>
-        <button (click)="changeProfileImg(imageData.image)" class="ct-button ct-primary-button mat-raised-button">Change profile picture</button>
+        <button mat-raised-button (click)="changeProfileImg(imageData.image)" class="ct-button ct-primary-button">Change profile picture</button>
     </div>
-
 </div>

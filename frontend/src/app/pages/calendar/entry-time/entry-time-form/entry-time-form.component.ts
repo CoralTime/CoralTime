@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Project } from '../../../../models/project';
 import { Task } from '../../../../models/task';
-import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
+import { TimeEntry, DateUtils, CalendarDay, Time } from '../../../../models/calendar';
 import { Subscription, Observable } from 'rxjs';
 import { ArrayUtils } from '../../../../core/object-utils';
 import { TasksService } from '../../../../services/tasks.service';
@@ -17,20 +17,6 @@ import { ImpersonationService } from '../../../../services/impersonation.service
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../../models/user';
 import { SelectItem } from 'primeng/primeng';
-import { isString } from 'util';
-import * as moment from 'moment';
-
-export class Time {
-	hours: string;
-	minutes: string;
-	seconds: string;
-
-	constructor(hours: string, minutes: string, seconds?: string) {
-		this.hours = hours;
-		this.minutes = minutes;
-		this.seconds = seconds;
-	}
-}
 
 @Component({
 	selector: 'ct-entry-time-form',
@@ -45,7 +31,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	@Output() deleted: EventEmitter<void> = new EventEmitter<void>();
 	@Output() timerUpdated: EventEmitter<void> = new EventEmitter<void>();
 
-	actualTime: string;
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
 	isFocusClassShown: boolean;
@@ -54,16 +39,16 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	isFromToFormFocus: boolean;
 	isRequestLoading: boolean;
 	isTimerShown: boolean;
-	plannedTime: string;
 	projectList: Project[];
 	projectModel: Project;
-	selectedDate: Date;
 	taskList: Task[];
 	taskModel: Task;
 	ticks: number;
-	timeMask = [/\d/, /\d/, ':', /\d/, /\d/];
+	timeActual: string;
+	timeEstimated: string;
 	timeFrom: string = '00:00';
 	timeTo: string = '00:00';
+	timeMask = [/\d/, /\d/, ':', /\d/, /\d/];
 	timerSubscription: Subscription;
 	timerValue: Time;
 	userInfo: User;
@@ -83,7 +68,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	private dayInfo: CalendarDay;
 	private defaultProject: Project;
 	private totalTrackedTimeForDay: number;
-	private totalPlannedTimeForDay: number;
+	private totalEstimatedTimeForDay: number;
 
 	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
@@ -101,18 +86,17 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		});
 
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
-		this.actualTime = this.convertTimeToString(this.timeEntry.time);
-		this.plannedTime = this.convertTimeToString(this.timeEntry.plannedTime);
+		this.timeActual = this.convertTimeToString(this.timeEntry.timeValues.timeActual);
+		this.timeEstimated = this.convertTimeToString(this.timeEntry.timeValues.timeEstimated);
 
-		if (this.currentTimeEntry.isFromToShow) {
+		if (this.currentTimeEntry.timeOptions.isFromToShow) {
 			this.fillFromToForm();
 		}
 
-		this.selectedDate = this.currentTimeEntry.date;
 		this.loadProjects();
 
-		if (this.currentTimeEntry.timeTimerStart > 0) {
-			this.startTimer(DateUtils.getSecondsFromStartDay() - this.currentTimeEntry.timeTimerStart);
+		if (this.timeEntry.timeOptions.timeTimerStart && this.timeEntry.timeOptions.timeTimerStart !== -1) {
+			this.startTimer();
 		}
 
 		this.getFormHeight();
@@ -163,15 +147,16 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	isToday(): boolean {
-		return DateUtils.isToday(new Date(this.timeEntry.date));
+		return DateUtils.isToday(this.timeEntry.date);
 	}
 
-	startTimer(timeTimerStart?: number): void {
+	startTimer(): void {
 		this.isTimerShown = true;
-		timeTimerStart = timeTimerStart ? timeTimerStart + this.currentTimeEntry.time : this.currentTimeEntry.time;
+
 		let timer = Observable.timer(0, 1000);
 		this.timerSubscription = timer.subscribe(() => {
-			this.ticks = timeTimerStart++;
+			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.currentTimeEntry.timeOptions.timeTimerStart
+				+ this.currentTimeEntry.timeValues.timeActual;
 			this.timerValue = this.convertSecondsToTimeFormat(this.ticks);
 		});
 	}
@@ -187,8 +172,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 		this.calendarService.isTimerActivated = true;
 		if (!this.currentTimeEntry.id) {
-			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
-			this.currentTimeEntry.isFromToShow = false;
+			this.currentTimeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
+			this.currentTimeEntry.timeOptions.isFromToShow = false;
 			this.submit();
 			return;
 		}
@@ -211,7 +196,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private isTimerValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid(true)) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
 			return false;
 		}
 
@@ -220,20 +205,26 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private saveTimerStatus(): Promise<any> {
 		if (!this.isTimerShown) {
-			this.currentTimeEntry.isFromToShow = false;
-			this.currentTimeEntry.timeFrom = null;
-			this.currentTimeEntry.timeTimerStart = DateUtils.getSecondsFromStartDay();
-			this.currentTimeEntry.timeTo = null;
+			this.currentTimeEntry.timeOptions = {
+				isFromToShow: false,
+				timeTimerStart: DateUtils.getSecondsFromStartDay(true)
+			};
+			this.currentTimeEntry.timeValues.timeFrom = null;
+			this.currentTimeEntry.timeValues.timeTo = null;
 		} else {
-			this.currentTimeEntry.isFromToShow = true;
-			this.currentTimeEntry.time = this.ticks;
-			this.currentTimeEntry.timeFrom = DateUtils.getSecondsFromStartDay() - this.ticks;
-			this.currentTimeEntry.timeTimerStart = -1;
-			this.currentTimeEntry.timeTo = this.currentTimeEntry.timeFrom + this.ticks;
-			this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
+			this.currentTimeEntry.timeOptions = {
+				isFromToShow: true,
+				timeTimerStart: -1
+			};
+			this.currentTimeEntry.timeValues = {
+				timeActual: this.ticks,
+				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
+				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
+				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
+			};
+			this.timeActual = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
 		}
 
-		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
 		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
 			.toPromise().then(
 				() => {
@@ -246,7 +237,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 					return null;
 				},
 				error => {
-					this.notificationService.danger('Error changing Timer status');
+					this.notificationService.danger('Error changing Timer status.');
 					return error;
 				});
 	}
@@ -254,11 +245,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	// FROM-TO FORM
 
 	openFromToForm(): void {
-		this.currentTimeEntry.isFromToShow = true;
+		this.currentTimeEntry.timeOptions.isFromToShow = true;
 	}
 
 	closeFromToForm(): void {
-		this.currentTimeEntry.isFromToShow = false;
+		this.currentTimeEntry.timeOptions.isFromToShow = false;
 		this.timeFrom = '00:00';
 		this.timeTo = '00:00';
 	}
@@ -269,40 +260,41 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.isFromToFormFocus = false;
 
 		this.timeTo = this.getMax(timeFrom, timeTo);
-		this.setActualTime();
-		this.actualTime = this.convertTimeToString(this.currentTimeEntry.time);
+		this.setTimeActual();
+		this.timeActual = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
 	}
-	
+
 	private isFromToFormValueValid(): boolean {
 		return this.convertFormValueToSeconds(this.timeTo) > this.convertFormValueToSeconds(this.timeFrom);
 	}
 
 	private fillFromToForm(): void {
-		this.currentTimeEntry.isFromToShow = true;
-		this.timeFrom = this.convertTimeToString(this.currentTimeEntry.timeFrom);
-		this.timeTo = this.convertTimeToString(this.currentTimeEntry.timeTo);
+		this.currentTimeEntry.timeOptions.isFromToShow = true;
+		this.timeFrom = this.convertTimeToString(this.currentTimeEntry.timeValues.timeFrom);
+		this.timeTo = this.convertTimeToString(this.currentTimeEntry.timeValues.timeTo);
 	}
 
 	private getMax(timeFrom: string, timeTo: string): string {
 		if (this.convertFormValueToSeconds(timeFrom) > this.convertFormValueToSeconds(timeTo)) {
 			return timeFrom;
 		}
+
 		return timeTo;
 	}
 
 	// TRACKING TIME
 
-	actualTimeOnChange(): void {
+	timeActualOnChange(): void {
 		this.closeFromToForm();
 		this.isFormChanged = true;
-		this.currentTimeEntry.time = this.convertFormValueToSeconds(this.actualTime);
-		this.currentTimeEntry.timeFrom = null;
-		this.currentTimeEntry.timeTo = null;
+		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeActual);
+		this.currentTimeEntry.timeValues.timeFrom = null;
+		this.currentTimeEntry.timeValues.timeTo = null;
 	}
 
-	plannedTimeOnChange(): void {
+	timeEstimatedOnChange(): void {
 		this.isFormChanged = true;
-		this.currentTimeEntry.plannedTime = this.convertFormValueToSeconds(this.plannedTime);
+		this.currentTimeEntry.timeValues.timeEstimated = this.convertFormValueToSeconds(this.timeEstimated);
 	}
 
 	// SUBMIT TIMEENTRY
@@ -319,9 +311,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		let submitObservable: Observable<any>;
 		let isNewTimeEntry: boolean;
 
-		this.currentTimeEntry.date = DateUtils.convertMomentToUTC(moment(this.currentTimeEntry.date));
-		this.currentTimeEntry.isFromToShow = this.currentTimeEntry.isFromToShow && this.isFromToFormValueValid();
-		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.getAuthUser().id;
+		this.currentTimeEntry.timeOptions.isFromToShow = this.currentTimeEntry.timeOptions.isFromToShow && this.isFromToFormValueValid();
+		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.authUser.id;
 
 		if (this.currentTimeEntry.id) {
 			submitObservable = this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString());
@@ -354,32 +345,59 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.isRequestLoading = false;
 
 				if (!this.currentTimeEntry.id) {
-					this.notificationService.danger('Error creating Time Entry');
+					this.notificationService.danger('Error creating Time Entry.');
 				} else {
-					this.notificationService.danger('Error changing Time Entry');
+					this.notificationService.danger('Error changing Time Entry.');
 				}
 			});
 	}
 
+	private isCurrentTrackedTimeValid(isStrongValidation?: boolean): boolean {
+		this.setDayInfo();
+		if (isStrongValidation) {
+			return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
+				+ this.currentTimeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+		} else {
+			return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
+				+ this.currentTimeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
+		}
+	}
+
+	private isEstimatedTimeValid(): boolean {
+		this.setDayInfo();
+		return this.totalEstimatedTimeForDay - this.timeEntry.timeValues.timeEstimated
+			+ this.currentTimeEntry.timeValues.timeEstimated < MAX_TIMER_VALUE;
+	}
+
 	private isFromToTimeValid(): boolean {
 		return this.dayInfo.timeEntries
-			.filter((timeEntry: TimeEntry) => timeEntry.isFromToShow && timeEntry.id !== this.currentTimeEntry.id)
+			.filter((timeEntry: TimeEntry) => timeEntry.timeOptions.isFromToShow && timeEntry.id !== this.currentTimeEntry.id)
 			.every((timeEntry: TimeEntry) => {
-				return timeEntry.timeFrom >= this.currentTimeEntry.timeTo || this.currentTimeEntry.timeFrom >= timeEntry.timeTo;
+				return timeEntry.timeValues.timeFrom >= this.currentTimeEntry.timeValues.timeTo
+					|| this.currentTimeEntry.timeValues.timeFrom >= timeEntry.timeValues.timeTo;
 			});
+	}
+
+	private isFromToTimeValid2(): boolean {
+		return this.currentTimeEntry.timeValues.timeFrom > 0
+			&& this.currentTimeEntry.timeValues.timeTo < MAX_TIMER_VALUE;
 	}
 
 	private isSubmitDataValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid()) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
 			return false;
 		}
-		if (!this.isPlannedTimeValid()) {
-			this.notificationService.danger('Total planned time can\'t be more than 24 hours');
+		if (!this.isEstimatedTimeValid()) {
+			this.notificationService.danger('Total planned time can\'t be more than 24 hours.');
 			return false;
 		}
-		if (this.currentTimeEntry.isFromToShow && !this.isFromToTimeValid()) {
-			this.notificationService.danger('Selected time period already exists');
+		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid()) {
+			this.notificationService.danger('Selected time period already exists.');
+			return false;
+		}
+		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid2()) {
+			this.notificationService.danger('Selected time period should be within one day.');
 			return false;
 		}
 
@@ -390,20 +408,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		if (this.timerSubscription) {
 			this.timerSubscription.unsubscribe();
 		}
-	}
-
-	isCurrentTrackedTimeValid(isStrongValidation?: boolean): boolean {
-		this.setDayInfo();
-		if (isStrongValidation) {
-			return this.totalTrackedTimeForDay - this.timeEntry.time + this.currentTimeEntry.time < MAX_TIMER_VALUE;
-		} else {
-			return this.totalTrackedTimeForDay - this.timeEntry.time + this.currentTimeEntry.time <= MAX_TIMER_VALUE;
-		}
-	}
-
-	isPlannedTimeValid(): boolean {
-		this.setDayInfo();
-		return this.totalPlannedTimeForDay - this.timeEntry.plannedTime + this.currentTimeEntry.plannedTime < MAX_TIMER_VALUE;
 	}
 
 	private getFormHeight(): void {
@@ -428,7 +432,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.currentTimeEntry.projectName = this.projectList[0].name;
 				this.currentTimeEntry.projectId = this.projectList[0].id;
 				this.currentTimeEntry.color = this.projectList[0].color;
-				this.loadTasks(this.timeEntry.projectId);
+				this.loadTasks(this.currentTimeEntry.projectId);
 			}
 
 			if (this.projectModel) {
@@ -436,7 +440,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.timeEntry.projectName = this.projectModel.name;
 				this.timeEntry.color = this.projectModel.color;
 			} else {
-				this.loadTasks(this.timeEntry.projectId);
+				this.loadTasks(this.currentTimeEntry.projectId);
 			}
 		});
 	}
@@ -482,10 +486,10 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private setActualTime(): void {
-		this.currentTimeEntry.timeFrom = this.convertFormValueToSeconds(this.timeFrom);
-		this.currentTimeEntry.timeTo = this.convertFormValueToSeconds(this.timeTo);
-		this.currentTimeEntry.time = this.convertFormValueToSeconds(this.timeTo) -
+	private setTimeActual(): void {
+		this.currentTimeEntry.timeValues.timeFrom = this.convertFormValueToSeconds(this.timeFrom);
+		this.currentTimeEntry.timeValues.timeTo = this.convertFormValueToSeconds(this.timeTo);
+		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeTo) -
 			this.convertFormValueToSeconds(this.timeFrom);
 	}
 
@@ -510,7 +514,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private removeNonActiveProjects(projectList: Project[]): Project[] {
-		let isUserAdmin = this.authService.getAuthUser().role === Roles.admin;
+		let isUserAdmin = this.authService.isLoggedIn() && this.authService.authUser.role === Roles.admin;
 		if (isUserAdmin) {
 			return projectList.filter(project => project.isActive === true);
 		} else {
@@ -528,9 +532,9 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		return projectList;
 	}
 
-	private setDayInfo(date?: Date): void {
+	private setDayInfo(date?: string): void {
 		this.dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
-		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'time');
-		this.totalPlannedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'plannedTime');
+		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'timeActual');
+		this.totalEstimatedTimeForDay = this.calendarService.getTotalTimeForDay(this.dayInfo, 'timeEstimated');
 	}
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export class LoginSettings {
+export interface LoginSettings {
 	enableAzure: boolean;
 	azureSettings: AzureSettings;
 }
 
-export class AzureSettings {
+export interface AzureSettings {
 	tenant: string;
 	clientId: string;
 	redirectUrl: string;
@@ -15,14 +15,22 @@ export class AzureSettings {
 
 @Injectable()
 export class LoginService {
-	constructor(private http: Http) {
+	private authenticationSettings: LoginSettings;
+
+	constructor(private http: HttpClient) {
 	}
 
 	getAuthenticationSettings(): Observable<LoginSettings> {
+		if (this.authenticationSettings) {
+			return Observable.of(this.authenticationSettings)
+		}
+
+		return this.loadAuthenticationSettings();
+	}
+
+	private loadAuthenticationSettings(): Observable<LoginSettings> {
 		let url = '/api/v1/AuthenticationSettings';
-		return this.http.get(url)
-			.map(res => {
-				return res.json();
-			});
+		return this.http.get<LoginSettings>(url)
+			.map((settings: LoginSettings) => this.authenticationSettings = settings);
 	}
 }

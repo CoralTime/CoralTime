@@ -1,10 +1,15 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { ReportGridView, ReportItem } from '../../../services/reposts.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../models/user';
+import { ReportGridView, ReportItem } from '../../../models/reports';
 import { ImpersonationService } from '../../../services/impersonation.service';
 import * as moment from 'moment';
+
+export interface ReportGridData {
+	gridData: ReportGridView;
+	rows: number;
+}
 
 @Component({
 	selector: 'ct-reports-grid',
@@ -14,10 +19,13 @@ import * as moment from 'moment';
 export class ReportsGridComponent implements OnChanges {
 	@Input() gridData: ReportGridView;
 	@Input() groupById: number;
+	@Input() rowsNumber: number;
 	@Input() showColumnIds: number[] = [];
 
 	dateFormat: string;
-	gridDataRows: ReportItem[];
+	gridDataRows: ReportItem[] = [];
+
+	private lastEvent: any;
 
 	constructor(private impersonationService: ImpersonationService,
 	            private route: ActivatedRoute) {
@@ -29,7 +37,7 @@ export class ReportsGridComponent implements OnChanges {
 
 	ngOnChanges(changes: any) {
 		if (this.gridData) {
-			this.gridDataRows = this.gridData.items;
+			this.loadLazy(this.lastEvent);
 		}
 	}
 
@@ -53,10 +61,16 @@ export class ReportsGridComponent implements OnChanges {
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
 	}
 
-	loadLazy(event): void {
-		event.sortField = event.sortField || 'date';
+	loadLazy(event: any): void {
+		this.lastEvent = event;
+
 		if (event && this.gridData) {
-			this.gridDataRows = [...ArrayUtils.sortByField(this.gridData.items, event.sortField, event.sortOrder)];
+			event.sortField = event.sortField || 'date';
+			this.gridData.items = [...ArrayUtils.sortByField(this.gridData.items, event.sortField, event.sortOrder)];
+
+			setTimeout(() => {
+				this.gridDataRows = this.gridData.items.slice(0, this.rowsNumber);
+			}, 0);
 		}
 	}
 }

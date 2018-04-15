@@ -6,9 +6,10 @@
 
         <div class="ct-page-content">
             <div class="ct-user-pic-container">
-                <ct-user-pic [userId]='impersonationId || userId' [fullSize]="true"></ct-user-pic>
+                <ct-user-pic [urlIcon]='avatarUrl' [fullSize]="true"></ct-user-pic>
                 <span class="ct-link-text" (click)="openPhotoDialog()">Change Profile Picture</span>
             </div>
+
             <div class="ct-user-settings">
                 <div class="ct-form-block">
                     <div class="ct-form-header" (click)="toggleForm(0)">
@@ -17,10 +18,12 @@
                         </a>
                         <span class="ct-link-text">{{isFormShownArray[0] ? "Hide Personal Info" : "Show Personal Info"}}</span>
                     </div>
+
                     <form class="ct-form" [hidden]="!isFormShownArray[0]" #personalInfoForm="ngForm" (submit)="submitPersonalInfo()">
                         <div>
                             <label class="ct-form-label">Personal Info</label>
                         </div>
+
                         <div>
                             <label class="ct-form-label">Full Name</label>
                             <div class="ct-required-field-container">
@@ -28,6 +31,7 @@
                                        [(ngModel)]="userModel.fullName" pattern=".*[^\s]+.*" required/>
                             </div>
                         </div>
+
                         <div>
                             <label class="ct-form-label">Email Address</label>
                             <div class="ct-required-field-container">
@@ -40,15 +44,18 @@
                             <div class="ct-error-text" *ngIf="isEmailChanged && showWrongEmailMessage">User with this email already exists</div>
                             <div class="ct-error-text" *ngIf="!contactEmail.pristine && !userModel.email">Email can't be empty</div>
                         </div>
+
                         <div>
                             <a class="ct-link-text ct-reset-password-button" (click)="resetPassword()">Reset password</a>
                             <div *ngIf="resetPasswordMessage" class="ct-reset-password-message">{{resetPasswordMessage}}</div>
                         </div>
-                        <button md-raised-button class="ct-button ct-blue-button" [disabled]="!personalInfoForm.valid">
+
+                        <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!personalInfoForm.valid">
                             Save Personal Info
                         </button>
                     </form>
                 </div>
+
                 <div class="ct-form-block">
                     <div class="ct-form-header" (click)="toggleForm(1)">
                         <a class="ct-add-button">
@@ -56,10 +63,12 @@
                         </a>
                         <span class="ct-link-text">{{isFormShownArray[1] ? "Hide Preferences" : "Show Preferences"}}</span>
                     </div>
+
                     <form class="ct-form" [hidden]="!isFormShownArray[1]" #preferencesForm="ngForm" (submit)="submitPreferences()">
                         <div>
                             <label class="ct-form-label">Preferences</label>
                         </div>
+
                         <div>
                             <label class="ct-form-label">Default Project</label>
                             <ct-select [name]="'defaultProject'"
@@ -69,6 +78,7 @@
                                        [options]="projects">
                             </ct-select>
                         </div>
+
                         <div>
                             <label class="ct-form-label">Default Task</label>
                             <ct-select [name]="'defaultTask'"
@@ -78,16 +88,7 @@
                                        [options]="tasks">
                             </ct-select>
                         </div>
-                        <div>
-                            <label class="ct-form-label">Time Zone</label>
-                            <ct-select [name]="'timeZone'"
-                                       [defaultValue]="'None'"
-                                       [displayName]="'name'"
-                                       [(ngModel)]="timeZoneModel"
-                                       (ngModelChange)="userModel.timeZone = timeZoneModel.name"
-                                       [options]="timeZones">
-                            </ct-select>
-                        </div>
+
                         <div>
                             <label class="ct-form-label">Date Format</label>
                             <ct-select [name]="'dateFormat'" [trackBy]="'dateFormat'"
@@ -97,6 +98,7 @@
                                        [options]="dateFormats">
                             </ct-select>
                         </div>
+
                         <div>
                             <label class="ct-form-label">Time Format</label>
                             <ct-select [name]="'timeFormat'" [trackBy]="'timeFormat'"
@@ -105,6 +107,7 @@
                                        [options]="timeFormats">
                             </ct-select>
                         </div>
+
                         <div>
                             <label class="ct-form-label">Week Starts On</label>
                             <ct-select [name]="'weekStartDay'"
@@ -113,49 +116,56 @@
                                        [options]="weekStartDays">
                             </ct-select>
                         </div>
-                        <button md-raised-button class="ct-button ct-blue-button" [disabled]="!preferencesForm.valid">
+
+                        <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!preferencesForm.valid">
                             Save Preferences
                         </button>
                     </form>
                 </div>
-                <div class="ct-form-block">
-                    <div class="ct-form-header" (click)="toggleForm(2)">
-                        <a class="ct-add-button">
-                            <i class="material-icons">{{isFormShownArray[2] ? "keyboard_arrow_up" : "add"}}</i>
-                        </a>
-                        <span class="ct-link-text">{{isFormShownArray[2] ? "Hide Notifications" : "Show Notifications"}}</span>
-                    </div>
-                    <form class="ct-form" [hidden]="!isFormShownArray[2]" #notificationForm="ngForm" (submit)="submitNotifications()">
-                        <div>
-                            <label class="ct-form-label">Notifications</label>
-                        </div>
-                        <div>
-                            <label class="ct-form-label">If i haven't logged hours, email me at</label>
-                            <ct-select [name]="'sendEmailTime'" #select
-                                       [(ngModel)]="sendEmailTimeModel"
-                                       (change)="sendEmailTimeOnChange(select)"
-                                       [options]="sendEmailTimeArray">
-                            </ct-select>
-                        </div>
-                        <div>
-                            <label class="ct-form-label">On the following days:</label>
-                            <md-checkbox *ngFor="let day of sendEmailDaysArray; let i = index"
-                                         [name]="'sendEmailDay-' + i"
-                                         [(ngModel)]="sendEmailDays[day.dayNumber]"
-                                         (change)="sendEmailDayOnChange()">
-                                {{day.name}}
-                            </md-checkbox>
-                        </div>
-                        <div>
-                            <md-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
-                                Send weekly time entry updates
-                            </md-checkbox>
-                        </div>
-                        <button md-raised-button class="ct-button ct-blue-button" [disabled]="!notificationForm.valid">
-                            Save Notifications
-                        </button>
-                    </form>
-                </div>
+
+                <!--<div class="ct-form-block">-->
+                    <!--<div class="ct-form-header" (click)="toggleForm(2)">-->
+                        <!--<a class="ct-add-button">-->
+                            <!--<i class="material-icons">{{isFormShownArray[2] ? "keyboard_arrow_up" : "add"}}</i>-->
+                        <!--</a>-->
+                        <!--<span class="ct-link-text">{{isFormShownArray[2] ? "Hide Notifications" : "Show Notifications"}}</span>-->
+                    <!--</div>-->
+
+                    <!--<form class="ct-form" [hidden]="!isFormShownArray[2]" #notificationForm="ngForm" (submit)="submitNotifications()">-->
+                        <!--<div>-->
+                            <!--<label class="ct-form-label">Notifications</label>-->
+                        <!--</div>-->
+
+                        <!--<div>-->
+                            <!--<label class="ct-form-label">If i haven't logged hours, email me at</label>-->
+                            <!--<ct-select [name]="'sendEmailTime'" #select-->
+                                       <!--[(ngModel)]="sendEmailTimeModel"-->
+                                       <!--(change)="sendEmailTimeOnChange(select)"-->
+                                       <!--[options]="sendEmailTimeArray">-->
+                            <!--</ct-select>-->
+                        <!--</div>-->
+
+                        <!--<div>-->
+                            <!--<label class="ct-form-label">On the following days:</label>-->
+                            <!--<mat-checkbox *ngFor="let day of sendEmailDaysArray; let i = index"-->
+                                         <!--[name]="'sendEmailDay-' + i"-->
+                                         <!--[(ngModel)]="sendEmailDays[day.dayNumber]"-->
+                                         <!--(change)="sendEmailDayOnChange()">-->
+                                <!--{{day.name}}-->
+                            <!--</mat-checkbox>-->
+                        <!--</div>-->
+
+                        <!--<div>-->
+                            <!--<mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">-->
+                                <!--Send weekly time entry updates-->
+                            <!--</mat-checkbox>-->
+                        <!--</div>-->
+
+                        <!--<button mat-raised-button class="ct-button ct-blue-button" [disabled]="!notificationForm.valid">-->
+                            <!--Save Notifications-->
+                        <!--</button>-->
+                    <!--</form>-->
+                <!--</div>-->
             </div>
         </div>
     </div>

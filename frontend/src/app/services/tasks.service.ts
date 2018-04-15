@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Task } from '../models/task';
 
@@ -12,35 +11,22 @@ export class TasksService {
 		this.odata = this.odataFactory.CreateService<Task>('Tasks');
 	}
 
-	getTasks(): Observable<Task[]> {
-		return this.odata.Query().Exec().map(res => res.map((x: any) => {
-			return new Task(x);
-		}));
-	}
-
-	getTasksWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Task>> {
+	getActiveTasks(projectId?: number): Observable<PagedResult<Task>> {
 		let filters = [];
 		let query = this.odata
-			.Query()
-			.Top(event.rows)
-			.Skip(event.first);
+			.Query();
 
-		if (event.sortField) {
-			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
+		query.OrderBy('name asc');
+		if (projectId) {
+			filters.push('(projectId eq ' + projectId + ' or projectId eq null)');
 		} else {
-			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
+			filters.push('projectId eq null');
 		}
-
-		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
-		}
-
-		filters.push('IsActive eq ' + isActive);
-		filters.push('ProjectId eq null');
+		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
 	}
@@ -61,24 +47,16 @@ export class TasksService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq ' + isActive);
+		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
-	}
-
-	toggleActive(task: Task): Observable<any> {
-		task.isActive = !task.isActive;
-
-		return this.odata.Patch({
-			isActive: task.isActive
-		}, task.id.toString());
 	}
 
 	getProjectTasks(event, filterStr = '', projectId: number): Observable<PagedResult<Task>> {
@@ -95,15 +73,15 @@ export class TasksService {
 		}
 
 		if (filterStr) {
-			filters.push('contains(tolower(Name),\'' + filterStr.trim().toLowerCase() + '\')');
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
 		}
 
-		filters.push('IsActive eq true');
-		filters.push('(ProjectId eq ' + projectId + ' or ProjectId eq null)');
+		filters.push('isActive eq true');
+		filters.push('(projectId eq ' + projectId + ' or projectId eq null)');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
 	}
@@ -118,7 +96,7 @@ export class TasksService {
 			.Query()
 			.Top(1);
 
-		query.Filter('tolower(Name) eq \'' + name + '\' and ProjectId eq null');
+		query.Filter('tolower(name) eq \'' + name + '\' and projectId eq null');
 
 		return query.Exec()
 			.flatMap(result => {
@@ -127,23 +105,38 @@ export class TasksService {
 			});
 	}
 
-	getActiveTasks(projectId?: number): Observable<PagedResult<Task>> {
+	getTasksWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Task>> {
 		let filters = [];
 		let query = this.odata
-			.Query();
+			.Query()
+			.Top(event.rows)
+			.Skip(event.first);
 
-		query.OrderBy('name asc');
-		if (projectId) {
-			filters.push('(ProjectId eq ' + projectId + ' or ProjectId eq null)');
+		if (event.sortField) {
+			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		} else {
-			filters.push('ProjectId eq null');
+			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
 		}
-		filters.push('IsActive eq true');
+
+		if (filterStr) {
+			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
+		}
+
+		filters.push('isActive eq ' + isActive);
+		filters.push('projectId eq null');
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: any) => new Task(x));
+			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
 		});
+	}
+
+	toggleActive(task: Task): Observable<any> {
+		task.isActive = !task.isActive;
+
+		return this.odata.Patch({
+			isActive: task.isActive
+		}, task.id.toString());
 	}
 }

@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { LoadingIndicatorDirective } from '../loading-indicator/loading-indicator.directive';
 import { IsGrantedDirective } from './is-granted.directive';
 import { EqualValidator } from './equal-validator.directive';
 import { UsernameValidator } from './username-validator.directive';
@@ -22,7 +21,6 @@ import { ClickCloseDirective } from './click-close.directive';
 @NgModule({
 	imports: [],
 	declarations: [
-		LoadingIndicatorDirective,
 		IsGrantedDirective,
 		EqualValidator,
 		UsernameValidator,
@@ -44,7 +42,6 @@ import { ClickCloseDirective } from './click-close.directive';
 		ClickCloseDirective
 	],
 	exports: [
-		LoadingIndicatorDirective,
 		IsGrantedDirective,
 		EqualValidator,
 		UsernameValidator,

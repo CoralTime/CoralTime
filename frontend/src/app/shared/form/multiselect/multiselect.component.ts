@@ -1,12 +1,11 @@
 import {
-	Component, Input, Output, EventEmitter, forwardRef, ViewChild, OnChanges, SimpleChanges, HostListener
+	Component, Input, Output, EventEmitter, forwardRef, ViewChild, HostListener
 } from '@angular/core';
-import { DomHandler } from 'primeng/components/dom/domhandler';
-import { ObjectUtils } from 'primeng/components/utils/ObjectUtils';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { MultiSelect as PrimeMultiSelect } from 'primeng/primeng';
-import { SlimScrollDirective } from 'ng2-slimscroll/src/directives/slimscroll.directive';
 import { SelectItem } from 'primeng/components/common/api';
+import { MultiSelect } from 'primeng/components/multiselect/multiselect';
+import { ObjectUtils } from 'primeng/components/utils/objectutils';
+import { DomHandler } from 'primeng/primeng';
 
 export class CustomSelectItem implements SelectItem {
 	isActive?: boolean;
@@ -32,8 +31,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
 	providers: [DomHandler, ObjectUtils, MULTISELECT_VALUE_ACCESSOR]
 })
 
-export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges {
-	@Input() ngModel: number[];
+export class MultiSelectComponent extends MultiSelect {
 	@Input() extraActionTitle: string;
 	@Input() showSubmitButton: boolean = false;
 	@Input() showFilterSearch: boolean = true;
@@ -42,11 +40,9 @@ export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges 
 	@Output() onExtraAction: EventEmitter<any> = new EventEmitter();
 	@Output() onSubmitAction: EventEmitter<any> = new EventEmitter();
 
-	@ViewChild('slimScroll') slimScroll: SlimScrollDirective;
+	@ViewChild('slimScroll') slimScroll: any;
 
-	clickListener: any;
 	isSubmitted: boolean = false;
-	filter: boolean;
 	oldValue: any[];
 
 	show(): void {
@@ -54,20 +50,17 @@ export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges 
 		this.redrowSlimScroll();
 
 		if (this.showSubmitButton) {
-			this.cashValue();
+			this.isSubmitted = false;
+			this.oldValue = this.value;
 		}
 	}
 
 	hide(): void {
-		this.isSubmitted = false;
 		super.hide();
-	}
 
-	ngOnChanges(changes: SimpleChanges) {
-		if (changes && changes['ngModel'] && changes['ngModel'].currentValue.length === 0) {
-			setTimeout(() => {
-				this.valuesAsString = this.defaultLabel;
-			}, 0);
+		if (this.showSubmitButton && !this.isSubmitted) {
+			this.value = this.oldValue;
+			this.updateLabel();
 		}
 	}
 
@@ -81,22 +74,16 @@ export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges 
 		this.redrowSlimScroll();
 	}
 
-	selectAll(): void {
-		let opts = this.getVisibleOptions();
-		if (opts) {
-			this.value = [];
-			for (let i = 0; i < opts.length; i++) {
-				this.value.push(opts[i].value);
-			}
-		}
-		this.onModelChange(this.value);
-		this.onChange.emit({originalEvent: event, value: this.value});
+	selectAll(event: MouseEvent): void {
+		super.toggleAll(event, {
+			checked: false
+		});
 	}
 
-	selectNone(): void {
-		this.value = [];
-		this.onModelChange(this.value);
-		this.onChange.emit({originalEvent: event, value: this.value});
+	selectNone(event: MouseEvent): void {
+		super.toggleAll(event, {
+			checked: true
+		});
 	}
 
 	doExtraAction(event): void {
@@ -114,28 +101,9 @@ export class MultiSelectComponent extends PrimeMultiSelect implements OnChanges 
 		return value !== null + '' ? value : this.defaultLabel.slice(4) + ' (1)';
 	}
 
-	private cashValue(): void {
-		this.oldValue = this.value;
-		if (!this.clickListener) {
-			this.clickListener = this.renderer.listen('document', 'click', () => {
-				if (!this.overlayVisible && !this.isSubmitted) {
-					this.clearCash();
-					this.value = this.oldValue;
-				}
-			});
-		}
-	}
-
-	private clearCash(): void {
-		this.clickListener();
-		this.clickListener = null;
-	}
-
 	private redrowSlimScroll(): void {
 		setTimeout(() => {
-			if (this.slimScroll) {
-				this.slimScroll.getBarHeight();
-			}
+			this.slimScroll.getBarHeight();
 		}, 0);
 	}
 

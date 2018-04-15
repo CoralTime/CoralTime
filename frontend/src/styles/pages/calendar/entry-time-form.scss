@@ -351,14 +351,14 @@ ct-entry-time {
         float: left;
 
         .ct-actions-icon {
-          background: url('/assets/icons/runtimer.svg') no-repeat center;
+          background: url(./assets/icons/runtimer.svg) no-repeat center;
         }
       }
       &.ct-time-path {
         float: right;
 
         .ct-actions-icon {
-          background: url('/assets/icons/fromto.svg') no-repeat center;
+          background: url(./assets/icons/fromto.svg) no-repeat center;
         }
       }
     }
@@ -449,7 +449,7 @@ ct-entry-time {
 
       &.ct-actual-time {
         .ct-period-icon {
-          background-image: url(/assets/icons/tasktile.time.actual.svg);
+          background-image: url(./assets/icons/tasktile.time.actual.svg);
         }
       }
 
@@ -459,7 +459,7 @@ ct-entry-time {
         text-align: right;
 
         .ct-period-icon {
-          background-image: url(/assets/icons/tasktile.time.estimated.svg);
+          background-image: url(./assets/icons/tasktile.time.estimated.svg);
         }
       }
     }

@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-
 import { ODataServiceFactory, ODataService } from './odata';
 import { ProjectRole } from '../models/project-role';
 
@@ -14,7 +13,7 @@ export class ProjectRolesService {
 
     getProjectRoles(): Observable<ProjectRole[]> {
         return this.odata.Query().Exec().map((res: any) => {
-            return res.map((x: any) => new ProjectRole(x));
+            return res.map((x: Object) => new ProjectRole(x));
         });
     }
 }

@@ -16,10 +16,10 @@ namespace CoralTime.BL.Helpers
                 timerTime = 0;
             }
 
-            timeEntry.Time += timerTime;
+            timeEntry.TimeActual += timerTime;
             timeEntry.TimeTimerStart = -1;
             timeEntry.TimeFrom = 0;
-            timeEntry.TimeTo = timeEntry.Time;
+            timeEntry.TimeTo = timeEntry.TimeActual;
         }
     }
 }

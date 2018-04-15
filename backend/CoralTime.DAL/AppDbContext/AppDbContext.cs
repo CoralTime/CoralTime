@@ -3,15 +3,12 @@ using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System.Threading.Tasks;
 
 namespace CoralTime.DAL
 {
     public partial class AppDbContext : IdentityDbContext<ApplicationUser>, IPersistedGrantDbContext
     {
-        public AppDbContext() { }
-
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
@@ -33,7 +30,7 @@ namespace CoralTime.DAL
 
         public DbSet<UserForgotPassRequest> UserForgotPassRequests { get; set; }
 
-        public DbSet<MemberAvatar> MemberAvatars { get; set; }
+        public DbSet<MemberImage> MemberImages { get; set; }
 
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
@@ -68,12 +65,18 @@ namespace CoralTime.DAL
                 .HasMany(p => p.Projects)
                 .WithOne(p => p.Client).IsRequired(false);
 
+            builder.Entity<Models.Client>()
+                .HasIndex(p => p.Name).IsUnique();
+
             builder.Entity<TaskType>()
                 .HasOne(p => p.Project);
 
-            builder.Entity<MemberAvatar>()
+            builder.Entity<MemberImage>()
                 .HasOne(p => p.Member);
-            
+
+            builder.Entity<Member>()
+                .HasOne(p => p.MemberImage);
+
             builder.Entity<Project>()
                 .HasMany(p => p.TaskTypes)
                 .WithOne(p => p.Project).IsRequired(false);

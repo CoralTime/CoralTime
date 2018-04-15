@@ -6,7 +6,7 @@ namespace CoralTime.Common.Helpers
 {
     public class ClaimsCreator
     {
-        public static List<Claim> GetUserClaims (string userName, string fullName, string email, string role, int memberId)
+        public static List<Claim> CreateUserClaims (string userName, string fullName, string email, string role, int memberId)
         {
             var claims = new List<Claim>
             {

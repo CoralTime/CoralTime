@@ -34,6 +34,8 @@ namespace CoralTime.ViewModels.Projects
         public int NotificationDay { get; set; }
 
         public bool IsTimeLockEnabled { get; set; }
+        
+        public bool IsNotificationEnabled { get; set; }
 
         public IEnumerable<MemberView> Members { get; set; }
     }

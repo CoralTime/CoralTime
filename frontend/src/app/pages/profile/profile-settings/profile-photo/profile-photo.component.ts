@@ -1,8 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Bounds, CropperSettings, ImageCropperComponent } from 'ng2-img-cropper';
-import { ProfileService } from '../../../../services/profile.service';
 import { NotificationService } from '../../../../core/notification.service';
-import { MdDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { UserPicService } from '../../../../services/user-pic.service';
 
 @Component({
@@ -16,11 +15,11 @@ export class ProfilePhotoComponent {
 	fileName: string;
 	fileType: string;
 
+	@Output() onSubmit = new EventEmitter();
 	@ViewChild(ImageCropperComponent) cropper: ImageCropperComponent;
 
 	constructor(private notificationService: NotificationService,
-	            private mdDialog: MdDialog,
-	            private profileService: ProfileService,
+	            private matDialog: MatDialog,
 	            private userPicService: UserPicService) {
 		this.cropperSettings = new CropperSettings();
 		this.cropperSettings.width = 200;
@@ -50,17 +49,15 @@ export class ProfilePhotoComponent {
 	}
 
 	changeProfileImg(base64String: string): void {
-		this.profileService
-			.upload(this.createCroppedImg(base64String))
-			.subscribe(() => {
-					this.userPicService.clearUserPictureCache();
-					this.userPicService.onUserPicChange.emit();
+		this.userPicService.uploadUserPicture(this.createCroppedImg(base64String))
+			.subscribe((avatar: string) => {
+					let avatarUrl = avatar;
 					this.notificationService.success('Your profile photo was changed.');
-					this.mdDialog.closeAll();
+					this.onSubmit.emit(avatarUrl);
 				},
 				error => {
 					this.notificationService.danger('Error changing profile photo.');
-					this.mdDialog.closeAll();
+					this.matDialog.closeAll();
 				});
 	}
 
@@ -89,7 +86,7 @@ export class ProfilePhotoComponent {
 			view[i] = binary.charCodeAt(i);
 		}
 
-		return new Blob([view], {type : this.fileType});
+		return new Blob([view], {type: this.fileType});
 	};
 
 	private blobToFile(theBlob: Blob, fileName: string): File {
@@ -106,6 +103,6 @@ export class ProfilePhotoComponent {
 	}
 
 	private sliceCoding(base64String: string): string {
-		return base64String.slice(base64String.indexOf('base64,') + 7)
+		return base64String.slice(base64String.indexOf('base64,') + 7);
 	}
 }

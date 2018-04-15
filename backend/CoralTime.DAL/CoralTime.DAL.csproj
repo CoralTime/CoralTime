@@ -1,39 +1,33 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1.2</TargetFramework>
-    <AssemblyName>CoralTime.DAL</AssemblyName>
-    <PackageId>CoralTime.DAL</PackageId>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Remove="ConvertersOfViewModels\ReportViewModel\ReportsGridItemView.cs" />
-    <Compile Remove="Migrations\20180119132135_Initial2.cs" />
-    <Compile Remove="Migrations\20180119134640_Add Reports Settings.cs" />
-    <Compile Remove="Migrations\20180119135000_Add Reports Settings.cs" />
-    <Compile Remove="Migrations\20180119135209_Add Reports Settings.cs" />
-    <Compile Remove="Migrations\20180119135404_Add Reports Settings.cs" />
-    <Compile Remove="Migrations\20180125202132_add bool field IsDefaulQuery in ReportsSettings.cs" />
-    <Compile Remove="Migrations\20180125202207_add bool field IsDefaultQuery in ReportsSettings.cs" />
-    <Compile Remove="Migrations\20180125202244_Add bool field IsDefaultQuery in ReportsSettings.cs" />
+    <Compile Remove="Migrations\20180213100954_Set unique %27Name%27 for Clients, ProjectRoles.cs" />
+    <Compile Remove="Migrations\20180321155042_ Rename TimeEnties Time2.cs" />
   </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="3.0.0" />
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="IdentityServer4.EntityFramework" Version="1.0.1" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.2" />
-    <PackageReference Include="IdentityModel" Version="2.9.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
-    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.0" />
-  </ItemGroup>
+
 </Project>
