@@ -22,20 +22,37 @@ namespace CoralTime.BL.Services
 
         public IEnumerable<TimeEntryView> GetAllTimeEntries(DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
-            var relatedMemberByName = GetRelatedMemberByUserName(ImpersonatedUserName);
+            var memberImpersonated = MemberImpersonated; 
+            var applicationUserImpersonated = ApplicationUserImpersonated;
 
             var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQueryWithIncludes()
-                .Where(tEntry => tEntry.MemberId == relatedMemberByName.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
+                .Where(tEntry => tEntry.MemberId == memberImpersonated.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
                 .ToList();
 
-            return timeEntriesByMemberIdAndDates.Select(x => x.GetViewTimeEntry(ImpersonatedUserName, Mapper));
+            var timeEntryViewList = new List<TimeEntryView>();
+
+            foreach (var timeEntry in timeEntriesByMemberIdAndDates)
+            {
+               var timeEntryView = timeEntry.GetView(applicationUserImpersonated.UserName, Mapper);
+
+                var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserImpersonated.IsAdmin, memberImpersonated.Id, timeEntry.ProjectId);
+
+                if (isOnlyMemberAtProject)
+                {
+                    timeEntryView.IsLocked = true;
+                }
+
+                timeEntryViewList.Add(timeEntryView);
+            }
+
+            return timeEntryViewList;
         }
 
         public TimeEntryView GetById(int id)
         {
             var timeEntryById = GetRelatedTimeEntryById(id);
 
-            return timeEntryById.GetViewTimeEntry(ImpersonatedUserName, Mapper);
+            return timeEntryById.GetView(ImpersonatedUserName, Mapper);
         }
 
         public TimeEntryView Create(TimeEntryView timeEntryView)
@@ -65,7 +82,7 @@ namespace CoralTime.BL.Services
                 Uow.Save();
 
                 var timeEntryWithUpdateRelatedEntities = Uow.TimeEntryRepository.LinkedCacheGetById(timeEntry.Id);
-                return timeEntryWithUpdateRelatedEntities.GetViewTimeEntry(ImpersonatedUserName, Mapper);
+                return timeEntryWithUpdateRelatedEntities.GetView(ImpersonatedUserName, Mapper);
             }
             catch (Exception e)
             {
@@ -101,7 +118,7 @@ namespace CoralTime.BL.Services
                 Uow.TimeEntryRepository.Update(timeEntryById);
                 Uow.Save();
 
-                return timeEntryById.GetViewTimeEntry(ImpersonatedUserName, Mapper);
+                return timeEntryById.GetView(ImpersonatedUserName, Mapper);
             }
             catch (Exception e)
             {
@@ -145,22 +162,6 @@ namespace CoralTime.BL.Services
         }
 
         #region Added Methods for Get Related Entities.
-
-        //private ApplicationUser GetRelatedUserByName(string userName)
-        //{
-        //    var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
-        //    if (relatedUserByName == null)
-        //    {
-        //        throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
-        //    }
-
-        //    if (!relatedUserByName.IsActive)
-        //    {
-        //        throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
-        //    }
-
-        //    return relatedUserByName;
-        //}
 
         private Member GetRelatedMemberByUserName(string userName)
         {
@@ -263,8 +264,8 @@ namespace CoralTime.BL.Services
         {
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
-            var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r =>
-                r.MemberId == memberId && r.ProjectId == projectId && r.RoleId == managerRoleId);
+            var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
+                .FirstOrDefault(r => r.MemberId == memberId && r.ProjectId == projectId && r.RoleId == managerRoleId);
 
             if (memberProjectRole == null)
             {
@@ -383,6 +384,18 @@ namespace CoralTime.BL.Services
                     throw new CoralTimeDangerException("Date for creating or updating TimeEntry is too late.");
                 }
             }
+        }
+
+        private bool IsTimeEntryLockedByProjectSettings(DateTime timeEntryDateEditing, Project projectById)
+        {
+            var isTimeEntryLocked = false;
+
+            if (projectById.IsTimeLockEnabled && IsOnlyMemberAtProject)
+            {
+                isTimeEntryLocked = CommonHelpers.IsTimeEntryLocked(timeEntryDateEditing, projectById.DaysBeforeStopEditTimeEntries, projectById.LockPeriod);
+            }
+
+            return isTimeEntryLocked;
         }
 
         #endregion
