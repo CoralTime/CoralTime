@@ -284,11 +284,7 @@ namespace CoralTime.BL.Services
                         <p><a href=""{linkToCreateTEntry}"">Would you like to enter your time now?</a><br><br>
                         <p>Best wishes, <a href=""mailto:coraltime2017@yandex.ru"">CoralTime Team!</a>"
                     };
-                    /*
-                     Hello, Kulick, Alex!
-
-                     This is a friendly reminder that you haven’t entered your Time on Coral MSP project for 5 workdays: 04/09, 04/10, 04/11, 04/12, 04/13.
-                     */
+               
                     await EmailSenderSimple(_configuration, emailSenderSimpleModel);
                 }
             }
