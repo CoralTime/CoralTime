@@ -15,8 +15,6 @@ namespace CoralTime.BL.Services
 {
     public class TimeEntryService : BaseService, ITimeEntryService
     {
-        private bool IsOnlyMemberAtProject { get; set; }
-
         public TimeEntryService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
@@ -35,9 +33,11 @@ namespace CoralTime.BL.Services
             {
                var timeEntryView = timeEntry.GetView(applicationUserImpersonated.UserName, Mapper);
 
-                var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserImpersonated.IsAdmin, memberImpersonated.Id, timeEntry.ProjectId);
+                var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserCurrent.IsAdmin, memberImpersonated.Id, timeEntry.ProjectId);
 
-                if (isOnlyMemberAtProject)
+                var isTimeEntryLocked = IsTimeEntryLockedByProjectSettings(timeEntry.Date, timeEntry.Project, isOnlyMemberAtProject);
+
+                if (isTimeEntryLocked)
                 {
                     timeEntryView.IsLocked = true;
                 }
@@ -60,10 +60,11 @@ namespace CoralTime.BL.Services
             var timeEntry = new TimeEntry();
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntry, ImpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntry, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
-            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
+            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserCurrent.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
+            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById, isOnlyMemberAtProject);
 
             // Check correct timing values from TimeEntryView.
             CheckCorrectTimingValues(timeEntryView.TimeValues.TimeFrom, timeEntryView.TimeValues.TimeTo, timeEntryView.TimeValues.TimeActual);
@@ -97,10 +98,11 @@ namespace CoralTime.BL.Services
             var timeEntryById = GetRelatedTimeEntryById(timeEntryView.Id);
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, ImpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntryById, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
-            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
+            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserCurrent.IsAdmin, relatedMemberByName.Id, relatedProjectById.Id);
+            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById, isOnlyMemberAtProject);
 
             // Check correct timing values from TimeEntryView.
             CheckCorrectTimingValues(timeEntryView.TimeValues.TimeFrom, timeEntryView.TimeValues.TimeTo, timeEntryView.TimeValues.TimeActual);
@@ -141,10 +143,11 @@ namespace CoralTime.BL.Services
             };
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntryById, ImpersonatedUserName, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntryById, out var relatedMemberByName, out var relatedProjectById);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
-            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById);
+            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserCurrent.IsAdmin, relatedMemberByName.Id, relatedProjectById.Id);
+            CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById, isOnlyMemberAtProject);
 
             #region Delete TimeEntry from DB.
 
@@ -240,16 +243,14 @@ namespace CoralTime.BL.Services
 
         #region Added Methods for Checks.
 
-        private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, string userName, out Member relatedMemberByName, out Project relatedProjectById)
+        private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, out Member relatedMemberByName, out Project relatedProjectById)
         {
-            var relatedUserByName = Uow.UserRepository.LinkedCacheGetByUserNameAndCheck(userName); 
-            relatedMemberByName = GetRelatedMemberByUserName(userName);
+            relatedMemberByName = MemberImpersonated;
+            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(ApplicationUserCurrent.IsAdmin, MemberImpersonated.Id, timeEntry.ProjectId);
 
-            IsOnlyMemberAtProject = !IsAdminOrManagerOfProject(relatedUserByName.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
-
-            relatedProjectById = GetRelatedProjectById(timeEntryView.ProjectId, IsOnlyMemberAtProject);
-            var relatedMemberById = GetRelatedMemberById(timeEntryView.MemberId, IsOnlyMemberAtProject);
-            var relatedTaskTypeById = GetRetaledTaskTypeById(timeEntryView.TaskTypesId, IsOnlyMemberAtProject);
+            relatedProjectById = GetRelatedProjectById(timeEntryView.ProjectId, isOnlyMemberAtProject);
+            var relatedMemberById = GetRelatedMemberById(timeEntryView.MemberId, isOnlyMemberAtProject);
+            var relatedTaskTypeById = GetRetaledTaskTypeById(timeEntryView.TaskTypesId, isOnlyMemberAtProject);
         }
 
         private bool IsAdminOrManagerOfProject(bool userIsAdmin, int memberId, int timeEntryProjectId)
@@ -373,11 +374,11 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private void CheckLockTimeEntryByProjectSettings(DateTime timeEntryDateEditing, Project projectById)
+        private void CheckLockTimeEntryByProjectSettings(DateTime timeEntryDateEditing, Project projectById, bool isOnlyMemberAtProject)
         {
-            if (projectById.IsTimeLockEnabled && IsOnlyMemberAtProject)
+            if (projectById.IsTimeLockEnabled && isOnlyMemberAtProject)
             {
-                var isTimeEntryLocked = CommonHelpers.IsTimeEntryLocked(timeEntryDateEditing, projectById.DaysBeforeStopEditTimeEntries, projectById.LockPeriod);
+                var isTimeEntryLocked = IsTimeEntryLockedByProjectSettings(timeEntryDateEditing, projectById, isOnlyMemberAtProject);
 
                 if (isTimeEntryLocked)
                 {
@@ -386,11 +387,11 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private bool IsTimeEntryLockedByProjectSettings(DateTime timeEntryDateEditing, Project projectById)
+        private bool IsTimeEntryLockedByProjectSettings(DateTime timeEntryDateEditing, Project projectById, bool isOnlyMemberAtProject)
         {
             var isTimeEntryLocked = false;
 
-            if (projectById.IsTimeLockEnabled && IsOnlyMemberAtProject)
+            if (projectById.IsTimeLockEnabled && isOnlyMemberAtProject)
             {
                 isTimeEntryLocked = CommonHelpers.IsTimeEntryLocked(timeEntryDateEditing, projectById.DaysBeforeStopEditTimeEntries, projectById.LockPeriod);
             }
