@@ -279,7 +279,7 @@ namespace CoralTime.BL.Services
                     {
                         Subject = $"Reminder to fill time entry {memberNotifRange.Member.User.Email} by {subjectName} Settigs",
                         ToEmail = memberNotifRange.Member.User.Email,
-                        EmailText = $@"<p>Hello, {memberNotifRange.Member.FullName}!
+                        EmailText = $@"<p>Hello, {memberNotifRange.Member.FullName}!<br>
                         <p>This is a friendly reminder, that you haven’t entered your Time Entries on <b>{project.Name}</b> project for <b>{project.NotificationDay}</b> work{dayOrDays}: {editionDaysFormat}.<br> 
                         <p><a href=""{linkToCreateTEntry}"">Would you like to enter your time now?</a><br><br>
                         <p>Best wishes, <a href=""mailto:coraltime2017@yandex.ru"">CoralTime Team!</a>"
