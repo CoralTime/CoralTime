@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
     <Version>2.0.0</Version>
   </PropertyGroup>
@@ -20,7 +21,6 @@
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <Compile Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <Compile Remove="Configs\**" />
-    <Compile Remove="wwwroot\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
@@ -33,7 +33,6 @@
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <Content Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <Content Remove="Configs\**" />
-    <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
@@ -46,7 +45,6 @@
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <EmbeddedResource Remove="Configs\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
@@ -59,7 +57,6 @@
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionQA\**" />
     <None Remove="ConfigsNetCore2.0\HelperFunctions\**" />
     <None Remove="Configs\**" />
-    <None Remove="wwwroot\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="ConfigsNetCore2.0\coraltime_azure.publishsettings" />
