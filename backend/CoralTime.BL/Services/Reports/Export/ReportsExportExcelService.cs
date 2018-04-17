@@ -493,9 +493,9 @@ namespace CoralTime.BL.Services.Reports.Export
                     return Constants.ReportsGroupByIds.Project.ToString();
                 }
 
-                case (int) Constants.ReportsGroupByIds.Member:
+                case (int) Constants.ReportsGroupByIds.User:
                 {
-                    return Constants.ReportsGroupByIds.Member.ToString();
+                    return Constants.ReportsGroupByIds.User.ToString();
                 }
 
                 case (int) Constants.ReportsGroupByIds.Date:
