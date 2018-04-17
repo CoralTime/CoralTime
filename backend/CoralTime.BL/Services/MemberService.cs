@@ -163,10 +163,7 @@ namespace CoralTime.BL.Services
             var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
             var memberViewResult = memberByName.GetView(Mapper, urlIcon);
 
-            if (memberView.SendInvitationEmail)
-            {
-                await SentInvitationEmailAsync(memberView, baseUrl);
-            }
+            await SentInvitationEmailAsync(memberView, baseUrl);
 
             return memberViewResult;
         }
@@ -442,7 +439,7 @@ namespace CoralTime.BL.Services
                     Text = $"Dear { member.FullName },<br/><br/>" +
                             "You have been invited to join CoralTime time tracking tool.<br/><br/>" +
                             "Below are your login details:<br/><br/>" +
-                            $"username: { member.UserName }<br/>password: { member.Password } <br/>" +
+                            $"username: { member.UserName }<br/>" +
                             $"You can change your password at any time on your <a href='{ profileUrl }'>Profile page</a>.<br/><br/><br/>" +
                             $"To get started, please click the link: <a href='{ baseUrl }'>CoralTime</a> <br/>" +
                             "If the link doesn’t work, copy and past URL into your browser.<br/><br/>" +

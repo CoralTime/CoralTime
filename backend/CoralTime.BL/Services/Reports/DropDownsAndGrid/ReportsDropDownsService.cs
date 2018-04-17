@@ -27,8 +27,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             new ReportCommonDropDownsView
             {
-                Id = (int) Constants.ReportsGroupByIds.Member,
-                Description = Constants.ReportsGroupByIds.Member.ToString()
+                Id = (int) Constants.ReportsGroupByIds.User,
+                Description = Constants.ReportsGroupByIds.User.ToString()
             },
 
             new ReportCommonDropDownsView
