@@ -108,7 +108,7 @@ namespace CoralTime.Common.Constants
         public enum ReportsGroupByIds
         {
             Project = 1,
-            Member = 2,
+            User = 2,
             Date = 3,
             Client = 4,
             UnknownGrouping = 5
