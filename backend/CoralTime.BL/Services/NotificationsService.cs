@@ -207,13 +207,13 @@ namespace CoralTime.BL.Services
             // Only All
             var membersIdsWithAllTimeEntriesInNotificationPeriod = timeEntrtyByNotificationRange
                 .Where(tEntry => editionPeriodDays.All(editionPeriodDay => tEntry.Member.TimeEntries.Select(tEntryDate => tEntryDate.Date.Date).Contains(editionPeriodDay)))
-                .Select(member => member.Member)
+                .Select(member => member.MemberId)
                 .Distinct()
                 .ToList();
 
             // Not All or Any
             var membersIdsWithoutAllTimeEntriesInNotificationPeriod = project.MemberProjectRoles
-                .Where(mpr => membersIdsWithAllTimeEntriesInNotificationPeriod.Any(m2 => m2.Id != mpr.Member.Id))
+                .Where(mpr => !membersIdsWithAllTimeEntriesInNotificationPeriod.Contains(mpr.MemberId))
                 .Select(x => x.Member)
                 .Where(member => member.SendEmailTime == currentHour);
 
