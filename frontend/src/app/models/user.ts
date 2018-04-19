@@ -10,11 +10,9 @@ export class User {
 	isAdmin: boolean;
 	isManager: boolean;
 	isWeeklyTimeEntryUpdatesSend: boolean;
-	password: string;
 	projectsCount: number;
 	sendEmailDays: string;
 	sendEmailTime: number;
-	sendInvitationEmail: boolean;
 	timeFormat: number;
 	urlIcon: string;
 	userName: string;
@@ -33,11 +31,9 @@ export class User {
 			this.isActive = data.isActive;
 			this.isManager = data.isManager;
 			this.isWeeklyTimeEntryUpdatesSend = data.isWeeklyTimeEntryUpdatesSend;
-			this.password = data.password;
 			this.projectsCount = data.projectsCount;
 			this.sendEmailDays = data.sendEmailDays;
 			this.sendEmailTime = data.sendEmailTime;
-			this.sendInvitationEmail = data.sendInvitationEmail;
 			this.timeFormat = data.timeFormat;
 			this.urlIcon = data.urlIcon;
 			this.userName = data.userName;
