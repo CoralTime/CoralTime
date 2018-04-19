@@ -60,7 +60,7 @@
 
     <p-column *ngIf="showColumnIds.indexOf(4)> -1" styleClass="ct-cell-start" field="hours" header="Hours">
         <ng-template let-item="rowData" pTemplate="body">
-            {{ item.timeValues.timeActual }}fdhgdjkfg<span class="ct-actual-label" *ngIf="item.timeValues.timeActual">{{getTimeString(item.timeValues.timeActual)}}</span>
+            <span class="ct-actual-label" *ngIf="item.timeValues.timeActual">{{getTimeString(item.timeValues.timeActual)}}</span>
             <div>
                 <span *ngIf="item.timeValues.timeFrom">from {{getTimeString(item.timeValues.timeFrom)}}</span>
                 <span *ngIf="item.timeValues.timeTo"> to {{getTimeString(item.timeValues.timeTo)}}</span>

@@ -16,9 +16,12 @@
 
   .dp-calendar-nav-container {
     border: none;
+    background: $blue-grid-header;
+    margin: 0 -31px;
+    height: 46px;
 
-    button {
-      color: $nav-background;
+      button {
+        color: $nav-background;
 
       &.dp-calendar-nav-right, &.dp-calendar-nav-left {
         display: inline-block;
