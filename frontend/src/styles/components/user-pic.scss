@@ -7,8 +7,9 @@ ct-user-pic {
   height: 30px;
 
   &.ct-user-pic-avatar {
-    width: 200px;
+    width: 199px;
     height: 200px;
+    border: 1px solid #ccc;
   }
 
   img {
