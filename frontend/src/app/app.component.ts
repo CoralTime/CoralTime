@@ -3,10 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from './core/auth/auth.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ImpersonationService } from './services/impersonation.service';
+import { ctRoutingAnimations } from './router-animation';
 
 @Component({
 	selector: 'ct-root',
-	templateUrl: 'app.component.html'
+	templateUrl: 'app.component.html',
+	animations: [ctRoutingAnimations.routerAnimation]
 })
 
 export class AppComponent implements OnInit {
@@ -18,6 +20,10 @@ export class AppComponent implements OnInit {
 
 		// the lang to use, if the lang isn't available, it will use the current loader to get them
 		translate.use('en');
+	}
+
+	getRouteAnimation(outlet): string {
+		return outlet.activatedRouteData.title;
 	}
 
 	ngOnInit() {

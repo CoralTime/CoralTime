@@ -6,7 +6,7 @@
 </div>
 <div class="ct-wrapper">
     <ct-navigation *ctIsGranted="'roleAuthenticatedUser'"></ct-navigation>
-    <div class="ct-content">
-        <router-outlet></router-outlet>
+    <div class="ct-content" [@routerAnimation]="getRouteAnimation(routerOutlet)">
+        <router-outlet #routerOutlet="outlet"></router-outlet>
     </div>
 </div>
