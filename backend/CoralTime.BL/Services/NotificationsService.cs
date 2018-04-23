@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CoralTime.BL.Services
@@ -95,7 +96,7 @@ namespace CoralTime.BL.Services
 
         #region ByProjects Settings.
 
-        public async Task ByProjectSettings()
+        public async Task ByProjectSettings(string baseUrl)
         {
             var todayDate = DateTime.Now;
 
@@ -112,7 +113,7 @@ namespace CoralTime.BL.Services
                     {
                         var membersWithoutTimeEntryForPrivateProjects = GetMembersWithoutTimeEntryForPrivateProjects(project, todayDate);
 
-                        await SendNotificationsForMembers(membersWithoutTimeEntryForPrivateProjects, project, "Project");
+                        await SendNotificationsForMembers(membersWithoutTimeEntryForPrivateProjects, project, "Project", baseUrl);
                     }
                 }
 
@@ -261,7 +262,7 @@ namespace CoralTime.BL.Services
 
         }
 
-        private async Task SendNotificationsForMembers(List<MembersWithEditionPeriodDays> membersWithNotificationRange, Project project, string subjectName)
+        private async Task SendNotificationsForMembers(List<MembersWithEditionPeriodDays> membersWithNotificationRange, Project project, string subjectName, string baseUrl)
         {
             if (membersWithNotificationRange.Any())
             {
@@ -269,20 +270,24 @@ namespace CoralTime.BL.Services
                 {
                     var dayOrDays = project.NotificationDay == 1 ? "day" : "days";
 
-                    var linkToCreateTEntry = $"https://time.coral.team:1593/calendar/week;date={NotificationPeriodFirstDay.Month}-{NotificationPeriodFirstDay.Day}-{NotificationPeriodFirstDay.Year}";
+                    var linkToCreateTEntry = $"{baseUrl}/calendar/week;date={NotificationPeriodFirstDay.Month}-{NotificationPeriodFirstDay.Day}-{NotificationPeriodFirstDay.Year}";
 
                     var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(memberNotifRange.Member.DateFormatId);
                     //var dateRangeShort = $"{NotificationPeriodFirstDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)} - {NotificationPeriodLastDay.ToString(dateFormatShort, CultureInfo.InvariantCulture)}";
 
                     var editionDaysFormat = "<b>" + string.Join(", </b><b>", memberNotifRange.EditionPeriodDays.Select(x => x.ToString(dateFormatShort, CultureInfo.InvariantCulture))) + "</b>";
+
+                    var sb = new StringBuilder();
+                    sb.Append($@"<p>Hello, {memberNotifRange.Member.FullName}!<br>");
+                    sb.Append($"<p>This is a friendly reminder, that you haven’t entered your Time Entries on <b>{project.Name}</b> project for <b>{project.NotificationDay}</b> work{dayOrDays}: {editionDaysFormat}.<br>");
+                    sb.Append($"<p><a href=\"{linkToCreateTEntry}\">Would you like to enter your time now?</a><br><br>");
+                    sb.Append("<p>Best wishes, <a href=\"mailto:coraltime2017@yandex.ru\">CoralTime Team!</a>");
+
                     var emailSenderSimpleModel = new EmailSenderSimpleModel
                     {
                         Subject = $"Reminder to fill time entry {memberNotifRange.Member.User.Email} by {subjectName} Settigs",
                         ToEmail = memberNotifRange.Member.User.Email,
-                        EmailText = $@"<p>Hello, {memberNotifRange.Member.FullName}!<br>
-                        <p>This is a friendly reminder, that you haven’t entered your Time Entries on <b>{project.Name}</b> project for <b>{project.NotificationDay}</b> work{dayOrDays}: {editionDaysFormat}.<br> 
-                        <p><a href=""{linkToCreateTEntry}"">Would you like to enter your time now?</a><br><br>
-                        <p>Best wishes, <a href=""mailto:coraltime2017@yandex.ru"">CoralTime Team!</a>"
+                        EmailText = sb.ToString()
                     };
                
                     await EmailSenderSimple(_configuration, emailSenderSimpleModel);

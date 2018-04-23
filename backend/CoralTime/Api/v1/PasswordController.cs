@@ -40,11 +40,17 @@ namespace CoralTime.Api.v1
         [Route("sendforgotemail/{email}")]
         public async Task<IActionResult> ResetPasswordAsync(string email)
         {
-            var serverUrl = GetBaseUrl();
-            var result = await _service.SentForgotEmailAsync(email, serverUrl);
+            var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
+
+            var result = await _service.SentForgotEmailAsync(email, baseUrl);
 
             return new JsonResult(result);
         }
+
+        //[HttpGet]
+        //// GET: api/v1/Password/create-password/email@email.com
+        //[Route("create-password/{email}")]
+        //public IActionResult SetNewPasswordAsync(string email) => new JsonResult(ResetPasswordAsync(email));
 
         // POST: api/v1/Password/changepasswordbytoken
         [HttpPost]
@@ -63,14 +69,6 @@ namespace CoralTime.Api.v1
         {
             var result = await _service.CheckForgotPasswordTokenAsync(token);
             return new JsonResult(result);
-        }
-
-        private string GetBaseUrl()
-        {
-            var request = Request;
-            var host = request.Host.ToUriComponent();
-
-            return $"{request.Scheme}://{host}";
         }
     }
 }
