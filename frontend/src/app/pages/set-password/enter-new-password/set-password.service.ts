@@ -8,7 +8,7 @@ export class PasswordChangingStatus {
 }
 
 @Injectable()
-export class ForgotPasswordService {
+export class SetPasswordService {
 	restoreCodeIsExpired: boolean = false;
 	private restoreCode: string;
 

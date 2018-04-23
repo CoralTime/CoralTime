@@ -6,7 +6,7 @@ import { Task } from '../../../models/task';
 import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
 import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } from '../../../services/profile.service';
-import { EnterEmailService } from '../../forgot-password/enter-email/enter-email.service';
+import { EnterEmailService } from '../../set-password/enter-email/enter-email.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { NotificationService } from '../../../core/notification.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
@@ -91,10 +91,14 @@ export class ProfileSettingsComponent implements OnInit {
 
 	// GENERAL
 
-	getAvatar(): void {
-		this.userPicService.loadUserPicture(this.userModel.id).subscribe((avatarUrl: string) => {
-			this.avatarUrl = avatarUrl;
-		});
+	getAvatar(): Promise<string> {
+		return this.userPicService.loadUserPicture(this.userModel.id)
+			.toPromise()
+			.then((avatarUrl: string) => this.avatarUrl = avatarUrl);
+	}
+
+	isGravatarIcon(avatarUrl: string): boolean {
+		return avatarUrl.includes('gravatar');
 	}
 
 	openPhotoDialog(): void {
@@ -102,14 +106,18 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.dialogRef.componentInstance.onSubmit.subscribe((avatarUrl: string) => {
 			this.dialogRef.close();
-			this.onSubmitPhotoDialog(avatarUrl);
+			this.updateAvatar(avatarUrl);
 		});
 	}
 
-	onSubmitPhotoDialog(avatarUrl: string): void {
+	toggleForm(formIndex: number): void {
+		this.isFormShownArray[formIndex] = !this.isFormShownArray[formIndex];
+	}
+
+	updateAvatar(avatarUrl: string): void {
 		this.avatarUrl = avatarUrl;
 		let iconObject = {
-			urlIcon: avatarUrl.replace('Avatars', 'Icons')
+			urlIcon: avatarUrl.replace('Avatars', 'Icons').replace('s=200', 's=40')
 		};
 
 		if (this.impersonationService.impersonationId) {
@@ -118,10 +126,6 @@ export class ProfileSettingsComponent implements OnInit {
 		} else {
 			this.usersService.setUserInfo(iconObject);
 		}
-	}
-
-	toggleForm(formIndex: number): void {
-		this.isFormShownArray[formIndex] = !this.isFormShownArray[formIndex];
 	}
 
 	// FORM CHANGED
@@ -207,6 +211,10 @@ export class ProfileSettingsComponent implements OnInit {
 
 		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
 			.subscribe((userModel: User) => {
+					if (this.isEmailChanged && this.isGravatarIcon(this.avatarUrl)) {
+						this.getAvatar().then((avatarUrl) => this.updateAvatar(avatarUrl));
+					}
+
 					this.isEmailChanged = false;
 					this.userModel.email = userModel.email;
 

@@ -5,7 +5,7 @@ import { ProfileComponent } from './profile.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ProfileSettingsComponent } from './profile-settings/profile-settings.component';
 import { ProfileService } from '../../services/profile.service';
-import { EnterEmailService } from '../forgot-password/enter-email/enter-email.service';
+import { EnterEmailService } from '../set-password/enter-email/enter-email.service';
 import { ProfilePhotoComponent } from './profile-settings/profile-photo/profile-photo.component';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { FileUploadModule } from 'ng2-file-upload';

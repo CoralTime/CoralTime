@@ -43,8 +43,8 @@ export const appRoutes: Routes = [
 		loadChildren: 'app/pages/login/login.module#LoginModule'
 	},
 	{
-		path: 'forgot-password',
-		loadChildren: 'app/pages/forgot-password/forgot-password.module#ForgotPasswordModule'
+		path: 'set-password',
+		loadChildren: 'app/pages/set-password/set-password.module#SetPasswordModule'
 	},
 	{
 		path: 'tasks',

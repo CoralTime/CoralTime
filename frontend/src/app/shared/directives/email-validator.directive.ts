@@ -12,7 +12,7 @@ import { User } from '../../models/user';
 })
 
 export class EmailValidator implements Validator {
-	@Input('ctEmailValidator') private user: User;
+	@Input('ctEmailValidator') user: User;
 
 	constructor(private userService: UsersService) {
 	}
