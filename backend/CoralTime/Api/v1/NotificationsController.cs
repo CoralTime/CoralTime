@@ -26,7 +26,7 @@ namespace CoralTime.Api.v1
         [Route(SendWeeklyTimeEntryUpdatesRoute)]
         public async Task<IActionResult> SendWeeklyTimeEntryUpdates()
         {
-            await _service.SendWeeklyTimeEntryUpdates();
+            await _service.SendWeeklyTimeEntryUpdatesAsync(GetBaseUrl());
             return Ok();
         }
     }

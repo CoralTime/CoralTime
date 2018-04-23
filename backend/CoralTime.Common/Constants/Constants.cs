@@ -103,7 +103,6 @@ namespace CoralTime.Common.Constants
 
         #endregion
 
-
         #region ProjectRoles
 
         public const string ProjectRoleManager = "manager";
@@ -130,6 +129,13 @@ namespace CoralTime.Common.Constants
         public static string EnvName { get; set; }
         
         public const string CoralTime = "CoralTime";
+
+        public enum FileType
+        {
+            Excel = 0,
+            CSV = 1,
+            PDF = 2
+        }
 
         public enum LockTimePeriod
         {

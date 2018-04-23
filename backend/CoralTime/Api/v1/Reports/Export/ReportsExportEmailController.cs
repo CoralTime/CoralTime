@@ -16,18 +16,16 @@ namespace CoralTime.Api.v1.Reports.Export
             : base(logger, service) { }
 
         [HttpPost]
-        public async Task<IActionResult> ReportsExportEmail([FromBody] ReportsExportEmailView reportsGridData)
+        public async Task<IActionResult> ReportsExportEmail([FromBody]ReportsExportEmailView reportsExportEmailView)
         {
-            var result = await _service.ExportEmailGroupedByType(reportsGridData);
+            var result = await _service.ExportEmailGroupedByType(reportsExportEmailView);
 
             if (result == null)
             {
                 return BadRequest();
             }
-            else
-            {
-                return Ok();
-            }
+
+            return Ok();
         }
     }
 }

@@ -33,6 +33,8 @@ namespace CoralTime.Api.v1.Reports
                 NullValueHandling = NullValueHandling.Ignore
             };
 
+            _service.CheckAndSaveCurrentQuery(reportsGridView);
+
             var reportsGrid = _service.GetReportsGrid(reportsGridView);
 
             return new JsonResult(reportsGrid, jsonSerializatorSettings);
