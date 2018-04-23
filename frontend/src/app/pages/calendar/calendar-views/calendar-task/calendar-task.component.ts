@@ -195,15 +195,15 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		if (!DateUtils.isToday(this.timeEntry.date) || !this.isTimeEntryAvailable) {
 			isChanged = true;
+			this.currentTimeEntry.timeValues = {
+				timeActual: this.currentTimeEntry.timeOptions.timeTimerStart,
+				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
+				timeFrom: MAX_TIMER_VALUE - this.currentTimeEntry.timeOptions.timeTimerStart,
+				timeTo: MAX_TIMER_VALUE
+			};
 			this.currentTimeEntry.timeOptions = {
 				isFromToShow: true,
 				timeTimerStart: -1
-			};
-			this.currentTimeEntry.timeValues = {
-				timeActual: this.ticks,
-				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
-				timeFrom: MAX_TIMER_VALUE - this.ticks,
-				timeTo: MAX_TIMER_VALUE
 			};
 		} else if (!this.isTrackedTimeValid()) {
 			isChanged = true;
