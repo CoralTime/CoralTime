@@ -113,11 +113,14 @@ export class ProjectFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(): void {
+		this.isRequestLoading = true;
 		this.validateForm().subscribe((isFormInvalid: boolean) => {
-			if (!isFormInvalid) {
-				this.submit();
-			}
-		})
+				this.isRequestLoading = false;
+				if (!isFormInvalid) {
+					this.submit();
+				}
+			},
+			() => this.isRequestLoading = false);
 	}
 
 	private submit(): void {

@@ -76,12 +76,14 @@ export class TaskFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(): void {
-		this.validateForm()
-			.subscribe((isFormInvalid: boolean) => {
+		this.isRequestLoading = true;
+		this.validateForm().subscribe((isFormInvalid: boolean) => {
+				this.isRequestLoading = false;
 				if (!isFormInvalid) {
 					this.submit();
 				}
-			})
+			},
+			() => this.isRequestLoading = false);
 	}
 
 	private submit(): void {

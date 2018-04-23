@@ -86,11 +86,12 @@ export class ClientFormComponent implements OnInit {
 		this.isRequestLoading = true;
 		this.validateForm(form)
 			.subscribe((isFormValid: boolean) => {
-				this.isRequestLoading = false;
-				if (isFormValid) {
-					this.submit();
-				}
-			})
+					this.isRequestLoading = false;
+					if (isFormValid) {
+						this.submit();
+					}
+				},
+				() => this.isRequestLoading = false);
 	}
 
 	private submit(): void {
