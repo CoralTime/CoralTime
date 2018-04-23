@@ -80,7 +80,7 @@ export class RangeDatepickerService {
 	private isFromOneMonth(period: DatePeriod): boolean {
 		let d: Date = period.dateFrom.toDate();
 		let monthBeginDay: Date = new Date(d.getFullYear(), d.getMonth(), 1);
-		let monthEndDay: Date = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+		let monthEndDay: Date = new Date(d.getFullYear(), d.getMonth() + 1, 1, 0, 0, 0, -1);
 
 		return period.dateFrom.toDate().getTime() >= monthBeginDay.getTime() &&
 			period.dateTo.toDate().getTime() <= monthEndDay.getTime();
@@ -89,7 +89,7 @@ export class RangeDatepickerService {
 	private isFromOneYear(period: DatePeriod): boolean {
 		let d: Date = period.dateFrom.toDate();
 		let yearBeginDay: Date = new Date(d.getFullYear(), 0, 1);
-		let yearEndDay: Date = new Date(d.getFullYear() + 1, 0, 0);
+		let yearEndDay: Date = new Date(d.getFullYear() + 1, 1, 0, 0, 0, -1);
 
 		return period.dateFrom.toDate().getTime() >= yearBeginDay.getTime() &&
 			period.dateTo.toDate().getTime() <= yearEndDay.getTime();

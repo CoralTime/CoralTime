@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
-	templateUrl: './forgot-password.component.html'
+	templateUrl: './set-password.component.html'
 })
 
-export class ForgotPasswordComponent implements OnInit {
+export class SetPasswordComponent implements OnInit {
 	constructor(private authService: AuthService) {
 	}
 

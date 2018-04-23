@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ForgotPasswordComponent } from './forgot-password.component';
+import { SetPasswordComponent } from './set-password.component';
 import { EnterEmailComponent } from './enter-email/enter-email.component';
 import { EnterNewPasswordComponent } from './enter-new-password/enter-new-password.component';
 import { EnterEmailService } from './enter-email/enter-email.service';
-import { ForgotPasswordService } from './enter-new-password/forgot-password.service';
+import { SetPasswordService } from './enter-new-password/set-password.service';
 import { ValidateRestoreCodeResolve } from './enter-new-password/validate-activation-code-resolve.service';
 
 @NgModule({
@@ -12,7 +12,7 @@ import { ValidateRestoreCodeResolve } from './enter-new-password/validate-activa
 		RouterModule.forChild([
 			{
 				path: '',
-				component: ForgotPasswordComponent,
+				component: SetPasswordComponent,
 				children: [
 					{
 						path: '',
@@ -31,7 +31,7 @@ import { ValidateRestoreCodeResolve } from './enter-new-password/validate-activa
 	],
 	providers: [
 		EnterEmailService,
-		ForgotPasswordService,
+		SetPasswordService,
 		ValidateRestoreCodeResolve
 	],
 	exports: [
@@ -39,5 +39,5 @@ import { ValidateRestoreCodeResolve } from './enter-new-password/validate-activa
 	]
 })
 
-export class ForgotPasswordRoutingModule {
+export class SetPasswordRoutingModule {
 }

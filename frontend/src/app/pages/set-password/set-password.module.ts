@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ForgotPasswordComponent } from './forgot-password.component';
+import { SetPasswordComponent } from './set-password.component';
 import { SharedModule } from '../../shared/shared.module';
-import { ForgotPasswordService } from './enter-new-password/forgot-password.service';
+import { SetPasswordService } from './enter-new-password/set-password.service';
 import { EnterNewPasswordComponent } from './enter-new-password/enter-new-password.component';
 import { EnterEmailComponent } from './enter-email/enter-email.component';
-import { ForgotPasswordRoutingModule } from './forgot-password-routing.module';
+import { SetPasswordRoutingModule } from './set-password-routing.module';
 import { EnterEmailFormComponent } from './enter-email/enter-email-form/enter-email-form.component';
 import { EnterNewPasswordFormComponent } from './enter-new-password/enter-new-password-form/enter-new-password-form.component';
 
@@ -13,22 +13,22 @@ import { EnterNewPasswordFormComponent } from './enter-new-password/enter-new-pa
 	imports: [
 		CommonModule,
 		SharedModule,
-		ForgotPasswordRoutingModule
+		SetPasswordRoutingModule
 	],
 	declarations: [
-		ForgotPasswordComponent,
+		SetPasswordComponent,
 		EnterEmailFormComponent,
 		EnterNewPasswordComponent,
 		EnterEmailComponent,
 		EnterNewPasswordFormComponent
 	],
 	providers: [
-		ForgotPasswordService
+		SetPasswordService
 	],
 	exports: [
-		ForgotPasswordComponent
+		SetPasswordComponent
 	]
 })
 
-export class ForgotPasswordModule {
+export class SetPasswordModule {
 }
