@@ -70,31 +70,25 @@ export class UsersFormComponent implements OnInit {
 	@Input() user: User;
 	@Output() onSaved = new EventEmitter();
 
+	authUser: AuthUser;
+	submitButtonText: string;
 	dialogHeader: string;
 	emailPattern = EMAIL_PATTERN;
 	isRequestLoading: boolean = false;
+	impersonateUser: User;
+	isActive: boolean;
+	isNewUser: boolean;
 	model: FormUser;
 	roleModel: any;
-	submitButtonText: string;
+	showErrors: boolean[] = []; // [showEmailError, showFullNameError, showUserNameError]
+	stateModel: any;
+	stateText: string;
 	userNotification: string;
-
-	errorFullNameMessage: boolean;
-	errorUserNameMessage: boolean;
-	errorEmailMessage: boolean;
-	isEmailValid: boolean = true;
-
-	authUser: AuthUser;
-	impersonateUser: User;
 
 	roles = [
 		{value: Roles.admin, title: 'admin'},
 		{value: Roles.user, title: 'user'}
 	];
-
-	stateModel: any;
-	isActive: boolean;
-	isNewUser: boolean;
-	stateText: string;
 
 	states = [
 		{value: true, title: 'active'},
@@ -120,7 +114,6 @@ export class UsersFormComponent implements OnInit {
 		this.dialogHeader = this.user.id ? 'Edit' : this.translatePipe.transform('Create New User');
 		this.userNotification = this.user.id ? 'Send update account email' : 'Send invitation email';
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);
-
 		this.stateText = this.user.isActive ? '' : 'Time entries of the deactivated user are still editable for managers.';
 	}
 
@@ -133,37 +126,20 @@ export class UsersFormComponent implements OnInit {
 		this.model.role = this.roleModel.value;
 	}
 
-	userFormValidate(): void {
-		if (!this.model.fullName) {
-			this.errorFullNameMessage = true;
-		}
-
-		if (!this.model.userName) {
-			this.errorUserNameMessage = true;
-		}
-
-		if (!this.model.email) {
-			this.errorEmailMessage = true;
-		}
-
-		if (this.model.email) {
-			this.isEmailValid = this.validateEmail(this.model.email);
-		}
+	validateAndSubmit(form: NgForm): void {
+		this.isRequestLoading = true;
+		this.validateForm(form)
+			.subscribe((isFormValid: boolean) => {
+				this.isRequestLoading = false;
+				if (isFormValid) {
+					this.submit();
+				}
+			})
 	}
 
-	validateEmail(email): boolean {
-		return EMAIL_PATTERN.test(email);
-	}
-
-	save(userForm: NgForm): void {
-		this.userFormValidate();
-
-		if (!userForm.valid) {
-			return;
-		}
-
-		let updatedUser = this.model.toUser(this.user);
+	private submit(): void {
 		let submitObservable: Observable<any>;
+		let updatedUser = this.model.toUser(this.user);
 
 		if (updatedUser.id) {
 			submitObservable = this.userService.odata.Put(updatedUser, updatedUser.id.toString());
@@ -194,5 +170,32 @@ export class UsersFormComponent implements OnInit {
 				isNewUser: this.isNewUser,
 				error: error
 			}));
+	}
+
+	private validateForm(form: NgForm): Observable<boolean> {
+		this.showErrors = [false, false, false];
+
+		let isEmailValidObservable: Observable<any>;
+		let isUserNameValidObservable: Observable<any>;
+
+		if (!this.model.email || !!form.controls['email'].errors) {
+			isEmailValidObservable = Observable.of(false);
+		} else {
+			isEmailValidObservable = this.userService.getUserByEmail(this.model.email)
+				.map((user) => !user || (user.id === this.model.id));
+		}
+
+		if (!this.model.userName) {
+			isUserNameValidObservable = Observable.of(false);
+		} else {
+			isUserNameValidObservable = this.userService.getUserByUsername(this.model.userName)
+				.map((user) => !user || (user.id === this.model.id));
+		}
+
+		return Observable.forkJoin(isEmailValidObservable, Observable.of(!!this.model.fullName), isUserNameValidObservable)
+			.map((response: boolean[]) =>
+				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
+					.every((showError) => showError === false)
+			);
 	}
 }

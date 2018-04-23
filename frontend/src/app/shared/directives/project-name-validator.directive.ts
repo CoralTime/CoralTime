@@ -16,7 +16,7 @@ import { Project } from '../../models/project';
 })
 
 export class ProjectNameValidator implements Validator {
-	@Input('ctProjectNameValidator') private project: Project;
+	@Input('ctProjectNameValidator') project: Project;
 
 	constructor(private projectsService: ProjectsService) {
 	}

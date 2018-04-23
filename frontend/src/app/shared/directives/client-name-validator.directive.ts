@@ -1,4 +1,4 @@
-import { Client } from './../../models/client';
+import { Client } from '../../models/client';
 import { Directive, forwardRef, Input } from '@angular/core';
 import { Validator, AbstractControl, NG_ASYNC_VALIDATORS } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -16,7 +16,7 @@ import { ClientsService } from '../../services/clients.service';
 })
 
 export class ClientNameValidator implements Validator {
-	@Input('ctClientNameValidator') private client: Client;
+	@Input('ctClientNameValidator') client: Client;
 
 	constructor(private clientsService: ClientsService) {
 	}
