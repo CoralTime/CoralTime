@@ -6,7 +6,7 @@ import { Task } from '../../../models/task';
 import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
 import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } from '../../../services/profile.service';
-import { EnterEmailService } from '../../forgot-password/enter-email/enter-email.service';
+import { EnterEmailService } from '../../set-password/enter-email/enter-email.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { NotificationService } from '../../../core/notification.service';
 import { MatDialog, MatDialogRef } from '@angular/material';
