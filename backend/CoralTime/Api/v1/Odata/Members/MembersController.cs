@@ -78,8 +78,9 @@ namespace CoralTime.Api.v1.Odata.Members
 
             var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
 
-            var locationUri = $"{Request.Host}/api/v1/odata/Members/{memberView.Id}";
             var createdMemberView = await _service.CreateNewUser(memberView, baseUrl);
+
+            var locationUri = $"{Request.Host}/api/v1/odata/Members/{memberView.Id}";
 
             return base.Created(locationUri, (object)createdMemberView);
         }

@@ -214,29 +214,30 @@ namespace CoralTime
             services.AddScoped<CheckSecureHeaderNotificationFilter>();
         }
 
+        private static string[] AngularRoutes { get; } = 
+        {
+            "/home",
+            "/profile",
+            "/projects",
+            "/clients",
+            "/about",
+            "/login",
+            "/tasks",
+            "/users",
+            "/reports",
+            "/calendar",
+            "/settings",
+            "/help",
+            "/forgot-password",
+            "/signin-oidc",
+            //"/create-password"
+        };
+
         private static void SetupAngularRouting(IApplicationBuilder app)
         {
-            //TODO: add all routes
-            var angularRoutes = new[] {
-                "/home",
-                "/profile",
-                "/projects",
-                "/clients",
-                "/about",
-                "/login",
-                "/tasks",
-                "/users",
-                "/reports",
-                "/calendar",
-                "/settings",
-                "/help",
-                "/forgot-password",
-                "/signin-oidc"
-            };
-
             app.Use(async (context, next) =>
             {
-                if (context.Request.Path.HasValue && null != angularRoutes.FirstOrDefault(ar => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
+                if (context.Request.Path.HasValue && null != AngularRoutes.FirstOrDefault(ar => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
                 {
                     context.Request.Path = new PathString("/");
 
