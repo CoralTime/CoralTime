@@ -19,6 +19,31 @@ namespace CoralTime.Common.Constants
 
         #endregion
 
+        #region Url adresses
+
+        public const string UrlSetPassword = "/set-password";
+
+        public static readonly string[] AngularRoutes =
+        {
+            "/home",
+            "/profile",
+            "/projects",
+            "/clients",
+            "/about",
+            "/login",
+            "/tasks",
+            "/users",
+            "/reports",
+            "/calendar",
+            "/settings",
+            "/help",
+            "/signin-oidc",
+            UrlSetPassword
+        };
+
+        #endregion
+
+
         #region ProjectRoles
 
         public const string ProjectRoleManager = "manager";

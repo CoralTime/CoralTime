@@ -441,7 +441,6 @@ namespace CoralTime.BL.Services
 
                 var link = CreateLinkByUserForgotPassRequestUid(baseUrl, userForgotPassRequest);
 
-                //sb.Append("CoralTime received a request to set your password.<br /><br />");
                 sb.Append($"To set your password, click this link or copy the URL below and paste it into your web browser's navigation bar:<br /><a href='{link}'>{link}</a><br /><br />Please note: This link will expire in {passwordResetLinkValidForHrs} hours. If it has already expired, please go back to <a href='{baseUrl}'>{baseUrl}</a> and click the \"Forgot Password?\"<br /><br />");
 
                 var profileUrl = baseUrl + "/profile/settings";
@@ -516,8 +515,8 @@ namespace CoralTime.BL.Services
             var link = CreateLinkByUserForgotPassRequestUid(serverUrl, userForgotPassRequest);
 
             var sb = new StringBuilder().Append("CoralTime received a request to reset your password.<br /><br />");
-            sb.Append($"To reset your password, click this link or copy the URL below and paste it into your web browser's navigation bar:<br />{link}<br /><br />Please note: This link will expire in {passwordResetLinkValidForHrs} hours. If it has already expired, please go back to {serverUrl} and click the Forgot Password?<br /><br />");
-            sb.Append("Best wishes,<br />the CoralTime team");
+            sb.Append($"To reset your password, click this link or copy the URL below and paste it into your web browser's navigation bar:<br />{link}<br /><br />Please note: This link will expire in {passwordResetLinkValidForHrs} hours. If it has already expired, please go back to {serverUrl} and click the \"Forgot Password?\"<br /><br />");
+            sb.Append("Best wishes, the CoralTime team");
 
             var body = new TextPart("html")
             {
@@ -544,8 +543,8 @@ namespace CoralTime.BL.Services
         private string CreateLinkByUserForgotPassRequestUid(string serverUrl, UserForgotPassRequest userForgotPassRequest)
         {
             var userForgotPassRequestUid = userForgotPassRequest.UserForgotPassRequestUid;
-            var link = $"{serverUrl}/forgot-password/enter-new-password?restoreCode={userForgotPassRequestUid}";
-
+            var link = $"{serverUrl}{UrlSetPassword}/enter-new-password?restoreCode={userForgotPassRequestUid}";
+            
             return link;
         }
 
