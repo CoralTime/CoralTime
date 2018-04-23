@@ -1,26 +1,23 @@
-import { Observable } from 'rxjs/Observable';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
 
-import { UsersService } from '../../../services/users.service';
 import { User } from '../../../models/user';
 import { Roles } from '../../../core/auth/permissions';
-import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthUser } from '../../../core/auth/auth-user';
 import { ArrayUtils } from '../../../core/object-utils';
-import { NgForm } from '@angular/forms';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
+import { UsersService } from '../../../services/users.service';
 
 class FormUser {
-	confirmPassword: string;
 	email: string;
 	fullName: string;
 	id: number;
 	isActive: boolean;
-	password: string;
 	role: number;
-	sendInvitationEmail: boolean;
 	userName: string;
 
 	static fromUser(user: User) {
@@ -28,9 +25,7 @@ class FormUser {
 		instance.id = user.id;
 		instance.fullName = user.fullName;
 		instance.userName = user.userName;
-		instance.password = user.password;
 		instance.email = user.email;
-		instance.sendInvitationEmail = user.sendInvitationEmail;
 		instance.isActive = user.id ? user.isActive : true;
 
 		if (user.isAdmin) {
@@ -55,11 +50,9 @@ class FormUser {
 			isAdmin: this.role === Roles.admin,
 			isManager: user.isManager,
 			isWeeklyTimeEntryUpdatesSend: user.isWeeklyTimeEntryUpdatesSend,
-			password: this.password,
 			projectsCount: user.projectsCount,
 			sendEmailDays: user.sendEmailDays,
 			sendEmailTime: user.sendEmailTime,
-			sendInvitationEmail: this.sendInvitationEmail || false,
 			timeFormat: user.timeFormat,
 			userName: this.userName,
 			weekStart: user.weekStart
@@ -88,8 +81,6 @@ export class UsersFormComponent implements OnInit {
 	errorFullNameMessage: boolean;
 	errorUserNameMessage: boolean;
 	errorEmailMessage: boolean;
-	errorPasswordMessage: boolean;
-	errorConfirmPasswordMessage: boolean;
 	isEmailValid: boolean = true;
 
 	authUser: AuthUser;
@@ -157,14 +148,6 @@ export class UsersFormComponent implements OnInit {
 
 		if (this.model.email) {
 			this.isEmailValid = this.validateEmail(this.model.email);
-		}
-
-		if (!this.model.password) {
-			this.errorPasswordMessage = true;
-		}
-
-		if (!this.model.confirmPassword) {
-			this.errorConfirmPasswordMessage = true;
 		}
 	}
 

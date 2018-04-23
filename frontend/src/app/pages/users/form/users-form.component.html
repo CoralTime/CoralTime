@@ -47,40 +47,6 @@
                 </div>
             </div>
 
-            <div *ngIf="!user.id">
-                <label class="ct-form-label">Password</label>
-                <div class="ct-required-field-container">
-                    <input class="ct-input ct-full-width" #password="ngModel"
-                           type="password" name="password"
-                           ctPasswordValidator ctValidateOnblur required
-                           [(ngModel)]="model.password"/>
-                </div>
-                <div *ngIf="password.errors?.ctPasswordLengthInvalid"
-                     [class.ct-error-text]="!password.pristine && password.errors?.ctPasswordLengthInvalid"
-                     [class.ct-hint-text]="password.pristine">
-                    Password must be at least 8 characters in length, include uppercase and lowercase letters, alphanumeric characters and special symbol.
-                </div>
-                <div class="ct-error-text" *ngIf="password.errors?.ctPasswordSpecialCharacterInvalid">Passwords must have at least one special character.</div>
-                <div class="ct-error-text" *ngIf="password.errors?.ctPasswordUppercaseInvalid">Passwords must have at least one uppercase ('A'-'Z').</div>
-                <div class="ct-error-text" *ngIf="password.errors?.ctPasswordLowercaseInvalid">Passwords must have at least one lowercase ('a'-'z').</div>
-                <div class="ct-error-text" *ngIf="password.errors?.ctPasswordDigitInvalid">Passwords must have at least one digit ('0'-'9').</div>
-
-                <div *ngIf="errorPasswordMessage && !model.password && !model.id" class="ct-login-failed ct-error-text">Password is required!
-                </div>
-            </div>
-
-            <div *ngIf="!user.id">
-                <label class="ct-form-label">Confirm Password</label>
-                <div class="ct-required-field-container">
-                    <input class="ct-input ct-full-width" type="password" name="confirmPassword" #confirmPassword="ngModel"
-                           [(ngModel)]="model.confirmPassword"
-                           required validateEqual="password" ctValidateOnblur/>
-                </div>
-                <div class="ct-error-text" *ngIf="confirmPassword.invalid && !confirmPassword.pristine">Passwords must be equal.</div>
-                <div *ngIf="errorPasswordMessage && !model.confirmPassword && !model.id" class="ct-login-failed ct-error-text">Confirm Password is required!
-                </div>
-            </div>
-
             <div>
                 <label class="ct-form-label">Email Address</label>
                 <div class="ct-required-field-container">
@@ -113,10 +79,6 @@
                            [options]="roles">
                 </ct-select>
             </div>
-
-            <mat-checkbox value="true" name="isInvitationEmailSend" [(ngModel)]="model.sendInvitationEmail">
-                {{ userNotification }}
-            </mat-checkbox>
         </div>
 
         <div class="ct-buttons-block" mat-dialog-actions>
