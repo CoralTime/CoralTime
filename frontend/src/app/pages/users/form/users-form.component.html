@@ -56,9 +56,11 @@
                            maxlength="200" required>
                 </div>
 
-                <div *ngIf="showErrors[0] && !model.email" class="ct-error-text">Email is required!</div>
-                <div *ngIf="showErrors[0] && !email.errors?.pattern" class="ct-error-text">User with this email already exists</div>
-                <div *ngIf="showErrors[0] && email.errors?.pattern" class="ct-error-text">Invalid email</div>
+                <ng-template [ngIf]="showErrors[0]">
+                    <div *ngIf="!model.email" class="ct-error-text">Email is required!</div>
+                    <div *ngIf="model.email && !email.errors?.pattern" class="ct-error-text">User with this email already exists</div>
+                    <div *ngIf="model.email && email.errors?.pattern" class="ct-error-text">Invalid email</div>
+                </ng-template>
             </div>
 
             <div>
