@@ -38,8 +38,6 @@ namespace CoralTime.ViewModels.Member
 
         public bool IsActive { get; set; }
 
-        public bool SendInvitationEmail { get; set; }
-
         public IEnumerable<ProjectView> Projects { get; set; }
 
         public int? ProjectsCount { get; set; }

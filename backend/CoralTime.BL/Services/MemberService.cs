@@ -303,10 +303,7 @@ namespace CoralTime.BL.Services
             var urlIcon = _avatarService.GetUrlIcon(memberByIdResult.Id);
             var meberView = memberByIdResult.GetView(Mapper, urlIcon);
 
-            if (memberView.SendInvitationEmail)
-            {
-                await SentUpdateAccountEmailAsync(meberView, baseUrl);
-            }
+            await SentUpdateAccountEmailAsync(meberView, baseUrl);
 
             return meberView;
         }
