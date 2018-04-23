@@ -20,12 +20,11 @@ namespace CoralTime.BL.Services
         {
             var todayDate = DateTime.Now;
 
-            // Commo0n conslusion for work script only 
             if (IsDayOfWeekStart(todayDate))
             {
                 var currentHour = todayDate.TimeOfDay.Hours;
 
-                //if (currentHour == 1) 
+                if (currentHour == 1) 
                 {
                     CommonHelpers.SetRangeOfLastWorkWeekByDate(out var lastWorkWeekFirstDay, out var lastWorkWeekLastDay, todayDate);
                     var diffDates = (lastWorkWeekLastDay - lastWorkWeekFirstDay).TotalDays;
