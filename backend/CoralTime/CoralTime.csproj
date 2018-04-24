@@ -9,8 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
-    <Compile Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
-    <Compile Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
     <Compile Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
     <Compile Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
@@ -22,8 +20,6 @@
     <Compile Remove="Configs\**" />
     <Compile Remove="wwwroot\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
-    <Content Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
-    <Content Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
     <Content Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
@@ -35,8 +31,6 @@
     <Content Remove="Configs\**" />
     <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
-    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
-    <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
@@ -48,8 +42,6 @@
     <EmbeddedResource Remove="Configs\**" />
     <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsDebug\**" />
-    <None Remove="ConfigsNetCore2.0\AppSettingsDefaultEmpty\**" />
-    <None Remove="ConfigsNetCore2.0\AppSettingsDefault\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsDevCommon\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionAzure\**" />
     <None Remove="ConfigsNetCore2.0\AppSettingsProductionCore2\**" />
