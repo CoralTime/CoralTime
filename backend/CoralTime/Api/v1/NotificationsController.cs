@@ -35,16 +35,10 @@ namespace CoralTime.Api.v1
         [Route("ByProjectSettings")]
         public async Task<IActionResult> ByProjectSettings()
         {
-            try
-            {
-                await _service.ByProjectSettings();
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"CheckAsync method {e}");
-                return BadRequest(new ErrorView { Source = "Other", Title = string.Empty, Details = e.Message });
-            }
+            var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
+
+            await _service.ByProjectSettings(baseUrl);
+            return Ok();
         }
     }
 }

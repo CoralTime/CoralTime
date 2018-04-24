@@ -1,11 +1,11 @@
-import { Observable } from 'rxjs/Observable';
-import { ClientsService } from '../../../services/clients.service';
-import { Client } from '../../../models/client';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ArrayUtils } from '../../../core/object-utils';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
+import { Client } from '../../../models/client';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
+import { ArrayUtils } from '../../../core/object-utils';
+import { ClientsService } from '../../../services/clients.service';
 
 class FormClient {
 	id: number;
@@ -43,27 +43,24 @@ class FormClient {
 })
 
 export class ClientFormComponent implements OnInit {
-	client: Client;
-	dialogHeader: string;
-	submitButtonText: string;
-	errorMessage: string;
+	@Input() client: Client;
+	@Output() onSubmit = new EventEmitter();
 
-	isActive: boolean;
-	isRequestLoading: boolean = false;
+	dialogHeader: string;
+	isNewClient: boolean;
+	isRequestLoading: boolean;
 	emailPattern = EMAIL_PATTERN;
+	model: FormClient;
+	showErrors: boolean[] = []; // [showEmailError, showNameError]
+	showNameError: boolean;
 	stateModel: any;
 	stateText: string;
+	submitButtonText: string;
 
 	states = [
 		{value: true, title: 'active'},
 		{value: false, title: 'archived'}
 	];
-
-	model: FormClient;
-
-	@Output() onSubmit = new EventEmitter();
-
-	private isNewClient: boolean;
 
 	constructor(private clientsService: ClientsService,
 	            private translatePipe: TranslatePipe) {
@@ -80,28 +77,26 @@ export class ClientFormComponent implements OnInit {
 		this.stateText = this.client.isActive ? '' : 'All projects assigned to the archived client are not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
 	}
 
-	checkIsNameEmpty(): void {
-		this.errorMessage = null;
-
-		if (!this.model.name) {
-			this.errorMessage = 'Client name is required.';
-			return;
-		}
-	}
-
 	stateOnChange(): void {
 		this.model.isActive = this.stateModel.value;
 		this.stateText = this.stateModel.value ? '' : 'All projects assigned to the archived client are not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
 	}
 
-	submit(form: NgForm): void {
-		this.checkIsNameEmpty();
-		if (form.invalid) {
-			return;
-		}
+	validateAndSubmit(form: NgForm): void {
+		this.isRequestLoading = true;
+		this.validateForm(form)
+			.subscribe((isFormValid: boolean) => {
+					this.isRequestLoading = false;
+					if (isFormValid) {
+						this.submit();
+					}
+				},
+				() => this.isRequestLoading = false);
+	}
 
-		this.client = this.model.toClient(this.client);
+	private submit(): void {
 		let submitObservable: Observable<any>;
+		this.client = this.model.toClient(this.client);
 
 		if (this.client.id) {
 			submitObservable = this.clientsService.odata.Put(this.client, this.client.id.toString());
@@ -122,5 +117,25 @@ export class ClientFormComponent implements OnInit {
 				error: error
 			})
 		);
+	}
+
+	private validateForm(form: NgForm): Observable<boolean> {
+		this.showErrors = [false, false];
+
+		let isEmailValidObservable = Observable.of(!form.controls['email'].errors);
+		let isNameValidObservable: Observable<any>;
+
+		if (!this.model.name) {
+			isNameValidObservable = Observable.of(false);
+		} else {
+			isNameValidObservable = this.clientsService.getClientByName(this.model.name)
+				.map((client) => !client || (client.id === this.model.id));
+		}
+
+		return Observable.forkJoin(isEmailValidObservable, isNameValidObservable)
+			.map((response: boolean[]) =>
+				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
+					.every((showError) => showError === false)
+			);
 	}
 }

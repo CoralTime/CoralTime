@@ -16,7 +16,7 @@ import { TasksService } from '../../services/tasks.service';
 })
 
 export class TaskNameValidator implements Validator {
-	@Input('ctTaskNameValidator') private task: Task;
+	@Input('ctTaskNameValidator') task: Task;
 
 	constructor(private tasksService: TasksService) {
 	}

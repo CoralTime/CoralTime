@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter, OnInit } from '@angular/core';
-import { ForgotPasswordService, PasswordChangingStatus } from '../forgot-password.service';
+import { SetPasswordService, PasswordChangingStatus } from '../set-password.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notification.service';
 
@@ -26,10 +26,10 @@ export class EnterNewPasswordFormComponent implements OnInit {
 	password2: string;
 	token: string;
 
-	constructor(private forgotPasswordService: ForgotPasswordService,
-	            private notificationService: NotificationService,
+	constructor(private notificationService: NotificationService,
 	            private route: ActivatedRoute,
-	            private router: Router) {
+	            private router: Router,
+	            private setPasswordService: SetPasswordService) {
 	}
 
 	ngOnInit() {
@@ -39,7 +39,7 @@ export class EnterNewPasswordFormComponent implements OnInit {
 	}
 
 	saveNewPassword(token: string, password: string): void {
-		this.forgotPasswordService.saveNewPassword(token, password).then((passwordChangeStatus) => {
+		this.setPasswordService.saveNewPassword(token, password).then((passwordChangeStatus) => {
 			this.errorMessage = null;
 			if (!passwordChangeStatus) {
 				this.errorMessage = ERRORS_PASSWORD_CHANGING[5];

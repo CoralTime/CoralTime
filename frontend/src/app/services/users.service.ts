@@ -45,7 +45,13 @@ export class UsersService {
 
 	setUserInfo(obj: any): void {
 		this.userInfo = (obj && this.userInfo) ? Object.assign(this.userInfo, obj) : obj;
-		localStorage.setItem('USER_INFO', JSON.stringify(this.userInfo));
+
+		if (this.userInfo) {
+			localStorage.setItem('USER_INFO', JSON.stringify(this.userInfo));
+		} else {
+			localStorage.removeItem('USER_INFO');
+		}
+
 		this.onChange.emit(this.userInfo);
 	}
 

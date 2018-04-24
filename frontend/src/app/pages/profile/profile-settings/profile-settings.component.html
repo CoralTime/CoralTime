@@ -117,6 +117,12 @@
                             </ct-select>
                         </div>
 
+                        <div>
+                            <mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
+                                Send weekly time entry updates
+                            </mat-checkbox>
+                        </div>
+
                         <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!preferencesForm.valid">
                             Save Preferences
                         </button>
