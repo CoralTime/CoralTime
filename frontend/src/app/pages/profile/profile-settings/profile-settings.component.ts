@@ -244,6 +244,7 @@ export class ProfileSettingsComponent implements OnInit {
 			defaultTaskId: this.userModel.defaultTaskId,
 			dateFormat: this.userModel.dateFormat,
 			dateFormatId: this.userModel.dateFormatId,
+			isWeeklyTimeEntryUpdatesSend: this.userModel.isWeeklyTimeEntryUpdatesSend,
 			timeFormat: this.userModel.timeFormat,
 			weekStart: this.userModel.weekStart
 		};
