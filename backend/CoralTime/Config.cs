@@ -31,10 +31,8 @@ namespace CoralTime
             };
         }
 
-        // Clients want to access resources.
-        public static IEnumerable<Client> GetClients(int accessTokenLifetime, int refreshTokenLifetime)
+        public static IEnumerable<Client> GetClients(int accessTokenLifetime, int refreshTokenLifetime, int slidingRefreshTokenLifetime)
         {
-            // Clients credentials.
             return new List<Client>
             {
                 // Local authentication client
@@ -43,13 +41,15 @@ namespace CoralTime
                     ClientId = "coraltimeapp",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword, // Resource Owner Password Credential grant.
                     AllowAccessTokensViaBrowser = true,
-
-                    //AlwaysIncludeUserClaimsInIdToken = true,  // Include claims in token
                     RequireClientSecret = false, // This client does not need a secret to request tokens from the token endpoint.
+                    
+                    UpdateAccessTokenClaimsOnRefresh = true,
                     AccessTokenLifetime = accessTokenLifetime,
                     AbsoluteRefreshTokenLifetime = refreshTokenLifetime,
-                    RefreshTokenExpiration = TokenExpiration.Absolute,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    SlidingRefreshTokenLifetime = slidingRefreshTokenLifetime,
                     RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId, // For UserInfo endpoint.
                         IdentityServerConstants.StandardScopes.Profile,
@@ -65,11 +65,7 @@ namespace CoralTime
                     ClientId = "coraltimeazure",
                     RequireClientSecret = false, // This client does not need a secret to request tokens from the token endpoint.
 
-                    //ClientSecrets =
-                    //{
-                    //    new Secret("secret".Sha256())
-                    //},
-                    AllowedGrantTypes = {"azureAuth"},//GrantTypes.List("azureAuth"),
+                    AllowedGrantTypes = {"azureAuth"},
 
                     AllowedScopes =
                     {
@@ -79,10 +75,13 @@ namespace CoralTime
                        "WebAPI"
                     },
 
+                    UpdateAccessTokenClaimsOnRefresh = true,
                     AccessTokenLifetime = accessTokenLifetime,
                     AbsoluteRefreshTokenLifetime = refreshTokenLifetime,
-                    RefreshTokenExpiration = TokenExpiration.Absolute,
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    SlidingRefreshTokenLifetime = slidingRefreshTokenLifetime,
                     RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    
                     AllowOfflineAccess = true
                 }
             };

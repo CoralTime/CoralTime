@@ -44,6 +44,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using IdentityServer4.Test;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CoralTime
 {
@@ -259,6 +261,17 @@ namespace CoralTime
 
             var accessTokenLifetime = int.Parse(Configuration["AccessTokenLifetime"]);
             var refreshTokenLifetime = int.Parse(Configuration["RefreshTokenLifetime"]);
+            var slidingRefreshTokenLifetime = int.Parse(Configuration["SlidingRefreshTokenLifetime"]);
+
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = Configuration["Authority"],
+                ValidateAudience = true,
+                ValidAudience = "WebAPI",
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
 
             if (isDemo)
             {
@@ -266,7 +279,7 @@ namespace CoralTime
                     .AddDeveloperSigningCredential()
                     .AddInMemoryIdentityResources(Config.GetIdentityResources())
                     .AddInMemoryApiResources(Config.GetApiResources())
-                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
+                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime: accessTokenLifetime, refreshTokenLifetime: refreshTokenLifetime, slidingRefreshTokenLifetime: slidingRefreshTokenLifetime))
                     .AddAspNetIdentity<ApplicationUser>()
                     .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
                     .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
@@ -278,11 +291,19 @@ namespace CoralTime
                 services.AddIdentityServer()
                     .AddInMemoryIdentityResources(Config.GetIdentityResources())
                     .AddInMemoryApiResources(Config.GetApiResources())
-                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime, refreshTokenLifetime))
+                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime: accessTokenLifetime, refreshTokenLifetime: refreshTokenLifetime, slidingRefreshTokenLifetime: slidingRefreshTokenLifetime))
                     .AddAspNetIdentity<ApplicationUser>()
                     .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
-                    .AddSigningCredential(cert).AddAppAuthRedirectUriValidator()
-                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+                    .AddSigningCredential(cert)
+                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>()
+                    .AddOperationalStore<AppDbContext>(options =>
+                        {
+                            options.EnableTokenCleanup = true;
+                        }
+                    );
+                var key = new X509SecurityKey(cert);
+                tokenValidationParameters.IssuerSigningKey = key;
+                tokenValidationParameters.ValidateIssuerSigningKey = true;
             }
 
             services.AddAuthentication(options =>
@@ -296,6 +317,7 @@ namespace CoralTime
                     options.Audience = "WebAPI";
                     options.Authority = Configuration["Authority"];
                     options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = tokenValidationParameters;
                 });
 
             services.AddAuthorization(options =>
