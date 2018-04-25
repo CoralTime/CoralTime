@@ -1,6 +1,5 @@
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Tasks;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Routing;
@@ -8,13 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CoralTime.Api.v1.Odata
 {
-    [Route("api/v1/odata/[controller]")]
     [Authorize]
+    [Route("api/v1/odata/[controller]")]
     public class TasksController : BaseODataController<TasksController, ITasksService>
     {
         public TasksController(ITasksService service, IMapper mapper, ILogger<TasksController> logger)
@@ -22,10 +19,7 @@ namespace CoralTime.Api.v1.Odata
 
         // GET: api/v1/odata/Tasks
         [HttpGet]
-        public IEnumerable<TaskView> Get()
-        {
-            return _service.GetAllTaskTypes().Select(_mapper.Map<TaskType, TaskView>);
-        }
+        public IActionResult Get() => new ObjectResult(_service.Get());
 
         // GET api/v1/odata/Tasks(2)
         [ODataRoute("Tasks({id})")]
@@ -34,18 +28,18 @@ namespace CoralTime.Api.v1.Odata
         {
             try
             {
-                var value = _service.GetById(id);
-                return new ObjectResult(_mapper.Map<TaskType, TaskView>(value));
+                var taskTypeViewResult = _service.GetById(id);
+                return new ObjectResult(taskTypeViewResult);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // POST api/v1/odata/Tasks
         [HttpPost]
-        public IActionResult Create([FromBody]TaskView taskTypeData)
+        public IActionResult Create([FromBody]TaskTypeView taskTypeView)
         {
             if (!ModelState.IsValid)
             {
@@ -54,59 +48,60 @@ namespace CoralTime.Api.v1.Odata
 
             try
             {
-                var result = _service.Create(taskTypeData);
+                var taskTypeViewResult = _service.Create(taskTypeView);
+                var locationUri = $"{Request.Host}/api/v1/odata/Tasks({taskTypeViewResult.Id})";
 
-                var locationUri = $"{Request.Host}/api/v1/odata/Tasks({result.Id})";
-
-                return Created(locationUri, _mapper.Map<TaskType, TaskView>(result));
+                return Created(locationUri, taskTypeViewResult);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PUT api/v1/odata/Tasks(1)
         [ODataRoute("Tasks({id})")]
         [HttpPut("{id}")]
-        public IActionResult Update([FromODataUri] int id, [FromBody] dynamic taskTypeData)
+        public IActionResult Update([FromODataUri] int id, [FromBody]TaskTypeView taskTypeView)
         {
             if (!ModelState.IsValid)
             {
                 return SendInvalidModelResponse();
             }
 
-            taskTypeData.Id = id;
+            taskTypeView.Id = id;
+
             try
             {
-                var result = _service.Update(taskTypeData);
-                return new ObjectResult(_mapper.Map<TaskType, TaskView>(result));
+                var taskTypeViewResult = _service.Update(taskTypeView);
+                return new ObjectResult(taskTypeViewResult);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PATCH api/v1/odata/Tasks(1)
         [ODataRoute("Tasks({id})")]
         [HttpPatch("{id}")]
-        public IActionResult Patch([FromODataUri] int id, [FromBody] dynamic taskTypeData)
+        public IActionResult Patch([FromODataUri] int id, [FromBody]TaskTypeView taskTypeView)
         {
             if (!ModelState.IsValid)
             {
                 return SendInvalidModelResponse();
             }
 
-            taskTypeData.Id = id;
+            taskTypeView.Id = id;
+
             try
             {
-                var result = _service.Patch(taskTypeData);
-                return new ObjectResult(_mapper.Map<TaskType, TaskView>(result));
+                var taskTypeViewResult = _service.Update(taskTypeView);
+                return new ObjectResult(taskTypeViewResult);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
@@ -123,7 +118,7 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
     }

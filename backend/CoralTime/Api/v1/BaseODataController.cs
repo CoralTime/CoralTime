@@ -30,10 +30,12 @@ namespace CoralTime.Api.v1
             _service = service;
         }
 
-        protected IActionResult SendErrorResponse(Exception e)
+        protected IActionResult SendErrorODataResponse(Exception exception)
         {
-            _logger.LogError($"Path: {(Request.Path)} , Query: {Request.QueryString}", e);
-            var error = ExceptionsChecker.CheckProjectRolesException(e);
+            _logger.LogError($"Path: {(Request.Path)} , Query: {Request.QueryString}", exception);
+
+            var error = ExceptionsODataChecker.CheckExceptions(exception);
+
             return BadRequest(error);
         }
 
@@ -41,14 +43,14 @@ namespace CoralTime.Api.v1
         {
             var errors = ControllerContext.ModelState.Values;
             return BadRequest(new List<ErrorView>
+            {
+                new ErrorView
                 {
-                    new ErrorView
-                    {
-                        Source = "Other",
-                        Title = "ModelState is invalid.",
-                        Details = GetWrongKeys()
-                    }
-                });
+                    Source = "Other",
+                    Title = "ModelState is invalid.",
+                    Details = GetWrongKeys()
+                }
+            });
         }
 
         private string GetWrongKeys()

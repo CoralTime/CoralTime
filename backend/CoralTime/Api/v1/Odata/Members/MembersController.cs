@@ -32,7 +32,7 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
@@ -47,7 +47,7 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
@@ -62,7 +62,7 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
@@ -104,7 +104,7 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 

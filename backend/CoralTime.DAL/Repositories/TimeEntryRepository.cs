@@ -10,7 +10,7 @@ namespace CoralTime.DAL.Repositories
         public TimeEntryRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-
+        // Don't touch!
         public override TimeEntry LinkedCacheGetById(int id)
         {
             return GetQueryWithIncludes().FirstOrDefault(x => x.Id == id);

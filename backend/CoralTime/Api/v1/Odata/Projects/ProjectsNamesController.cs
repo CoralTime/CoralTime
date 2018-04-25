@@ -24,7 +24,7 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
     }

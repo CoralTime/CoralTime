@@ -334,7 +334,7 @@ namespace CoralTime
             builder.EntitySet<MemberView>("Members");
             builder.EntitySet<MemberProjectRoleView>("MemberProjectRoles");
             builder.EntitySet<ProjectRoleView>("ProjectRoles");
-            builder.EntitySet<TaskView>("Tasks");
+            builder.EntitySet<TaskTypeView>("Tasks");
             builder.EntitySet<ErrorView>("Errors");
             builder.EntitySet<SettingsView>("Settings");
             builder.EntitySet<ManagerProjectsView>("ManagerProjects");
