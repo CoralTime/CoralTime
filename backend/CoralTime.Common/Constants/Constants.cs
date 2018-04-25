@@ -41,6 +41,64 @@ namespace CoralTime.Common.Constants
             UrlSetPassword
         };
 
+        public static class Routes
+        {
+            public const string BaseControllerRoute = "api/v1/[controller]";
+            public const string IdRoute = "{id}";
+            public const string IdRouteWithMembers = IdRoute + WithMembers;
+            public const string IdRouteWithProjects = IdRoute + WithProjects;
+            public const string UpdateManagerRolesRoute = "UpdateManagerRoles";
+            public const string UpdateClaimsRoute = "UpdateClaims";
+            public const string RefreshDataBaseRoute = "RefreshDataBase";
+            public const string SaveImagesFromDbToStaticFilesRoute = "SaveImagesFromDbToStaticFiles";
+            public const string SendForgotEmailRoute = "sendforgotemail/{email}";
+            public const string ChangePasswordByTokenRoute = "changepasswordbytoken";
+            public const string ChangePasswordByTokenWithTokenRoute = ChangePasswordByTokenRoute + "/{token}";
+            public const string MemberRoute = "Member(" + IdRoute + ")";
+            public const string MemberRouteWithNotifications = MemberRoute + WithNotifications;
+            public const string MemberRouteWithPreferences = MemberRoute + WithPreferences;
+            public const string MemberRouteWithPersonalInfo = MemberRoute + WithPersonalInfo;
+            public const string MemberRouteWithUrlAvatar = MemberRoute + WithUrlAvatar;
+            public const string UploadImageRoute = "UploadImage";
+            public const string ProjectsRoute = "Projects";
+            public const string DateFormatsRoute = "DateFormats";
+            public const string ProjectMembersWithIdRoute = "ProjectMembers/" + IdRoute;
+            public const string ByProjectSettingsRoute = "ByProjectSettings";
+            public const string CustomQueryRoute = "CustomQuery";
+            public const string CustomQueryWithIdRoute = CustomQueryRoute + "/" + IdRoute;
+            public const string AuthorizeRoute = "authorize";
+            public const string AuthorizeActiveUserRoute = AuthorizeRoute + "/activeuser";
+            public const string AuthorizeAdminRoute = AuthorizeRoute + "/admin";
+            public const string AuthorizeUserRoute = AuthorizeRoute + "/user";
+            public const string UnauthorizeRoute = "unauthorize";
+            public const string PingRoute = "ping";
+            public const string PingdatabaseRoute = "pingdatabase";
+            
+            
+            
+            private const string WithMembers = "/members";
+            private const string WithProjects = "/projects";
+            private const string WithNotifications = "/Notifications";
+            private const string WithPreferences = "/Preferences";
+            private const string WithPersonalInfo = "/PersonalInfo";
+            private const string WithUrlAvatar = "/UrlAvatar";
+            
+            public static class OData
+            {
+                public const string BaseODataRoute = "api/v1/odata";
+                public const string BaseODataControllerRoute = BaseODataRoute + "/[controller]";
+                public const string TasksWithIdRoute = "Tasks(" + IdRoute + ")";
+                public const string ClientsWithIdRoute = "Clients(" + IdRoute + ")";
+                public const string ProjectsWithIdRoute = "Projects(" + IdRoute + ")";
+                public const string ProjectsRouteWithMembers = ProjectsWithIdRoute + WithMembers;
+                public const string MembersWithIdRoute = "Members(" + IdRoute + ")";
+                public const string MembersRouteWithProjects = MembersWithIdRoute + WithProjects;
+                public const string MemberProjectRolesWithIdRoute = "MemberProjectRoles(" + IdRoute + ")";
+                public const string MemberProjectRolesRouteWithProjects = MemberProjectRolesWithIdRoute + WithProjects;
+                public const string MemberProjectRolesRouteWithMembers = MemberProjectRolesWithIdRoute + WithMembers;
+            }
+        }
+
         #endregion
 
 

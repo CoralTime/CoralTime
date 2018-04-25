@@ -51,6 +51,8 @@ namespace CoralTime.Api.v1
                 });
         }
 
+        protected string GetBaseUrl() => $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
+        
         private string GetWrongKeys()
         {
             var wrongKeys = ControllerContext.ModelState.Keys

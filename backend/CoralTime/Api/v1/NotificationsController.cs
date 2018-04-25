@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     [ServiceFilter(typeof(CheckSecureHeaderNotificationFilter))]
     public class NotificationsController : BaseController<NotificationsController, INotificationService>
     {
@@ -32,12 +33,10 @@ namespace CoralTime.Api.v1
         //}
 
         [HttpGet]
-        [Route("ByProjectSettings")]
+        [Route(ByProjectSettingsRoute)]
         public async Task<IActionResult> ByProjectSettings()
         {
-            var baseUrl = $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
-
-            await _service.ByProjectSettings(baseUrl);
+            await _service.ByProjectSettings(GetBaseUrl());
             return Ok();
         }
     }

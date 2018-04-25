@@ -46,6 +46,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using IdentityServer4.Test;
 using Microsoft.IdentityModel.Tokens;
+using static CoralTime.Common.Constants.Constants.Routes.OData;
 
 namespace CoralTime
 {
@@ -162,7 +163,7 @@ namespace CoralTime
             app.UseMvc(routeBuilder =>
             {
                 routeBuilder.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
-                routeBuilder.MapODataServiceRoute("ODataRoute", "api/v1/odata", edmModel);
+                routeBuilder.MapODataServiceRoute("ODataRoute", BaseODataRoute, edmModel);
                 routeBuilder.EnableDependencyInjection();
             });
 

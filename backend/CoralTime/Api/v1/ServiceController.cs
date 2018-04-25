@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     [ServiceFilter(typeof(CheckSecureHeaderServiceFilter))]
     public class ServiceController : BaseController<ServiceController, IMemberService>
     {
@@ -30,7 +31,7 @@ namespace CoralTime.Api.v1
 
         // GET api/v1/Service/UpdateManagerRoles
         [HttpGet]
-        [Route("UpdateManagerRoles")]
+        [Route(UpdateManagerRolesRoute)]
         public ActionResult UpdateManagerRoles()
         {
             try
@@ -48,7 +49,7 @@ namespace CoralTime.Api.v1
 
         // GET api/v1/Service/UpdateClaims
         [HttpGet]
-        [Route("UpdateClaims")]
+        [Route(UpdateClaimsRoute)]
         public ActionResult UpdateClaims()
         {
             try
@@ -65,8 +66,8 @@ namespace CoralTime.Api.v1
         }
 
         [HttpGet]
-        [Route("RefreshDataBase")]
-        public async Task<ActionResult >RefreshDataBase()
+        [Route(RefreshDataBaseRoute)]
+        public async Task<ActionResult>RefreshDataBase()
         {
             try
             {
@@ -83,7 +84,7 @@ namespace CoralTime.Api.v1
 
         // GET api/v1/Service/SaveImagesFromDbToStaticFiles
         [HttpGet]
-        [Route("SaveImagesFromDbToStaticFiles")]
+        [Route(SaveImagesFromDbToStaticFilesRoute)]
         public ActionResult SaveImagesFromDbToStaticFiles()
         {
             try
