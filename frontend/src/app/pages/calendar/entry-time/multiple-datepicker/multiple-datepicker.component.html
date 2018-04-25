@@ -9,6 +9,7 @@
                        [multiselect]="true"
                        (dateChanged)="dateOnChange($event)"></ct-datepicker>
     </div>
+
     <div class="ct-output-results">
         <div class="ct-field">
             <label class="ct-field-head">Copy Entry:</label>
@@ -16,27 +17,32 @@
                 <em>{{timeEntry.projectName}}</em>
             </div>
         </div>
+
         <div class="ct-field">
             <label class="ct-field-head">In total:</label>
             <div class="ct-field-details">
-                <em>{{timeActual.hours}}h {{timeActual.minutes}}m</em> logged time<br>
-                <em>{{timeEstimated.hours}}h {{timeEstimated.minutes}}m</em> estimated time
+                <em>{{getHours(timeEntry.timeValues.timeActual)}}h {{getMinutes(timeEntry.timeValues.timeActual)}}m</em> logged time<br>
+                <em>{{getHours(timeEntry.timeValues.timeEstimated)}}h {{getMinutes(timeEntry.timeValues.timeEstimated)}}m</em> estimated time
             </div>
         </div>
+
         <div class="ct-field">
             <label class="ct-field-head">To:</label>
             <div class="ct-field-details">
                 <span *ngIf="dateList?.length == 1">
                     <em>{{dateList?.length}} day</em>
                 </span>
+
                 <span *ngIf="dateList?.length > 1">
                     <em>{{dateList?.length}} days</em>
                 </span>
+
                 <span *ngIf="!dateList?.length" class="ct-placeholder">
                     Click days to copy the entry to...
                 </span>
             </div>
         </div>
+
         <div mat-dialog-actions class="ct-form-actions ct-datepicker-button-block">
             <button class="ct-close" mat-dialog-close>Cancel</button>
             <button mat-button mat-dialog-close class="ct-submit ct-blue-button"
