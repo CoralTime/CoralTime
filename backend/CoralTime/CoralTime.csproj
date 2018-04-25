@@ -9,16 +9,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ConfigsNetCore2.0\**" />
-    <Compile Remove="Configs\**" />
     <Compile Remove="wwwroot\**" />
     <Content Remove="ConfigsNetCore2.0\**" />
-    <Content Remove="Configs\**" />
     <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\**" />
-    <EmbeddedResource Remove="Configs\**" />
     <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="ConfigsNetCore2.0\**" />
-    <None Remove="Configs\**" />
     <None Remove="wwwroot\**" />
   </ItemGroup>
   <ItemGroup>
