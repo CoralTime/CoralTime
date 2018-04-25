@@ -34,17 +34,8 @@ namespace CoralTime.Api.v1
         [Route(UpdateManagerRolesRoute)]
         public ActionResult UpdateManagerRoles()
         {
-            try
-            {
-                var result = _roleService.FixAllManagerRoles();
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"UpdateManagerRoles method {e}");
-                var errors = ExceptionsChecker.CheckProjectRolesException(e);
-                return BadRequest(errors);
-            }
+            var result = _roleService.FixAllManagerRoles();
+            return Ok(result);
         }
 
         // GET api/v1/Service/UpdateClaims
@@ -52,34 +43,16 @@ namespace CoralTime.Api.v1
         [Route(UpdateClaimsRoute)]
         public ActionResult UpdateClaims()
         {
-            try
-            {
-                _service.UpdateUsersClaims();
-                return Ok(true);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"UpdateClaims method {e}");
-                var errors = ExceptionsChecker.CheckMembersException(e);
-                return BadRequest(errors);
-            }
+            _service.UpdateUsersClaims();
+            return Ok(true);
         }
 
         [HttpGet]
         [Route(RefreshDataBaseRoute)]
         public async Task<ActionResult>RefreshDataBase()
         {
-            try
-            {
-                await _refreshDataBaseService.RefreshDataBase();
-                return Ok(true);
-            }
-            catch (Exception e)
-            {
-                _logger.LogWarning($"RefreshDataBase method {e}");
-                var errors = ExceptionsChecker.CheckMembersException(e);
-                return BadRequest(errors);
-            }
+            await _refreshDataBaseService.RefreshDataBase();
+            return Ok(true);
         }
 
         // GET api/v1/Service/SaveImagesFromDbToStaticFiles
@@ -87,16 +60,8 @@ namespace CoralTime.Api.v1
         [Route(SaveImagesFromDbToStaticFilesRoute)]
         public ActionResult SaveImagesFromDbToStaticFiles()
         {
-            try
-            {
-                _avatarService.SaveImagesFromDbToFolder();
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError($"SaveAllIconsAndAvatarsInStaticFiles method {e}");
-                return BadRequest(e.Message);
-            }
+            _avatarService.SaveImagesFromDbToFolder();
+            return Ok();
         }
     }
 }

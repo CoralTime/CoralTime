@@ -1,83 +1,107 @@
-﻿using System;
-using System.Collections.Generic;
-using CoralTime.Common.Exceptions;
+﻿using CoralTime.Common.Exceptions;
 using CoralTime.ViewModels.Errors;
+using System;
+using System.Collections.Generic;
 
 namespace CoralTime.Common.Middlewares
 {
-    public class ExceptionsChecker
+    public class ExceptionsODataChecker
     {
-        private static List<ErrorView> CheckException(Exception e)
+        public static List<ErrorView> CheckExceptions(Exception exception)
         {
-            if (e is CoralTimeEntityNotFoundException)
+            switch (exception)
             {
-                return new List<ErrorView>
+                case CoralTimeSafeEntityException ex:
                 {
-                    new ErrorView
+                    return new List<ErrorView>
                     {
-                        Source = "Other",
-                        Title = "Entity not found.",
-                        Details = e.Message
-                    }
-                };
-            }
-
-            if (e is CoralTimeSafeEntityException ex)
-            {
-                return ex.errors;
-            }
-
-            return new List<ErrorView>
-            {
-                new ErrorView
-                {
-                    Source = "Other",
-                    Title = "",
-                    Details = e.Message
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "Safe Entity Exception",
+                            Details = ex.Message
+                        }
+                    };
                 }
-            };
-        }
 
-        public static List<ErrorView> CheckMembersException(Exception e)
-        {
-            if (e is CoralTimeAlreadyExistsException)
-            {
-                return new List<ErrorView>
+                case CoralTimeAlreadyExistsException ex:
                 {
-                    new ErrorView
+                    return new List<ErrorView>
                     {
-                        Source = "Username",
-                        Title = "User with this name already exist.",
-                        Details = "Username must be unique for each user."
-                    }
-                };
-            }
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "Project role already exists.",
+                            Details = ex.Message
+                        }
+                    };
+                }
 
-            if (e is CoralTimeIncorrectPasswordException)
-            {
-                var ex = (CoralTimeIncorrectPasswordException)e;
-                return ex.errors;
-            }
-
-            return CheckException(e);
-        }
-
-        public static List<ErrorView> CheckProjectRolesException(Exception e)
-        {
-            if (e is CoralTimeAlreadyExistsException)
-            {
-                return new List<ErrorView>
+                case CoralTimeEntityNotFoundException ex:
                 {
-                    new ErrorView
+                    return new List<ErrorView>
                     {
-                        Source = "Other",
-                        Title = "Project role already exists.",
-                        Details = e.Message
-                    }
-                };
-            }
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "Entity not found Exception",
+                            Details = ex.Message
+                        }
+                    };
+                }
 
-            return CheckException(e);
+                case CoralTimeDangerException ex:
+                {
+                    return new List<ErrorView>
+                    {
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "Danger Exception.",
+                            Details = ex.Message
+                        }
+                    };
+                }
+
+                case CoralTimeIncorrectPasswordException ex:
+                {
+                    return new List<ErrorView>
+                    {
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "Incorrect Password Exception.",
+                            Details = ex.Message
+                        }
+                    };
+                }
+
+                case CoralTimeForbiddenException ex:
+                {
+                    return new List<ErrorView>
+                    {
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "Forbidden Exception.",
+                            Details = ex.Message
+                        }
+                    };
+                }
+
+                default:
+                {
+                    return new List<ErrorView>
+                    {
+                        new ErrorView
+                        {
+                            Source = "Other",
+                            Title = "",
+                            Details = exception.Message
+                        }
+                    };
+                }
+            }
         }
     }
 }

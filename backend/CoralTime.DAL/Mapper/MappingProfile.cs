@@ -65,8 +65,8 @@ namespace CoralTime.DAL.Mapper
             CreateMap<SettingsView, Setting>();
             CreateMap<Setting, SettingsView>();
 
-            CreateMap<TaskView, TaskType>();
-            CreateMap<TaskType, TaskView>();
+            CreateMap<TaskTypeView, TaskType>();
+            CreateMap<TaskType, TaskTypeView>();
 
             CreateMap<ReportsSettings, ReportsSettings>();
         }
