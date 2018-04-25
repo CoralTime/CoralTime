@@ -71,7 +71,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
 		this.timeActual = this.splitTime(this.timeEntry.timeValues.timeActual);
 		this.timeEstimated = this.splitTime(this.timeEntry.timeValues.timeEstimated);
-		this.selectedDate = this.currentTimeEntry.date;
+		this.selectedDate = this.timeEntry.date;
 		this.isUserManagerOnProject = this.timeEntry.isUserManagerOnProject;
 
 		if (this.timeEntry.timeOptions.timeTimerStart && this.timeEntry.timeOptions.timeTimerStart !== -1) {
@@ -92,7 +92,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.dialogRef = this.dialog.open(MultipleDatepickerComponent, {
 			width: '650px'
 		});
-		this.dialogRef.componentInstance.timeEntry = this.currentTimeEntry;
+		this.dialogRef.componentInstance.timeEntry = this.timeEntry;
 		this.dialogRef.componentInstance.timeActual = this.timeActual;
 		this.dialogRef.componentInstance.timeEstimated = this.timeEstimated;
 		this.dialogRef.componentInstance.firstDayOfWeek = this.firstDayOfWeek;
@@ -112,7 +112,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	deleteAction(): void {
 		let observable: Observable<any>;
-		observable = this.calendarService.Delete(this.currentTimeEntry.id.toString());
+		observable = this.calendarService.Delete(this.timeEntry.id.toString());
 
 		observable.subscribe(
 			() => {
@@ -162,7 +162,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	private isNewTrackedTimeValid(newDate: string): boolean {
 		this.setDayInfo(newDate);
-		return this.totalTrackedTimeForDay + this.currentTimeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
+		return this.totalTrackedTimeForDay + this.timeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
 	}
 
 	private onSubmitDialog(dateList: string[]): void {
@@ -191,37 +191,32 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	// TIMER ACTIONS
 
 	checkTimer(): void {
-		let isChanged: boolean = false;
+		let errorMessage: string;
 
-		if (!DateUtils.isToday(this.timeEntry.date) || !this.isTimeEntryAvailable) {
-			isChanged = true;
-			this.currentTimeEntry.timeValues = {
-				timeActual: this.currentTimeEntry.timeOptions.timeTimerStart,
-				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
-				timeFrom: MAX_TIMER_VALUE - this.currentTimeEntry.timeOptions.timeTimerStart,
-				timeTo: MAX_TIMER_VALUE
-			};
-			this.currentTimeEntry.timeOptions = {
-				isFromToShow: true,
-				timeTimerStart: -1
-			};
-		} else if (!this.isTrackedTimeValid()) {
-			isChanged = true;
+		if (!DateUtils.isToday(this.timeEntry.date)) {
+			errorMessage = 'Selected time period should be within one day. Timer has stopped.'
+		}
+		if (!errorMessage && !this.isTimeEntryAvailable) {
+			errorMessage = 'Timer has stopped, because Time Entry is locked.';
+		}
+		if (!errorMessage && !this.isTrackedTimeValid()) {
+			errorMessage = 'Total actual time can\'t be more than 24 hours. Timer has stopped.';
+		}
+
+		if (errorMessage) {
 			this.currentTimeEntry.timeOptions = {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
 			this.currentTimeEntry.timeValues = {
 				timeActual: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual),
-				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
-				timeFrom: 0,
-				timeTo: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual)
+				timeEstimated: this.timeEntry.timeValues.timeEstimated,
+				timeFrom: MAX_TIMER_VALUE - this.currentTimeEntry.timeValues.timeActual,
+				timeTo: MAX_TIMER_VALUE
 			};
-		}
 
-		if (isChanged) {
 			this.autoStopTimer();
-			this.changeTimerStatus(this.currentTimeEntry);
+			this.changeTimerStatus(this.currentTimeEntry, errorMessage);
 		}
 	}
 
@@ -264,17 +259,16 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private changeTimerStatus(timeEntry: TimeEntry): void {
+	private changeTimerStatus(timeEntry: TimeEntry, errorMessage: string): void {
 		this.calendarService.Put(timeEntry, this.timeEntry.id.toString())
 			.toPromise().then(
 			() => {
 				this.calendarService.isTimerActivated = false;
-
 				this.timeEntry.timeValues = timeEntry.timeValues;
 				this.timeEntry.timeOptions = timeEntry.timeOptions;
-
 				this.form.closeTimeEntryForm();
-				this.notificationService.danger('Total actual time can\'t be more than 24 hours. Timer has stopped.');
+
+				this.notificationService.danger(errorMessage);
 				return null;
 			},
 			error => {
@@ -300,7 +294,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			};
 			this.currentTimeEntry.timeValues = {
 				timeActual: this.ticks,
-				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
+				timeEstimated: this.timeEntry.timeValues.timeEstimated,
 				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
 				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
 			};
@@ -323,7 +317,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	// GENERAL
 
 	calculateCalendarTaskHeight(): number {
-		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 95  - 42;
+		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 95 - 42;
 		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - 25 : taskHeight;
 	}
 
