@@ -57,6 +57,7 @@ export class MultiSelectComponent extends MultiSelect {
 
 	hide(): void {
 		super.hide();
+		this.clearFilter();
 
 		if (this.showSubmitButton && !this.isSubmitted) {
 			this.value = this.oldValue;

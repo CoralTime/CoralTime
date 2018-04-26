@@ -99,7 +99,7 @@ export class CalendarDayComponent implements OnInit {
 				return;
 			}
 			if (!this.isNewTrackedTimeValid(this.dayInfo.date, this.draggedTimeEntry.timeValues.timeActual)) {
-				this.notificationService.danger('Total actual time can\'t be more than 24 hours');
+				this.notificationService.danger('Total actual time should be less than 24 hours.');
 				return;
 			}
 			this.draggedTimeEntry.date = this.dayInfo.date;
