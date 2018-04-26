@@ -3,10 +3,10 @@
     <span class="ct-hours-planned">{{getTotalTime('timeEstimated')}}</span>
 </div>
 <div class="ct-calendar clearfix" (window:resize)="onResize($event)">
-    <ct-calendar-day [@slideCalendar]="animationState"
-                     *ngFor="let dayInfo of calendar"
-                     [dayInfo]="dayInfo"
+    <ct-calendar-day *ngFor="let dayInfo of calendar"
                      class="ct-calendar-day"
-                     [class.ct-calendar-day-active]="false">
+                     [class.ct-calendar-day-active]="false"
+                     [@slideCalendar]="animationState"
+                     [dayInfo]="dayInfo">
     </ct-calendar-day>
 </div>
