@@ -138,7 +138,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		currentTimeEntry.date = date[0] ? DateUtils.formatDateToString(date[0]) : currentTimeEntry.date;
 
 		if (!this.isNewTrackedTimeValid(currentTimeEntry.date)) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			this.closeAllMenus();
 			return;
 		}
@@ -166,7 +166,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		let observable: Observable<any>;
 
 		if (dateList.some((date: string) => !this.isNewTrackedTimeValid(date))) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			return;
 		}
 
@@ -198,7 +198,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			errorMessage = 'Timer has stopped, because Time Entry is locked.';
 		}
 		if (!errorMessage && !this.isTrackedTimeValid()) {
-			errorMessage = 'Total actual time can\'t be more than 24 hours. Timer has stopped.';
+			errorMessage = 'Total actual time should be less than 24 hours. Timer has stopped.';
 		}
 
 		if (errorMessage) {

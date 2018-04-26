@@ -196,7 +196,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private isTimerValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid(true)) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			return false;
 		}
 
@@ -385,11 +385,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private isSubmitDataValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid()) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			return false;
 		}
 		if (!this.isEstimatedTimeValid()) {
-			this.notificationService.danger('Total planned time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total planned time should be less than 24 hours.');
 			return false;
 		}
 		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid()) {
