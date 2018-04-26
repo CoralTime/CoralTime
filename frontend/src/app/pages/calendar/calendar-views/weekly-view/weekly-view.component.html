@@ -4,8 +4,9 @@
 </div>
 <div class="ct-calendar clearfix" (window:resize)="onResize($event)">
     <ct-calendar-day *ngFor="let dayInfo of calendar"
-                     [dayInfo]="dayInfo"
                      class="ct-calendar-day"
-                     [class.ct-calendar-day-active]="false">
+                     [class.ct-calendar-day-active]="false"
+                     [@slideCalendar]="animationState"
+                     [dayInfo]="dayInfo">
     </ct-calendar-day>
 </div>

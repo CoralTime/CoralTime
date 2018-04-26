@@ -1,22 +1,25 @@
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
-import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
 import { ActivatedRoute, Params } from '@angular/router';
-import { CalendarService } from '../../../../services/calendar.service';
-import { Project } from '../../../../models/project';
 import { Subscription } from 'rxjs';
-import { ImpersonationService } from '../../../../services/impersonation.service';
+import * as moment from 'moment';
+import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
+import { Project } from '../../../../models/project';
 import { User } from '../../../../models/user';
 import { AuthService } from '../../../../core/auth/auth.service';
-import * as moment from 'moment';
+import { CalendarService } from '../../../../services/calendar.service';
+import { ImpersonationService } from '../../../../services/impersonation.service';
+import { ctCalendarAnimations } from '../../calendar-animation';
 
 @Component({
 	selector: 'ct-calendar-weekly-view',
-	templateUrl: 'weekly-view.component.html'
+	templateUrl: 'weekly-view.component.html',
+	animations: [ctCalendarAnimations.slideCalendar]
 })
 
 export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	@HostBinding('class.ct-calendar-weekly-view') addClass: boolean = true;
 
+	animationState: string;
 	calendar: CalendarDay[];
 	date: string;
 	daysInCalendar: number;
@@ -38,16 +41,20 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		this.calendar = this.setEmptyWeek();
+
 		this.route.data.forEach((data: { user: User }) => {
 			let user = this.impersonationService.impersonationUser || data.user;
 			this.firstDayOfWeek = user.weekStart;
 		});
 
 		this.route.params.subscribe((params: Params) => {
-			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
+			let oldDate = this.date || DateUtils.formatDateToString(new Date());
 			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
+			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
+
+			this.triggerAnimation(oldDate, this.date);
 			this.setAvailablePeriod(window.innerWidth);
-			this.setEmptyWeek();
 			this.getTimeEntries(this.projectIds);
 		});
 
@@ -114,7 +121,6 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		let lastPeriod: number = this.daysInCalendar;
 		this.setAvailablePeriod(width);
 		if (lastPeriod - this.daysInCalendar) {
-			this.setEmptyWeek();
 			this.getTimeEntries(this.projectIds);
 		}
 	}
@@ -138,8 +144,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		this.endDay = this.moveDate(moment(this.startDay).format('YYYY-MM-DD'), this.daysInCalendar - 1);
 	}
 
-	setEmptyWeek(): void {
-		this.calendar = [];
+	setEmptyWeek(): CalendarDay[] {
 		let newCalendar: CalendarDay[] = [];
 		let newDay: CalendarDay;
 
@@ -148,12 +153,11 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 			newCalendar.push(newDay);
 		}
 
-		this.calendar = newCalendar;
+		return newCalendar;
 	}
 
 	sortTimeEntriesByDate(): void {
-		this.setEmptyWeek();
-		let newCalendar: CalendarDay[] = this.calendar;
+		let newCalendar: CalendarDay[] = this.setEmptyWeek();
 
 		this.projectTimeEntries.forEach((timeEntry: TimeEntry) => {
 			newCalendar.forEach((day: CalendarDay) => {
@@ -174,5 +178,9 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	private moveDate(date: string, dif: number): string {
 		let newDate = moment(date).toDate();
 		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
+	}
+
+	private triggerAnimation(oldDate: string, newDate: string): void {
+		this.animationState = (new Date(oldDate) <= new Date(newDate)) ? 'left' : 'right';
 	}
 }

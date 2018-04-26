@@ -71,7 +71,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 				this.loadProjects(this.showOnlyActive);
 			}
 		});
-
 	}
 
 	onResize(event): void {
