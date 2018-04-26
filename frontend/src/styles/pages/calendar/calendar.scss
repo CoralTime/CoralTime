@@ -18,6 +18,17 @@ $calendarTabletWidth: 1299px;
 $calendarPhoneWidth: 809px;
 
 .ct-calendar-page {
+  background: linear-gradient(90deg, #fff, transparent 5px), linear-gradient(#dbdbdb, transparent 1px), center left;
+  background-size: calc(100% / 7 - 42px / 7) 18px;
+
+  @media (max-width: $calendarTabletWidth) {
+    background-size: 25% 18px;
+  }
+
+  @media (max-width: $calendarPhoneWidth) {
+    background-size: 100% 18px;
+  }
+
   .ct-page-header {
     position: fixed !important;
     width: calc(100% - 40px);
@@ -154,7 +165,6 @@ $calendarPhoneWidth: 809px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    //display: flex;
     width: 100%;
     border-top: 10px solid white;
     white-space: nowrap;
@@ -166,7 +176,6 @@ $calendarPhoneWidth: 809px;
       display: inline-block;
       vertical-align: top;
       box-sizing: border-box;
-      //background: url(./assets/ct-bg-calendar.jpg);
 
       &:first-child {
         margin-left: 0;
@@ -286,6 +295,7 @@ $calendarPhoneWidth: 809px;
           }
         }
       }
+
       .ct-calendar-task {
         font-family: inherit;
         display: inline-block;
@@ -300,6 +310,7 @@ $calendarPhoneWidth: 809px;
           z-index: 1;
           cursor: pointer;
         }
+
         .ct-calendar-time-entry-container {
           position: relative;
           cursor: pointer;
@@ -826,37 +837,13 @@ $calendarPhoneWidth: 809px;
   }
 }
 
-.ct-calendar-page {
-  background: linear-gradient(90deg, #fff, transparent 5px), linear-gradient(#dbdbdb, transparent 1px);
-  background-size: calc(100% / 7 - 42px / 7) 18px;
-  background-position: center left;
-
-  @media (max-width: $calendarTabletWidth) {
-    background-size: 25% 18px;
-  }
-
-  @media (max-width: $calendarPhoneWidth) {
-    background-size: 100% 18px;
-  }
-}
-
 .ng-animating {
-  .ct-calendar-page .ct-page-header,
-  .ct-reports-page .ct-page-container .ct-page-header {
-    width: 100%;
-  }
-
   .ct-calendar-day-tasks {
     margin-top: -5px !important;
   }
 
   .ct-calendar-day-title {
     position: static !important;
-    top: 40px !important;
     width: 100% !important;
-  }
-
-  .ct-total-tracked-time {
-    display: none;
   }
 }
