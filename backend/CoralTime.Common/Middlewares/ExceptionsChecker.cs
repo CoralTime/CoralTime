@@ -7,15 +7,15 @@ namespace CoralTime.Common.Middlewares
 {
     public class ExceptionsODataChecker
     {
-        public static List<ErrorView> CheckExceptions(Exception exception)
+        public static List<ErrorODataView> CheckExceptions(Exception exception)
         {
             switch (exception)
             {
                 case CoralTimeSafeEntityException ex:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
                             Title = "Safe Entity Exception",
@@ -26,12 +26,12 @@ namespace CoralTime.Common.Middlewares
 
                 case CoralTimeAlreadyExistsException ex:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
-                            Title = "Project role already exists.",
+                            Title = "Item already exists.",
                             Details = ex.Message
                         }
                     };
@@ -39,9 +39,9 @@ namespace CoralTime.Common.Middlewares
 
                 case CoralTimeEntityNotFoundException ex:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
                             Title = "Entity not found Exception",
@@ -52,9 +52,9 @@ namespace CoralTime.Common.Middlewares
 
                 case CoralTimeDangerException ex:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
                             Title = "Danger Exception.",
@@ -65,9 +65,9 @@ namespace CoralTime.Common.Middlewares
 
                 case CoralTimeIncorrectPasswordException ex:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
                             Title = "Incorrect Password Exception.",
@@ -78,9 +78,9 @@ namespace CoralTime.Common.Middlewares
 
                 case CoralTimeForbiddenException ex:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
                             Title = "Forbidden Exception.",
@@ -91,9 +91,9 @@ namespace CoralTime.Common.Middlewares
 
                 default:
                 {
-                    return new List<ErrorView>
+                    return new List<ErrorODataView>
                     {
-                        new ErrorView
+                        new ErrorODataView
                         {
                             Source = "Other",
                             Title = "",

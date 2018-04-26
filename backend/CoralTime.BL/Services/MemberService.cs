@@ -698,14 +698,14 @@ namespace CoralTime.BL.Services
 
         private void CheckMembersErrors(IEnumerable<IdentityErrorView> result)
         {
-            var passwordErrors = new List<ErrorView>();
-            var otherException = new List<ErrorView>();
+            var passwordErrors = new List<ErrorODataView>();
+            var otherException = new List<ErrorODataView>();
 
             foreach (var error in result)
             {
                 if (error.Code.Contains("Password"))
                 {
-                    passwordErrors.Add(new ErrorView
+                    passwordErrors.Add(new ErrorODataView
                     {
                         Source = "Password",
                         Title = StringHandler.SeparateStringByUpperCase(error.Code),
@@ -714,7 +714,7 @@ namespace CoralTime.BL.Services
                 }
                 else if (error.Code.Contains("UserName"))
                 {
-                    otherException.Add(new ErrorView
+                    otherException.Add(new ErrorODataView
                     {
                         Source = "UserName",
                         Title = StringHandler.SeparateStringByUpperCase(error.Code),
@@ -723,7 +723,7 @@ namespace CoralTime.BL.Services
                 }
                 else
                 {
-                    otherException.Add(new ErrorView
+                    otherException.Add(new ErrorODataView
                     {
                         Source = "Other",
                         Title = StringHandler.SeparateStringByUpperCase(error.Code),

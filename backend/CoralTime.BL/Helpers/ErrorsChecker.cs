@@ -9,11 +9,11 @@ namespace CoralTime.BL.Helpers
     {
         public static void CheckClientsErrors(Client clientData)
         {
-            var errors = new List<ErrorView>();
+            var errors = new List<ErrorODataView>();
 
             if (string.IsNullOrEmpty(clientData.Name))
             {
-                errors.Add(new ErrorView
+                errors.Add(new ErrorODataView
                 {
                     Source = "Name",
                     Title = "Name is required",
@@ -32,11 +32,11 @@ namespace CoralTime.BL.Helpers
 
         public static void CheckProjectsErrors(Project projectData, bool isNameUnique)
         {
-            List<ErrorView> errors = new List<ErrorView>();
+            List<ErrorODataView> errors = new List<ErrorODataView>();
 
             if (string.IsNullOrEmpty(projectData.Name) || !isNameUnique)
             {
-                errors.Add(new ErrorView
+                errors.Add(new ErrorODataView
                 {
                     Source = "Name",
                     Title = "Name is invalid",
@@ -55,11 +55,11 @@ namespace CoralTime.BL.Helpers
 
         public static void CheckSettingsErrors(Setting projectSetting, bool isNameUnique = true)
         {
-            List<ErrorView> errors = new List<ErrorView>();
+            List<ErrorODataView> errors = new List<ErrorODataView>();
 
             if ((string.IsNullOrEmpty(projectSetting.Name) || !isNameUnique))
             {
-                errors.Add(new ErrorView
+                errors.Add(new ErrorODataView
                 {
                     Source = "Name",
                     Title = "Name is invalid",

@@ -42,9 +42,9 @@ namespace CoralTime.Api.v1
         protected IActionResult SendInvalidModelResponse()
         {
             var errors = ControllerContext.ModelState.Values;
-            return BadRequest(new List<ErrorView>
+            return BadRequest(new List<ErrorODataView>
             {
-                new ErrorView
+                new ErrorODataView
                 {
                     Source = "Other",
                     Title = "ModelState is invalid.",

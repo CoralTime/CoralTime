@@ -7,7 +7,7 @@ namespace CoralTime.Common.Exceptions
 
     public class CoralTimeSafeEntityException : Exception
     {
-        public List<ErrorView> errors;
+        public List<ErrorODataView> errors;
 
         public CoralTimeSafeEntityException() { }
 

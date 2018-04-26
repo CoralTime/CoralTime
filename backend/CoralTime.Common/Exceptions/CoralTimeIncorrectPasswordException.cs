@@ -6,7 +6,7 @@ namespace CoralTime.Common.Exceptions
 {
     public class CoralTimeIncorrectPasswordException : Exception
     {
-        public List<ErrorView> errors;
+        public List<ErrorODataView> errors;
 
         public CoralTimeIncorrectPasswordException() { }
     }
