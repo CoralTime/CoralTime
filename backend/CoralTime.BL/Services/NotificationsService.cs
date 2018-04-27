@@ -111,21 +111,13 @@ namespace CoralTime.BL.Services
             {
                 //CommonHelpers.SetRangeOfWorkWeekByDate(out var workWeekFirstDay, out var workWeekLastDay, todayDate);
 
-                #region Active Private Projects with Notification Enable.
-
-                var membersWithNotificationsProjects = GetMembersWithNotificationsProjects(todayDate);
-
-                await SendNotificationsForMembers(membersWithNotificationsProjects, "Project", baseUrl);
-
-                #endregion
+                GetMembersWithNotificationsProjects(todayDate, baseUrl);
             }
         }
 
-        private List<MemberWithProjecsNotifications> GetMembersWithNotificationsProjects(DateTime todayDate)
+        private async Task GetMembersWithNotificationsProjects(DateTime todayDate, string baseUrl)
         {
             var currentHour = todayDate.TimeOfDay.Hours;
-
-            var membersWithNotifcationsProjects = new List<MemberWithProjecsNotifications>();
 
             var members = Uow.MemberRepository.LinkedCacheGetList()
                 .Where(member => member.SendEmailTime == currentHour && member.MemberProjectRoles.Any(mpr => mpr.Project.IsNotificationEnabled && mpr.Project.IsActive && mpr.Project.IsPrivate && mpr.Project.NotificationDay > 0))
@@ -186,12 +178,10 @@ namespace CoralTime.BL.Services
 
                         memberWithProjectsNotifications.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
                     }
+
+                    await CreateAndSendEmailNotificationForUser("Project", baseUrl, memberWithProjectsNotifications);
                 }
-
-                membersWithNotifcationsProjects.Add(memberWithProjectsNotifications);
             }
-
-            return membersWithNotifcationsProjects;
         }
 
         private bool IsWorkDay(DateTime date) => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday;
@@ -234,49 +224,43 @@ namespace CoralTime.BL.Services
 
         #region Added methods
 
-        private async Task SendNotificationsForMembers(List<MemberWithProjecsNotifications> membersWithProjecsNotifications, string subjectName, string baseUrl)
+        private async Task CreateAndSendEmailNotificationForUser(string subjectName, string baseUrl, MemberWithProjecsNotifications memberWithProjecsNotifications)
         {
-            if (membersWithProjecsNotifications.Any())
+            var sbEmailText = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberFullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
+
+            if (memberWithProjecsNotifications.ProjectsWithDatesEditing.Count > 1)
             {
-                foreach (var memberWithProjecsNotifications in membersWithProjecsNotifications)
-                {
-                    var sb = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberFullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
-
-                    if (memberWithProjecsNotifications.ProjectsWithDatesEditing.Count > 1)
-                    {
-                        sb.Append("the following projects:<br>");
-                    }
-
-                    var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(memberWithProjecsNotifications.MemberDateFormatId);
-
-                    var indexCurrentProject = 0;
-                    foreach (var project in memberWithProjecsNotifications.ProjectsWithDatesEditing)
-                    {
-                        var dayOrDays = project.EditionDays.EditionDays.Length > 1 ? "days" : "day";
-
-                        if (memberWithProjecsNotifications.ProjectsWithDatesEditing.Count > 1)
-                        {
-                            sb.Append($"{++indexCurrentProject}. ");
-                        }
-
-                        var editionDaysFormat = string.Join(", </b><b>", project.EditionDays.EditionDays.Select(x => x.ToString(dateFormatShort, CultureInfo.InvariantCulture)));
-                        var sbEditionDaysFormat = new StringBuilder($"<b>{editionDaysFormat}</b>");
-
-                        sb.Append($"<b>{project.ProjectWithDatesEditing.Name}</b> project for <b>{project.EditionDays.EditionDays.Length}</b> work{dayOrDays}: {sbEditionDaysFormat}.<br>");
-                    }
-
-                    sb.Append($"<p><a href=\"{baseUrl}/calendar/\">Would you like to enter your time now?</a><br><p>Best wishes, <a href=\"mailto:coraltime2017@yandex.ru\">CoralTime Team!</a>");
-
-                    var emailSenderSimpleModel = new EmailSenderSimpleModel
-                    {
-                        Subject = $"Reminder to fill time entry {memberWithProjecsNotifications.MemberEmail} by {subjectName} Settigs",
-                        ToEmail = memberWithProjecsNotifications.MemberEmail,
-                        EmailText = sb.ToString()
-                    };
-
-                    await EmailSenderSimple(_configuration, emailSenderSimpleModel);
-                }
+                sbEmailText.Append("the following projects:<br>");
             }
+
+            var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(memberWithProjecsNotifications.MemberDateFormatId);
+
+            var indexCurrentProject = 0;
+            foreach (var project in memberWithProjecsNotifications.ProjectsWithDatesEditing)
+            {
+                var dayOrDays = project.EditionDays.EditionDays.Length > 1 ? "days" : "day";
+
+                if (memberWithProjecsNotifications.ProjectsWithDatesEditing.Count > 1)
+                {
+                    sbEmailText.Append($"{++indexCurrentProject}. ");
+                }
+
+                var editionDaysFormat = string.Join(", </b><b>", project.EditionDays.EditionDays.Select(x => x.ToString(dateFormatShort, CultureInfo.InvariantCulture)));
+                var sbEditionDaysFormat = new StringBuilder($"<b>{editionDaysFormat}</b>");
+
+                sbEmailText.Append($"<b>{project.ProjectWithDatesEditing.Name}</b> project for <b>{project.EditionDays.EditionDays.Length}</b> work{dayOrDays}: {sbEditionDaysFormat}.<br>");
+            }
+
+            sbEmailText.Append($"<p><a href=\"{baseUrl}/calendar/\">Would you like to enter your time now?</a><br><p>Best wishes, <a href=\"mailto:coraltime2017@yandex.ru\">CoralTime Team!</a>");
+
+            var emailSenderSimpleModel = new EmailSenderSimpleModel
+            {
+                Subject = $"Reminder to fill time entry {memberWithProjecsNotifications.MemberEmail} by {subjectName} Settigs",
+                ToEmail = memberWithProjecsNotifications.MemberEmail,
+                EmailText = sbEmailText.ToString()
+            };
+
+            await EmailSenderSimple(_configuration, emailSenderSimpleModel);
         }
 
         #endregion
