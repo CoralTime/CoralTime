@@ -87,7 +87,7 @@ namespace CoralTime.BL.Services
             public string EmailText { get; set; }
         }
 
-        public async Task EmailSenderSimple(IConfiguration configuration, EmailSenderSimpleModel emailSenderSimpleModel)
+        private async Task EmailSenderSimple(IConfiguration configuration, EmailSenderSimpleModel emailSenderSimpleModel)
         {
             var body = new TextPart("html")
             {
@@ -103,7 +103,7 @@ namespace CoralTime.BL.Services
 
         #region ByProjects Settings.
 
-        public async Task ByProjectSettings(string baseUrl)
+        public async Task ByProjectSettingsAsync(string baseUrl)
         {
             var todayDate = DateTime.Now;
 
@@ -111,11 +111,11 @@ namespace CoralTime.BL.Services
             {
                 //CommonHelpers.SetRangeOfWorkWeekByDate(out var workWeekFirstDay, out var workWeekLastDay, todayDate);
 
-                GetMembersWithNotificationsProjects(todayDate, baseUrl);
+               await GetMembersWithNotificationsProjectsAsync(todayDate, baseUrl);
             }
         }
 
-        private async Task GetMembersWithNotificationsProjects(DateTime todayDate, string baseUrl)
+        private async Task GetMembersWithNotificationsProjectsAsync(DateTime todayDate, string baseUrl)
         {
             var currentHour = todayDate.TimeOfDay.Hours;
 
@@ -179,7 +179,7 @@ namespace CoralTime.BL.Services
                         memberWithProjectsNotifications.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
                     }
 
-                    await CreateAndSendEmailNotificationForUser("Project", baseUrl, memberWithProjectsNotifications);
+                    await CreateAndSendEmailNotificationForUserAsync("Project", baseUrl, memberWithProjectsNotifications);
                 }
             }
         }
@@ -224,7 +224,7 @@ namespace CoralTime.BL.Services
 
         #region Added methods
 
-        private async Task CreateAndSendEmailNotificationForUser(string subjectName, string baseUrl, MemberWithProjecsNotifications memberWithProjecsNotifications)
+        private async Task CreateAndSendEmailNotificationForUserAsync(string subjectName, string baseUrl, MemberWithProjecsNotifications memberWithProjecsNotifications)
         {
             var sbEmailText = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberFullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
 

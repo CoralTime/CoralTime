@@ -6,7 +6,7 @@ namespace CoralTime.BL.Interfaces
     {
         //Task ByMemberSettings();
 
-        Task ByProjectSettings(string baseUrl);
+        Task ByProjectSettingsAsync(string baseUrl);
         
         //Task CheckTasksAsync(string userName);
         //Task SendNotificationAsync(Member member, Project project);
