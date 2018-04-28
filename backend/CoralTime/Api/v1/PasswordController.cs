@@ -52,7 +52,7 @@ namespace CoralTime.Api.v1
 
         // POST: api/v1/Password/changepasswordbytoken
         [HttpPost]
-        [Route(ChangePasswordByTokenRoute)]
+        [Route(ChangePasswordByTokenWithTokenRoute)]
         public async Task<IActionResult> ChangePasswordByTokenAsync([FromBody] MemberChangePasswordByTokenView model)
         {
             var result = await _service.ChangePasswordByTokenAsync(model);
@@ -62,7 +62,7 @@ namespace CoralTime.Api.v1
 
         // GET: api/v1/Password/checkforgotpasswordtoken
         [HttpGet]
-        [Route(ChangePasswordByTokenWithTokenRoute)]
+        [Route(CheckPasswordByTokenWithTokenRoute)]
         public async Task<IActionResult> CheckForgotPasswordToken(string token)
         {
             var result = await _service.CheckForgotPasswordTokenAsync(token);
