@@ -66,6 +66,7 @@ namespace CoralTime.Common.Constants
             public const string DateFormatsRoute = "DateFormats";
             public const string ProjectMembersWithIdRoute = "ProjectMembers/" + IdRoute;
             public const string ByProjectSettingsRoute = "ByProjectSettings";
+            public const string SendWeeklyTimeEntryUpdatesRoute = "SendWeeklyTimeEntryUpdates";
             public const string CustomQueryRoute = "CustomQuery";
             public const string CustomQueryWithIdRoute = CustomQueryRoute + "/" + IdRoute;
             public const string AuthorizeRoute = "authorize";

@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using CoralTime.BL.Interfaces;
-using CoralTime.Common.Helpers;
-using CoralTime.DAL.Models;
-using CoralTime.DAL.Repositories;
-using Microsoft.Extensions.Configuration;
-using MimeKit;
+﻿using CoralTime.Common.Helpers;
+using CoralTime.ViewModels.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,94 +9,9 @@ using System.Threading.Tasks;
 
 namespace CoralTime.BL.Services
 {
-    public class NotificationsService : BaseService, INotificationService
+    public partial class NotificationsService
     {
-        private readonly IConfiguration _configuration;
-
-        public NotificationsService(UnitOfWork uow, IMapper mapper, IConfiguration configuration)
-            : base(uow, mapper)
-        {
-            _configuration = configuration;
-        }
-        
-        private class MemberWithProjecsNotifications
-        {
-            public int MemberId { get; set; }
-
-            public string MemberFullName { get; set; }
-
-            public int MemberDateFormatId { get; set; }
-
-            public string MemberEmail { get; set; }
-
-            public List<ProjectsWithDatesEditing> ProjectsWithDatesEditing { get; set; }
-
-            public MemberWithProjecsNotifications()
-            {
-                ProjectsWithDatesEditing = new List<ProjectsWithDatesEditing>();
-            }
-        }
-
-        private class ProjectsWithDatesEditing
-        {
-            public ProjectWithNotifications ProjectWithDatesEditing { get; set; }
-
-            public ProjectEditionDays EditionDays { get; set; }
-
-            public ProjectsWithDatesEditing()
-            {
-                ProjectWithDatesEditing = new ProjectWithNotifications();
-                EditionDays = new ProjectEditionDays(); 
-            }
-        }
-
-        private class ProjectEditionDays
-        {
-            public DateTime[] EditionDays { get; set; }
-
-            public DateTime NotificationPeriodFirstDay { get; set; }
-
-            public DateTime NotificationPeriodLastDay { get; set; }
-
-            public ProjectEditionDays()
-            {
-                EditionDays = new DateTime[0];
-            }
-        }
-
-        private class ProjectWithNotifications
-        {
-            public int Id { get; set; }
-
-            public string Name { get; set; }
-
-            public int NotificationDay { get; set; }
-        }
-
-        public class EmailSenderSimpleModel
-        {
-            public string Subject { get; set; }
-
-            public string ToEmail { get; set; }
-
-            public string EmailText { get; set; }
-        }
-
-        private async Task EmailSenderSimple(IConfiguration configuration, EmailSenderSimpleModel emailSenderSimpleModel)
-        {
-            var body = new TextPart("html")
-            {
-                Text = emailSenderSimpleModel.EmailText
-            };
-
-            var emailSender = new EmailSender(configuration);
-
-            emailSender.CreateSimpleMessage(emailSenderSimpleModel.ToEmail, new Multipart {body}, emailSenderSimpleModel.Subject);
-
-            await emailSender.SendMessageAsync();
-        }
-
-        #region ByProjects Settings.
+        #region ByProjectsSettings.
 
         public async Task ByProjectSettingsAsync(string baseUrl)
         {
@@ -111,7 +21,7 @@ namespace CoralTime.BL.Services
             {
                 //CommonHelpers.SetRangeOfWorkWeekByDate(out var workWeekFirstDay, out var workWeekLastDay, todayDate);
 
-               await GetMembersWithNotificationsProjectsAsync(todayDate, baseUrl);
+                await GetMembersWithNotificationsProjectsAsync(todayDate, baseUrl);
             }
         }
 
@@ -128,7 +38,7 @@ namespace CoralTime.BL.Services
                     MemberDateFormatId = member.DateFormatId,
                     MemberEmail = member.User.Email,
 
-                    Projects = member.MemberProjectRoles.Where(mpr => mpr.Project.IsNotificationEnabled && mpr.Project.IsActive && mpr.Project.IsPrivate &&mpr.Project.NotificationDay > 0)
+                    Projects = member.MemberProjectRoles.Where(mpr => mpr.Project.IsNotificationEnabled && mpr.Project.IsActive && mpr.Project.IsPrivate && mpr.Project.NotificationDay > 0)
                         .Select(x => new
                         {
                             Id = x.Project.Id,
@@ -137,7 +47,7 @@ namespace CoralTime.BL.Services
                         }).ToList()
                 }).ToList();
 
-            foreach(var member in members)
+            foreach (var member in members)
             {
                 var memberWithProjectsNotifications = new MemberWithProjecsNotifications();
 
@@ -156,7 +66,7 @@ namespace CoralTime.BL.Services
                         .Select(tEntry => tEntry.Date)
                         .ToList();
 
-                    var datesThatNotContainsTimeEntries= editionPeriodDays.Except(dateTimeEntryByNotificationRange).Select(g => g.Date.Date).ToArray();
+                    var datesThatNotContainsTimeEntries = editionPeriodDays.Except(dateTimeEntryByNotificationRange).Select(g => g.Date.Date).ToArray();
                     if (datesThatNotContainsTimeEntries.Length > 0)
                     {
                         var projectWithDatesEditing = new ProjectsWithDatesEditing
@@ -220,10 +130,6 @@ namespace CoralTime.BL.Services
         //    return lastDayEditionRange;
         //}
 
-        #endregion
-
-        #region Added methods
-
         private async Task CreateAndSendEmailNotificationForUserAsync(string subjectName, string baseUrl, MemberWithProjecsNotifications memberWithProjecsNotifications)
         {
             var sbEmailText = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberFullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
@@ -265,4 +171,4 @@ namespace CoralTime.BL.Services
 
         #endregion
     }
-} 
+}

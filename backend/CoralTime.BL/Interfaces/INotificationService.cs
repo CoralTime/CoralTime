@@ -7,7 +7,8 @@ namespace CoralTime.BL.Interfaces
         //Task ByMemberSettings();
 
         Task ByProjectSettingsAsync(string baseUrl);
-        
+
+        Task SendWeeklyTimeEntryUpdates();
         //Task CheckTasksAsync(string userName);
         //Task SendNotificationAsync(Member member, Project project);
     }
