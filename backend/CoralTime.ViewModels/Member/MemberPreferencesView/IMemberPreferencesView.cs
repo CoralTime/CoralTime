@@ -15,5 +15,7 @@
         int TimeFormat { get; set; }
 
         int WeekStart { get; set; }
+
+        bool IsWeeklyTimeEntryUpdatesSend { get; set; }
     }
 }

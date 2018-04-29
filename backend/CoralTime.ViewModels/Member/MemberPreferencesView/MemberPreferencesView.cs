@@ -18,5 +18,7 @@ namespace CoralTime.ViewModels.Member.MemberPreferencesView
         public int TimeFormat { get; set; }
 
         public int WeekStart { get; set; }
+
+        public bool IsWeeklyTimeEntryUpdatesSend { get; set; }
     }
 }
