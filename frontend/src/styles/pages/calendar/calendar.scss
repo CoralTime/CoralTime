@@ -629,6 +629,7 @@ $calendarPhoneWidth: 809px;
     $oneDayWidth: calc(100% / 7 - 37px / 7);
 
     .ct-calendar-day {
+      position: relative;
       width: $oneDayWidth;
 
       .ct-calendar-day-title {
@@ -639,7 +640,9 @@ $calendarPhoneWidth: 809px;
       }
 
       .ct-calendar-day-container {
-        height: calc(100% - 65px);
+        position: absolute;
+        height: 100%;
+        width: 100%;
         white-space: initial;
 
         .ct-calendar-day-tasks {
