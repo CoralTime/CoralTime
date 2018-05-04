@@ -20,6 +20,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	@HostBinding('class.ct-calendar-weekly-view') addClass: boolean = true;
 
 	animationState: string;
+	animationDisabled: boolean = false;
 	calendar: CalendarDay[];
 	date: string;
 	daysInCalendar: number;
@@ -55,12 +56,12 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 			this.triggerAnimation(oldDate, this.date);
 			this.setAvailablePeriod(window.innerWidth);
-			this.getTimeEntries(this.projectIds);
+			this.getTimeEntries(this.projectIds, params['date'] && oldDate === this.date);
 		});
 
 		this.timeEntriesSubscription = this.calendarService.timeEntriesUpdated
 			.subscribe(() => {
-				this.getTimeEntries(this.projectIds);
+				this.getTimeEntries(this.projectIds, true);
 			});
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
 			if (this.authService.isLoggedIn()) {
@@ -79,15 +80,19 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		return this.formatTimeToString(time);
 	}
 
-	getTimeEntries(projIds?: number[]): void {
+	getTimeEntries(projIds?: number[], disableAnimation: boolean = false): void {
+		this.animationDisabled = disableAnimation;
 		this.calendarService.getTimeEntries(this.startDay, this.daysInCalendar)
+			.finally(() => setTimeout(() => this.animationDisabled = false, 500))
 			.subscribe((res) => {
 				this.timeEntries = res;
+
 				if (projIds) {
 					this.filterByProject(projIds);
 				} else {
 					this.filterByProject();
 				}
+
 				this.sortTimeEntriesByDate();
 			});
 	}

@@ -52,7 +52,7 @@ namespace CoralTime.Api.v1
 
         // POST: api/v1/Password/changepasswordbytoken
         [HttpPost]
-        [Route(ChangePasswordByTokenWithTokenRoute)]
+        [Route(ChangePasswordByTokenRoute)]
         public async Task<IActionResult> ChangePasswordByTokenAsync([FromBody] MemberChangePasswordByTokenView model)
         {
             var result = await _service.ChangePasswordByTokenAsync(model);

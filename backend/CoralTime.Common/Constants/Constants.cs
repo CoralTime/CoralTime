@@ -43,7 +43,7 @@ namespace CoralTime.Common.Constants
 
         public static class Routes
         {
-            public const string BaseControllerRoute = "api/v1/[controller]";
+            public const string BaseControllerRoute = BaseApiRoute + "[controller]";
             public const string IdRoute = "{id}";
             public const string IdRouteWithMembers = IdRoute + WithMembers;
             public const string IdRouteWithProjects = IdRoute + WithProjects;
@@ -53,7 +53,6 @@ namespace CoralTime.Common.Constants
             public const string SaveImagesFromDbToStaticFilesRoute = "SaveImagesFromDbToStaticFiles";
             public const string SendForgotEmailRoute = "sendforgotemail/{email}";
             public const string ChangePasswordByTokenRoute = "changepasswordbytoken";
-            public const string ChangePasswordByTokenWithTokenRoute = ChangePasswordByTokenRoute + WithToken;
             public const string CheckPasswordByTokenRoute = "checkforgotpasswordtoken";
             public const string CheckPasswordByTokenWithTokenRoute = CheckPasswordByTokenRoute + WithToken;
             public const string MemberRoute = "Member(" + IdRoute + ")";
@@ -84,10 +83,11 @@ namespace CoralTime.Common.Constants
             private const string WithPersonalInfo = "/PersonalInfo";
             private const string WithUrlAvatar = "/UrlAvatar";
             private const string WithToken = "/{token}";
+            private const string BaseApiRoute = "api/v1/";
             
             public static class OData
             {
-                public const string BaseODataRoute = "api/v1/odata";
+                public const string BaseODataRoute = BaseApiRoute + "odata";
                 public const string BaseODataControllerRoute = BaseODataRoute + "/[controller]";
                 public const string TasksWithIdRoute = "Tasks(" + IdRoute + ")";
                 public const string ClientsWithIdRoute = "Clients(" + IdRoute + ")";
