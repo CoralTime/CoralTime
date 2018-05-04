@@ -16,6 +16,10 @@ body, html {
   color: $nav-background;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 ul, li {
   margin: 0;
   list-style: none;
