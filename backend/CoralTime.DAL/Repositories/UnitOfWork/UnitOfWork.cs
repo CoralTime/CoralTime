@@ -19,7 +19,7 @@ namespace CoralTime.DAL.Repositories
 
         public Member MemberCurrent { get; }
 
-        public Member MemberImpersonated { get; }
+        public Member MemberImpersonated { get; set; }
 
         private readonly AppDbContext _context;
         private readonly IMemoryCache _memoryCache;
@@ -27,10 +27,7 @@ namespace CoralTime.DAL.Repositories
         public readonly string CurrentUserName;
         public readonly string ImpersonatedUserName;
 
-        public UnitOfWork(
-            AppDbContext appDbcontext,
-            IMemoryCache memoryCache,
-            IHttpContextAccessor httpContextAccessor)
+        public UnitOfWork(AppDbContext appDbcontext, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
         {
             _memoryCache = memoryCache;
             _context = appDbcontext;

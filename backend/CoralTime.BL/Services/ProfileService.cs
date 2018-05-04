@@ -2,14 +2,12 @@
 using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
-using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.ConvertModelToView.Profile;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.DateFormat;
 using CoralTime.ViewModels.Member;
-using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
 using CoralTime.ViewModels.Profiles;
@@ -141,24 +139,24 @@ namespace CoralTime.BL.Services
             return profileProjectMemberView;
         }
 
-        public MemberView PatchNotifications(MemberNotificationView memberNotificationView)
-        {
-            CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
-            memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
-            memberByName.SendEmailTime = memberNotificationView.SendEmailTime;
-            memberByName.SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(memberNotificationView.SendEmailDays);
-            memberByName.IsWeeklyTimeEntryUpdatesSend = memberNotificationView.IsWeeklyTimeEntryUpdatesSend;
+        //public MemberView PatchNotifications(MemberNotificationView memberNotificationView)
+        //{
+        //    CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
+        //    memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
+        //    memberByName.SendEmailTime = memberNotificationView.SendEmailTime;
+        //    memberByName.SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(memberNotificationView.SendEmailDays);
+        //    memberByName.IsWeeklyTimeEntryUpdatesSend = memberNotificationView.IsWeeklyTimeEntryUpdatesSend;
 
-            Uow.MemberRepository.Update(memberByName);
-            Uow.Save();
+        //    Uow.MemberRepository.Update(memberByName);
+        //    Uow.Save();
 
-            Uow.MemberRepository.LinkedCacheClear();
+        //    Uow.MemberRepository.LinkedCacheClear();
 
-            var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
-            var memberView = memberByName.GetView(Mapper, urlIcon);
+        //    var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
+        //    var memberView = memberByName.GetView(Mapper, urlIcon);
 
-            return memberView;
-        }
+        //    return memberView;
+        //}
 
         public MemberView PatchPreferences(MemberPreferencesView memberPreferencesView)
         {
@@ -169,7 +167,8 @@ namespace CoralTime.BL.Services
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;
             memberByName.TimeFormat = memberPreferencesView.TimeFormat;
             memberByName.WeekStart = (WeekStart)memberPreferencesView.WeekStart;
-     
+            memberByName.IsWeeklyTimeEntryUpdatesSend = memberPreferencesView.IsWeeklyTimeEntryUpdatesSend;
+
             Uow.MemberRepository.Update(memberByName);
             Uow.Save();
 

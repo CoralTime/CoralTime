@@ -10,7 +10,5 @@ namespace CoralTime.ViewModels.Member.MemberNotificationView
         public int SendEmailTime { get; set; }
 
         public string SendEmailDays { get; set; }
-
-        public bool IsWeeklyTimeEntryUpdatesSend { get; set; }
     }
 }

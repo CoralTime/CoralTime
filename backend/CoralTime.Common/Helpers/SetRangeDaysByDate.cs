@@ -28,7 +28,7 @@ namespace CoralTime.Common.Helpers
             yearDateEnd = new DateTime(day.Year + 1, 1, 1).AddMilliseconds(-1);
         }
 
-        public static void SetRangeOfLastWeekByDate(out DateTime lastWeekStart, out DateTime lastWeekEnd, DateTime dayOfWeek, DayOfWeek startOfWeek)
+        public static void SetRangeOfLastWeekByDate(out DateTime lastWeekStart, out DateTime lastWeekEnd, DateTime dayOfWeek, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
             SetRangeOfThisWeekByDate(out lastWeekStart, out lastWeekEnd, dayOfWeek, startOfWeek);
 
@@ -57,6 +57,13 @@ namespace CoralTime.Common.Helpers
             SetRangeOfThisWeekByDate(out workWeekDateStart, out workWeekDateEnd, dayOfWeek);
 
             workWeekDateEnd = workWeekDateEnd.AddDays(-2);
+        }
+
+        public static void SetRangeOfLastWorkWeekByDate(out DateTime lastWorkWeekStart, out DateTime lastWorkWeekEnd, DateTime dayOfWeek, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        {
+            SetRangeOfLastWeekByDate(out lastWorkWeekStart, out lastWorkWeekEnd, dayOfWeek, startOfWeek);
+
+            lastWorkWeekEnd = lastWorkWeekEnd.AddDays(-2);
         }
     }
 }
