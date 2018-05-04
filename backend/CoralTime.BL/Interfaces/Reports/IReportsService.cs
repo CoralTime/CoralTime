@@ -11,5 +11,7 @@ namespace CoralTime.BL.Interfaces.Reports
         ReportDropDownView GetReportsDropDowns();
 
         ReportTotalView GetReportsGrid(ReportsGridView reportsGridView);
+
+        void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView);
     }
 }

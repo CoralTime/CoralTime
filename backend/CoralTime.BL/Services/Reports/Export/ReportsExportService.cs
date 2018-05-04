@@ -41,13 +41,6 @@ namespace CoralTime.BL.Services.Reports.Export
         private const string ContentTypeCSV = "application/csv";
         private const string ContentTypePDF = "application/pdf";
 
-        private enum FileType
-        {
-            Excel = 0,
-            CSV = 1,
-            PDF = 2
-        }
-
         #endregion
 
         #region Properties. 
@@ -83,7 +76,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
             switch (reportsGridView.FileTypeId ?? 0)
             {
-                case (int) FileType.Excel:
+                case (int) Constants.FileType.Excel:
                 {
                     FileName = FileName + ExtensionXLSX;
                     fileOfBytes = CreateFileExcel(reportTotalView);
@@ -92,7 +85,7 @@ namespace CoralTime.BL.Services.Reports.Export
                     break;
                 }
 
-                case (int) FileType.CSV:
+                case (int) Constants.FileType.CSV:
                 {
                     FileName = FileName + ExtensionCSV;
                     //file = CreateFileCSV(reportTotalView);
@@ -101,7 +94,7 @@ namespace CoralTime.BL.Services.Reports.Export
                     break;
                 }
 
-                case (int) FileType.PDF:
+                case (int) Constants.FileType.PDF:
                 {
                     FileName = FileName + ExtensionPDF;
                     fileOfBytes = await CreateFilePDFAsync(reportTotalView);

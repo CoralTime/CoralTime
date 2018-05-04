@@ -17,8 +17,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public ReportTotalView GetReportsGrid(ReportsGridView reportsGridView)
         {
-            CheckAndSaveCurrentQuery(reportsGridView);
-
             var dateFrom = reportsGridView.CurrentQuery.DateFrom;
             var dateTo = reportsGridView.CurrentQuery.DateTo;
 
@@ -79,7 +77,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return reportTotalView;
         }
 
-        private void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView)
+        public void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView)
         {
             var queryDateFrom = reportsGridView.CurrentQuery.DateFrom;
             var queryDateTo = reportsGridView.CurrentQuery.DateTo;

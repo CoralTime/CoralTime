@@ -18,7 +18,15 @@ namespace CoralTime.Api.v1
         [Route(ByProjectSettingsRoute)]
         public async Task<IActionResult> ByProjectSettings()
         {
-            await _service.ByProjectSettings(GetBaseUrl());
+            await _service.ByProjectSettingsAsync(GetBaseUrl());
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route(SendWeeklyTimeEntryUpdatesRoute)]
+        public async Task<IActionResult> SendWeeklyTimeEntryUpdates()
+        {
+            await _service.SendWeeklyTimeEntryUpdatesAsync(GetBaseUrl());
             return Ok();
         }
     }

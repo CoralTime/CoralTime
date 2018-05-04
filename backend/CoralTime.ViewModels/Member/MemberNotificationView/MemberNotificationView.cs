@@ -7,7 +7,5 @@
         int SendEmailTime { get; set; }
 
         string SendEmailDays { get; set; }
-
-        bool IsWeeklyTimeEntryUpdatesSend { get; set; }
     }
 }

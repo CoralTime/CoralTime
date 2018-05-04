@@ -53,7 +53,9 @@ namespace CoralTime.Common.Constants
             public const string SaveImagesFromDbToStaticFilesRoute = "SaveImagesFromDbToStaticFiles";
             public const string SendForgotEmailRoute = "sendforgotemail/{email}";
             public const string ChangePasswordByTokenRoute = "changepasswordbytoken";
-            public const string ChangePasswordByTokenWithTokenRoute = ChangePasswordByTokenRoute + "/{token}";
+            public const string ChangePasswordByTokenWithTokenRoute = ChangePasswordByTokenRoute + WithToken;
+            public const string CheckPasswordByTokenRoute = "checkforgotpasswordtoken";
+            public const string CheckPasswordByTokenWithTokenRoute = CheckPasswordByTokenRoute + WithToken;
             public const string MemberRoute = "Member(" + IdRoute + ")";
             public const string MemberRouteWithNotifications = MemberRoute + WithNotifications;
             public const string MemberRouteWithPreferences = MemberRoute + WithPreferences;
@@ -64,6 +66,7 @@ namespace CoralTime.Common.Constants
             public const string DateFormatsRoute = "DateFormats";
             public const string ProjectMembersWithIdRoute = "ProjectMembers/" + IdRoute;
             public const string ByProjectSettingsRoute = "ByProjectSettings";
+            public const string SendWeeklyTimeEntryUpdatesRoute = "SendWeeklyTimeEntryUpdates";
             public const string CustomQueryRoute = "CustomQuery";
             public const string CustomQueryWithIdRoute = CustomQueryRoute + "/" + IdRoute;
             public const string AuthorizeRoute = "authorize";
@@ -74,14 +77,13 @@ namespace CoralTime.Common.Constants
             public const string PingRoute = "ping";
             public const string PingdatabaseRoute = "pingdatabase";
             
-            
-            
             private const string WithMembers = "/members";
             private const string WithProjects = "/projects";
             private const string WithNotifications = "/Notifications";
             private const string WithPreferences = "/Preferences";
             private const string WithPersonalInfo = "/PersonalInfo";
             private const string WithUrlAvatar = "/UrlAvatar";
+            private const string WithToken = "/{token}";
             
             public static class OData
             {
@@ -100,7 +102,6 @@ namespace CoralTime.Common.Constants
         }
 
         #endregion
-
 
         #region ProjectRoles
 
@@ -128,6 +129,13 @@ namespace CoralTime.Common.Constants
         public static string EnvName { get; set; }
         
         public const string CoralTime = "CoralTime";
+
+        public enum FileType
+        {
+            Excel = 0,
+            CSV = 1,
+            PDF = 2
+        }
 
         public enum LockTimePeriod
         {

@@ -1,6 +1,4 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.BL.Services;
-using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
 using Microsoft.AspNetCore.Authorization;
@@ -35,13 +33,13 @@ namespace CoralTime.Api.v1
         #region Notifications Preferences PersonalInfo
 
         // PATCH: api/v1/Profile/Member(3066)/Notifications
-        [HttpPatch(MemberRouteWithNotifications)]
-        public IActionResult Patch(int id, [FromBody]MemberNotificationView memberNotificationView)
-        {
-            memberNotificationView.Id = id;
+        //[HttpPatch(MemberRouteWithNotifications)]
+        //public IActionResult Patch(int id, [FromBody]MemberNotificationView memberNotificationView)
+        //{
+        //    memberNotificationView.Id = id;
 
-            return Ok(_service.PatchNotifications(memberNotificationView));
-        }
+        //    return Ok(_service.PatchNotifications(memberNotificationView));
+        //}
 
         // PATCH: api/v1/Profile/Member(3066)/Preferences
         [HttpPatch(MemberRouteWithPreferences)]

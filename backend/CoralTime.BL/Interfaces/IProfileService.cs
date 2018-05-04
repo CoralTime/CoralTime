@@ -1,6 +1,5 @@
 ﻿using CoralTime.ViewModels.DateFormat;
 using CoralTime.ViewModels.Member;
-using CoralTime.ViewModels.Member.MemberNotificationView;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
 using CoralTime.ViewModels.Profiles;
@@ -16,7 +15,7 @@ namespace CoralTime.BL.Interfaces
 
         IEnumerable<ProjectMembersView> GetProjectMembers(int projectId);
 
-        MemberView PatchNotifications(MemberNotificationView memberNotificationView);
+        //MemberView PatchNotifications(MemberNotificationView memberNotificationView);
 
         MemberView PatchPreferences(MemberPreferencesView memberPreferencesView);
 
