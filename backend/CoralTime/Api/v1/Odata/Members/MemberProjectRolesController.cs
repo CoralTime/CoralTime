@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using static CoralTime.Common.Constants.Constants.Routes;
+using static CoralTime.Common.Constants.Constants.Routes.OData;
 
 namespace CoralTime.Api.v1.Odata.Members
 {
-    [Route("api/v1/odata/[controller]")]
+    [Route(BaseODataControllerRoute)]
     [Authorize]
     public class MemberProjectRolesController : BaseODataController<MemberProjectRolesController, IMemberProjectRoleService>
     {
@@ -26,13 +28,13 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // GET api/v1/odata/MemberProjectRoles(2)
-        [ODataRoute("MemberProjectRoles({id})")]
-        [HttpGet("{id}")]
+        [ODataRoute(MemberProjectRolesWithIdRoute)]
+        [HttpGet(IdRoute)]
         public IActionResult GetById([FromODataUri]int id)
         {
             try
@@ -41,13 +43,13 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // GET api/v1/odata/MemberProjectRoles(2)/members
-        [ODataRoute("MemberProjectRoles({id})/members")]
-        [HttpGet("{id}/members")]
+        [ODataRoute(MemberProjectRolesRouteWithMembers)]
+        [HttpGet(IdRouteWithMembers)]
         public IActionResult GetNotAssignMembersAtProjByProjectId([FromODataUri] int id)
         {
             try
@@ -56,13 +58,13 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // GET api/v1/odata/MemberProjectRoles(2)/projects
-        [ODataRoute("MemberProjectRoles({id})/projects")]
-        [HttpGet("{id}/projects")]
+        [ODataRoute(MemberProjectRolesRouteWithProjects)]
+        [HttpGet(IdRouteWithProjects)]
         public IActionResult GetNotAssignMembersAtProjByMemberId([FromODataUri] int id)
         {
             try
@@ -71,7 +73,7 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
@@ -82,19 +84,19 @@ namespace CoralTime.Api.v1.Odata.Members
             try
             {
                 var value = _service.Create(projectRole);
-                var locationUri = $"{Request.Host}/api/v1/odata/MemberProjectRoles({value.Id})";
+                var locationUri = $"{Request.Host}/{BaseODataRoute}/MemberProjectRoles({value.Id})";
 
                 return Created(locationUri, value);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PUT: api/v1/odata/MemberProjectRoles(2)
-        [ODataRoute("MemberProjectRoles({id})")]
-        [HttpPut("{id}")]
+        [ODataRoute(MemberProjectRolesWithIdRoute)]
+        [HttpPut(IdRoute)]
         public IActionResult Update([FromODataUri] int id, [FromBody]dynamic projectRole)
         {
             projectRole.Id = id;
@@ -106,13 +108,13 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PATCH: api/v1/odata/MemberProjectRoles(2)
-        [ODataRoute("MemberProjectRoles({id})")]
-        [HttpPatch("{id}")]
+        [ODataRoute(MemberProjectRolesWithIdRoute)]
+        [HttpPatch(IdRoute)]
         public IActionResult Patch([FromODataUri] int id, [FromBody] MemberProjectRoleView projectRole)
         {
             projectRole.Id = id;
@@ -124,13 +126,13 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         //DELETE :api/v1/odata/MemberProjectRoles(1)
-        [ODataRoute("MemberProjectRoles({id})")]
-        [HttpDelete("{id}")]
+        [ODataRoute(MemberProjectRolesWithIdRoute)]
+        [HttpDelete(IdRoute)]
         public IActionResult Delete([FromODataUri] int id)
         {
             try
@@ -141,7 +143,7 @@ namespace CoralTime.Api.v1.Odata.Members
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
     }

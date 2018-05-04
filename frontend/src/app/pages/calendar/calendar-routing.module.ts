@@ -10,6 +10,9 @@ const routes: Routes = [
 	{
 		path: '',
 		component: CalendarComponent,
+		data: {
+			title: 'Calendar'
+		},
 		resolve: {
 			user: UserInfoResolve
 		},

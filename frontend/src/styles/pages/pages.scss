@@ -18,6 +18,7 @@ html, body {
 }
 
 .ct-content {
+  overflow: hidden;
   padding: 70px 20px 0;
   background: $gray-page-background;
 }

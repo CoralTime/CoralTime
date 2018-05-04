@@ -27,5 +27,7 @@ namespace CoralTime.Api.v1
         {
             _logger = logger;
         }
+        
+        protected string GetBaseUrl() => $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
     }
 }

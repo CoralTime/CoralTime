@@ -2,7 +2,8 @@
 using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
-using CoralTime.Common.Helpers;
+using CoralTime.DAL.ConvertModelToView;
+using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Tasks;
@@ -17,116 +18,86 @@ namespace CoralTime.BL.Services
         public TasksService(UnitOfWork uow, IMapper mapper) 
             : base(uow, mapper) { }
 
-        public IEnumerable<TaskType> GetAllTaskTypes()
-        {
-            return Uow.TaskTypeRepository.LinkedCacheGetList();
-        }
+        public IEnumerable<TaskTypeView> Get() => Uow.TaskTypeRepository.LinkedCacheGetList().Select(x=>x.GetView(Mapper));
 
-        public TaskType GetById(int id)
+        public TaskTypeView GetById(int id)
         {
-            var result = Uow.TaskTypeRepository.LinkedCacheGetList().FirstOrDefault(t => t.Id == id);
+            var taskType = Uow.TaskTypeRepository.LinkedCacheGetById(id);
 
-            if (result == null)
+            if (taskType == null)
             {
-                throw new CoralTimeEntityNotFoundException($"TimeEntryType with id {id} not found");
+                throw new CoralTimeEntityNotFoundException($"Task with id {id} not found");
             }
 
-            return result;
+            return taskType.GetView(Mapper);
         }
 
-        public TaskType Create(TaskView taskTypeData)
+        public TaskTypeView Create(TaskTypeView taskTypeView)
         {
-            if (!IsNameUnique(taskTypeData.Name, taskTypeData.ProjectId))
+            IsTaskTypeNameHasChars(taskTypeView.Name);
+            IsNameUnique(taskTypeView);
+
+            if (taskTypeView.ProjectId != null && !ApplicationUserCurrent.IsAdmin)
             {
-                throw new CoralTimeAlreadyExistsException($"Task with name {taskTypeData.Name} already exist");
-            }
-
-            var user = Uow.UserRepository.LinkedCacheGetByName(CurrentUserName);
-
-            if (taskTypeData.ProjectId != null && !user.IsAdmin)
-            {
-                var project = Uow.ProjectRepository.GetById(taskTypeData.ProjectId);
-
-                if (project == null)
+                if (taskTypeView.ProjectId != null)
                 {
-                    throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeData.ProjectId} not found");
-                }
+                    var project = Uow.ProjectRepository.LinkedCacheGetById((int) taskTypeView.ProjectId);
+                    if (project == null)
+                    {
+                        throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeView.ProjectId} not found");
+                    }
 
-                var member = Uow.MemberRepository.LinkedCacheGetByName(CurrentUserName);
+                    var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
-                if (member == null)
-                {
-                    throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found");
-                }
-
-                var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
-
-                var memberProjectRole = Uow.MemberProjectRoleRepository.GetQueryWithIncludes()
-                    .FirstOrDefault(r => r.MemberId == member.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
-
-                if (memberProjectRole == null)
-                {
-                    throw new CoralTimeForbiddenException("Forbidden");
+                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == MemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                    if (memberProjectRole == null)
+                    {
+                        throw new CoralTimeForbiddenException("Forbidden");
+                    }
                 }
             }
 
-            var timeEntryType = Mapper.Map<TaskView, TaskType>(taskTypeData);
-            timeEntryType.IsActive = true;
+            var taskType = taskTypeView.GetModel(Mapper, true);
 
-            try
-            {
-                Uow.TaskTypeRepository.Insert(timeEntryType);
-                Uow.Save();
-                ClearCache();
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while creating timeEntryType", e);
-            }
+            Uow.TaskTypeRepository.Insert(taskType);
+            Uow.Save();
+            Uow.TaskTypeRepository.LinkedCacheClear();
 
-            var result = Uow.TaskTypeRepository.GetById(timeEntryType.Id);
-            return result;
+            return Uow.TaskTypeRepository.LinkedCacheGetById(taskType.Id).GetView(Mapper);
         }
 
-        public TaskType Update(dynamic taskTypeData)
+        public TaskTypeView Update(TaskTypeView taskTypeView)
         {
-            var timeEntryType = Uow.TaskTypeRepository.GetById((int)taskTypeData.Id);
-            if (timeEntryType == null)
+            IsTaskTypeNameHasChars(taskTypeView.Name);
+            IsNameUnique(taskTypeView);
+
+            var taskType = Uow.TaskTypeRepository.GetQueryWithIncludesById(taskTypeView.Id);
+            if (taskType == null)
             {
-                throw new CoralTimeEntityNotFoundException($"timeEntryType with id {taskTypeData.Id} not found");
+                throw new CoralTimeEntityNotFoundException($"TaskType with id {taskTypeView.Id} not found");
             }
 
             #region We shouldn't change projectId for Tasks
 
-            if (timeEntryType.ProjectId != (int?)taskTypeData["projectId"])
+            if (taskType.ProjectId != taskTypeView.ProjectId)
             {
-                taskTypeData["projectId"] = timeEntryType.ProjectId;
+                taskTypeView.ProjectId = taskType.ProjectId;
             }
 
             #endregion We shouldn't change projectId for Tasks
 
-            var user = Uow.UserRepository.LinkedCacheGetByName(CurrentUserName);
-
-            if (taskTypeData["projectId"] != null && !user.IsAdmin)
+            if (taskTypeView.ProjectId != null && !ApplicationUserCurrent.IsAdmin)
             {
-                var project = Uow.ProjectRepository.GetById((int)taskTypeData.ProjectId);
-
+                var project = Uow.ProjectRepository.LinkedCacheGetById((int)taskTypeView.ProjectId);
                 if (project == null)
                 {
-                    throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeData.ProjectId} not found");
-                }
-
-                var member = Uow.MemberRepository.LinkedCacheGetByName(CurrentUserName);
-
-                if (member == null)
-                {
-                    throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found");
+                    throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeView.ProjectId} not found");
                 }
 
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
-                var memberProjectRole = Uow.MemberProjectRoleRepository.GetQueryWithIncludes()
-                    .FirstOrDefault(r => r.MemberId == member.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
+                    .FirstOrDefault(r => r.MemberId == MemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
 
                 if (memberProjectRole == null)
                 {
@@ -134,106 +105,22 @@ namespace CoralTime.BL.Services
                 }
             }
 
-            if (taskTypeData["isActive"] != null && !(bool)taskTypeData["isActive"])
+            if (!taskTypeView.IsActive)
             {
-                var timeEntries = Uow.TimeEntryRepository
-                    .GetQueryWithIncludes()
-                    .Where(t => t.TaskTypesId == timeEntryType.Id && t.Date.Date == DateTime.Now.Date)
+                var timeEntries = Uow.TimeEntryRepository.GetQueryWithIncludes()
+                    .Where(t => t.TaskTypesId == taskType.Id && t.Date.Date == DateTime.Now.Date)
                     .ToList();
 
                 timeEntries.ForEach(t => t.StopTimer());
             }
 
-            UpdateService<TaskType>.UpdateObject(taskTypeData, timeEntryType);
+            UpdateValuesForTaskType(taskType, taskTypeView);
 
-            try
-            {
-                Uow.TaskTypeRepository.Update(timeEntryType);
-                Uow.Save();
-                ClearCache();
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating timeEntryType", e);
-            }
+            Uow.TaskTypeRepository.Update(taskType);
+            Uow.Save();
+            Uow.TaskTypeRepository.LinkedCacheClear();
 
-            var result = Uow.TaskTypeRepository.GetById(timeEntryType.Id);
-
-            return result;
-        }
-
-        public TaskType Patch(dynamic taskTypeData)
-        {
-            var timeEntryType = Uow.TaskTypeRepository.GetById((int)taskTypeData.Id);
-            if (timeEntryType == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"timeEntryType with id {taskTypeData.Id} not found");
-            }
-
-            #region We shouldn't change projectId for Tasks
-
-            if (timeEntryType.ProjectId != (int?)taskTypeData["projectId"])
-            {
-                taskTypeData["projectId"] = timeEntryType.ProjectId;
-            }
-
-            #endregion We shouldn't change projectId for Tasks
-
-            var user = Uow.UserRepository.LinkedCacheGetByName(CurrentUserName);
-
-            if (taskTypeData.ProjectId != null && !user.IsAdmin)
-            {
-                var project = Uow.ProjectRepository.GetById((int)taskTypeData.ProjectId);
-
-                if (project == null)
-                {
-                    throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeData.ProjectId} not found");
-                }
-
-                var member = Uow.MemberRepository.LinkedCacheGetByName(CurrentUserName);
-
-                if (member == null)
-                {
-                    throw new CoralTimeEntityNotFoundException($"Member with userName {CurrentUserName} not found");
-                }
-
-                var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
-
-                var memberProjectRole = Uow.MemberProjectRoleRepository.GetQueryWithIncludes()
-                    .FirstOrDefault(r => r.MemberId == member.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
-
-                if (memberProjectRole == null)
-                {
-                    throw new CoralTimeForbiddenException("Forbidden");
-                }
-            }
-
-            if (taskTypeData["isActive"] != null && !(bool)taskTypeData["isActive"])
-            {
-                var timeEntries = Uow.TimeEntryRepository
-                    .GetQueryWithIncludes()
-                    .Where(t => t.TaskTypesId == timeEntryType.Id && t.Date.Date == DateTime.Now.Date)
-                    .ToList();
-
-                timeEntries.ForEach(t => t.StopTimer());
-            }
-
-            UpdateService<TaskType>.UpdateObject(taskTypeData, timeEntryType);
-
-            try
-            {
-                Uow.TaskTypeRepository.Update(timeEntryType);
-                Uow.Save();
-                ClearCache();
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while updating timeEntryType", e);
-            }
-
-            var result = Uow.TaskTypeRepository.GetById(timeEntryType.Id);
-
-            return result;
+            return Uow.TaskTypeRepository.LinkedCacheGetById(taskType.Id).GetView(Mapper);
         }
 
         public bool Delete(int id)
@@ -244,31 +131,49 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException("timeEntryType with id " + $"{id} not found or is not active");
             }
 
-            try
-            {
-                Uow.TaskTypeRepository.Delete(timeEntryType.Id);
-                Uow.Save();
-                ClearCache();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw new CoralTimeDangerException("An error occurred while deleting timeEntryType", e);
-            }
-        }
-
-        private bool IsNameUnique(string name, int? projectId)
-        {
-            var task = Uow.TaskTypeRepository.GetQueryWithIncludes()
-                .FirstOrDefault(t => t.IsActive
-                && t.Name == name
-                && (t.ProjectId == projectId || t.ProjectId == null));
-            return task == null;
-        }
-
-        private void ClearCache()
-        {
+            Uow.TaskTypeRepository.Delete(timeEntryType.Id);
+            Uow.Save();
             Uow.TaskTypeRepository.LinkedCacheClear();
+
+            return true;
+        }
+
+        private void UpdateValuesForTaskType(TaskType taskType, TaskTypeView taskTypeView)
+        {
+            #region #1. Update related entites. 
+
+            taskType.ProjectId = taskTypeView.ProjectId;
+
+            #endregion
+
+            #region #2. Update other values.
+
+            taskType.Name = taskTypeView.Name;
+            taskType.IsActive = taskTypeView.IsActive;
+            taskType.Color = taskTypeView.Color;
+            taskType.Description = taskTypeView.Description;
+
+            #endregion
+        }
+
+        private void IsNameUnique(TaskTypeView taskTypeView)
+        {
+            var isNameUnique = Uow.TaskTypeRepository.LinkedCacheGetList()
+                                   .FirstOrDefault(task => task.IsActive && task.Name == taskTypeView.Name 
+                                                                         && (task.ProjectId == taskTypeView.ProjectId || task.ProjectId == null)) == null;
+
+            if (!isNameUnique)
+            {
+                throw new CoralTimeAlreadyExistsException($"Task with name {taskTypeView.Name} already exist");
+            }
+        }
+
+        private void IsTaskTypeNameHasChars(string taskTypeViewName)
+        {
+            if (string.IsNullOrWhiteSpace(taskTypeViewName) && string.IsNullOrEmpty(taskTypeViewName))
+            {
+                throw new CoralTimeAlreadyExistsException($"Task Name cannot be null or empty or whitespace.");
+            }
         }
     }
 }

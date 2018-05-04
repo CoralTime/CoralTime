@@ -14,7 +14,7 @@
                 <div class="ct-form-block">
                     <div class="ct-form-header" (click)="toggleForm(0)">
                         <a class="ct-add-button">
-                            <i class="material-icons">{{isFormShownArray[0] ? "keyboard_arrow_up" : "add"}}</i>
+                            <i class="material-icons">{{isFormShownArray[0] ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</i>
                         </a>
                         <span class="ct-link-text">{{isFormShownArray[0] ? "Hide Personal Info" : "Show Personal Info"}}</span>
                     </div>
@@ -59,7 +59,7 @@
                 <div class="ct-form-block">
                     <div class="ct-form-header" (click)="toggleForm(1)">
                         <a class="ct-add-button">
-                            <i class="material-icons">{{isFormShownArray[1] ? "keyboard_arrow_up" : "add"}}</i>
+                            <i class="material-icons">{{isFormShownArray[1] ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</i>
                         </a>
                         <span class="ct-link-text">{{isFormShownArray[1] ? "Hide Preferences" : "Show Preferences"}}</span>
                     </div>
@@ -117,6 +117,12 @@
                             </ct-select>
                         </div>
 
+                        <div>
+                            <mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
+                                Send weekly time entry updates
+                            </mat-checkbox>
+                        </div>
+
                         <button mat-raised-button class="ct-button ct-blue-button" [disabled]="!preferencesForm.valid">
                             Save Preferences
                         </button>
@@ -126,7 +132,7 @@
                 <!--<div class="ct-form-block">-->
                     <!--<div class="ct-form-header" (click)="toggleForm(2)">-->
                         <!--<a class="ct-add-button">-->
-                            <!--<i class="material-icons">{{isFormShownArray[2] ? "keyboard_arrow_up" : "add"}}</i>-->
+                            <!--<i class="material-icons">{{isFormShownArray[2] ? "keyboard_arrow_up" : "keyboard_arrow_down"}}</i>-->
                         <!--</a>-->
                         <!--<span class="ct-link-text">{{isFormShownArray[2] ? "Hide Notifications" : "Show Notifications"}}</span>-->
                     <!--</div>-->

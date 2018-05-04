@@ -2,7 +2,7 @@
 
 namespace CoralTime.ViewModels.Errors
 {
-    public class ErrorView
+    public class ErrorODataView
     {
         [Key]
         public string Source { get; set; }

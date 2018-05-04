@@ -16,7 +16,10 @@
          [style.display]="overlayVisible ? 'block' : 'none'" (click)="panelClick = true">
         <div class="ui-multiselect-panel ui-widget ui-widget-content ui-shadow">
             <div class="ct-search-filter" *ngIf="showFilterSearch">
-                <input #filterInput (input)="onFilter($event)" [attr.placeholder]="'Search'">
+                <input #filterInput
+                       [attr.placeholder]="'Search'"
+                       [(ngModel)]="filterValue"
+                       (input)="onFilter($event)">
                 <i class="fa fa-search"></i>
                 <i class="fa fa-times" (click)="clearFilter()"></i>
             </div>

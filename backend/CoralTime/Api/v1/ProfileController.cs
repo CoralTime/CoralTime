@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     [Authorize]
     public class ProfileController : BaseController<ProfileController, IProfileService>
     {
@@ -22,19 +23,19 @@ namespace CoralTime.Api.v1
             _imageService = imageService;
         }
 
-        [HttpGet("Projects")]
+        [HttpGet(ProjectsRoute)]
         public ActionResult GetMemberProjects() => new JsonResult(_service.GetMemberProjects());
 
-        [HttpGet("DateFormats")]
+        [HttpGet(DateFormatsRoute)]
         public IActionResult GetDateFormats() => new JsonResult(_service.GetDateFormats());
 
-        [HttpGet("ProjectMembers/{projectId}")]
-        public ActionResult GetProjectMembers(int projectId) => Ok(_service.GetProjectMembers(projectId));
+        [HttpGet(ProjectMembersWithIdRoute)]
+        public ActionResult GetProjectMembers(int id) => Ok(_service.GetProjectMembers(id));
 
         #region Notifications Preferences PersonalInfo
 
         // PATCH: api/v1/Profile/Member(3066)/Notifications
-        [HttpPatch("Member({id})/Notifications")]
+        [HttpPatch(MemberRouteWithNotifications)]
         public IActionResult Patch(int id, [FromBody]MemberNotificationView memberNotificationView)
         {
             memberNotificationView.Id = id;
@@ -43,7 +44,7 @@ namespace CoralTime.Api.v1
         }
 
         // PATCH: api/v1/Profile/Member(3066)/Preferences
-        [HttpPatch("Member({id})/Preferences")]
+        [HttpPatch(MemberRouteWithPreferences)]
         public IActionResult Patch(int id, [FromBody]MemberPreferencesView memberPreferencesView)
         {
             memberPreferencesView.Id = id;
@@ -52,7 +53,7 @@ namespace CoralTime.Api.v1
         }
 
         // PATCH: api/v1/Profile/Member(3066)/PersonalInfo
-        [HttpPatch("Member({id})/PersonalInfo")]
+        [HttpPatch(MemberRouteWithPersonalInfo)]
         public IActionResult Patch(int id, [FromBody]MemberPersonalInfoView memberPersonalInfoView)
         {
             memberPersonalInfoView.Id = id;
@@ -64,10 +65,10 @@ namespace CoralTime.Api.v1
 
         #region Member Avatar
 
-        [HttpGet("Member({id})/UrlAvatar")]
+        [HttpGet(MemberRouteWithUrlAvatar)]
         public IActionResult GetUrlAvatar(int id) => Ok(_imageService.GetUrlAvatar(id));
 
-        [HttpPut("UploadImage")]
+        [HttpPut(UploadImageRoute)]
         public IActionResult UploadImage(IFormFile file) => Ok(_imageService.UploadImage(file));
 
         #endregion

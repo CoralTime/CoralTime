@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
-import { ForgotPasswordService } from './forgot-password.service';
+import { SetPasswordService } from './set-password.service';
 import { Observable } from 'rxjs';
 
 @Injectable()
 export class ValidateRestoreCodeResolve implements Resolve<boolean> {
-	constructor(private service: ForgotPasswordService) {
+	constructor(private service: SetPasswordService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<boolean> | boolean {

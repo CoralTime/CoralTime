@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { EnterEmailService, EmailSendingStatus } from '../enter-email.service';
-import { ForgotPasswordService } from '../../enter-new-password/forgot-password.service';
+import { SetPasswordService } from '../../enter-new-password/set-password.service';
 import { EMAIL_PATTERN } from '../../../../core/constant.service';
 
 const ERRORS_EMAIL_SENDING = [
@@ -26,11 +26,11 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 	errorCode: number;
 
 	constructor(private enterEmailService: EnterEmailService,
-	            private forgotPasswordService: ForgotPasswordService) {
+	            private setPasswordService: SetPasswordService) {
 	}
 
 	ngOnInit() {
-		this.activationCodeIsValid = !this.forgotPasswordService.restoreCodeIsExpired;
+		this.activationCodeIsValid = !this.setPasswordService.restoreCodeIsExpired;
 	}
 
 	sendEmail(): void {
@@ -58,7 +58,7 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 				}
 
 				this.activationCodeIsValid = true;
-				this.forgotPasswordService.restoreCodeIsExpired = false;
+				this.setPasswordService.restoreCodeIsExpired = false;
 			});
 		}
 	}
@@ -75,6 +75,6 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.activationCodeIsValid = true;
-		this.forgotPasswordService.restoreCodeIsExpired = false;
+		this.setPasswordService.restoreCodeIsExpired = false;
 	}
 }

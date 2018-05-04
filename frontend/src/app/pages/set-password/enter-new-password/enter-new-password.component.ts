@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PasswordChangingStatus, ForgotPasswordService } from './forgot-password.service';
+import { PasswordChangingStatus, SetPasswordService } from './set-password.service';
 
 @Component({
 	selector: 'ct-enter-new-password',
@@ -10,16 +10,16 @@ import { PasswordChangingStatus, ForgotPasswordService } from './forgot-password
 export class EnterNewPasswordComponent implements OnInit {
 	isPasswordChanged: boolean = false;
 
-	constructor(private forgotPasswordService: ForgotPasswordService,
-	            private route: ActivatedRoute,
-	            private router: Router) {
+	constructor(private route: ActivatedRoute,
+	            private router: Router,
+	            private setPasswordService: SetPasswordService) {
 	}
 
 	ngOnInit(): void {
 		this.route.data.forEach((data: { restoreCodeValid: boolean }) => {
 			if (!data.restoreCodeValid) {
-				this.forgotPasswordService.restoreCodeIsExpired = !data.restoreCodeValid;
-				this.router.navigate(['forgot-password']);
+				this.setPasswordService.restoreCodeIsExpired = !data.restoreCodeValid;
+				this.router.navigate(['set-password']);
 			}
 		});
 	}

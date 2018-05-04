@@ -44,7 +44,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                         return reportTotalView.GetView(timeEntriesGroupByProjects);
                     }
 
-                    case (int) ReportsGroupByIds.Member:
+                    case (int) ReportsGroupByIds.User:
                     {
                         var timeEntriesGroupByMembers = filteredTimeEntries
                             .GroupBy(i => i.Member)

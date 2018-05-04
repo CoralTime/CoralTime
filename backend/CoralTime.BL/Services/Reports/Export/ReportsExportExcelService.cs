@@ -64,6 +64,15 @@ namespace CoralTime.BL.Services.Reports.Export
             return timeStyle;
         }
 
+        private XSSFCellStyle CreateTimeTotalFormatStyle(XSSFWorkbook workbook, IFont font)
+        {
+            var timeStyle = CreateTimeFormatStyle(workbook, font);
+
+            timeStyle.DataFormat = workbook.CreateDataFormat().GetFormat("[h]:mm");
+
+            return timeStyle;
+        }
+
         private XSSFFont CreateDefaultFont(XSSFWorkbook workbook)
         {
             var font = (XSSFFont)workbook.CreateFont();
@@ -351,6 +360,15 @@ namespace CoralTime.BL.Services.Reports.Export
             ++cellIndex;
         }
 
+        private void CreateCellItemTotal(XSSFWorkbook workbook, IRow rowListOfValues, ref int cellIndex, string cellValue, IFont font)
+        {
+            var cellListOfValues = rowListOfValues.CreateCell(cellIndex);
+            cellListOfValues.SetCellValue(cellValue);
+            cellListOfValues.CellStyle = CreateTimeTotalFormatStyle(workbook, font);
+
+            ++cellIndex;
+        }
+
         private void CreateRowOfTotalFor(ISheet sheet, ReportTotalForGroupTypeView groupedItems, XSSFWorkbook workbook)
         {
             sheet.AddMergedRegion(new CellRangeAddress(RowIndex, RowIndex, 0, 1));
@@ -404,7 +422,7 @@ namespace CoralTime.BL.Services.Reports.Export
             var cellIndex = 0;
 
             var cellValueTotal = reportTotalView.TimeTotal.DisplayNameTimeActualTotal.ToUpper();
-            CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueTotal, CreateFontColorAqua(workbook));
+            CreateCellItemTotal(workbook, rowTotal, ref cellIndex, cellValueTotal, CreateFontColorAqua(workbook));
 
             if (reportTotalView.DisplayNames.DisplayNameDate != null || reportTotalView.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
             {
@@ -425,8 +443,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
             // 1 
             var cellValueActTotal= ConvertModelToView.UpdateTimeFormatForValue(reportTotalView.TimeTotal.TimeActualTotal.ToString());
-            CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueActTotal, CreateFontBold(workbook));
-
+            CreateCellItemTotal(workbook, rowTotal, ref cellIndex, cellValueActTotal, CreateFontBold(workbook));
             // 2
             if (reportTotalView.DisplayNames.DisplayNameTimeEstimated != null)
             {
@@ -434,7 +451,7 @@ namespace CoralTime.BL.Services.Reports.Export
                     ? null
                     : ConvertModelToView.UpdateTimeFormatForValue(reportTotalView.TimeTotal.TimeEstimatedTotal.ToString());
 
-                CreateCellItem(workbook, rowTotal, ref cellIndex, cellValueEstTotal, CreateFontBold(workbook));
+                CreateCellItemTotal(workbook, rowTotal, ref cellIndex, cellValueEstTotal, CreateFontBold(workbook));
             }
 
             if (reportTotalView.DisplayNames.DisplayNameNotes != null)
@@ -476,9 +493,9 @@ namespace CoralTime.BL.Services.Reports.Export
                     return Constants.ReportsGroupByIds.Project.ToString();
                 }
 
-                case (int) Constants.ReportsGroupByIds.Member:
+                case (int) Constants.ReportsGroupByIds.User:
                 {
-                    return Constants.ReportsGroupByIds.Member.ToString();
+                    return Constants.ReportsGroupByIds.User.ToString();
                 }
 
                 case (int) Constants.ReportsGroupByIds.Date:

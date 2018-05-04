@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using static CoralTime.Common.Constants.Constants;
+using static CoralTime.Common.Constants.Constants.Routes;
+using static CoralTime.Common.Constants.Constants.Routes.OData;
 
 namespace CoralTime.Api.v1.Odata
 {
-    [Route("api/v1/odata/[controller]")]
+    [Route(BaseODataControllerRoute)]
     [Authorize]
     public class ClientsController : BaseODataController<ClientsController, IClientService>
     {
@@ -26,31 +29,31 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // POST: api/v1/odata/Clients
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = ApplicationRoleAdmin)]
         public IActionResult Create([FromBody] ClientView clientData)
         {
             try
             {
                 var result = _service.Create(clientData);
 
-                var locationUri = $"{Request.Host}/api/v1/odata/Clients({result.Id})";
+                var locationUri = $"{Request.Host}/{BaseODataRoute}/Clients({result.Id})";
                 return Created(locationUri, result);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // GET api/v1/odata/Clients(2)
-        [ODataRoute("Clients({id})")]
-        [HttpGet("{id}")]
+        [ODataRoute(ClientsWithIdRoute)]
+        [HttpGet(IdRoute)]
         public IActionResult GetById([FromODataUri] int id)
         {
             try
@@ -60,14 +63,14 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PUT: api/v1/odata/Clients(2)
-        [ODataRoute("Clients({id})")]
-        [HttpPut("{id}")]
-        [Authorize(Roles = "admin")]
+        [ODataRoute(ClientsWithIdRoute)]
+        [HttpPut(IdRoute)]
+        [Authorize(Roles = ApplicationRoleAdmin)]
         public IActionResult Update([FromODataUri]int id, [FromBody]dynamic clientData)
         {
             clientData.Id = id;
@@ -79,14 +82,14 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PATCH: api/v1/odata/Clients(30)
-        [ODataRoute("Clients({id})")]
-        [HttpPatch("{id}")]
-        [Authorize(Roles = "admin")]
+        [ODataRoute(ClientsWithIdRoute)]
+        [HttpPatch(IdRoute)]
+        [Authorize(Roles = ApplicationRoleAdmin)]
         public IActionResult Patch([FromODataUri]int id, [FromBody]dynamic clientData)
         {
             clientData.Id = id;
@@ -98,14 +101,14 @@ namespace CoralTime.Api.v1.Odata
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         //DELETE :api/v1/odata/Clients(1)
-        [HttpDelete("{id}")]
-        [ODataRoute("Clients({id})")]
-        [Authorize(Roles = "admin")]
+        [HttpDelete(IdRoute)]
+        [ODataRoute(ClientsWithIdRoute)]
+        [Authorize(Roles = ApplicationRoleAdmin)]
         public IActionResult Delete([FromODataUri]int id)
         {
             return BadRequest($"Can't delete the client with Id - {id}");

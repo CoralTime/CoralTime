@@ -4,21 +4,18 @@
         <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
-    <form #projectForm="ngForm" class="ct-form-add">
+    <form class="ct-form-add">
         <div class="ct-form-block">
             <div>
                 <label class="ct-form-label">Project Name</label>
                 <div class="ct-required-field-container ct-project-name-container">
-                    <input class="ct-input ct-full-width" [ctProjectNameValidator]="model" name="name" [(ngModel)]="model.name"
-                           maxlength="200" pattern=".*[^\s]+.*" required #projectName="ngModel" autofocus/>
+                    <input class="ct-input ct-full-width" name="name"
+                           [(ngModel)]="model.name"
+                           (ngModelChange)="showNameError = false"
+                           maxlength="200" required autofocus/>
                 </div>
-                <div class="ct-error-text" *ngIf="projectName.errors?.ctProjectNameInvalid">Project with this name
-                    already exists
-                </div>
-
-                <div *ngIf="errorMessage && !projectName.errors?.ctProjectNameInvalid"
-                     class="ct-login-failed ct-error-text">{{errorMessage}}
-                </div>
+                <div *ngIf="showNameError && !model.name" class="ct-error-text">Project name is required.</div>
+                <div *ngIf="showNameError && model.name" class="ct-error-text">Project with this name already exists</div>
             </div>
 
             <div *ctIsGranted="'roleChangeProjectStatus'">
@@ -33,7 +30,6 @@
                     <div *ngIf="model.clientIsActive || !model.clientId" class="ct-info-message">
                         {{stateText}}
                     </div>
-
                     <div *ngIf="!model.clientIsActive && model.clientId" class="ct-info-message">
                         Cannot change the project status because its client is archived.
                     </div>
@@ -67,7 +63,10 @@
         </div>
 
         <div class="ct-buttons-block" mat-dialog-actions>
-            <button mat-raised-button class="ct-button ct-blue-button" [disabled]="projectName.errors?.ctProjectNameInvalid || isRequestLoading" (click)="submit()">{{submitButtonText}}
+            <button mat-raised-button class="ct-button ct-blue-button"
+                    [disabled]="isRequestLoading"
+                    (click)="validateAndSubmit()">
+                {{submitButtonText}}
             </button>
             <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>

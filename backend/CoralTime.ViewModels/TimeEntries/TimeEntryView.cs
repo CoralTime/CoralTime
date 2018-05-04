@@ -41,5 +41,7 @@ namespace CoralTime.ViewModels.TimeEntries
         public bool IsUserManagerOnProject { get; set; }
 
         public int Color { get; set; }
+
+        public bool IsLocked { get; set; } = false;
     }
 }

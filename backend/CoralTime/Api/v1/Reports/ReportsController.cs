@@ -5,11 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1.Reports
 {
     [Authorize]
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     public class ReportsController : BaseController<ReportsController, IReportsService>
     {
         public ReportsController(IReportsService service, ILogger<ReportsController> logger)
