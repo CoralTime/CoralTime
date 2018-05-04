@@ -18,9 +18,11 @@ html, body {
 }
 
 .ct-content {
-  overflow: hidden;
+  box-sizing: border-box;
+  height: 100%;
   padding: 70px 20px 0;
   background: $gray-page-background;
+  overflow-x: hidden;
 }
 
 .ct-page-container {

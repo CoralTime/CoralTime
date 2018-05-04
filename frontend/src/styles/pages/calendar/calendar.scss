@@ -17,18 +17,13 @@ $timestamp: 19px;
 $calendarTabletWidth: 1299px;
 $calendarPhoneWidth: 809px;
 
+ct-calendar {
+  display: block;
+  background: linear-gradient(#dbdbdb, transparent 1px) 0 -1px;
+  background-size: 100% 18px;
+}
+
 .ct-calendar-page {
-  background: linear-gradient(90deg, #fff, transparent 0px), linear-gradient(#dbdbdb, transparent 1px), center left;
-  background-size: calc(100% / 7 - 42px / 7) 18px;
-
-  @media (max-width: $calendarTabletWidth) {
-    background-size: 25% 18px;
-  }
-
-  @media (max-width: $calendarPhoneWidth) {
-    background-size: 100% 18px;
-  }
-
   .ct-page-header {
     position: fixed !important;
     width: calc(100% - 40px);
@@ -632,6 +627,7 @@ $calendarPhoneWidth: 809px;
     $oneDayWidth: calc(100% / 7 - 37px / 7);
 
     .ct-calendar-day {
+      position: relative;
       width: $oneDayWidth;
 
       .ct-calendar-day-title {
@@ -642,7 +638,9 @@ $calendarPhoneWidth: 809px;
       }
 
       .ct-calendar-day-container {
-        height: calc(100% - 65px);
+        position: absolute;
+        height: 100%;
+        width: 100%;
         white-space: initial;
 
         .ct-calendar-day-tasks {
