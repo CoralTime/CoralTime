@@ -18,7 +18,7 @@ $calendarTabletWidth: 1299px;
 $calendarPhoneWidth: 809px;
 
 .ct-calendar-page {
-  background: linear-gradient(90deg, #fff, transparent 5px), linear-gradient(#dbdbdb, transparent 1px), center left;
+  background: linear-gradient(90deg, #fff, transparent 0px), linear-gradient(#dbdbdb, transparent 1px), center left;
   background-size: calc(100% / 7 - 42px / 7) 18px;
 
   @media (max-width: $calendarTabletWidth) {
@@ -752,7 +752,7 @@ $calendarPhoneWidth: 809px;
     position: relative;
     color: #fff;
     font-size: 19px;
-    font-family: $robotoRegular;
+    font-family: $baseFontFamily;
     top: 0;
     margin-left: 40px;
 

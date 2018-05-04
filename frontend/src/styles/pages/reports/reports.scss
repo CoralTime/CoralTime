@@ -163,7 +163,7 @@ $fieldHeight: 30px;
 
   .ct-query-block {
     position: relative;
-    float: left;
+    display: inline-block;
     bottom: 2px;
 
     > * {
