@@ -211,7 +211,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			currentTimeEntry.timeValues = {
 				timeActual: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual),
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: MAX_TIMER_VALUE - currentTimeEntry.timeValues.timeActual,
+				timeFrom: this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual,
 				timeTo: MAX_TIMER_VALUE
 			};
 
