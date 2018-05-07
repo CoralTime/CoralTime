@@ -1,4 +1,4 @@
-import { Component, ContentChildren, QueryList, AfterContentInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ContentChildren, QueryList, AfterContentInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { MenuItemComponent } from './menu-item/menu-item.component';
 
 @Component({
@@ -20,9 +20,8 @@ export class MenuComponent implements AfterContentInit {
 		this._xPosition = value;
 	}
 
-	@Output() closed: EventEmitter<void> = new EventEmitter<void>();
-
 	@ContentChildren(MenuItemComponent) items: QueryList<MenuItemComponent>;
+	@Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
 	canClose: boolean = true;
 	isOpen: boolean = false;
@@ -37,12 +36,15 @@ export class MenuComponent implements AfterContentInit {
 	}
 
 	openMenu(): void {
-		this.isOpen = true;
-		this.changeCloseParameter();
+		if (this.canClose) {
+			this.changeCloseParameter();
+			this.isOpen = true;
+		}
 	}
 
 	closeMenu(): void {
 		if (this.canClose) {
+			this.changeCloseParameter();
 			this.isOpen = false;
 			this.closed.emit();
 		}
@@ -58,6 +60,6 @@ export class MenuComponent implements AfterContentInit {
 
 	private changeCloseParameter(): void {
 		this.canClose = false;
-		setTimeout(() => this.canClose = true, 0);
+		setTimeout(() => this.canClose = true, 300);
 	}
 }
