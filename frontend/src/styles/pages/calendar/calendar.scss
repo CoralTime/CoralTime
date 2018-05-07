@@ -160,16 +160,22 @@ ct-calendar {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    width: 100%;
+    display: flex;
     border-top: 10px solid white;
-    white-space: nowrap;
+
+    > * {
+      display: flex;
+      flex: 0 0 auto;
+
+      > * {
+        width: 100%;
+      }
+    }
 
     .ct-calendar-day {
-      min-height: calc(100vh - 115px);
+      min-height: calc(100vh - 85px);
       margin-left: 6px;
       padding-bottom: $timestamp;
-      display: inline-block;
-      vertical-align: top;
       box-sizing: border-box;
 
       &:first-child {
@@ -177,7 +183,8 @@ ct-calendar {
       }
 
       .ct-calendar-day-tasks {
-        margin-top: 80px;
+        position: relative;
+        margin-top: 110px;
       }
 
       .ct-calendar-task,
@@ -620,29 +627,18 @@ ct-calendar {
   }
 
   .ct-calendar-weekly-view .ct-calendar {
-    padding-top: 30px;
-    $oneDayWidth: calc(100% / 7 - 37px / 7);
-
     .ct-calendar-day {
-      position: relative;
-      width: $oneDayWidth;
+      width: calc((100% - 30px) / 7);
 
       .ct-calendar-day-title {
         position: fixed;
         top: 110px;
         z-index: 995;
-        width: calc(100% / 7 - 74px / 7);
+        width: calc((100% - 70px) / 7);
       }
 
       .ct-calendar-day-container {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        white-space: initial;
-
         .ct-calendar-day-tasks {
-          position: relative;
-
           > *:before {
             content: '';
             position: absolute;
@@ -656,10 +652,8 @@ ct-calendar {
     }
 
     @media (max-width: $calendarTabletWidth) {
-      $tabletOneDayWidth: calc(25% - 4.5px);
-
       .ct-calendar-day {
-        width: $tabletOneDayWidth;
+        width: calc(25% - 4.5px);
 
         .ct-calendar-day-title {
           width: calc(25% - 14.5px);
@@ -681,7 +675,6 @@ ct-calendar {
   .ct-calendar-daily-view .ct-calendar {
     .ct-calendar-day {
       width: 100%;
-      min-height: calc(100vh - 115px);
 
       .ct-calendar-day-title {
         position: fixed;
@@ -691,10 +684,9 @@ ct-calendar {
       }
 
       .ct-calendar-day-tasks {
-        position: relative;
         display: inline-block;
         width: calc(100% + 6px);
-        margin: 109px -3px 0;
+        margin: 110px -3px 0;
         padding-bottom: 50px;
       }
 
@@ -843,6 +835,7 @@ ct-calendar {
 
   .ct-calendar-day-title {
     position: static !important;
+    margin-top: 30px;
     width: 100% !important;
   }
 }
