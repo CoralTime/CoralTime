@@ -168,6 +168,22 @@ ct-calendar {
     border-top: 10px solid white;
     white-space: nowrap;
 
+    .ct-calendar-day-active {
+      .ct-calendar-day-title {
+        .ct-calendar-date, .ct-calendar-date span {
+          color: $activeText !important;
+        }
+
+        .ct-calendar-day-hours {
+          background: $activeText !important;
+        }
+      }
+
+      .ct-calendar-add-task {
+        opacity: 1 !important;
+      }
+    }
+
     .ct-calendar-day {
       min-height: calc(100vh - 115px);
       margin-left: 6px;
@@ -280,19 +296,7 @@ ct-calendar {
             }
           }
         }
-        &.ct-calendar-day-active {
-          .ct-calendar-date {
-            color: $activeText;
 
-            span {
-              color: $activeText;
-            }
-          }
-
-          .ct-calendar-day-hours {
-            background: $activeText;
-          }
-        }
       }
 
       .ct-calendar-task {
@@ -579,6 +583,7 @@ ct-calendar {
           left: 0;
           height: 100%;
           width: 100%;
+          background: #cce9f3;
 
           &:before,
           &:after {

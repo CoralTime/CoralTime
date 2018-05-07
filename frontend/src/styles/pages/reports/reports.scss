@@ -73,13 +73,20 @@ $fieldHeight: 30px;
       font-size: 13px !important;
     }
 
-    .ct-actual-label {
-      background: #66b2cc;
+    .ct-actual-label, .ct-estimated-label {
       color: #ffffff;
       padding: 2px 4px;
       border-radius: 5px;
       display: inline-block;
       margin-bottom: 5px;
+    }
+
+    .ct-actual-label {
+      background: $label-background;
+    }
+
+    .ct-estimated-label {
+      background: $form-border;
     }
 
     .ct-total-time-container {
@@ -113,7 +120,7 @@ $fieldHeight: 30px;
     z-index: 995;
     background: $blue-grid-header;
     width: 61%;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
     &:before {
       content: '';
@@ -144,7 +151,11 @@ $fieldHeight: 30px;
     position: relative;
     height: 30px;
     line-height: 30px;
-    display: inline-block;
+    display: block;
+
+    .ct-datepicker-container {
+      margin-top: 15px;
+    }
 
     .ct-reports-actions-block {
       position: relative;
@@ -164,7 +175,7 @@ $fieldHeight: 30px;
   .ct-query-block {
     position: relative;
     display: inline-block;
-    bottom: 2px;
+    margin-top: 20px;
 
     > * {
       vertical-align: middle;
@@ -178,19 +189,21 @@ $fieldHeight: 30px;
       margin: 0;
       position: absolute;
       width: 208px;
+      right: 3px;
     }
 
     .ct-query-text {
       box-sizing: border-box;
       display: inline-block;
-      margin-left: -5px;
-      padding: 0 5px;
-      width: 110px;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
       text-align: center;
       cursor: pointer;
+      background-color: $label-background;
+      color: white;
+      width: 208px;
+      padding: 5px 16px;
     }
 
     .ct-select-open-button {
@@ -202,6 +215,7 @@ $fieldHeight: 30px;
 
       i {
         vertical-align: middle;
+        font-size: 29px;
       }
 
       &:hover i {
@@ -213,16 +227,19 @@ $fieldHeight: 30px;
       }
     }
 
-    .ct-close {
-      display: none;
-      margin-left: -10px;
-      font-size: 14px;
-      line-height: 19px;
+    .ct-clear-icon {
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      top: 0.5px;
+      font-size: 37px !important;
+      line-height: 0 !important;
+      color: #616c7a;
     }
 
-    .ct-query-text:hover + .ct-close, .ct-close:hover {
-      display: inline-block;
-    }
+    //.ct-query-text:hover + .ct-close, .ct-close:hover {
+    //  display: inline-block;
+    //}
   }
 
   .ct-collapsed-menu-footer {
@@ -236,10 +253,15 @@ $fieldHeight: 30px;
     display: inline-block;
     float: right;
     cursor: pointer;
+    top: 20px;
+    padding: 0 16px;
+    background: #374456;
+    width: 100px;
+    text-align: center;
 
     span {
       text-decoration: none;
-      border-bottom: 2px dotted;
+      color: white;
     }
   }
 
@@ -247,6 +269,8 @@ $fieldHeight: 30px;
     position: relative;
     height: 30px;
     line-height: 30px;
+    width: 100%;
+    padding: 0;
 
     > div {
       cursor: pointer;
@@ -255,15 +279,15 @@ $fieldHeight: 30px;
     > a {
       display: inline-block;
       position: relative;
-      margin-top: -9px;
-      width: 15px;
+      margin-top: -5px;
+      width: 100px;
       height: 30px;
       vertical-align: middle;
       text-align: center;
       cursor: pointer;
 
       &:before {
-        top: 0;
+        top: -2.5px;
         left: 0;
         right: 0;
       }
@@ -272,6 +296,7 @@ $fieldHeight: 30px;
     > div {
       display: inline-block;
       padding: 0 13px 0 11px;
+      width: 256px;
 
       //&:hover {
       //  .fa {
@@ -386,8 +411,6 @@ $fieldHeight: 30px;
       }
     }
 
-
-
     .ui-multiselect {
       vertical-align: middle;
       width: 170px !important;
@@ -439,7 +462,7 @@ $fieldHeight: 30px;
     display: inline-block;
     margin-bottom: 20px;
     background-color: #ffffff;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
     &:first-child {
       margin-top: 70px;
@@ -541,7 +564,7 @@ $fieldHeight: 30px;
       }
 
       td:last-child {
-        text-align: left;
+        text-align: right;
       }
     }
 
@@ -589,7 +612,10 @@ $fieldHeight: 30px;
   ct-range-datepicker {
     position: absolute;
     top: 31px;
-    width: 280px;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     text-align: center;
     background: #fff;
     box-shadow: none;
@@ -669,11 +695,11 @@ $fieldHeight: 30px;
   }
   > div {
     display: inline-block;
-    width: 148px !important;
+    width: 147px !important;
   }
 
   > div:nth-child(3) {
-    margin: 0 15px;
+    margin: 0 20px;
   }
 
   .ct-select {
@@ -700,8 +726,8 @@ $fieldHeight: 30px;
   .mat-expansion-panel-body {
     margin-top: 20px;
 
-    >.ct-report-filters-block:nth-child(1) {
-      >label {
+    > .ct-report-filters-block:nth-child(1) {
+      > label {
         position: relative;
         top: -4px;
       }

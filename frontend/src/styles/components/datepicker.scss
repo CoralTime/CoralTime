@@ -1,5 +1,8 @@
 #datepicker {
   font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+
   button {
     background: none;
     border: none;
@@ -11,14 +14,15 @@
   }
 
   .dp-day-calendar-container {
-    padding: 20px;
+    padding: 0;
   }
 
   .dp-calendar-nav-container {
     border: none;
     background: $blue-grid-header;
-    margin: 0 -31px;
+    margin: 0px -125px;
     height: 46px;
+    min-width: 488px;
 
       button {
         color: $nav-background;
@@ -26,7 +30,7 @@
       &.dp-calendar-nav-right, &.dp-calendar-nav-left {
         display: inline-block;
         margin: 0 6px;
-        font: normal normal normal 14px/1 FontAwesome;
+        //font: normal normal normal 14px/1 FontAwesome;
         font-size: 0;
         text-rendering: auto;
         -webkit-font-smoothing: antialiased;
@@ -34,7 +38,7 @@
         transition-duration: .3s;
 
         &:before, &:after {
-          font-size: 12px;
+          font-size: 28px;
           display: inline-block;
         }
 
@@ -44,18 +48,20 @@
       }
 
       &.dp-calendar-nav-right {
-        padding-left: 30px;
+        padding-right: 40px;
+        padding-left: 100px;
 
         &:before {
-          content: "\f054";
+          content: '\203A';
         }
       }
 
       &.dp-calendar-nav-left {
-        padding-right: 30px;
+        padding-right: 100px;
+        padding-left: 40px;
 
         &:before {
-          content: "\f053";
+          content: '\2039';
         }
       }
 
@@ -110,7 +116,9 @@
   }
 
   dp-month-calendar {
-    padding: 10px;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .dp-calendar-month {
