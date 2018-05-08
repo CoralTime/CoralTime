@@ -20,6 +20,7 @@ $calendarPhoneWidth: 809px;
 .ct-calendar-page {
   background: linear-gradient(#dbdbdb, transparent 1px) 0 -1px;
   background-size: 100% 18px;
+  overflow-x: hidden;
 
   .ct-page-header {
     position: fixed !important;
@@ -625,13 +626,13 @@ $calendarPhoneWidth: 809px;
 
   .ct-calendar-weekly-view .ct-calendar {
     .ct-calendar-day {
-      width: calc((100% - 30px) / 7);
+      width: calc((100% - 37px) / 7);
 
       .ct-calendar-day-title {
         position: fixed;
         top: 110px;
         z-index: 995;
-        width: calc((100% - 70px) / 7);
+        width: calc((100% - 84px) / 7);
       }
 
       .ct-calendar-day-container {
