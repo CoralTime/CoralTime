@@ -17,13 +17,10 @@ $timestamp: 19px;
 $calendarTabletWidth: 1299px;
 $calendarPhoneWidth: 809px;
 
-ct-calendar {
-  display: block;
+.ct-calendar-page {
   background: linear-gradient(#dbdbdb, transparent 1px) 0 -1px;
   background-size: 100% 18px;
-}
 
-.ct-calendar-page {
   .ct-page-header {
     position: fixed !important;
     width: calc(100% - 40px);
