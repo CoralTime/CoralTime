@@ -12,17 +12,17 @@
 
   .loading-mask-content {
     position: relative;
-    top: -50px;
+    top: -75px;
     width: 100px;
     height: 100px;
     margin: auto;
-    //background: url(./assets/doublering.gif) no-repeat center center;
-    background: url(./assets/icons/ct.logo-2.svg) no-repeat center center;
+    background: url(./assets/doublering.gif) no-repeat center center;
+    //background: url(./assets/icons/ct.logo-2.svg) no-repeat center center;
     background-size: contain;
     opacity: 0;
     transition: opacity 1s ease;
-    transform-origin: 51px 53px;
-    animation: ld-spin-fast 1s infinite;
+    //transform-origin: 51px 53px;
+    //animation: ld-spin-fast 1s infinite;
   }
 
   &.ct-active, &.ct-active .loading-mask-content {
