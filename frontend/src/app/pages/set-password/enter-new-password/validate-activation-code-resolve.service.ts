@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
-import { SetPasswordService } from './set-password.service';
 import { Observable } from 'rxjs';
+import { SetPasswordService } from './set-password.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 @Injectable()
 export class ValidateRestoreCodeResolve implements Resolve<boolean> {
-	constructor(private service: SetPasswordService) {
+	constructor(private loadingService: LoadingMaskService,
+	            private service: SetPasswordService) {
 	}
 
 	resolve(route: ActivatedRouteSnapshot): Observable<boolean> | boolean {
@@ -13,8 +15,11 @@ export class ValidateRestoreCodeResolve implements Resolve<boolean> {
 		if (!restoreCode) {
 			return false;
 		}
+
+		this.loadingService.addLoading();
 		return this.service.validateRestoreCode(restoreCode)
 			.map((restoreCodeValid: boolean) => {
+				this.loadingService.removeLoading();
 				return restoreCodeValid;
 			});
 	}

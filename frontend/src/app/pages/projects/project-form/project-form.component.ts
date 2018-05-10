@@ -6,6 +6,7 @@ import { Project } from '../../../models/project';
 import { Client } from '../../../models/client';
 import { ArrayUtils } from '../../../core/object-utils';
 import { ProjectsService } from '../../../services/projects.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 export class FormProject {
 	id: number;
@@ -77,6 +78,7 @@ export class ProjectFormComponent implements OnInit {
 	];
 
 	constructor(private clientsService: ClientsService,
+	            private loadingService: LoadingMaskService,
 	            private projectsService: ProjectsService,
 	            private translatePipe: TranslatePipe) {
 	}
@@ -134,17 +136,19 @@ export class ProjectFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit({
-					isNewProject: this.isNewProject
-				});
-			},
-			error => this.onSubmit.emit({
-				isNewProject: this.isNewProject,
-				error: error
-			}));
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit({
+						isNewProject: this.isNewProject
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewProject: this.isNewProject,
+					error: error
+				}));
 	}
 
 	private validateForm(): Observable<boolean> {

@@ -1,12 +1,12 @@
-import { NotificationService } from '../../../core/notification.service';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { PagedResult } from '../../../services/odata/query';
-import { Subject } from 'rxjs/Subject';
-import { Project } from '../../../models/project';
-import { Client } from '../../../models/client';
-import { ProjectsService } from '../../../services/projects.service';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Client } from '../../../models/client';
+import { Project } from '../../../models/project';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
+import { NotificationService } from '../../../core/notification.service';
+import { PagedResult } from '../../../services/odata';
+import { ProjectsService } from '../../../services/projects.service';
 
 @Component({
 	selector: 'ct-client-project-assignment',

@@ -10,9 +10,6 @@ export class EnterEmailComponent {
 	emailSubmitted: boolean = false;
 	errorCode: number;
 
-	constructor() {
-	}
-
 	displayEmailSubmittedMessage(isEmailValid: EmailSendingStatus): void {
 		this.errorCode = isEmailValid.message;
 		this.emailSubmitted = isEmailValid.isSentEmail;
