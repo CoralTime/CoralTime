@@ -9,6 +9,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { ImpersonationService } from '../../../../services/impersonation.service';
 import { ctCalendarAnimations } from '../../calendar-animation';
+import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	selector: 'ct-calendar-weekly-view',
@@ -38,6 +39,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private route: ActivatedRoute) {
 	}
 
@@ -82,8 +84,12 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 	getTimeEntries(projIds?: number[], disableAnimation: boolean = false): void {
 		this.animationDisabled = disableAnimation;
+		this.loadingService.addLoading();
 		this.calendarService.getTimeEntries(this.startDay, this.daysInCalendar)
-			.finally(() => setTimeout(() => this.animationDisabled = false, 500))
+			.finally(() => {
+				this.loadingService.removeLoading();
+				setTimeout(() => this.animationDisabled = false, 500);
+			})
 			.subscribe((res) => {
 				this.timeEntries = res;
 

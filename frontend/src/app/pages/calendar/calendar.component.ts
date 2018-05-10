@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import { CalendarProjectsService } from './calendar-projects.service';
-import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
-import { CalendarService } from '../../services/calendar.service';
-import { User } from '../../models/user';
-import { ImpersonationService } from '../../services/impersonation.service';
 import { Subscription } from 'rxjs/Subscription';
 import { DateUtils } from '../../models/calendar';
+import { User } from '../../models/user';
 import { AuthService } from '../../core/auth/auth.service';
+import { CalendarProjectsService } from './calendar-projects.service';
+import { CalendarService } from '../../services/calendar.service';
+import { ImpersonationService } from '../../services/impersonation.service';
+import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
 import * as moment from 'moment';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -34,7 +34,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
 	            private calendarService: CalendarService,
 	            private route: ActivatedRoute,
 	            private router: Router,
-	            private projectsService: CalendarProjectsService) {}
+	            private projectsService: CalendarProjectsService) {
+	}
 
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {

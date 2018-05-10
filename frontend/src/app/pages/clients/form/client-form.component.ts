@@ -6,6 +6,7 @@ import { Client } from '../../../models/client';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ArrayUtils } from '../../../core/object-utils';
 import { ClientsService } from '../../../services/clients.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class FormClient {
 	id: number;
@@ -63,6 +64,7 @@ export class ClientFormComponent implements OnInit {
 	];
 
 	constructor(private clientsService: ClientsService,
+	            private loadingService: LoadingMaskService,
 	            private translatePipe: TranslatePipe) {
 	}
 
@@ -105,18 +107,20 @@ export class ClientFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit({
-					isNewClient: this.isNewClient
-				});
-			},
-			error => this.onSubmit.emit({
-				isNewClient: this.isNewClient,
-				error: error
-			})
-		);
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit({
+						isNewClient: this.isNewClient
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewClient: this.isNewClient,
+					error: error
+				})
+			);
 	}
 
 	private validateForm(form: NgForm): Observable<boolean> {

@@ -9,7 +9,7 @@ import { ProjectRolesService } from '../../../services/project-roles.service';
 import { SettingsService } from '../../../services/settings.service';
 import { ProjectRole } from '../../../models/project-role';
 import { User } from '../../../models/user';
-import { PagedResult } from '../../../services/odata/query';
+import { PagedResult } from '../../../services/odata';
 import { Subject } from 'rxjs/Subject';
 import { ArrayUtils } from '../../../core/object-utils';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
@@ -43,11 +43,11 @@ export class ProjectUsersComponent implements OnInit {
 	private notAssignedUsersLastEvent: any;
 	private notAssignedUsersSubject = new Subject<any>();
 
-	constructor(private usersService: UsersService,
+	constructor(private authService: AuthService,
 	            private notificationService: NotificationService,
-	            private authService: AuthService,
 	            private projectRolesService: ProjectRolesService,
-	            private settingsService: SettingsService) {
+	            private settingsService: SettingsService,
+	            private usersService: UsersService) {
 	}
 
 	ngOnInit() {

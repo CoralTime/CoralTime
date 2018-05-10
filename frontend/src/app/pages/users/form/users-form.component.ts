@@ -11,6 +11,7 @@ import { ArrayUtils } from '../../../core/object-utils';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
 import { UsersService } from '../../../services/users.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class FormUser {
 	email: string;
@@ -97,6 +98,7 @@ export class UsersFormComponent implements OnInit {
 
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private translatePipe: TranslatePipe,
 	            private userService: UsersService) { }
 
@@ -149,28 +151,30 @@ export class UsersFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
 
-				if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
-					this.impersonationService.impersonationUser = updatedUser;
-					this.impersonationService.setStorage(updatedUser);
-					this.impersonationService.onChange.emit(updatedUser);
-				}
+					if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
+						this.impersonationService.impersonationUser = updatedUser;
+						this.impersonationService.setStorage(updatedUser);
+						this.impersonationService.onChange.emit(updatedUser);
+					}
 
-				if (this.authUser.id === updatedUser.id) {
-					this.userService.setUserInfo(updatedUser);
-				}
+					if (this.authUser.id === updatedUser.id) {
+						this.userService.setUserInfo(updatedUser);
+					}
 
-				this.onSaved.emit({
-					isNewUser: this.isNewUser
-				});
-			},
-			error => this.onSaved.emit({
-				isNewUser: this.isNewUser,
-				error: error
-			}));
+					this.onSaved.emit({
+						isNewUser: this.isNewUser
+					});
+				},
+				error => this.onSaved.emit({
+					isNewUser: this.isNewUser,
+					error: error
+				}));
 	}
 
 	private validateForm(form: NgForm): Observable<boolean> {
