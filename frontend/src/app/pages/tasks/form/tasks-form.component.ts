@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Task } from '../../../models/task';
 import { ArrayUtils } from '../../../core/object-utils';
 import { TasksService } from '../../../services/tasks.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class FormTask {
 	id: number;
@@ -55,7 +56,8 @@ export class TaskFormComponent implements OnInit {
 		{value: false, title: 'archived'}
 	];
 
-	constructor(private tasksService: TasksService,
+	constructor(private loadingService: LoadingMaskService,
+	            private tasksService: TasksService,
 	            private translatePipe: TranslatePipe) {
 	}
 
@@ -97,17 +99,19 @@ export class TaskFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit({
-					isNewTask: this.isNewTask
-				});
-			},
-			error => this.onSubmit.emit({
-				isNewTask: this.isNewTask,
-				error: error
-			}));
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit({
+						isNewTask: this.isNewTask
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewTask: this.isNewTask,
+					error: error
+				}));
 	}
 
 	private validateForm(): Observable<boolean> {

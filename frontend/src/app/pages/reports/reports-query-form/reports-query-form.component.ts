@@ -1,7 +1,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ReportsService } from '../../../services/reposts.service';
 import { ReportFilters } from '../../../models/reports';
+import { ReportsService } from '../../../services/reposts.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	selector: 'ct-reports-query-form',
@@ -14,7 +15,8 @@ export class ReportsQueryFormComponent {
 
 	@Output() onSubmit = new EventEmitter();
 
-	constructor(private reportsService: ReportsService) {
+	constructor(private loadingService: LoadingMaskService,
+	            private reportsService: ReportsService) {
 	}
 
 	submit(form: NgForm): void {
@@ -23,13 +25,16 @@ export class ReportsQueryFormComponent {
 		}
 
 		this.isRequestLoading = true;
+		this.loadingService.addLoading();
 		this.reportsService.createQuery({
 			currentQuery: this.model
-		}).subscribe(() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit(null);
-			},
-			error => this.onSubmit.emit(error)
-		);
+		})
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe(() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit(null);
+				},
+				error => this.onSubmit.emit(error)
+			);
 	}
 }

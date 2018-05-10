@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { ImpersonationService } from '../../../services/impersonation.service';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { ActivatedRoute } from '@angular/router';
+import { ArrayUtils } from '../../../core/object-utils';
 import { User } from '../../../models/user';
 import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
+import { EMAIL_PATTERN } from '../../../core/constant.service';
+import { NotificationService } from '../../../core/notification.service';
+import { ImpersonationService } from '../../../services/impersonation.service';
 import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
 import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } from '../../../services/profile.service';
 import { EnterEmailService } from '../../set-password/enter-email/enter-email.service';
-import { ArrayUtils } from '../../../core/object-utils';
-import { NotificationService } from '../../../core/notification.service';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 import { SelectComponent } from '../../../shared/form/select/select.component';
-import { EMAIL_PATTERN } from '../../../core/constant.service';
-import { ActivatedRoute } from '@angular/router';
 import { UserPicService } from '../../../services/user-pic.service';
 import { UsersService } from '../../../services/users.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
+import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 
 const STANDART_TIME_ARRAY = [
 	'0:00', '1:00', '2:00', '3:00', '4:00', '5:00',
@@ -64,6 +65,7 @@ export class ProfileSettingsComponent implements OnInit {
 	constructor(private dialog: MatDialog,
 	            private enterEmailService: EnterEmailService,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private notificationService: NotificationService,
 	            private projectsService: ProjectsService,
 	            private profileService: ProfileService,
@@ -209,7 +211,9 @@ export class ProfileSettingsComponent implements OnInit {
 			fullName: this.userModel.fullName
 		};
 
+		this.loadingService.addLoading();
 		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
+			.finally(() => this.loadingService.removeLoading())
 			.subscribe((userModel: User) => {
 					if (this.isEmailChanged && this.isGravatarIcon(this.avatarUrl)) {
 						this.getAvatar().then((avatarUrl) => this.updateAvatar(avatarUrl));
@@ -249,7 +253,9 @@ export class ProfileSettingsComponent implements OnInit {
 			weekStart: this.userModel.weekStart
 		};
 
+		this.loadingService.addLoading();
 		this.profileService.submitPreferences(preferencesObject, this.userModel.id)
+			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
 					if (this.impersonationService.impersonationId) {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);

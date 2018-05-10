@@ -1,16 +1,16 @@
-import { UserProject } from '../../../models/user-project';
-import { NotificationService } from '../../../core/notification.service';
-import { UsersService } from '../../../services/users.service';
-import { User } from '../../../models/user';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { PagedResult } from '../../../services/odata/query';
 import { Subject } from 'rxjs/Subject';
-import { ProjectRole } from '../../../models/project-role';
-import { Project } from '../../../models/project';
 import { ArrayUtils } from '../../../core/object-utils';
-import { SettingsService } from '../../../services/settings.service';
-import { ProjectRolesService } from '../../../services/project-roles.service';
+import { Project } from '../../../models/project';
+import { ProjectRole } from '../../../models/project-role';
+import { UserProject } from '../../../models/user-project';
+import { User } from '../../../models/user';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
+import { NotificationService } from '../../../core/notification.service';
+import { PagedResult } from '../../../services/odata';
+import { ProjectRolesService } from '../../../services/project-roles.service';
+import { UsersService } from '../../../services/users.service';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
 	selector: 'ct-user-project-assignment',

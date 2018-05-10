@@ -5,6 +5,7 @@ import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
 import { Project } from '../../../../models/project';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CalendarService } from '../../../../services/calendar.service';
+import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	templateUrl: 'daily-view.component.html',
@@ -25,6 +26,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 
 	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
+	            private loadingService: LoadingMaskService,
 	            private route: ActivatedRoute) {
 	}
 
@@ -44,7 +46,9 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	}
 
 	getTimeEntries(projectIds?: number[]) {
+		this.loadingService.addLoading();
 		this.calendarService.getTimeEntries(this.date)
+			.finally(() => this.loadingService.removeLoading())
 			.subscribe((res) => {
 				this.timeEntries = res;
 				if (projectIds) {
