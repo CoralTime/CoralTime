@@ -1,31 +1,30 @@
 #loading-mask {
-  display: flex;
   position: fixed;
   top: 50px;
   left: 0;
   height: 100%;
   width: 100%;
-  background: rgba(255, 255, 255, .7);
+  background: rgba(255, 255, 255, .8);
   opacity: 0;
-  transition: opacity .3s ease;
   z-index: -1;
 
   .loading-mask-content {
-    position: relative;
-    top: -75px;
-    width: 100px;
-    height: 100px;
+    position: absolute;
+    top: calc(50% - 125px);
+    left: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
     margin: auto;
-    background: url(./assets/doublering.gif) no-repeat center center;
-    //background: url(./assets/icons/ct.logo-2.svg) no-repeat center center;
+    background: url(./assets/icons/ct.logo-2.svg) no-repeat center center;
     background-size: contain;
     opacity: 0;
-    transition: opacity 1s ease;
-    //transform-origin: 51px 53px;
-    //animation: ld-spin-fast 1s infinite;
+    animation: ld-spin-fast 1s infinite;
+    transform-origin: 76px 79px;
   }
 
   &.ct-active, &.ct-active .loading-mask-content {
+    transition: opacity 1s ease;
     opacity: 1;
     z-index: 9999;
   }
