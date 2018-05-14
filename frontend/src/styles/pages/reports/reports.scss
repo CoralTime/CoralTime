@@ -103,9 +103,9 @@ $fieldHeight: 30px;
     }
   }
 
-  .ct-reports-data {
-    padding-right: 20px;
-  }
+  //.ct-reports-data {
+  //  padding-right: 20px;
+  //}
 
   //.ct-total-time-container {
   //  td {
@@ -115,21 +115,22 @@ $fieldHeight: 30px;
 
   .ct-page-container .ct-page-header {
     height: auto;
+    border-bottom: 1px solid #e1e6ed;
     min-height: 46px;
-    position: fixed;
+    //position: fixed;
     z-index: 995;
     background: $blue-grid-header;
-    width: 61%;
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    //width: 61%;
+    //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
-    &:before {
-      content: '';
-      position: absolute;
-      height: 20px;
-      width: 100%;
-      background: $gray-page-background;
-      top: -20px;
-    }
+    //&:before {
+    //  content: '';
+    //  position: absolute;
+    //  height: 20px;
+    //  width: 100%;
+    //  background: $gray-page-background;
+    //  top: -20px;
+    //}
   }
 
   .ct-grid-container .ui-cell-data {
@@ -462,11 +463,11 @@ $fieldHeight: 30px;
     display: inline-block;
     margin-bottom: 20px;
     background-color: #ffffff;
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
-    &:first-child {
-      margin-top: 70px;
-    }
+    //&:first-child {
+    //  margin-top: 70px;
+    //}
 
     .ui-datatable-thead:after {
       width: 100%;
@@ -486,7 +487,7 @@ $fieldHeight: 30px;
     line-height: 42px;
     font-size: 15px;
     text-transform: uppercase;
-    background: $blue-grid-header !important;
+    //background: $blue-grid-header !important;
     border-bottom: 1px solid #e1e6ed;
 
     > div {
@@ -710,7 +711,7 @@ $fieldHeight: 30px;
 }
 
 .ct-reports-chart-container {
-  width: 35%;
+  width: 300px;
   position: fixed;
   display: inline-block;
   right: 20px;
@@ -742,6 +743,9 @@ $fieldHeight: 30px;
 }
 
 .ct-reports-grid-container {
-  width: 64%;
+  background: #ffffff;
+  margin-right: 310px;
+  //padding-right: 30px;
   display: inline-block;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
 }
