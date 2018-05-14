@@ -8,9 +8,9 @@
             </div>
 
             <div class="ct-buttons-block" mat-dialog-actions>
-                <button mat-raised-button class="ct-button ct-blue-button"
+                <button mat-raised-button class="ct-button ct-blue-button" #btn="matButton"
                         [disabled]="isRequestLoading"
-                        (click)="submitTask(i, tasks.controls[i])">Add
+                        (click)="submitTask(i, tasks.controls[i], btn._elementRef.nativeElement)">Add
                 </button>
                 <button (click)="delTask(i)" class="ct-cancel-button">Cancel</button>
             </div>

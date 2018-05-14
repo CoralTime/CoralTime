@@ -50,10 +50,10 @@ export class ClientFormComponent implements OnInit {
 	dialogHeader: string;
 	isNewClient: boolean;
 	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	emailPattern = EMAIL_PATTERN;
 	model: FormClient;
 	showErrors: boolean[] = []; // [showEmailError, showNameError]
-	showNameError: boolean;
 	stateModel: any;
 	stateText: string;
 	submitButtonText: string;
@@ -85,15 +85,14 @@ export class ClientFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(form: NgForm): void {
-		this.isRequestLoading = true;
+		this.isValidateLoading = true;
 		this.validateForm(form)
+			.finally(() => this.isValidateLoading = false)
 			.subscribe((isFormValid: boolean) => {
-					this.isRequestLoading = false;
-					if (isFormValid) {
-						this.submit();
-					}
-				},
-				() => this.isRequestLoading = false);
+				if (isFormValid) {
+					this.submit();
+				}
+			});
 	}
 
 	private submit(): void {

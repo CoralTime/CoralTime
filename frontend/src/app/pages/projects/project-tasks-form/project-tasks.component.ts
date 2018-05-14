@@ -1,12 +1,11 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Project } from '../../../models/project';
-import { NotificationService } from '../../../core/notification.service';
-import { Observable } from 'rxjs';
-import { TasksService } from '../../../services/tasks.service';
-import { Task } from '../../../models/task';
-import { PagedResult } from '../../../services/odata/query';
 import { Subject } from 'rxjs/Subject';
+import { Project } from '../../../models/project';
+import { Task } from '../../../models/task';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
+import { PagedResult } from '../../../services/odata';
+import { NotificationService } from '../../../core/notification.service';
+import { TasksService } from '../../../services/tasks.service';
 
 @Component({
 	selector: 'ct-project-tasks',
@@ -74,17 +73,19 @@ export class ProjectTasksComponent implements OnInit {
 		}
 	}
 
-	removeTask(task: Task): void {
-		let observable: Observable<any>;
-
-		observable = this.tasksService.toggleActive(task);
-		observable.subscribe(
-			() => {
-				this.filterStr = '';
-				this.updateTasks(null, true);
-				this.notificationService.success('Task status has been successfully removed from projects.');
-			}
-		);
+	removeTask(task: Task, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.tasksService.toggleActive(task)
+			.finally(() => {
+				target.classList.remove('ct-loading');
+			})
+			.subscribe(() => {
+					this.filterStr = '';
+					this.updateTasks(null, true);
+					this.notificationService.success('Task has been successfully removed from projects.');
+				},
+				() => this.notificationService.danger('Error removing task.')
+			);
 	}
 
 	onEndScroll(): void {

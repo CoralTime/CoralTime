@@ -42,8 +42,8 @@
 
                 <p-column field="projectDel" header="Actions">
                     <ng-template let-col let-projectTask="rowData" pTemplate="body">
-                        <a *ngIf="projectTask.projectId"
-                           (click)="removeTask(projectTask)"
+                        <a *ngIf="projectTask.projectId" #removeBtn
+                           (click)="removeTask(projectTask, removeBtn)"
                            class="ct-grid-link ct-grid-ellipse ct-grid-delete">
                             <i class="material-icons" aria-hidden="true">clear</i>
                         </a>

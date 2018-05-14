@@ -66,6 +66,7 @@ export class ProjectFormComponent implements OnInit {
 	isClientSelectDisabled: boolean;
 	isNewProject: boolean;
 	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	model: FormProject;
 	showNameError: boolean;
 	stateModel: any;
@@ -115,14 +116,14 @@ export class ProjectFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(): void {
-		this.isRequestLoading = true;
-		this.validateForm().subscribe((isFormInvalid: boolean) => {
-				this.isRequestLoading = false;
+		this.isValidateLoading = true;
+		this.validateForm()
+			.finally(() => this.isValidateLoading = false)
+			.subscribe((isFormInvalid: boolean) => {
 				if (!isFormInvalid) {
 					this.submit();
 				}
-			},
-			() => this.isRequestLoading = false);
+			});
 	}
 
 	private submit(): void {
@@ -137,10 +138,11 @@ export class ProjectFormComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		submitObservable.finally(() => this.loadingService.removeLoading())
-			.subscribe(
-				() => {
-					this.isRequestLoading = false;
+		submitObservable.finally(() => {
+			this.isRequestLoading = false;
+			this.loadingService.removeLoading();
+		})
+			.subscribe(() => {
 					this.onSubmit.emit({
 						isNewProject: this.isNewProject
 					});
