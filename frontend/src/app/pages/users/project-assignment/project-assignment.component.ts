@@ -25,7 +25,6 @@ export class UserProjectAssignmentComponent implements OnInit {
 	filterStr: string = '';
 	projectRoles: ProjectRole[];
 	resizeObservable: Subject<any> = new Subject();
-	isRequestLoading: boolean;
 	wrapperHeightObservable: Subject<any> = new Subject();
 
 	assignedProjectsPagedResult: PagedResult<UserProject>;
@@ -190,27 +189,27 @@ export class UserProjectAssignmentComponent implements OnInit {
 
 	// GENERAL
 
-	addToUser(project: Project): void {
-		this.isRequestLoading = true;
+	addToUser(project: Project, target: HTMLElement): void {
+		target.classList.add('ct-loading');
 		this.usersService.assignProjectToUser(this.user.id, project.id, this.defaultProjectRole.id)
-			.subscribe(
-				() => {
-					this.isRequestLoading = false;
+			.subscribe(() => {
 					this.notificationService.success('Project successfully assigned.');
 					this.filterStr = '';
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
 				},
-				() => {
+				error => {
+					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error adding project.');
 				}
 			);
 	}
 
-	assignToPublic(userProject: UserProject): void {
+	assignToPublic(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
 		this.usersService.assignProjectToUser(userProject.memberId, userProject.projectId, userProject.roleId)
-			.subscribe(
-				() => {
+			.finally(() => target.classList.remove('ct-loading'))
+			.subscribe(() => {
 					this.notificationService.success('Access level has been changed.');
 					this.updateAssignedProjects();
 				},
@@ -220,32 +219,34 @@ export class UserProjectAssignmentComponent implements OnInit {
 			);
 	}
 
-	changeRole(userProject: UserProject): void {
-		this.usersService.changeRole(userProject.id, userProject.role.id).subscribe(
-			() => {
-				this.notificationService.success('Access level has been changed.');
-				this.updateAssignedProjects();
-			},
-			() => {
-				this.notificationService.danger('Access level has not been changed.');
-			}
-		);
+	changeRole(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.changeRole(userProject.id, userProject.role.id)
+			.finally(() => target.classList.remove('ct-loading'))
+			.subscribe(() => {
+					this.notificationService.success('Access level has been changed.');
+					this.updateAssignedProjects();
+				},
+				() => {
+					this.notificationService.danger('Access level has not been changed.');
+				}
+			);
 	}
 
-	removeFromUser(userProject: UserProject): void {
-		this.isRequestLoading = true;
-		this.usersService.removeFromProject(userProject).subscribe(
-			() => {
-				this.isRequestLoading = false;
-				this.notificationService.success('User was removed from project.');
-				this.filterStr = '';
-				this.updateAssignedProjects(null, true);
-				this.updateNotAssignedProjects(null, true);
-			},
-			() => {
-				this.notificationService.danger('Error removing project.');
-			}
-		);
+	removeFromUser(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.removeFromProject(userProject)
+			.subscribe(() => {
+					this.notificationService.success('User was removed from project.');
+					this.filterStr = '';
+					this.updateAssignedProjects(null, true);
+					this.updateNotAssignedProjects(null, true);
+				},
+				error => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger('Error removing project.');
+				}
+			);
 	}
 
 	onResize(): void {

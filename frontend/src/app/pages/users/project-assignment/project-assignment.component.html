@@ -27,22 +27,22 @@
 
                 <p-column header="Access Level" [style]="{'width':'180px'}">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
-                        <ct-select *ngIf="userProject.id" [name]="'role'"
+                        <ct-select *ngIf="userProject.id" [name]="'role'" #select1
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [displayName]="'name'" [trackBy]="'id'"
                                    [icon]="'chevron-down'"
                                    [container]="tableWrapper.el.nativeElement"
                                    [(ngModel)]="userProject.role"
-                                   (change)="changeRole(userProject)"
+                                   (change)="changeRole(userProject, select1.el.nativeElement)"
                                    [options]="projectRoles">
                         </ct-select>
-                        <ct-select *ngIf="!userProject.id" [name]="'role'"
+                        <ct-select *ngIf="!userProject.id" [name]="'role'" #select2
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [displayName]="'name'" [trackBy]="'id'"
                                    [icon]="'chevron-down'"
                                    [container]="tableWrapper.el.nativeElement"
                                    [(ngModel)]="userProject.role"
-                                   (change)="assignToPublic(userProject)"
+                                   (change)="assignToPublic(userProject, select2.el.nativeElement)"
                                    [options]="projectRoles">
                         </ct-select>
                     </ng-template>
@@ -50,9 +50,9 @@
 
                 <p-column header="Actions" styleClass="ct-user-actions-col">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
-                        <a *ngIf="userProject.isProjectPrivate"
-                           [class.ct-disabled]="isRequestLoading"
-                           (click)="removeFromUser(userProject)" class="ct-grid-link ct-grid-ellipse ct-grid-delete">
+                        <a *ngIf="userProject.isProjectPrivate" #removeBtn
+                           class="ct-grid-link ct-grid-ellipse ct-grid-delete"
+                           (click)="removeFromUser(userProject, removeBtn)">
                             <i class="material-icons">clear</i>
                         </a>
                         <span *ngIf="!userProject.isProjectPrivate">Public</span>
@@ -74,8 +74,7 @@
 
                 <p-column header="Actions">
                     <ng-template let-col let-project="rowData" pTemplate="body">
-                        <span (click)="addToUser(project)" class="ct-grid-button"
-                              [class.ct-disabled]="isRequestLoading">Assign to User</span>
+                        <span class="ct-grid-button" (click)="addToUser(project, $event.target)">Assign to User</span>
                     </ng-template>
                 </p-column>
             </p-dataTable>

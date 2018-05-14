@@ -26,7 +26,6 @@ export class ProjectUsersComponent implements OnInit {
 	authUser: AuthUser;
 	defaultProjectRole: ProjectRole;
 	filterStr: string = '';
-	isRequestLoading: boolean = false;
 	projectRoles: ProjectRole[];
 	resizeObservable: Subject<any> = new Subject();
 	wrapperHeightObservable: Subject<any> = new Subject();
@@ -195,63 +194,66 @@ export class ProjectUsersComponent implements OnInit {
 
 	// GENERAL
 
-	addToProject(user: User): void {
-		this.isRequestLoading = true;
+	addToProject(user: User, target: HTMLElement): void {
+		target.classList.add('ct-loading');
 		this.usersService.assignUserToProject(this.project.id, user.id, this.defaultProjectRole.id)
-			.subscribe(
-				() => {
-					this.isRequestLoading = false;
+			.subscribe(() => {
 					this.notificationService.success('User successfully assigned.');
 					this.filterStr = '';
 					this.updateAssignedUsers(null, true);
 					this.updateNotAssignedUsers(null, true);
 				},
 				() => {
+					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error adding user.');
 				}
 			);
 	}
 
-	assignToPublic(userProject: UserProject): void {
-		this.usersService.assignProjectToUser(userProject.memberId, userProject.projectId, userProject.roleId).subscribe(
-			() => {
-				this.notificationService.success('Access level has been changed.');
-				this.updateAssignedUsers(null, true);
-				this.updateNotAssignedUsers(null, true);
-			},
-			() => {
-				this.notificationService.danger('Access level has not been changed.');
-			}
-		);
+	assignToPublic(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.assignProjectToUser(userProject.memberId, userProject.projectId, userProject.roleId)
+			.finally(() => target.classList.remove('ct-loading'))
+			.subscribe(() => {
+					this.notificationService.success('Access level has been changed.');
+					this.updateAssignedUsers(null, true);
+					this.updateNotAssignedUsers(null, true);
+				},
+				() => {
+					this.notificationService.danger('Access level has not been changed.');
+				}
+			);
 	}
 
-	changeRole(userProject: UserProject): void {
-		this.usersService.changeRole(userProject.id, userProject.role.id).subscribe(
-			() => {
-				this.notificationService.success('Access level has been changed.');
-				this.updateAssignedUsers(null, true);
-				this.updateNotAssignedUsers(null, true);
-			},
-			() => {
-				this.notificationService.danger('Access level has not been changed.');
-			}
-		);
+	changeRole(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.changeRole(userProject.id, userProject.role.id)
+			.finally(() => target.classList.remove('ct-loading'))
+			.subscribe(() => {
+					this.notificationService.success('Access level has been changed.');
+					this.updateAssignedUsers(null, true);
+					this.updateNotAssignedUsers(null, true);
+				},
+				() => {
+					this.notificationService.danger('Access level has not been changed.');
+				}
+			);
 	}
 
-	removeFromProject(userProject: UserProject): void {
-		this.isRequestLoading = true;
-		this.usersService.removeFromProject(userProject).subscribe(
-			() => {
-				this.isRequestLoading = false;
-				this.notificationService.success('User was removed from project.');
-				this.filterStr = '';
-				this.updateAssignedUsers(null, true);
-				this.updateNotAssignedUsers(null, true);
-			},
-			() => {
-				this.notificationService.danger('Error removing user.');
-			}
-		);
+	removeFromProject(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.removeFromProject(userProject)
+			.subscribe(() => {
+					this.notificationService.success('User was removed from project.');
+					this.filterStr = '';
+					this.updateAssignedUsers(null, true);
+					this.updateNotAssignedUsers(null, true);
+				},
+				() => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger('Error removing user.');
+				}
+			);
 	}
 
 	onResize(): void {

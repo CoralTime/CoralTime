@@ -6,7 +6,7 @@
 
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
-                <input class="ct-input-element" #gb placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
+            <input class="ct-input-element" #gb placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
             <i class="fa fa-search"></i>
         </div>
     </div>
@@ -27,7 +27,8 @@
 
                 <p-column *ngIf="client?.isActive" header="Actions" styleClass="ct-user-actions-col">
                     <ng-template let-col let-clientProject="rowData" pTemplate="body">
-                        <a (click)="updateProjectClient(clientProject, null)" class="ct-grid-link ct-grid-ellipse ct-grid-delete">
+                        <a class="ct-grid-link ct-grid-ellipse ct-grid-delete" #btn1
+                           (click)="updateProjectClient(clientProject, null, btn1)">
                             <i class="material-icons">clear</i>
                         </a>
                     </ng-template>
@@ -48,7 +49,8 @@
 
                 <p-column *ngIf="client?.isActive" header="Actions">
                     <ng-template let-col let-clientProject="rowData" pTemplate="body">
-                        <span (click)="updateProjectClient(clientProject, client)" class="ct-grid-button">Add to Client</span>
+                        <span class="ct-grid-button" #btn2
+                              (click)="updateProjectClient(clientProject, client, btn2)">Add to Client</span>
                     </ng-template>
                 </p-column>
             </p-dataTable>
