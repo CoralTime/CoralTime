@@ -77,7 +77,7 @@
 
         <div class="ct-buttons-block" mat-dialog-actions>
             <button mat-raised-button class="ct-button ct-blue-button"
-                    [class.ct-loading]="isValidateLoading"
+                    [class.ct-loading]="isValidateLoading || isValidateLoading"
                     [disabled]="isRequestLoading"
                     (click)="validateAndSubmit(userForm)">
                 {{submitButtonText}}
