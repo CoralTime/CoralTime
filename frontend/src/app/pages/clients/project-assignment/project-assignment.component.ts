@@ -170,7 +170,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 
 	// GENERAL
 
-	updateProjectClient(project: Project, client: Client = null): void {
+	updateProjectClient(project: Project, client: Client = null, target: HTMLElement): void {
 		let newProjectClient = project;
 		if (client) {
 			newProjectClient.clientId = client.id;
@@ -180,18 +180,18 @@ export class ClientProjectAssignmentComponent implements OnInit {
 			newProjectClient.clientName = null;
 		}
 
-		let submitObservable: Observable<any>;
-		submitObservable = this.projectsService.odata.Put(newProjectClient, newProjectClient.id.toString());
-		submitObservable.toPromise()
-			.then(() => {
-				this.updateAssignedProjects(null, true);
-				this.updateNotAssignedProjects(null, true);
-				this.filterStr = '';
-				this.notificationService.success('Project successfully ' + (client ? 'assigned.' : 'unassigned.'));
-			})
-			.catch(() => {
-				this.notificationService.danger(client ? 'Error assigning client.' : 'Error deleting project from client');
-			});
+		target.classList.add('ct-loading');
+		this.projectsService.odata.Put(newProjectClient, newProjectClient.id.toString())
+			.subscribe(() => {
+					this.updateAssignedProjects(null, true);
+					this.updateNotAssignedProjects(null, true);
+					this.filterStr = '';
+					this.notificationService.success('Project successfully ' + (client ? 'assigned.' : 'unassigned.'));
+				},
+				error => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger(client ? 'Error assigning client.' : 'Error deleting project from client');
+				});
 	}
 
 	onResize(): void {

@@ -52,7 +52,6 @@
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <a *ngIf="userProject.isProjectPrivate" #removeBtn
                            class="ct-grid-link ct-grid-ellipse ct-grid-delete"
-                           [class.ct-disabled]="isRequestLoading"
                            (click)="removeFromUser(userProject, removeBtn)">
                             <i class="material-icons">clear</i>
                         </a>
@@ -75,8 +74,7 @@
 
                 <p-column header="Actions">
                     <ng-template let-col let-project="rowData" pTemplate="body">
-                        <span (click)="addToUser(project, $event.target)" class="ct-grid-button"
-                              [class.ct-disabled]="isRequestLoading">Assign to User</span>
+                        <span class="ct-grid-button" (click)="addToUser(project, $event.target)">Assign to User</span>
                     </ng-template>
                 </p-column>
             </p-dataTable>

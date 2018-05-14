@@ -76,15 +76,15 @@ export class ProjectTasksComponent implements OnInit {
 	removeTask(task: Task, target: HTMLElement): void {
 		target.classList.add('ct-loading');
 		this.tasksService.toggleActive(task)
-			.finally(() => {
-				target.classList.remove('ct-loading');
-			})
 			.subscribe(() => {
 					this.filterStr = '';
 					this.updateTasks(null, true);
 					this.notificationService.success('Task has been successfully removed from projects.');
 				},
-				() => this.notificationService.danger('Error removing task.')
+				error => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger('Error removing task.');
+				}
 			);
 	}
 

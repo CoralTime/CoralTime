@@ -408,6 +408,8 @@ h5 {
 .ct-grid-button, .ct-blue-button, .ct-grid-link {
   &.ct-loading {
     position: relative;
+    pointer-events: none;
+    cursor: default;
 
     &:after {
       position: absolute;

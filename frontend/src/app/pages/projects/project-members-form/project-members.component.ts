@@ -26,7 +26,6 @@ export class ProjectUsersComponent implements OnInit {
 	authUser: AuthUser;
 	defaultProjectRole: ProjectRole;
 	filterStr: string = '';
-	isRequestLoading: boolean;
 	projectRoles: ProjectRole[];
 	resizeObservable: Subject<any> = new Subject();
 	wrapperHeightObservable: Subject<any> = new Subject();
@@ -196,13 +195,8 @@ export class ProjectUsersComponent implements OnInit {
 	// GENERAL
 
 	addToProject(user: User, target: HTMLElement): void {
-		this.isRequestLoading = true;
 		target.classList.add('ct-loading');
 		this.usersService.assignUserToProject(this.project.id, user.id, this.defaultProjectRole.id)
-			.finally(() => {
-				this.isRequestLoading = false;
-				target.classList.remove('ct-loading');
-			})
 			.subscribe(() => {
 					this.notificationService.success('User successfully assigned.');
 					this.filterStr = '';
@@ -210,6 +204,7 @@ export class ProjectUsersComponent implements OnInit {
 					this.updateNotAssignedUsers(null, true);
 				},
 				() => {
+					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error adding user.');
 				}
 			);
@@ -246,13 +241,8 @@ export class ProjectUsersComponent implements OnInit {
 	}
 
 	removeFromProject(userProject: UserProject, target: HTMLElement): void {
-		this.isRequestLoading = true;
 		target.classList.add('ct-loading');
 		this.usersService.removeFromProject(userProject)
-			.finally(() => {
-				this.isRequestLoading = false;
-				target.classList.remove('ct-loading');
-			})
 			.subscribe(() => {
 					this.notificationService.success('User was removed from project.');
 					this.filterStr = '';
@@ -260,6 +250,7 @@ export class ProjectUsersComponent implements OnInit {
 					this.updateNotAssignedUsers(null, true);
 				},
 				() => {
+					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error removing user.');
 				}
 			);

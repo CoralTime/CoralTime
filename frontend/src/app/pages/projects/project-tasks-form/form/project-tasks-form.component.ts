@@ -18,7 +18,6 @@ export class ProjectTasksFormComponent {
 	@Output() onHeightChanged: EventEmitter<any> = new EventEmitter();
 
 	form: FormGroup;
-	isRequestLoading: boolean;
 
 	constructor(private fb: FormBuilder,
 	            private notificationService: NotificationService,
@@ -73,18 +72,14 @@ export class ProjectTasksFormComponent {
 			isActive: true
 		});
 
-		this.isRequestLoading = true;
 		target.classList.add('ct-loading');
 		this.tasksService.odata.Post(projectTask)
-			.finally(() => {
-				this.isRequestLoading = false;
-				target.classList.remove('ct-loading');
-			})
 			.subscribe(() => {
 					this.delTask(index);
 					this.onTaskSubmitted.emit();
 				},
 				error => {
+					target.classList.remove('ct-loading');
 					this.onTaskSubmitted.emit(error);
 				});
 	}
