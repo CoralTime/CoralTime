@@ -10,17 +10,17 @@
 
   .loading-mask-content {
     position: absolute;
-    top: calc(50% - 125px);
+    top: calc(50% - 100px);
     left: 0;
     right: 0;
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     margin: auto;
     background: url(./assets/icons/ct.logo-2.svg) no-repeat center center;
     background-size: contain;
     opacity: 0;
     animation: ld-spin-fast 1s infinite;
-    transform-origin: 76px 79px;
+    transform-origin: 51px 53px;
   }
 
   &.ct-active, &.ct-active .loading-mask-content {
