@@ -214,7 +214,7 @@ tr:hover .ct-grid-settings {
       .ui-datatable-emptymessage {
         text-align: left !important;
         background: #fff !important;
-        padding-top: 30px;
+        padding-top: 15px;
       }
     }
 
@@ -244,7 +244,7 @@ tr:hover .ct-grid-settings {
       }
 
       tr, td, th {
-        background: transparent !important;
+        background: #ffffff !important;
         color: $grid-text;
         text-transform: capitalize;
         font-size: $baseFont;

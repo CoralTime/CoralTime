@@ -103,6 +103,14 @@ export class ReportsComponent implements OnInit {
 		this.getReportGrid(!!this.reportFilters.queryId);
 	}
 
+	// expanded panel
+
+	expandedPanelStep = 0;
+
+	setexpandedPanelStep(index: number) {
+		this.expandedPanelStep = index;
+	}
+
 	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
 		this.reportDropdowns = reportDropdowns;
 
