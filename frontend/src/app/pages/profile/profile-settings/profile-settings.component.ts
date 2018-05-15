@@ -45,6 +45,7 @@ export class ProfileSettingsComponent implements OnInit {
 	emailPattern = EMAIL_PATTERN;
 	isEmailChanged: boolean;
 	isFormShownArray: boolean[] = [true, true, true];
+	isTasksLoading: boolean;
 	projects: Project[];
 	projectModel: Project;
 	resetPasswordMessage: string;
@@ -294,7 +295,10 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	private loadTasks(projectId?: number): void {
-		this.tasksService.getActiveTasks(projectId).subscribe((res) => {
+		this.isTasksLoading = true;
+		this.tasksService.getActiveTasks(projectId)
+			.finally(() => this.isTasksLoading = false)
+			.subscribe((res) => {
 			this.tasks = this.filterTasks(res.data);
 			this.tasks.unshift(new Task({
 				id: 0,

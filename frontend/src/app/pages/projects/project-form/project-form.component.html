@@ -47,6 +47,7 @@
             <div>
                 <label class="ct-form-label">Client</label>
                 <ct-select [name]="'client'"
+                           [class.ct-loading]="isClientsLoading"
                            [displayName]="'name'" [trackBy]="'id'"
                            [defaultValue]="defaultClientName"
                            [(ngModel)]="clientModel"
