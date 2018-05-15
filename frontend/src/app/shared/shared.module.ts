@@ -36,7 +36,6 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 	],
 	declarations: [
 		ReadMoreComponent,
-		LoadingBarComponent,
 		ConfirmationComponent,
 		UserPicComponent
 	],
@@ -50,7 +49,6 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		CalendarModule,
 		ReadMoreComponent,
 		TranslateModule,
-		LoadingBarComponent,
 		TranslateModule,
 		DirectivesModule,
 		DatepickerModule,
