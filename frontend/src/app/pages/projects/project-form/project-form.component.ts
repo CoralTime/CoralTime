@@ -64,6 +64,7 @@ export class ProjectFormComponent implements OnInit {
 	defaultClientName: string;
 	dialogHeader: string;
 	isClientSelectDisabled: boolean;
+	isClientsLoading: boolean;
 	isNewProject: boolean;
 	isRequestLoading: boolean;
 	isValidateLoading: boolean;
@@ -85,15 +86,7 @@ export class ProjectFormComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.clientsService.getClients().subscribe((clients) => {
-			this.clients = clients;
-			this.clientModel = this.clients.filter((client) => client.id === this.project.clientId)[0];
-
-			if (this.model.clientName && !this.clientModel) {
-				this.defaultClientName = this.model.clientName + ' (archived)';
-				this.isClientSelectDisabled = true;
-			}
-		});
+		this.getClients();
 
 		let project = this.project;
 		this.isNewProject = !project;
@@ -103,6 +96,21 @@ export class ProjectFormComponent implements OnInit {
 		this.model = FormProject.formProject(this.project);
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);
 		this.stateText = this.project.isActive ? '' : 'Archived project is not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
+	}
+
+	getClients(): void {
+		this.isClientsLoading = true;
+		this.clientsService.getClients()
+			.finally(() => this.isClientsLoading = false)
+			.subscribe((clients) => {
+				this.clients = clients;
+				this.clientModel = this.clients.filter((client) => client.id === this.project.clientId)[0];
+
+				if (this.model.clientName && !this.clientModel) {
+					this.defaultClientName = this.model.clientName + ' (archived)';
+					this.isClientSelectDisabled = true;
+				}
+			});
 	}
 
 	stateOnChange(): void {

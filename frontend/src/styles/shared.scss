@@ -437,7 +437,7 @@ h5 {
   }
 }
 
-.ct-select-ellipse.ct-loading i:before{
+.ct-select-ellipse.ct-loading i:before {
   position: absolute;
   top: -1px;
   right: -1px;
@@ -446,6 +446,16 @@ h5 {
   content: '';
   background: url(./assets/rolling-blue.gif) no-repeat center center;
   background-size: contain;
+}
+
+.ct-loading .ct-select:after{
+  top: 8px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  background: url(./assets/rolling-blue.gif) no-repeat center center;
+  background-size: contain;
+  border: none;
 }
 
 .ct-blue-button:hover {
