@@ -12,11 +12,30 @@ $fieldHeight: 30px;
 }
 
 .ct-reports-page {
+
+  .ct-menu-item {
+    line-height: 36px;
+    height: 36px;
+
+    a {
+      position: relative;
+      display: block;
+      padding: 0 20px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    &:hover a:not(.ct-disabled) {
+      background: #e9f8fc;
+    }
+  }
+
   .ct-total-footer {
-    margin: 0 20px 40px 0 !important;
-    -webkit-box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    //margin: 0 20px 40px 0 !important;
+    //-webkit-box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     border: none !important;
+    background: #e9f8fc;
 
     label {
       font-weight: 700;
@@ -31,7 +50,7 @@ $fieldHeight: 30px;
     border-top: 2px solid #f1f1f1;
     border-bottom: 2px solid #f1f1f1;
     //margin: 0 20px 40px 0;
-    background: $blue-grid-header;
+    //background: $blue-grid-header;
     margin-top: 0;
     padding: 20px;
 
@@ -119,7 +138,9 @@ $fieldHeight: 30px;
     min-height: 46px;
     //position: fixed;
     z-index: 995;
-    background: $blue-grid-header;
+    background: $nav-background;
+    width: 100%;
+
     //width: 61%;
     //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
@@ -139,7 +160,7 @@ $fieldHeight: 30px;
 
   .ct-white-button {
     background: #ffffff;
-    color: $nav-link-border !important;
+    color: $nav-background !important;
     border: 1px solid #dfdfdf;
   }
 
@@ -167,16 +188,52 @@ $fieldHeight: 30px;
         display: inline-block;
       }
 
+      .ct-prev, .ct-next {
+        position: absolute;
+      }
+
+      .ct-prev {
+         left: 0;
+       }
+
+      .ct-next {
+        right: 0;
+      }
+
       .ct-prev, .ct-next, .fa-sort-desc:before {
         color: $nav-link-border;
       }
     }
   }
 
+  .ct-query-add-box, .ct-reports-reset-link {
+    display: inline-block;
+  }
+
+
+  .ct-query-add-box {
+    cursor: pointer;
+    color: $main-blue;
+
+    i {
+      top: 5px;
+      left: -6px;
+      position: relative;
+      font-size: 20px;
+    }
+
+    span {
+      border-bottom: 1px dotted;
+      position: relative;
+      left: -7px;
+    }
+  }
+
   .ct-query-block {
     position: relative;
     display: inline-block;
-    margin-top: 20px;
+    //margin-bottom: 20px;
+    width: 100%;
 
     > * {
       vertical-align: middle;
@@ -189,8 +246,12 @@ $fieldHeight: 30px;
     .ct-select-component {
       margin: 0;
       position: absolute;
-      width: 208px;
-      right: 3px;
+      //width: 208px;
+      //right: 3px;
+      //right: -37px;
+      left: 0;
+      top: 35px;
+      right: 0;
     }
 
     .ct-query-text {
@@ -201,10 +262,18 @@ $fieldHeight: 30px;
       white-space: nowrap;
       text-align: center;
       cursor: pointer;
-      background-color: $label-background;
-      color: white;
-      width: 208px;
-      padding: 5px 16px;
+      background-color: $main-blue;
+      color: #fff;
+      //border-radius: 4px;
+      padding: 7px 35px 7px 12px;
+      width: 100%;
+      position: relative;
+
+      i {
+        position: absolute;
+        right: 7px;
+        top: 5px;
+      }
     }
 
     .ct-select-open-button {
@@ -217,6 +286,9 @@ $fieldHeight: 30px;
       i {
         vertical-align: middle;
         font-size: 29px;
+        position: absolute;
+        right: -35px;
+        top: -3px;
       }
 
       &:hover i {
@@ -232,10 +304,12 @@ $fieldHeight: 30px;
       margin-left: 10px;
       cursor: pointer;
       font-weight: 700;
-      top: 0.5px;
-      font-size: 37px !important;
+      font-size: 24px !important;
       line-height: 0 !important;
-      color: #616c7a;
+      color: #ffffff;
+      right: 5px;
+      position: absolute;
+      top: 17px;
     }
 
     //.ct-query-text:hover + .ct-close, .ct-close:hover {
@@ -244,44 +318,53 @@ $fieldHeight: 30px;
   }
 
   .ct-collapsed-menu-footer {
-    margin-top: 20px;
+    margin-bottom: 18px;
   }
 
   .ct-reports-reset-link {
-    position: relative;
+    position: absolute;
+    right: 20px;
     height: 30px;
-    line-height: 30px;
     display: inline-block;
-    float: right;
     cursor: pointer;
-    top: 20px;
-    padding: 0 16px;
-    background: #374456;
-    width: 100px;
-    text-align: center;
+    padding: 0;
+    text-align: right;
+    margin: 3px 0 0 0;
 
     span {
       text-decoration: none;
-      color: white;
+      color: $nav-background;
+      border-bottom: 1px dotted;
+    }
+
+    i {
+      top: 4px;
+      position: relative;
+      font-size: 17px;
+      right: 2px;
     }
   }
 
   .ct-reports-time-period {
     position: relative;
-    height: 30px;
-    line-height: 30px;
+    height: 35px;
+    line-height: 35px;
     width: 100%;
     padding: 0;
 
     > div {
       cursor: pointer;
+
+      >span {
+        font-weight: 400;
+      }
     }
 
     > a {
       display: inline-block;
       position: relative;
-      margin-top: -5px;
-      width: 100px;
+      //margin-top: -5px;
+      width: 25px;
       height: 30px;
       vertical-align: middle;
       text-align: center;
@@ -297,7 +380,7 @@ $fieldHeight: 30px;
     > div {
       display: inline-block;
       padding: 0 13px 0 11px;
-      width: 256px;
+      //width: 256px;
 
       //&:hover {
       //  .fa {
@@ -310,12 +393,16 @@ $fieldHeight: 30px;
       width: 15px;
       height: 20px;
       text-align: center;
-      color: $nav-link-border;
+      color: $nav-background;
     }
 
     .fa-sort-desc {
       position: relative;
       top: -3px;
+    }
+
+    .fa-sort-desc:before {
+      color: $nav-background !important;
     }
   }
 
@@ -455,13 +542,12 @@ $fieldHeight: 30px;
 
   .ct-button.ct-white-button {
     background: white;
-    color: $nav-link-border;
-    margin-right: 8px;
+    color: $nav-background;
   }
 
   .ct-reports-grid {
     display: inline-block;
-    margin-bottom: 20px;
+    //margin-bottom: 20px;
     background-color: #ffffff;
     //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 
@@ -487,7 +573,7 @@ $fieldHeight: 30px;
     line-height: 42px;
     font-size: 15px;
     text-transform: uppercase;
-    //background: $blue-grid-header !important;
+    background: #e9f8fc !important;
     border-bottom: 1px solid #e1e6ed;
 
     > div {
@@ -573,10 +659,14 @@ $fieldHeight: 30px;
       width: 110px;
     }
     .ct-cell-client {
-      width: 130px;
+      width: 150px;
     }
     .ct-cell-user {
       width: 150px;
+
+      .ui-cell-data {
+        color: $black;
+      }
     }
     .ct-cell-task {
       width: 380px;
@@ -624,7 +714,7 @@ $fieldHeight: 30px;
     opacity: 0;
     z-index: 1;
     transition: opacity .3s;
-    padding: 0 10px;
+    //padding: 0 10px;
 
     &.ct-datepicker-opened {
       opacity: 1;
@@ -643,7 +733,7 @@ $fieldHeight: 30px;
     li {
       cursor: pointer;
       display: inline-block;
-      font-size: 12px;
+      font-size: 11px;
       height: 22px;
       width: 25%;
       text-align: center;
@@ -691,19 +781,17 @@ $fieldHeight: 30px;
 }
 
 .ct-report-filters-block {
+  margin-bottom: 15px;
+
   label {
     display: block;
   }
   > div {
     display: inline-block;
-    width: 147px !important;
+    width: 100%;
   }
 
-  > div:nth-child(3) {
-    margin: 0 20px;
-  }
-
-  .ct-select {
+   .ct-select {
     line-height: 35px;
     padding-left: 5px;
   }
@@ -713,6 +801,7 @@ $fieldHeight: 30px;
 .ct-reports-chart-container {
   width: 300px;
   position: fixed;
+  //position: absolute;
   display: inline-block;
   right: 20px;
   z-index: 994;
@@ -720,8 +809,9 @@ $fieldHeight: 30px;
 
   .mat-expansion-panel-header {
     height: 46px !important;
-    background: $blue-grid-header !important;
+    background: $nav-background !important;
     border-bottom: 1px solid #e1e6ed;
+    color: #ffffff;
   }
 
   .mat-expansion-panel-body {
@@ -744,7 +834,8 @@ $fieldHeight: 30px;
 
 .ct-reports-grid-container {
   background: #ffffff;
-  margin-right: 310px;
+  margin-right: 325px;
+  margin-bottom: 20px;
   //padding-right: 30px;
   display: inline-block;
   box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);

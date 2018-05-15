@@ -10,9 +10,71 @@
             <div class="ct-reports-chart-container">
                 <mat-accordion>
                     <mat-expansion-panel [expanded]="expandedPanelStep === 0" (opened)="setexpandedPanelStep(0)" hideToggle="true">
+
                         <mat-expansion-panel-header [expandedHeight]="'46px'" [collapsedHeight]="'46px'">
-                            Default Layout
+                            Filters
                         </mat-expansion-panel-header>
+
+                        <div class="ct-collapsed-menu-footer">
+                            <div class="ct-query-block" *ngIf="queryItems.length">
+                                <span *ngIf="queryItems.length" class="ct-query-text" (click)="querySelect.toggleSelect()">
+                                    {{queryModel?.queryName || 'Saved Query'}}<i *ngIf="!queryModel" class="material-icons">arrow_drop_down</i>
+                                    <span *ngIf="queryModel" class="ct-clear-icon material-icons" (click)="deleteQuery(queryModel)">clear</span>
+                                </span>
+
+                                <ct-select [name]="'query'" #querySelect
+                                           [displayName]="'queryName'" [trackBy]="'queryId'"
+                                           [(ngModel)]="queryModel"
+                                           (change)="queryOnChange(queryModel)"
+                                           [options]="queryItems">
+                                </ct-select>
+
+
+                                <!--<span class="ct-query-text" (click)="openQueryDialog()">{{queryModel?.queryName || 'Add Query'}}</span>-->
+
+                                <!--<span *ngIf="!queryItems.length" class="ct-query-text" (click)="openQueryDialog()">Add Query</span>-->
+
+                                <!--<button class="ct-select-open-button" [class.ct-disabled]="!queryItems.length" (click)="querySelect.toggleSelect()">-->
+                                <!--<i class="material-icons">more_vert</i>-->
+                                <!--</button>-->
+                                <!--<span *ngIf="!queryModel" class="ct-clear-icon material-icons" (click)="openQueryDialog()">add</span>-->
+
+
+                                <!--<button class="ct-select-open-button" [class.ct-disabled]="!queryItems.length" (click)="querySelect.toggleSelect()">-->
+                                <!--<i class="material-icons">more_vert</i>-->
+                                <!--</button>-->
+
+                                <!--<span *ngIf="!queryModel" class="ct-close" (click)="openQueryDialog()">Create</span>-->
+                                <!--<span *ngIf="queryModel" class="ct-close" (click)="deleteQuery(queryModel)">Delete</span>-->
+                            </div>
+
+                            <div class="ct-reports-settings">
+                                <div class="ct-reports-actions-block">
+                                    <div class="ct-reports-time-period ct-button ct-white-button mat-raised-button">
+                                        <a class="ct-prev" (click)="getNewPeriod(false)"></a>
+                                        <div>
+                                            <i class="fa fa-calendar"></i>
+                                            <span (click)="toggleRangeDatepicker()">{{dateString}}</span>
+                                            <i *ngIf="isDatepickerShown" class="fa fa-times" (click)="cancelUpdatingReportGrid()"></i>
+                                            <i *ngIf="!isDatepickerShown" class="fa fa-sort-desc" (click)="toggleRangeDatepicker()"></i>
+                                        </div>
+                                        <a class="ct-next" (click)="getNewPeriod()"></a>
+                                    </div>
+                                    <ct-range-datepicker *ngIf="isDatepickerShown"
+                                                         [class.ct-datepicker-opened]="isDatepickerAnimating"
+                                                         [dateResponse]="dateResponse"
+                                                         [datePeriodList]="reportDropdowns?.values.dateStatic"
+                                                         [firstDayOfWeek]="firstDayOfWeek"
+                                                         (clickOutside)="toggleRangeDatepicker($event)"
+                                                         (onPeriodChanged)="datePeriodOnChange($event)"
+                                                         (closed)="toggleRangeDatepicker()"></ct-range-datepicker>
+                                </div>
+                            </div>
+
+                            <!--<div class="ct-reports-time-period ct-button mat-raised-button ct-white-button">-->
+                            <!--<i class="fa fa-plus"></i> <span class="ct-default-text">Queries</span>-->
+                            <!--</div>-->
+                        </div>
 
                         <div class="ct-report-filters-block">
                             <label class="ct-filter-label">Filter by</label>
@@ -74,69 +136,24 @@
                                        [options]="groupByItems">
                             </ct-select>
                         </div>
-
-                        <div class="ct-collapsed-menu-footer">
-                            <div class="ct-reports-settings">
-                                <div class="ct-reports-actions-block">
-                                    <div class="ct-reports-time-period ct-button ct-white-button mat-raised-button">
-                                        <a class="ct-prev" (click)="getNewPeriod(false)"></a>
-                                        <div>
-                                            <i class="fa fa-calendar"></i>
-                                            <span (click)="toggleRangeDatepicker()">{{dateString}}</span>
-                                            <i *ngIf="isDatepickerShown" class="fa fa-times" (click)="cancelUpdatingReportGrid()"></i>
-                                            <i *ngIf="!isDatepickerShown" class="fa fa-sort-desc" (click)="toggleRangeDatepicker()"></i>
-                                        </div>
-                                        <a class="ct-next" (click)="getNewPeriod()"></a>
-                                    </div>
-                                    <ct-range-datepicker *ngIf="isDatepickerShown"
-                                                         [class.ct-datepicker-opened]="isDatepickerAnimating"
-                                                         [dateResponse]="dateResponse"
-                                                         [datePeriodList]="reportDropdowns?.values.dateStatic"
-                                                         [firstDayOfWeek]="firstDayOfWeek"
-                                                         (clickOutside)="toggleRangeDatepicker($event)"
-                                                         (onPeriodChanged)="datePeriodOnChange($event)"
-                                                         (closed)="toggleRangeDatepicker()"></ct-range-datepicker>
-                                </div>
+                        <div>
+                            <div class="ct-query-add-box" (click)="openQueryDialog()" title="Save query">
+                                <i class="material-icons">add</i> <span>Save query</span>
                             </div>
-
-                            <!--<div class="ct-reports-time-period ct-button mat-raised-button ct-white-button">-->
-                            <!--<i class="fa fa-plus"></i> <span class="ct-default-text">Queries</span>-->
-                            <!--</div>-->
-
-                            <div class="ct-query-block">
-
-                                <span class="ct-query-text" (click)="openQueryDialog()">{{queryModel?.queryName || 'Add Query'}}</span>
-
-                                <!--<span class="ct-close" (click)="openQueryDialog()">Create</span>-->
-                                <span *ngIf="queryModel" class="ct-clear-icon material-icons" (click)="deleteQuery(queryModel)">backspace</span>
-
-                                <button class="ct-select-open-button" [class.ct-disabled]="!queryItems.length">
-                                    <i class="material-icons" (click)="querySelect.toggleSelect()">more_vert</i>
-                                </button>
-                                <ct-select [name]="'query'" #querySelect
-                                           [displayName]="'queryName'" [trackBy]="'queryId'"
-                                           [(ngModel)]="queryModel"
-                                           (change)="queryOnChange(queryModel)"
-                                           [options]="queryItems">
-                                </ct-select>
-                                <!--<span *ngIf="!queryModel" class="ct-close" (click)="openQueryDialog()">Create</span>-->
-                                <!--<span *ngIf="queryModel" class="ct-close" (click)="deleteQuery(queryModel)">Delete</span>-->
-                            </div>
-
-                            <div class="ct-reports-reset-link" (click)="resetFilters()" title="Reset filters">
-                                <span>Reset</span>
+                            <div class="ct-reports-reset-link" (click)="resetFilters()" title="Clear filters">
+                                <i class="material-icons">clear</i><span>Clear filters</span>
                             </div>
                         </div>
 
                     </mat-expansion-panel>
 
-                    <mat-expansion-panel [expanded]="expandedPanelStep === 1" (opened)="setexpandedPanelStep(1)" hideToggle="true">
-                        <mat-expansion-panel-header [expandedHeight]="'46px'" [collapsedHeight]="'46px'">
-                            Current Week Summary
-                        </mat-expansion-panel-header>
+                    <!--<mat-expansion-panel [expanded]="expandedPanelStep === 1" (opened)="setexpandedPanelStep(1)" hideToggle="true">-->
+                        <!--<mat-expansion-panel-header [expandedHeight]="'46px'" [collapsedHeight]="'46px'">-->
+                            <!--Current Week Summary-->
+                        <!--</mat-expansion-panel-header>-->
 
-                        <img src="http://www.conceptdraw.com/solution-park/resource/images/solutions/pie-charts/Graphs-and-Chatrs-Pie-Chart-Europe-Browser-Usage-Share.png"/>
-                    </mat-expansion-panel>
+                        <!--&lt;!&ndash;<img src="http://www.conceptdraw.com/solution-park/resource/images/solutions/pie-charts/Graphs-and-Chatrs-Pie-Chart-Europe-Browser-Usage-Share.png"/>&ndash;&gt;-->
+                    <!--</mat-expansion-panel>-->
 
                 </mat-accordion>
             </div>
