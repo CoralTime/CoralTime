@@ -37,6 +37,7 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 	declarations: [
 		ReadMoreComponent,
 		ConfirmationComponent,
+		ExpansionPanelComponent,
 		UserPicComponent
 	],
 	exports: [
@@ -57,6 +58,7 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		SharedFormModule,
 		UserPicComponent,
 		ConfirmationComponent,
+		ExpansionPanelComponent
 	]
 })
 
