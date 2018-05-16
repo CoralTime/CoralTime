@@ -115,7 +115,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				this.calendarService.timeEntriesUpdated.emit();
 				this.closeForm();
 			},
-			error => {
+			() => {
 				this.notificationService.danger('Error deleting Time Entry');
 			});
 	}
@@ -151,7 +151,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				this.calendarService.timeEntriesUpdated.emit();
 				this.closeEntryTimeForm.emit();
 			},
-			error => {
+			() => {
 				this.notificationService.danger('Error moving Time Entry.');
 			});
 		this.closeAllMenus();
@@ -180,7 +180,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 					this.notificationService.success('New Time Entry has been successfully dublicated.');
 					this.calendarService.timeEntriesUpdated.emit();
 				},
-				error => {
+				() => {
 					this.notificationService.danger('Error dublicating Time Entry.');
 				});
 		});
@@ -271,7 +271,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				this.notificationService.danger(errorMessage);
 				return null;
 			},
-			error => {
+			() => {
 				this.notificationService.danger('Error changing Timer status.');
 				return error;
 			});

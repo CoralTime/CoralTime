@@ -152,7 +152,8 @@ export class ProfileSettingsComponent implements OnInit {
 				} else {
 					this.notificationService.danger('Error when resetting the password.');
 				}
-			}, error => this.notificationService.danger('Error when resetting the password.'));
+			},
+			() => this.notificationService.danger('Error when resetting the password.'));
 	}
 
 	sendEmailDayOnChange(): void {
@@ -200,7 +201,7 @@ export class ProfileSettingsComponent implements OnInit {
 
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
-				error => {
+				() => {
 					this.notificationService.danger('Error changing profile settings.');
 				});
 	}
@@ -267,7 +268,7 @@ export class ProfileSettingsComponent implements OnInit {
 
 					this.notificationService.success('Profile settings has been successfully changed.');
 				},
-				error => {
+				() => {
 					this.notificationService.danger('Error changing profile settings.');
 				});
 	}

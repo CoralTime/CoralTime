@@ -341,7 +341,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 				this.closeEntryTimeForm.emit();
 			},
-			error => {
+			() => {
 				this.isRequestLoading = false;
 
 				if (!this.currentTimeEntry.id) {

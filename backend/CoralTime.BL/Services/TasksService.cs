@@ -69,13 +69,18 @@ namespace CoralTime.BL.Services
         public TaskTypeView Update(TaskTypeView taskTypeView)
         {
             IsTaskTypeNameHasChars(taskTypeView.Name);
-            IsNameUnique(taskTypeView);
 
             var taskType = Uow.TaskTypeRepository.GetQueryWithIncludesById(taskTypeView.Id);
             if (taskType == null)
             {
                 throw new CoralTimeEntityNotFoundException($"TaskType with id {taskTypeView.Id} not found");
             }
+
+            if (taskTypeView.Name != taskType.Name)
+            {
+                IsNameUnique(taskTypeView);
+            }
+            
 
             #region We shouldn't change projectId for Tasks
 

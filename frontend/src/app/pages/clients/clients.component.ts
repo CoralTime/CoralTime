@@ -47,8 +47,6 @@ export class ClientsComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllClients();
-
 		if (!this.isAllClients) {
 			this.loadLazy();
 		}
@@ -68,16 +66,16 @@ export class ClientsComponent implements OnInit {
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllClients();
 				},
-				error => this.notificationService.danger('Error loading clients.')
+				() => this.notificationService.danger('Error loading clients.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllClients();
-
 		if (event) {
 			this.lastEvent = event;
 		}

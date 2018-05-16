@@ -91,22 +91,19 @@ export class ProjectUsersComponent implements OnInit {
 					this.assignedUsersLastEvent.first = this.assignedUsersPagedResult.data.length;
 					this.updatingAssignedUsersGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllAssignedUsers();
 				},
-				error => this.notificationService.danger('Error loading users.')
+				() => this.notificationService.danger('Error loading users.')
 			);
 	}
 
 	onAssignedUsersEndScroll(): void {
-		this.checkIsAllAssignedUsers();
-
 		if (!this.isAllAssignedUsers) {
 			this.updateAssignedUsers();
 		}
 	}
 
 	updateAssignedUsers(event = null, updatePage?: boolean): void {
-		this.checkIsAllAssignedUsers();
-
 		if (event) {
 			this.assignedUsersLastEvent = event;
 		}
@@ -148,25 +145,23 @@ export class ProjectUsersComponent implements OnInit {
 					} else {
 						this.notAssignedUsersPagedResult.data = this.notAssignedUsersPagedResult.data.concat(res.data);
 					}
+
 					this.notAssignedUsersLastEvent.first = this.notAssignedUsersPagedResult.data.length;
 					this.updatingNotAssignedUsersGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllUnassignedUsers();
 				},
-				error => this.notificationService.danger('Error loading users.')
+				() => this.notificationService.danger('Error loading users.')
 			);
 	}
 
 	onNotAssignedUsersEndScroll(): void {
-		this.checkIsAllUnassignedUsers();
-
 		if (!this.isAllNotAssignedUsers) {
 			this.updateNotAssignedUsers();
 		}
 	}
 
 	updateNotAssignedUsers(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedUsers();
-
 		if (event) {
 			this.notAssignedUsersLastEvent = event;
 		}
