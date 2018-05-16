@@ -68,22 +68,19 @@ export class ClientProjectAssignmentComponent implements OnInit {
 					this.assignedProjectsLastEvent.first = this.assignedProjectsPagedResult.data.length;
 					this.updatingAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllAssignedProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	onAssignedProjectsEndScroll(): void {
-		this.checkIsAllAssignedProjects();
-
 		if (!this.isAllAssignedProjects) {
 			this.updateAssignedProjects();
 		}
 	}
 
 	updateAssignedProjects(event = null, updatePage?: boolean): void {
-		this.checkIsAllAssignedProjects();
-
 		if (event) {
 			this.assignedProjectsLastEvent = event;
 		}
@@ -125,25 +122,23 @@ export class ClientProjectAssignmentComponent implements OnInit {
 					} else {
 						this.notAssignedProjectsPagedResult.data = this.notAssignedProjectsPagedResult.data.concat(res.data);
 					}
+
 					this.notAssignedProjectsLastEvent.first = this.notAssignedProjectsPagedResult.data.length;
 					this.updatingNotAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllUnassignedProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	onNotAssignedProjectsEndScroll(): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (!this.isAllNotAssignedProjects) {
 			this.updateNotAssignedProjects();
 		}
 	}
 
 	updateNotAssignedProjects(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (event) {
 			this.notAssignedProjectsLastEvent = event;
 			this.isAllNotAssignedProjects = false;
@@ -195,7 +190,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 					this.filterStr = '';
 					this.notificationService.success('Project successfully ' + (client ? 'assigned.' : 'unassigned.'));
 				},
-				error => {
+				() => {
 					target.classList.remove('ct-loading');
 					this.notificationService.danger(client ? 'Error assigning client.' : 'Error deleting project from client');
 				});

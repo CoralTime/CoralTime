@@ -295,7 +295,7 @@ export class ReportsComponent implements OnInit {
 					this.notificationService.success('Report query has been successfully deleted.');
 					this.updateQueryItems();
 				},
-				error => this.notificationService.danger('Error deleting report query.'));
+				() => this.notificationService.danger('Error deleting report query.'));
 	}
 
 	queryOnChange(queryModel: ReportFilters): void {

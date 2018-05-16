@@ -54,8 +54,6 @@ export class UsersComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllUsers();
-
 		if (!this.isAllUsers) {
 			this.loadLazy();
 		}
@@ -71,16 +69,16 @@ export class UsersComponent implements OnInit {
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllUsers();
 				},
-				error => this.notificationService.danger('Error loading Users.')
+				() => this.notificationService.danger('Error loading Users.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllUsers();
-
 		if (event) {
 			this.lastEvent = event;
 		}

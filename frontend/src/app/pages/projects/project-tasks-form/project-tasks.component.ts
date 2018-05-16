@@ -52,8 +52,9 @@ export class ProjectTasksComponent implements OnInit {
 
 					this.tasksLastEvent.first = this.tasksPagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllTasks();
 				},
-				error => this.notificationService.danger('Error loading tasks.')
+				() => this.notificationService.danger('Error loading tasks.')
 			);
 	}
 
@@ -80,7 +81,7 @@ export class ProjectTasksComponent implements OnInit {
 					this.updateTasks(null, true);
 					this.notificationService.success('Task has been successfully removed from projects.');
 				},
-				error => {
+				() => {
 					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error removing task.');
 				}
@@ -88,16 +89,12 @@ export class ProjectTasksComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllTasks();
-
 		if (!this.isAllTasks) {
 			this.updateTasks();
 		}
 	}
 
 	updateTasks(event = null, updatePage?: boolean): void {
-		this.checkIsAllTasks();
-
 		if (event) {
 			this.tasksLastEvent = event;
 		}

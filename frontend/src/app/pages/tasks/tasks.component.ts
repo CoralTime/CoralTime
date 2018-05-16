@@ -44,8 +44,6 @@ export class TasksComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllTasks();
-
 		if (!this.isAllTasks) {
 			this.loadLazy();
 		}
@@ -65,21 +63,21 @@ export class TasksComponent implements OnInit {
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllTasks();
 				},
-				error => this.notificationService.danger('Error loading tasks.')
+				() => this.notificationService.danger('Error loading tasks.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllTasks();
-
 		if (event) {
 			this.lastEvent = event;
 		}
 		if (updatePage) {
-			this.updatingGrid = updatePage;
+			this.updatingGrid = true;
 			this.lastEvent.first = 0;
 		}
 		if (event || updatePage) {
@@ -134,6 +132,7 @@ export class TasksComponent implements OnInit {
 			this.lastEvent.first = 0;
 			this.lastEvent.pageCount = 1;
 		}
+
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
 	}

@@ -58,8 +58,6 @@ export class ProjectsComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (!this.isAllProjects) {
 			this.loadLazy();
 		}
@@ -75,16 +73,16 @@ export class ProjectsComponent implements OnInit {
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (event) {
 			this.lastEvent = event;
 		}
@@ -108,7 +106,7 @@ export class ProjectsComponent implements OnInit {
 		});
 	}
 
-	private checkIsAllUnassignedProjects(): void {
+	private checkIsAllProjects(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllProjects = true;
 		}

@@ -121,7 +121,7 @@ export class CalendarDayComponent implements OnInit {
 					this.calendarService.timeEntriesUpdated.emit();
 					this.draggedTimeEntry = null;
 				},
-				error => {
+				() => {
 					this.notificationService.danger('Error moving Time Entry.');
 				});
 		}

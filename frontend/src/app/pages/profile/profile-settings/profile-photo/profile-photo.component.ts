@@ -59,7 +59,7 @@ export class ProfilePhotoComponent {
 					this.notificationService.success('Your profile photo was changed.');
 					this.onSubmit.emit(avatarUrl);
 				},
-				error => {
+				() => {
 					this.notificationService.danger('Error changing profile photo.');
 					this.matDialog.closeAll();
 				});
