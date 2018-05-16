@@ -521,14 +521,22 @@ tr:hover .ct-grid-settings {
   }
 }
 
-.ct-grid-loading {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 37px;
-  text-align: center;
-  margin-top: -37px;
-  background: white;
+.ct-loading-block td {
+  height: 50px;
+  overflow: hidden !important;
+
+  &:before {
+    position: absolute;
+    top: -47px;
+    left: 0;
+    right: 0;
+    content: '';
+    width: 100%;
+    height: 150px;
+    margin: auto;
+    background: #fff url(./assets/grid-loader.gif) no-repeat center center;
+    background-size: contain;
+  }
 }
 
 .ct-visible {

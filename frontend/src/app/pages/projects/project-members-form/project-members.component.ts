@@ -77,8 +77,7 @@ export class ProjectUsersComponent implements OnInit {
 		this.assignedUsersSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getProjectUsersWithCount(this.assignedUsersLastEvent, this.filterStr, this.project.id);
 		})
-			.subscribe(
-				(res: PagedResult<UserProject>) => {
+			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedUsersPagedResult || !this.assignedUsersLastEvent.first || this.updatingAssignedUsersGrid) {
 						this.assignedUsersPagedResult = res;
 					} else {
@@ -110,12 +109,15 @@ export class ProjectUsersComponent implements OnInit {
 
 		if (event) {
 			this.assignedUsersLastEvent = event;
-			this.isAllAssignedUsers = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedUsersGrid = updatePage;
 			this.assignedUsersLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedUsers = false;
+			this.assignedUsersPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedUsersLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedUsers) {
@@ -140,8 +142,7 @@ export class ProjectUsersComponent implements OnInit {
 		this.notAssignedUsersSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUnassignedUsersWithCount(this.notAssignedUsersLastEvent, this.filterStr, this.project.id);
 		})
-			.subscribe(
-				(res: PagedResult<User>) => {
+			.subscribe((res: PagedResult<User>) => {
 					if (!this.notAssignedUsersPagedResult || !this.notAssignedUsersLastEvent.first || this.updatingNotAssignedUsersGrid) {
 						this.notAssignedUsersPagedResult = res;
 					} else {
@@ -168,12 +169,15 @@ export class ProjectUsersComponent implements OnInit {
 
 		if (event) {
 			this.notAssignedUsersLastEvent = event;
-			this.isAllNotAssignedUsers = false;
 		}
 		if (updatePage) {
 			this.updatingNotAssignedUsersGrid = updatePage;
 			this.notAssignedUsersLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllNotAssignedUsers = false;
+			this.notAssignedUsersPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.notAssignedUsersLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedUsers) {

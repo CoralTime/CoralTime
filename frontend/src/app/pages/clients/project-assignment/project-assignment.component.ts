@@ -86,12 +86,15 @@ export class ClientProjectAssignmentComponent implements OnInit {
 
 		if (event) {
 			this.assignedProjectsLastEvent = event;
-			this.isAllAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedProjectsGrid = updatePage;
 			this.assignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedProjects = false;
+			this.assignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedProjects) {
@@ -116,8 +119,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.projectsService.getClientProjects(this.notAssignedProjectsLastEvent, this.filterStr, true, null);
 		})
-			.subscribe(
-				(res: PagedResult<Project>) => {
+			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;
 					} else {
@@ -150,6 +152,11 @@ export class ClientProjectAssignmentComponent implements OnInit {
 			this.updatingNotAssignedProjectsGrid = updatePage;
 			this.notAssignedProjectsLastEvent.first = 0;
 			this.isAllNotAssignedProjects = false;
+		}
+		if (event || updatePage) {
+			this.isAllNotAssignedProjects = false;
+			this.notAssignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedProjects) {

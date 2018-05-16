@@ -20,6 +20,7 @@
                      [resizeObservable]="resizeObservable"
                      scrollable="true" [sortField]="'name'"
                      [responsive]="true" [lazy]="true"
+                     [loading]="!isAllProjects"
                      [globalFilter]="gb"
                      (onLazyLoad)="loadLazy($event)"
                      (onMoreContent)="loadLazy()"

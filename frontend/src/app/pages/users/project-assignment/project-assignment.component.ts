@@ -72,8 +72,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUserProjectsWithCount(this.assignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
-			.subscribe(
-				(res: PagedResult<UserProject>) => {
+			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedProjectsPagedResult || !this.assignedProjectsLastEvent.first || this.updatingAssignedProjectsGrid) {
 						this.assignedProjectsPagedResult = res;
 					} else {
@@ -105,12 +104,15 @@ export class UserProjectAssignmentComponent implements OnInit {
 
 		if (event) {
 			this.assignedProjectsLastEvent = event;
-			this.isAllAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedProjectsGrid = updatePage;
 			this.assignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedProjects = false;
+			this.assignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedProjects) {
@@ -135,8 +137,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUnassignedProjectsWithCount(this.notAssignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
-			.subscribe(
-				(res: PagedResult<Project>) => {
+			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;
 					} else {
@@ -163,12 +164,15 @@ export class UserProjectAssignmentComponent implements OnInit {
 
 		if (event) {
 			this.notAssignedProjectsLastEvent = event;
-			this.isAllNotAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingNotAssignedProjectsGrid = updatePage;
 			this.notAssignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllNotAssignedProjects = false;
+			this.notAssignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedProjects) {

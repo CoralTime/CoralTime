@@ -65,8 +65,7 @@ export class UsersComponent implements OnInit {
 		this.subject.debounceTime(500).switchMap(() => {
 			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 		})
-			.subscribe(
-				(res: PagedResult<User>) => {
+			.subscribe((res: PagedResult<User>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;
 					} else {
@@ -84,12 +83,15 @@ export class UsersComponent implements OnInit {
 
 		if (event) {
 			this.lastEvent = event;
-			this.isAllUsers = false;
 		}
 		if (updatePage) {
 			this.updatingGrid = updatePage;
 			this.lastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllUsers = false;
+			this.pagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.lastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllUsers) {
