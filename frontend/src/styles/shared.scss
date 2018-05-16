@@ -253,7 +253,7 @@ h5 {
 }
 
 .ct-grid-search-filter {
-  $placeholderColor: hsla(0,0%,100%,.86);
+  $placeholderColor: hsla(0, 0%, 100%, .86);
 
   position: relative;
   top: -59px;
@@ -264,7 +264,7 @@ h5 {
   box-sizing: border-box;
   width: 180px;
   height: 28px;
-  background: hsla(0,0%,100%,.23);
+  background: hsla(0, 0%, 100%, .23);
 
   .fa-search {
     position: absolute;
@@ -392,6 +392,76 @@ h5 {
     font-size: 16px;
     font-family: inherit;
   }
+}
+
+.ct-loading {
+  &.ct-grid-button, &.ct-blue-button {
+    position: relative;
+
+    &:after {
+      position: absolute;
+      right: 2px;
+      top: 2px;
+      content: '';
+      width: 18px;
+      height: 18px;
+      background: url(./assets/rolling-white.gif) no-repeat center center;
+      background-size: contain;
+    }
+  }
+}
+
+.ct-grid-button, .ct-blue-button, .ct-grid-link {
+  &.ct-loading {
+    position: relative;
+    pointer-events: none;
+    cursor: default;
+
+    &:after {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      content: '';
+      background: url(./assets/rolling-white.gif) no-repeat center center;
+      background-size: contain;
+    }
+  }
+
+  &.ct-grid-button:after {
+    top: 1px;
+    right: 1px;
+    width: 15px;
+    height: 15px;
+  }
+
+  &.ct-grid-link:after {
+    background-image: url(./assets/rolling-blue.gif);
+    top: 3px;
+    right: -20px;
+  }
+}
+
+.ct-select-ellipse.ct-loading i:before {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 18px;
+  height: 18px;
+  content: '';
+  background: url(./assets/rolling-blue.gif) no-repeat center center;
+  background-size: contain;
+}
+
+.ct-loading .ct-select:after {
+  top: 8px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  background: url(./assets/rolling-blue.gif) no-repeat center center;
+  background-size: contain;
+  border: none;
 }
 
 .ct-blue-button:hover {

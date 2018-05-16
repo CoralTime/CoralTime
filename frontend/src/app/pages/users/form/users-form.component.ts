@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
-
 import { User } from '../../../models/user';
 import { Roles } from '../../../core/auth/permissions';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -75,7 +74,8 @@ export class UsersFormComponent implements OnInit {
 	submitButtonText: string;
 	dialogHeader: string;
 	emailPattern = EMAIL_PATTERN;
-	isRequestLoading: boolean = false;
+	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	impersonateUser: User;
 	isActive: boolean;
 	isNewUser: boolean;
@@ -129,15 +129,14 @@ export class UsersFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(form: NgForm): void {
-		this.isRequestLoading = true;
+		this.isValidateLoading = true;
 		this.validateForm(form)
+			.finally(() => this.isValidateLoading = false)
 			.subscribe((isFormValid: boolean) => {
-					this.isRequestLoading = false;
-					if (isFormValid) {
-						this.submit();
-					}
-				},
-				() => this.isRequestLoading = false);
+				if (isFormValid) {
+					this.submit();
+				}
+			});
 	}
 
 	private submit(): void {

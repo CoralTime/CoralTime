@@ -86,12 +86,15 @@ export class ClientProjectAssignmentComponent implements OnInit {
 
 		if (event) {
 			this.assignedProjectsLastEvent = event;
-			this.isAllAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedProjectsGrid = updatePage;
 			this.assignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedProjects = false;
+			this.assignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedProjects) {
@@ -116,8 +119,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.projectsService.getClientProjects(this.notAssignedProjectsLastEvent, this.filterStr, true, null);
 		})
-			.subscribe(
-				(res: PagedResult<Project>) => {
+			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;
 					} else {
@@ -151,6 +153,11 @@ export class ClientProjectAssignmentComponent implements OnInit {
 			this.notAssignedProjectsLastEvent.first = 0;
 			this.isAllNotAssignedProjects = false;
 		}
+		if (event || updatePage) {
+			this.isAllNotAssignedProjects = false;
+			this.notAssignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
+		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedProjects) {
 			return;
@@ -170,7 +177,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 
 	// GENERAL
 
-	updateProjectClient(project: Project, client: Client = null): void {
+	updateProjectClient(project: Project, client: Client = null, target: HTMLElement): void {
 		let newProjectClient = project;
 		if (client) {
 			newProjectClient.clientId = client.id;
@@ -180,18 +187,18 @@ export class ClientProjectAssignmentComponent implements OnInit {
 			newProjectClient.clientName = null;
 		}
 
-		let submitObservable: Observable<any>;
-		submitObservable = this.projectsService.odata.Put(newProjectClient, newProjectClient.id.toString());
-		submitObservable.toPromise()
-			.then(() => {
-				this.updateAssignedProjects(null, true);
-				this.updateNotAssignedProjects(null, true);
-				this.filterStr = '';
-				this.notificationService.success('Project successfully ' + (client ? 'assigned.' : 'unassigned.'));
-			})
-			.catch(() => {
-				this.notificationService.danger(client ? 'Error assigning client.' : 'Error deleting project from client');
-			});
+		target.classList.add('ct-loading');
+		this.projectsService.odata.Put(newProjectClient, newProjectClient.id.toString())
+			.subscribe(() => {
+					this.updateAssignedProjects(null, true);
+					this.updateNotAssignedProjects(null, true);
+					this.filterStr = '';
+					this.notificationService.success('Project successfully ' + (client ? 'assigned.' : 'unassigned.'));
+				},
+				error => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger(client ? 'Error assigning client.' : 'Error deleting project from client');
+				});
 	}
 
 	onResize(): void {

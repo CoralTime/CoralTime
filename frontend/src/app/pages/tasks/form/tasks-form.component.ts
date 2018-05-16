@@ -45,6 +45,7 @@ export class TaskFormComponent implements OnInit {
 	dialogHeader: string;
 	isNewTask: boolean;
 	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	model: FormTask;
 	showNameError: boolean;
 	stateModel: any;
@@ -78,14 +79,14 @@ export class TaskFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(): void {
-		this.isRequestLoading = true;
-		this.validateForm().subscribe((isFormInvalid: boolean) => {
-				this.isRequestLoading = false;
+		this.isValidateLoading = true;
+		this.validateForm()
+			.finally(() => this.isValidateLoading = false)
+			.subscribe((isFormInvalid: boolean) => {
 				if (!isFormInvalid) {
 					this.submit();
 				}
-			},
-			() => this.isRequestLoading = false);
+			});
 	}
 
 	private submit(): void {
