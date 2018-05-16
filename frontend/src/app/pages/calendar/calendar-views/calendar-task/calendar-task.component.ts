@@ -271,7 +271,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				this.notificationService.danger(errorMessage);
 				return null;
 			},
-			() => {
+			error => {
 				this.notificationService.danger('Error changing Timer status.');
 				return error;
 			});
