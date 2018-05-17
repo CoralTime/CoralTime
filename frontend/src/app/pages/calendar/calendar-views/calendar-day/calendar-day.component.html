@@ -12,7 +12,7 @@
         </div>
     </div>
 
-    <div class="ct-calendar-day-tasks">
+    <div class="ct-calendar-day-tasks" [@slideCalendarTask]="animationState">
         <div [style.height]="(isDragEnter ? fakeCalendarTaskHeight : 0) + 'px'"
              [class.ct-calendar-task]="isDragEnter" class="ct-fake-task"></div>
         <ct-calendar-task *ngFor="let timeEntry of dayInfo.timeEntries; let i = index"

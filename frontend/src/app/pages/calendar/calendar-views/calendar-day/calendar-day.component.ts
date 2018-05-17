@@ -1,21 +1,25 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { CalendarDay, DateUtils, TimeEntry } from '../../../../models/calendar';
+import { NotificationService } from '../../../../core/notification.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { EntryTimeComponent } from '../../entry-time/entry-time.component';
-import { NotificationService } from '../../../../core/notification.service';
 import { MAX_TIMER_VALUE } from '../calendar-task/calendar-task.component';
-import { Observable } from 'rxjs/Observable';
 import * as moment from 'moment';
+import { ctCalendarDayAnimation } from '../../calendar.animation';
 
 @Component({
 	selector: 'ct-calendar-day',
-	templateUrl: 'calendar-day.component.html'
+	templateUrl: 'calendar-day.component.html',
+	animations: [ctCalendarDayAnimation.slideCalendarTask]
 })
 
 export class CalendarDayComponent implements OnInit {
+	@Input() animationDelay: number;
 	@Input() dayInfo: CalendarDay;
 	@ViewChild('entryForm') entryForm: EntryTimeComponent;
 
+	animationState: boolean;
 	canChangeDragEnter: boolean = true;
 	changeDragEnterTimeout: any;
 	draggedTimeEntry: TimeEntry;
@@ -35,6 +39,7 @@ export class CalendarDayComponent implements OnInit {
 			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
 				timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
 		}
+		this.triggerAnimation();
 	}
 
 	addNewTimeEntry(currentDate: string): void {
@@ -69,8 +74,13 @@ export class CalendarDayComponent implements OnInit {
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
-	deleteTimeEntry(): void {
+	deleteTimeEntry(index?: number): void {
 		this.isEntryFormOpened = false;
+	}
+
+	triggerAnimation(): void {
+		this.animationState = false;
+		setTimeout(() => this.animationState = true, this.animationDelay);
 	}
 
 	// DRAG ACTIONS

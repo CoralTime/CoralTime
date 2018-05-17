@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { TimeEntry, CalendarDay, DateUtils } from '../../../../models/calendar';
@@ -6,6 +6,7 @@ import { Project } from '../../../../models/project';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
+import { CalendarDayComponent } from '../calendar-day/calendar-day.component';
 
 @Component({
 	templateUrl: 'daily-view.component.html',
@@ -21,6 +22,8 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	projects: Project[] = [];
 	projectTimeEntries: TimeEntry[] = [];
 	timeEntries: TimeEntry[];
+
+	@ViewChild('calendarDay') calendarDay: CalendarDayComponent;
 
 	private timeEntriesSubscription: Subscription;
 
@@ -57,6 +60,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 					this.filterByProject();
 				}
 				this.setDayInfo();
+				this.calendarDay.triggerAnimation();
 			});
 	}
 
