@@ -75,13 +75,13 @@ export class CalendarDayComponent implements OnInit {
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
-	private triggerAnimation(): void {
-		this.animationState = false;
-		setTimeout(() => this.animationState = true, this.animationDelay);
-	}
-
 	deleteTimeEntry(index?: number): void {
 		this.isEntryFormOpened = false;
+	}
+
+	triggerAnimation(): void {
+		this.animationState = false;
+		setTimeout(() => this.animationState = true, this.animationDelay);
 	}
 
 	// DRAG ACTIONS

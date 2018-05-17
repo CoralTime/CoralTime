@@ -180,9 +180,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		});
 
 		this.setAnimationDelayArray(newCalendar);
-
-		this.calendar = newCalendar;
-		this.calendarService.calendar = newCalendar;
+		this.setCalendar(newCalendar);
 	}
 
 	ngOnDestroy() {
@@ -210,6 +208,20 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 				delay += 100;
 			}
 		});
+	}
+
+	private setCalendar(newCalendar: CalendarDay[]): void {
+		if (newCalendar.length === this.calendar.length) {
+			newCalendar.forEach((day, i) => {
+				if (this.animationDelayArray[i] > 0) {
+					this.calendar[i] = day;
+				}
+			});
+		} else {
+			this.calendar = newCalendar;
+		}
+
+		this.calendarService.calendar = newCalendar;
 	}
 
 	private triggerAnimation(oldDate: string, newDate: string): void {

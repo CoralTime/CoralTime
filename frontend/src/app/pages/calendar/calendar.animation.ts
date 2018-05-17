@@ -80,10 +80,10 @@ export const ctCalendarDayAnimation: {
 		state('false', style({
 			opacity: 0
 		})),
-		transition('* => true', [
+		transition('false => true', [
 			style({
-				opacity: 1,
-				overflow: 'hidden'
+				overflow: 'hidden',
+				opacity: 1
 			}),
 			query('.ct-calendar-task', [
 					style({
