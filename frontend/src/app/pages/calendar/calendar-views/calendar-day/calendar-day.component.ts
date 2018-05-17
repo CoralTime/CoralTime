@@ -17,7 +17,6 @@ import { ctCalendarDayAnimation } from '../../calendar.animation';
 export class CalendarDayComponent implements OnInit {
 	@Input() animationDelay: number;
 	@Input() dayInfo: CalendarDay;
-	@Input() isDayChanged: boolean;
 	@ViewChild('entryForm') entryForm: EntryTimeComponent;
 
 	animationState: boolean;
