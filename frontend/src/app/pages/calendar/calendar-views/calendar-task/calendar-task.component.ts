@@ -163,7 +163,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	private onSubmitDialog(dateList: string[]): void {
-		let observable: Observable<any>;
+		let observableList: Observable<any>[] = [];
 
 		if (dateList.some((date: string) => !this.isNewTrackedTimeValid(date))) {
 			this.notificationService.danger('Total actual time should be less than 24 hours.');
@@ -173,17 +173,17 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		dateList.forEach((date: string) => {
 			let currentTimeEntry = new TimeEntry(this.timeEntry);
 			currentTimeEntry.date = date;
-			observable = this.calendarService.Post(currentTimeEntry);
-
-			observable.subscribe(
-				() => {
-					this.notificationService.success('New Time Entry has been successfully dublicated.');
-					this.calendarService.timeEntriesUpdated.emit();
-				},
-				() => {
-					this.notificationService.danger('Error dublicating Time Entry.');
-				});
+			observableList.push(this.calendarService.Post(currentTimeEntry));
 		});
+
+		Observable.forkJoin(observableList).subscribe(
+			() => {
+				this.notificationService.success('New Time Entry has been successfully dublicated.');
+				this.calendarService.timeEntriesUpdated.emit();
+			},
+			() => {
+				this.notificationService.danger('Error dublicating Time Entry.');
+			});
 	}
 
 	// TIMER ACTIONS
