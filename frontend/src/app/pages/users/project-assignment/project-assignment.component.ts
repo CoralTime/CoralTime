@@ -72,8 +72,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUserProjectsWithCount(this.assignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
-			.subscribe(
-				(res: PagedResult<UserProject>) => {
+			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedProjectsPagedResult || !this.assignedProjectsLastEvent.first || this.updatingAssignedProjectsGrid) {
 						this.assignedProjectsPagedResult = res;
 					} else {
@@ -87,30 +86,30 @@ export class UserProjectAssignmentComponent implements OnInit {
 					this.assignedProjectsLastEvent.first = this.assignedProjectsPagedResult.data.length;
 					this.updatingAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllAssignedProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	onAssignedProjectsEndScroll(): void {
-		this.checkIsAllAssignedProjects();
-
 		if (!this.isAllAssignedProjects) {
 			this.updateAssignedProjects();
 		}
 	}
 
 	updateAssignedProjects(event = null, updatePage?: boolean): void {
-		this.checkIsAllAssignedProjects();
-
 		if (event) {
 			this.assignedProjectsLastEvent = event;
-			this.isAllAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedProjectsGrid = updatePage;
 			this.assignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedProjects = false;
+			this.assignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedProjects) {
@@ -135,40 +134,40 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUnassignedProjectsWithCount(this.notAssignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
-			.subscribe(
-				(res: PagedResult<Project>) => {
+			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;
 					} else {
 						this.notAssignedProjectsPagedResult.data = this.notAssignedProjectsPagedResult.data.concat(res.data);
 					}
+
 					this.notAssignedProjectsLastEvent.first = this.notAssignedProjectsPagedResult.data.length;
 					this.updatingNotAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllUnassignedProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	onNotAssignedProjectsEndScroll(): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (!this.isAllNotAssignedProjects) {
 			this.updateNotAssignedProjects();
 		}
 	}
 
 	updateNotAssignedProjects(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (event) {
 			this.notAssignedProjectsLastEvent = event;
-			this.isAllNotAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingNotAssignedProjectsGrid = updatePage;
 			this.notAssignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllNotAssignedProjects = false;
+			this.notAssignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedProjects) {
@@ -198,7 +197,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
 				},
-				error => {
+				() => {
 					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error adding project.');
 				}
@@ -242,7 +241,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
 				},
-				error => {
+				() => {
 					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error removing project.');
 				}

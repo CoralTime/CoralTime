@@ -21,6 +21,7 @@
                          [value]="tasksPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"
+                         [loading]="!isAllTasks"
                          [globalFilter]="gb"
                          [resizeObservable]="resizeObservable"
                          (onLazyLoad)="updateTasks($event)"

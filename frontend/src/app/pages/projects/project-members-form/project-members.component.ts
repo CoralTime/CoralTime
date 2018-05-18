@@ -77,8 +77,7 @@ export class ProjectUsersComponent implements OnInit {
 		this.assignedUsersSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getProjectUsersWithCount(this.assignedUsersLastEvent, this.filterStr, this.project.id);
 		})
-			.subscribe(
-				(res: PagedResult<UserProject>) => {
+			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedUsersPagedResult || !this.assignedUsersLastEvent.first || this.updatingAssignedUsersGrid) {
 						this.assignedUsersPagedResult = res;
 					} else {
@@ -92,30 +91,30 @@ export class ProjectUsersComponent implements OnInit {
 					this.assignedUsersLastEvent.first = this.assignedUsersPagedResult.data.length;
 					this.updatingAssignedUsersGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllAssignedUsers();
 				},
-				error => this.notificationService.danger('Error loading users.')
+				() => this.notificationService.danger('Error loading users.')
 			);
 	}
 
 	onAssignedUsersEndScroll(): void {
-		this.checkIsAllAssignedUsers();
-
 		if (!this.isAllAssignedUsers) {
 			this.updateAssignedUsers();
 		}
 	}
 
 	updateAssignedUsers(event = null, updatePage?: boolean): void {
-		this.checkIsAllAssignedUsers();
-
 		if (event) {
 			this.assignedUsersLastEvent = event;
-			this.isAllAssignedUsers = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedUsersGrid = updatePage;
 			this.assignedUsersLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedUsers = false;
+			this.assignedUsersPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedUsersLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedUsers) {
@@ -140,40 +139,40 @@ export class ProjectUsersComponent implements OnInit {
 		this.notAssignedUsersSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUnassignedUsersWithCount(this.notAssignedUsersLastEvent, this.filterStr, this.project.id);
 		})
-			.subscribe(
-				(res: PagedResult<User>) => {
+			.subscribe((res: PagedResult<User>) => {
 					if (!this.notAssignedUsersPagedResult || !this.notAssignedUsersLastEvent.first || this.updatingNotAssignedUsersGrid) {
 						this.notAssignedUsersPagedResult = res;
 					} else {
 						this.notAssignedUsersPagedResult.data = this.notAssignedUsersPagedResult.data.concat(res.data);
 					}
+
 					this.notAssignedUsersLastEvent.first = this.notAssignedUsersPagedResult.data.length;
 					this.updatingNotAssignedUsersGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllUnassignedUsers();
 				},
-				error => this.notificationService.danger('Error loading users.')
+				() => this.notificationService.danger('Error loading users.')
 			);
 	}
 
 	onNotAssignedUsersEndScroll(): void {
-		this.checkIsAllUnassignedUsers();
-
 		if (!this.isAllNotAssignedUsers) {
 			this.updateNotAssignedUsers();
 		}
 	}
 
 	updateNotAssignedUsers(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedUsers();
-
 		if (event) {
 			this.notAssignedUsersLastEvent = event;
-			this.isAllNotAssignedUsers = false;
 		}
 		if (updatePage) {
 			this.updatingNotAssignedUsersGrid = updatePage;
 			this.notAssignedUsersLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllNotAssignedUsers = false;
+			this.notAssignedUsersPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.notAssignedUsersLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedUsers) {

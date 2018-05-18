@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
+import * as moment from 'moment';
 import { DateUtils } from '../../models/calendar';
 import { User } from '../../models/user';
 import { AuthService } from '../../core/auth/auth.service';
@@ -8,7 +9,6 @@ import { CalendarProjectsService } from './calendar-projects.service';
 import { CalendarService } from '../../services/calendar.service';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
-import * as moment from 'moment';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
