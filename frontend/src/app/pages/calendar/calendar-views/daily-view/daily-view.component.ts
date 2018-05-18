@@ -7,17 +7,22 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
 import { CalendarDayComponent } from '../calendar-day/calendar-day.component';
+import { ctCalendarAnimation } from '../../calendar.animation';
 
 @Component({
 	templateUrl: 'daily-view.component.html',
-	selector: 'ct-calendar-daily-view'
+	selector: 'ct-calendar-daily-view',
+	animations: [ctCalendarAnimation.slideCalendar]
 })
 
 export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	@HostBinding('class.ct-calendar-daily-view') addClass: boolean = true;
 
+	animationDisabled: boolean = false;
+	animationState: string;
 	date: string;
 	dayInfo: CalendarDay;
+	oldDate: string;
 	projectIds: number[];
 	projects: Project[] = [];
 	projectTimeEntries: TimeEntry[] = [];
@@ -35,6 +40,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
+			this.oldDate = this.date || DateUtils.formatDateToString(new Date());
 			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
 			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 			this.setDate();
@@ -49,18 +55,25 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	}
 
 	getTimeEntries(projectIds?: number[]) {
+		this.animationDisabled = true;
+		this.animationState = 'hide';
 		this.loadingService.addLoading();
 		this.calendarService.getTimeEntries(this.date)
-			.finally(() => this.loadingService.removeLoading())
+			.finally(() => {
+				this.loadingService.removeLoading();
+				this.animationDisabled = false;
+			})
 			.subscribe((res) => {
 				this.timeEntries = res;
+
 				if (projectIds) {
 					this.filterByProject(projectIds);
 				} else {
 					this.filterByProject();
 				}
+
 				this.setDayInfo();
-				this.calendarDay.triggerAnimation();
+				this.triggerAnimation(this.oldDate, this.date);
 			});
 	}
 
@@ -120,5 +133,10 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.timeEntriesSubscription.unsubscribe();
+	}
+
+	private triggerAnimation(oldDate: string, newDate: string): void {
+		this.animationState = (new Date(oldDate) <= new Date(newDate)) ? 'left' : 'right';
+		this.calendarDay.triggerAnimation();
 	}
 }

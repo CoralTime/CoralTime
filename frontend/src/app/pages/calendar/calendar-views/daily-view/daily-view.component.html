@@ -5,6 +5,9 @@
 <div class="ct-calendar clearfix">
     <ct-calendar-day class="ct-calendar-day" #calendarDay
                      [class.ct-calendar-day-active]="false"
+                     [@slideCalendar]="animationState"
+                     [@.disabled]="animationDisabled"
+                     [animationDelay]="500"
                      [dayInfo]="dayInfo">
     </ct-calendar-day>
 </div>
