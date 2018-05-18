@@ -14,6 +14,9 @@ export const ctCalendarAnimation: {
 	readonly slideCalendar: AnimationTriggerMetadata;
 } = {
 	slideCalendar: trigger('slideCalendar', [
+		state('hide', style({
+			opacity: 0
+		})),
 		transition('left => void', [
 			style({
 				position: 'relative',
@@ -28,7 +31,7 @@ export const ctCalendarAnimation: {
 				})
 			)
 		]),
-		transition('void => left', [
+		transition('void => left, hide => left', [
 			style({
 				position: 'relative',
 				left: '30%',
@@ -56,7 +59,7 @@ export const ctCalendarAnimation: {
 				})
 			)
 		]),
-		transition('void => right', [
+		transition('void => right, hide => right', [
 			style({
 				position: 'relative',
 				left: '-30%',
@@ -77,10 +80,10 @@ export const ctCalendarDayAnimation: {
 	readonly slideCalendarTask: AnimationTriggerMetadata;
 } = {
 	slideCalendarTask: trigger('slideCalendarTask', [
-		state('false', style({
+		state('hide', style({
 			opacity: 0
 		})),
-		transition('false => true', [
+		transition('hide => show', [
 			style({
 				overflow: 'hidden',
 				opacity: 1

@@ -19,7 +19,7 @@ export class CalendarDayComponent implements OnInit {
 	@Input() dayInfo: CalendarDay;
 	@ViewChild('entryForm') entryForm: EntryTimeComponent;
 
-	animationState: boolean;
+	animationState: string;
 	canChangeDragEnter: boolean = true;
 	changeDragEnterTimeout: any;
 	draggedTimeEntry: TimeEntry;
@@ -79,8 +79,8 @@ export class CalendarDayComponent implements OnInit {
 	}
 
 	triggerAnimation(): void {
-		this.animationState = false;
-		setTimeout(() => this.animationState = true, this.animationDelay);
+		this.animationState = 'hide';
+		setTimeout(() => this.animationState = 'show', this.animationDelay);
 	}
 
 	// DRAG ACTIONS
