@@ -89,8 +89,8 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		this.loadingService.addLoading();
 		this.calendarService.getTimeEntries(this.startDay, this.daysInCalendar)
 			.finally(() => {
-				this.animationDisabled = false;
 				this.loadingService.removeLoading();
+				setTimeout(() => this.animationDisabled = false, 500);
 			})
 			.subscribe((res) => {
 				this.timeEntries = res;
