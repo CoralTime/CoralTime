@@ -2,7 +2,7 @@ import {
 	Component, Input, ViewChild, EventEmitter, Output, OnInit, OnDestroy, QueryList,
 	ViewChildren, ElementRef
 } from '@angular/core';
-import { TimeEntry, DateUtils } from '../../../../models/calendar';
+import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
 import { Subscription, Observable } from 'rxjs';
 import { CalendarService } from '../../../../services/calendar.service';
 import { NotificationService } from '../../../../core/notification.service';
@@ -49,7 +49,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	timerValue: string;
 	timerSubscription: Subscription;
 
-	private totalEstimatedTimeForDay: number;
 	private totalTrackedTimeForDay: number;
 
 	constructor(private route: ActivatedRoute,
@@ -75,7 +74,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 
 		this.checkTimeEntryStatus();
-		this.setDayInfo();
+		this.getDayInfo();
 	}
 
 	// MENU ACTIONS
@@ -137,8 +136,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		let currentTimeEntry = new TimeEntry(this.timeEntry);
 		currentTimeEntry.date = date[0] ? DateUtils.formatDateToString(date[0]) : currentTimeEntry.date;
 
-		if (!this.isNewTrackedTimeValid(currentTimeEntry.date)) {
-			this.notificationService.danger('Total actual time should be less than 24 hours.');
+		if (!this.isSubmitDataValid(currentTimeEntry.date)) {
 			this.closeAllMenus();
 			return;
 		}
@@ -157,16 +155,10 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.closeAllMenus();
 	}
 
-	private isNewTrackedTimeValid(newDate: string): boolean {
-		this.setDayInfo(newDate);
-		return this.totalTrackedTimeForDay + this.timeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
-	}
-
-	private onSubmitDialog(dateList: string[]): void {
+	onSubmitDialog(dateList: string[]): void {
 		let observableList: Observable<any>[] = [];
 
-		if (dateList.some((date: string) => !this.isNewTrackedTimeValid(date))) {
-			this.notificationService.danger('Total actual time should be less than 24 hours.');
+		if (dateList.some((date: string) => !this.isSubmitDataValid(date))) {
 			return;
 		}
 
@@ -184,6 +176,45 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			() => {
 				this.notificationService.danger('Error dublicating Time Entry.');
 			});
+	}
+
+	private isNewTrackedTimeValid(newDate: string): boolean {
+		let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(newDate), 'timeActual');
+		return totalTrackedTimeForDay + this.timeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
+	}
+
+	private isNewPlannedTimeValid(newDate: string): boolean {
+		let totalEstimatedTimeForDay = this.getTotalTime(this.getDayInfo(newDate), 'timeEstimated');
+		return totalEstimatedTimeForDay + this.timeEntry.timeValues.timeEstimated <= MAX_TIMER_VALUE;
+	}
+
+	private isFromToTimeValid(newDate: string): boolean {
+		let dayInfo = this.getDayInfo(newDate);
+		return dayInfo.timeEntries
+			.filter((timeEntry: TimeEntry) => timeEntry.timeOptions.isFromToShow && timeEntry.id !== this.timeEntry.id)
+			.every((timeEntry: TimeEntry) => {
+				return timeEntry.timeValues.timeFrom >= this.timeEntry.timeValues.timeTo
+					|| this.timeEntry.timeValues.timeFrom >= timeEntry.timeValues.timeTo;
+			});
+	}
+
+	private isSubmitDataValid(date: string): boolean {
+		if (!this.isNewTrackedTimeValid(date)) {
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
+			return false;
+		}
+
+		if (!this.isNewPlannedTimeValid(date)) {
+			this.notificationService.danger('Total planned time should be less than 24 hours.');
+			return false;
+		}
+
+		if (!this.isFromToTimeValid(date)) {
+			this.notificationService.danger('Selected time period already exists.');
+			return false;
+		}
+
+		return true;
 	}
 
 	// TIMER ACTIONS
@@ -221,7 +252,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	updateTimer(): void {
-		this.setDayInfo();
+		this.getDayInfo();
 		this.isTimerShown ? this.autoStopTimer() : this.startTimer();
 	}
 
@@ -278,6 +309,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	private isTrackedTimeValid(): boolean {
+		this.totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
 		return this.totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
 	}
 
@@ -362,10 +394,12 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private setDayInfo(date?: string): void {
-		let dayInfo = this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
-		this.totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
-		this.totalEstimatedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeEstimated');
+	private getDayInfo(date?: string): CalendarDay {
+		return this.calendarService.getDayInfoByDate(date || this.timeEntry.date);
+	}
+
+	private getTotalTime(dayInfo: CalendarDay, field: string): number {
+		return this.calendarService.getTotalTimeForDay(dayInfo, field);
 	}
 
 	private saveTimeEntry(timeEntry: TimeEntry): void {
