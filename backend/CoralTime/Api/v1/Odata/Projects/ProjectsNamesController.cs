@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using static CoralTime.Common.Constants.Constants.Routes.OData;
 
 namespace CoralTime.Api.v1.Odata.Projects
 {
-    [Route("api/v1/odata/[controller]")]
+    [Route(BaseODataControllerRoute)]
     [Authorize]
     public class ProjectsNamesController : BaseODataController<ProjectsNamesController, IProjectService>
     {
@@ -24,7 +25,7 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
     }

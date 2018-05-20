@@ -68,8 +68,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         };
 
-        private ReportDropDownsDateStaticView[] DatesStaticInfo { get; }
-
         #endregion
 
         public ReportDropDownView GetReportsDropDowns()
@@ -97,7 +95,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 CustomQueries = GetCustomQueries(memberImpersonated).OrderBy(x => x.QueryName).ToList(),
                 GroupBy = groupByInfo,
                 ShowColumns = showColumnsInfo,
-                DateStatic = DatesStaticInfo
+                DateStatic = GetDatesStaticInfo()
             };
         }
 
@@ -240,12 +238,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
         {
-            var dateStaticInfo = DatesStaticInfo.FirstOrDefault(x => x.Id == dateStaticId);
+            var dateStaticInfo = GetDatesStaticInfo().FirstOrDefault(x => x.Id == dateStaticId);
             if (dateStaticInfo != null)
             {
                 var dateStaticExtend = new ReportDropDownsDateStaticExtendView
                 {
-                    DateStatic = DatesStaticInfo,
+                    DateStatic = GetDatesStaticInfo(),
 
                     DateFrom = dateStaticInfo.DateFrom,
                     DateTo = dateStaticInfo.DateTo

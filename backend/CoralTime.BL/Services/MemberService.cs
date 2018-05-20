@@ -5,6 +5,7 @@ using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertModelToView;
+using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Errors;
@@ -16,8 +17,8 @@ using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using CoralTime.DAL.ConvertViewToModel;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
@@ -117,7 +118,11 @@ namespace CoralTime.BL.Services
             #endregion
 
             // Insert ApplicationUser
-            var userCreationResult = await _userManager.CreateAsync(applicationUserNew, memberView.Password);
+            var sb = new StringBuilder();
+            sb.Append(Guid.NewGuid());
+            sb.Append("A_");
+
+            var userCreationResult = await _userManager.CreateAsync(applicationUserNew, sb.ToString());
             if (!userCreationResult.Succeeded)
             {
                 CheckIdentityResultErrors(userCreationResult);
@@ -163,7 +168,7 @@ namespace CoralTime.BL.Services
             var urlIcon = _avatarService.GetUrlIcon(memberByName.Id);
             var memberViewResult = memberByName.GetView(Mapper, urlIcon);
 
-            await SentInvitationEmailAsync(memberView, baseUrl);
+            await SentInvitationEmailForNewUserAsync(memberView, baseUrl, applicationUserNew);
 
             return memberViewResult;
         }
@@ -298,10 +303,7 @@ namespace CoralTime.BL.Services
             var urlIcon = _avatarService.GetUrlIcon(memberByIdResult.Id);
             var meberView = memberByIdResult.GetView(Mapper, urlIcon);
 
-            if (memberView.SendInvitationEmail)
-            {
-                await SentUpdateAccountEmailAsync(meberView, baseUrl);
-            }
+            await SentUpdateAccountEmailAsync(meberView, baseUrl);
 
             return meberView;
         }
@@ -339,18 +341,18 @@ namespace CoralTime.BL.Services
             }
         }
 
-        public async Task ResetPassword(int id)
+        public async Task ResetPassword(int memberId)
         {
-            var user = await _userManager.FindByIdAsync(Uow.MemberRepository.GetById(id).UserId);
+            var user = await _userManager.FindByIdAsync(Uow.MemberRepository.GetById(memberId).UserId);
 
             if (user == null)
             {
-                throw new CoralTimeEntityNotFoundException($"user with id {Uow.MemberRepository.GetById(id).UserId} not found.");
+                throw new CoralTimeEntityNotFoundException($"user with id {Uow.MemberRepository.GetById(memberId).UserId} not found.");
             }
 
             if (!user.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"user with id {Uow.MemberRepository.GetById(id).UserId} is not active.");
+                throw new CoralTimeEntityNotFoundException($"user with id {Uow.MemberRepository.GetById(memberId).UserId} is not active.");
             }
 
             var resetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -415,62 +417,63 @@ namespace CoralTime.BL.Services
 
         #region Emails: Invitation, Update Account, Forgot, Check Forgot Password Token, Change Email.
 
-        public async Task SentInvitationEmailAsync(MemberView member, string baseUrl)
+        private async Task SentInvitationEmailForNewUserAsync(MemberView member, string baseUrl, ApplicationUser user)
         {
             if (_isDemo)
+            {
                 return;
-            
-            var profileUrl = baseUrl + "/profile/settings";
+            }
+
+            var sb = new StringBuilder();
+
+            sb.Append($"Dear {member.FullName},<br/><br/> You have been invited to join CoralTime time tracking tool.<br/><br/>");
 
             bool.TryParse(_configuration["Authentication:EnableAzure"], out bool enableAzure);
+            if (!enableAzure)
+            {
+                sb.Append($"Below are your login details:<br/><br/> Username: {member.UserName}<br/><br/>");
 
-            var body = (enableAzure) ?
-                 new TextPart("html")
-                 {
-                     Text = $"Dear { member.FullName },<br/><br/>" +
-                            "You have been invited to join CoralTime time tracking tool.<br/><br/>" +
-                            $"To get started, please click the link: <a href='{baseUrl}'>CoralTime</a> <br/>" +
-                            "If the link doesn’t work, copy and past URL into your browser.<br/><br/>" +
-                            "Best wishes,<br/>" +
-                            "CoralTime Team"
-                 } :
-                new TextPart("html")
-                {
-                    Text = $"Dear { member.FullName },<br/><br/>" +
-                            "You have been invited to join CoralTime time tracking tool.<br/><br/>" +
-                            "Below are your login details:<br/><br/>" +
-                            $"username: { member.UserName }<br/>" +
-                            $"You can change your password at any time on your <a href='{ profileUrl }'>Profile page</a>.<br/><br/><br/>" +
-                            $"To get started, please click the link: <a href='{ baseUrl }'>CoralTime</a> <br/>" +
-                            "If the link doesn’t work, copy and past URL into your browser.<br/><br/>" +
-                            "Best wishes,<br/>" +
-                            "CoralTime Team"
-                };
+                var passwordResetLinkValidForHrs = int.Parse(_configuration["PasswordResetLinkValidForHrs"]);
+                var userForgotPassRequest = await CreateUserForgotPassRequest(member.Email, user, passwordResetLinkValidForHrs);
+
+                var link = CreateLinkByUserForgotPassRequestUid(baseUrl, userForgotPassRequest);
+
+                sb.Append($"To set your password, click this link or copy the URL below and paste it into your web browser's navigation bar:<br /><a href='{link}'>{link}</a><br /><br />Please note: This link will expire in {passwordResetLinkValidForHrs} hours. If it has already expired, please go back to <a href='{baseUrl}'>{baseUrl}</a> and click the \"Set Password?\"<br /><br />");
+
+                var profileUrl = baseUrl + "/profile/settings";
+                sb.Append($"You can change your password at any time on your <a href='{profileUrl}'>Profile page</a>.<br/><br/>");
+            }
+
+            sb.Append($"To get started, please click the link: <a href='{baseUrl}'>CoralTime</a><br/>If the link doesn’t work, copy and past URL into your browser.<br/><br/>Best wishes, CoralTime Team");
+
+            var body = new TextPart("html") {Text = sb.ToString()};
 
             var multipart = new Multipart { body };
 
             var emailSender = new EmailSender(_configuration);
 
             emailSender.CreateSimpleMessage(member.Email, multipart, "Invitation to join CoralTime");
+
             await emailSender.SendMessageAsync();
         }
 
         public async Task SentUpdateAccountEmailAsync(MemberView member, string baseUrl)
         {
             if (_isDemo)
+            {
                 return;
+            }
             
             var profileUrl = baseUrl + "/profile/settings";
 
-            var body = new TextPart("html")
-            {
-                Text = $"Dear { member.FullName },<br/><br/>" +
-                            "Your account data have been changed in CoralTime time tracking tool.<br/><br/>" +
-                            $"You can change your account data at any time on your <a href='{ profileUrl }'>Profile page</a>.<br/><br/>" +
-                            "If the link doesn’t work, copy and past URL into your browser.<br/><br/>" +
-                            "Best wishes,<br/>" +
-                            "CoralTime Team"
-            };
+            var sb = new StringBuilder();
+            sb.Append($"Dear {member.FullName},<br/><br/>");
+            sb.Append("Your account data have been changed in CoralTime time tracking tool.<br/><br/>");
+            sb.Append($"You can change your account data at any time on your <a href='{profileUrl}'>Profile page</a>.<br/><br/>");
+            sb.Append("If the link doesn’t work, copy and past URL into your browser.<br/><br/>");
+            sb.Append("Best wishes,<br/>CoralTime Team");
+
+            var body = new TextPart("html") {Text = sb.ToString()};
 
             var multipart = new Multipart { body };
 
@@ -480,10 +483,12 @@ namespace CoralTime.BL.Services
             await emailSender.SendMessageAsync();
         }
 
-        public async Task<PasswordForgotEmailResultView> SentForgotEmailAsync(string email, string url)
+        public async Task<PasswordForgotEmailResultView> SentForgotEmailAsync(string email, string serverUrl)
         {
             if (_isDemo)
+            {
                 return new PasswordForgotEmailResultView { IsSentEmail = false, Message = (int)Constants.Errors.ErrorSendEmail };
+            }
             
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -496,42 +501,56 @@ namespace CoralTime.BL.Services
                 return new PasswordForgotEmailResultView { IsSentEmail = false, Message = (int)Constants.Errors.UserIsArchived };
             }
 
-            var token = await GetForgotToken(user);
             var passwordResetLinkValidForHrs = int.Parse(_configuration["PasswordResetLinkValidForHrs"]);
-            var userForgotPassRequest = Uow.UserForgotPassRequestRepository.CreateUserForgotPassRequest(email, passwordResetLinkValidForHrs, token);
+            var userForgotPassRequest = await CreateUserForgotPassRequest(email, user, passwordResetLinkValidForHrs);
 
             if (userForgotPassRequest == null)
             {
                 return new PasswordForgotEmailResultView { IsSentEmail = false, Message = (int)Constants.Errors.ErrorSendEmail };
             }
 
-            var link = $"{url}/forgot-password/enter-new-password?restoreCode={userForgotPassRequest.UserForgotPassRequestUid}";
-            var subject = "Reset your CoralTime password.";
+            var link = CreateLinkByUserForgotPassRequestUid(serverUrl, userForgotPassRequest);
+
+            var sb = new StringBuilder().Append("CoralTime received a request to reset your password.<br /><br />");
+            sb.Append($"To reset your password, click this link or copy the URL below and paste it into your web browser's navigation bar:<br />{link}<br /><br />Please note: This link will expire in {passwordResetLinkValidForHrs} hours. If it has already expired, please go back to {serverUrl} and click the \"Set Password?\"<br /><br />");
+            sb.Append("Best wishes, the CoralTime team");
 
             var body = new TextPart("html")
             {
-                Text = $@"CoralTime received a request to reset your password.<br /><br />
-                        To reset your password, click this link or copy the URL below and paste it into your web browser's navigation bar:<br />
-                        {link}<br /><br />
-                        Please note: This link will expire in {passwordResetLinkValidForHrs} hours. If it has already expired, please go back to {url} and click the Forgot Password?<br /><br />
-                        Best wishes,<br />
-                        the CoralTime team"
+                Text = sb.ToString()
             };
-
-            var multipart = new Multipart { body };
 
             var emailSender = new EmailSender(_configuration);
 
-            emailSender.CreateSimpleMessage(email, multipart, subject);
+            var subject = "Reset your CoralTime password.";
+            emailSender.CreateSimpleMessage(email, new Multipart { body }, subject);
+
             try
             {
                 await emailSender.SendMessageAsync();
+
                 return new PasswordForgotEmailResultView { IsSentEmail = true, Message = (int)Constants.Errors.None };
             }
             catch (Exception)
             {
                 return new PasswordForgotEmailResultView { IsSentEmail = false, Message = (int)Constants.Errors.ErrorSendEmail };
             }
+        }
+
+        private string CreateLinkByUserForgotPassRequestUid(string serverUrl, UserForgotPassRequest userForgotPassRequest)
+        {
+            var userForgotPassRequestUid = userForgotPassRequest.UserForgotPassRequestUid;
+            var link = $"{serverUrl}{UrlSetPassword}/enter-new-password?restoreCode={userForgotPassRequestUid}";
+            
+            return link;
+        }
+
+        private async Task<UserForgotPassRequest> CreateUserForgotPassRequest(string email, ApplicationUser user, int passwordResetLinkValidForHrs)
+        {
+            var token = await GetForgotToken(user);
+            var userForgotPassRequest = Uow.UserForgotPassRequestRepository.CreateUserForgotPassRequest(email, passwordResetLinkValidForHrs,token);
+
+            return userForgotPassRequest;
         }
 
         public async Task<CheckForgotPasswordTokenResultView> CheckForgotPasswordTokenAsync(string token)
@@ -679,14 +698,14 @@ namespace CoralTime.BL.Services
 
         private void CheckMembersErrors(IEnumerable<IdentityErrorView> result)
         {
-            var passwordErrors = new List<ErrorView>();
-            var otherException = new List<ErrorView>();
+            var passwordErrors = new List<ErrorODataView>();
+            var otherException = new List<ErrorODataView>();
 
             foreach (var error in result)
             {
                 if (error.Code.Contains("Password"))
                 {
-                    passwordErrors.Add(new ErrorView
+                    passwordErrors.Add(new ErrorODataView
                     {
                         Source = "Password",
                         Title = StringHandler.SeparateStringByUpperCase(error.Code),
@@ -695,7 +714,7 @@ namespace CoralTime.BL.Services
                 }
                 else if (error.Code.Contains("UserName"))
                 {
-                    otherException.Add(new ErrorView
+                    otherException.Add(new ErrorODataView
                     {
                         Source = "UserName",
                         Title = StringHandler.SeparateStringByUpperCase(error.Code),
@@ -704,7 +723,7 @@ namespace CoralTime.BL.Services
                 }
                 else
                 {
-                    otherException.Add(new ErrorView
+                    otherException.Add(new ErrorODataView
                     {
                         Source = "Other",
                         Title = StringHandler.SeparateStringByUpperCase(error.Code),

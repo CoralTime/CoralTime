@@ -23,7 +23,6 @@ namespace CoralTime.BL.Services.Reports.Export
 
             #region Create and send message with file Attachment.
 
-            // Create builder for message body 
             var builder = new BodyBuilder
             {
                 TextBody = emailData.Comment ?? string.Empty,
@@ -32,11 +31,10 @@ namespace CoralTime.BL.Services.Reports.Export
             // Add file to message body
             builder.Attachments.Add(FileName, fileByte);
 
-            var multipart = builder.ToMessageBody();
+            var mimeEntity = builder.ToMessageBody();
 
             var emailSender = new EmailSender(_configuration);
-
-            emailSender.CreateSimpleMessage(emailData.ToEmail, multipart, emailData.Subject ?? FileName, emailData.CcEmails, emailData.BccEmails);
+            emailSender.CreateSimpleMessage(emailData.ToEmail, mimeEntity, emailData.Subject ?? FileName, emailData.CcEmails, emailData.BccEmails);
 
             await emailSender.SendMessageAsync();
 

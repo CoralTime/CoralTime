@@ -1,9 +1,9 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { Project } from '../../../../models/project';
-import { TasksService } from '../../../../services/tasks.service';
-import { Task } from '../../../../models/task';
 import { FormArray, FormBuilder, FormControl, FormControlName, FormGroup, Validators } from '@angular/forms';
+import { Project } from '../../../../models/project';
+import { Task } from '../../../../models/task';
 import { NotificationService } from '../../../../core/notification.service';
+import { TasksService } from '../../../../services/tasks.service';
 
 @Component({
 	selector: 'ct-project-tasks-form',
@@ -18,8 +18,6 @@ export class ProjectTasksFormComponent {
 	@Output() onHeightChanged: EventEmitter<any> = new EventEmitter();
 
 	form: FormGroup;
-	formHeight: number;
-	isRequestLoading: boolean;
 
 	constructor(private fb: FormBuilder,
 	            private notificationService: NotificationService,
@@ -29,8 +27,8 @@ export class ProjectTasksFormComponent {
 		});
 
 		const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
-		FormControlName.prototype.ngOnChanges = function() {
-			const result =  originFormControlNameNgOnChanges.apply(this, arguments);
+		FormControlName.prototype.ngOnChanges = function () {
+			const result = originFormControlNameNgOnChanges.apply(this, arguments);
 			this.control.nativeElement = this.valueAccessor._elementRef.nativeElement;
 			return result;
 		};
@@ -57,7 +55,7 @@ export class ProjectTasksFormComponent {
 		this.onFormHeightChanged();
 	}
 
-	submitTask(index: number, control: FormControl): void {
+	submitTask(index: number, control: FormControl, target: HTMLElement): void {
 		if (control.hasError('ctTaskInvalid')) {
 			this.notificationService.danger('Task can\'t be empty.');
 			return;
@@ -74,15 +72,14 @@ export class ProjectTasksFormComponent {
 			isActive: true
 		});
 
-		this.isRequestLoading = true;
+		target.classList.add('ct-loading');
 		this.tasksService.odata.Post(projectTask)
 			.subscribe(() => {
-					this.isRequestLoading = false;
 					this.delTask(index);
 					this.onTaskSubmitted.emit();
 				},
-				(error) => {
-					this.isRequestLoading = false;
+				error => {
+					target.classList.remove('ct-loading');
 					this.onTaskSubmitted.emit(error);
 				});
 	}

@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using static CoralTime.Common.Constants.Constants;
+using static CoralTime.Common.Constants.Constants.Routes;
+using static CoralTime.Common.Constants.Constants.Routes.OData;
 
 namespace CoralTime.Api.v1.Odata.Projects
 {
-    [Route("api/v1/odata/[controller]")]
+    [Route(BaseODataControllerRoute)]
     [Authorize]
     public class ProjectsController : BaseODataController<ProjectsController, IProjectService>
     {
@@ -26,13 +29,13 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // GET api/v1/odata/Projects(2)
-        [ODataRoute("Projects({id})/members")]
-        [HttpGet("{id}/members")]
+        [ODataRoute(ProjectsRouteWithMembers)]
+        [HttpGet(IdRouteWithMembers)]
         public IActionResult GetMembers([FromODataUri] int id)
         {
             try
@@ -41,13 +44,13 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // GET api/v1/odata/Projects(2)
-        [ODataRoute("Projects({id})")]
-        [HttpGet("{id}")]
+        [ODataRoute(ProjectsWithIdRoute)]
+        [HttpGet(IdRoute)]
         public IActionResult GetById([FromODataUri]  int id)
         {
             try
@@ -57,12 +60,12 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // POST api/v1/odata/Projects
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = ApplicationRoleAdmin)]
         [HttpPost]
         public IActionResult Create([FromBody]ProjectView projectData)
         {
@@ -74,19 +77,19 @@ namespace CoralTime.Api.v1.Odata.Projects
             try
             {
                 var result = _service.Create(projectData);
-                var locationUri = $"{Request.Host}/api/v1/odata/Projects({result.Id})";
+                var locationUri = $"{Request.Host}/{BaseODataRoute}/Projects({result.Id})";
 
                 return Created(locationUri, result);
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PUT api/v1/odata/Projects(1)
-        [ODataRoute("Projects({id})")]
-        [HttpPut("{id}")]
+        [ODataRoute(ProjectsWithIdRoute)]
+        [HttpPut(IdRoute)]
         public IActionResult Update([FromODataUri] int id, [FromBody]dynamic project)
         {
             if (!ModelState.IsValid)
@@ -103,13 +106,13 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // PATCH api/v1/odata/Projects(1)
-        [ODataRoute("Projects({id})")]
-        [HttpPatch("{id}")]
+        [ODataRoute(ProjectsWithIdRoute)]
+        [HttpPatch(IdRoute)]
         public IActionResult Patch([FromODataUri] int id, [FromBody]dynamic project)
         {
             if (!ModelState.IsValid)
@@ -126,14 +129,14 @@ namespace CoralTime.Api.v1.Odata.Projects
             }
             catch (Exception e)
             {
-                return SendErrorResponse(e);
+                return SendErrorODataResponse(e);
             }
         }
 
         // DELETE api/v1/odata/Projects(1)
-        [Authorize(Roles = "admin")]
-        [ODataRoute("Projects({id})")]
-        [HttpDelete("{id}")]
+        [Authorize(Roles = ApplicationRoleAdmin)]
+        [ODataRoute(ProjectsWithIdRoute)]
+        [HttpDelete(IdRoute)]
         public IActionResult Delete([FromODataUri] int id)
         {
             return BadRequest($"Can't delete the project with Id - {id}");

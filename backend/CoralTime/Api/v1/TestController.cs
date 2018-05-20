@@ -2,12 +2,12 @@ using CoralTime.DAL.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-
-// For more information on enabling Web API for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+using static CoralTime.Common.Constants.Constants.Routes;
+using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.Api.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     public class TestController : Controller
     {
         private readonly UnitOfWork _uow;
@@ -19,7 +19,7 @@ namespace CoralTime.Api.v1
 
         // GET: api/v1/test/ping
         [HttpGet]
-        [Route("ping")]
+        [Route(PingRoute)]
         public IActionResult Ping()
         {
             return Ok("I'm alive!");
@@ -27,7 +27,7 @@ namespace CoralTime.Api.v1
 
         // GET: api/v1/test/pingdatabase
         [HttpGet]
-        [Route("pingdatabase")]
+        [Route(PingdatabaseRoute)]
         public IActionResult PingDataBase()
         {
             try
@@ -45,7 +45,7 @@ namespace CoralTime.Api.v1
 
         // GET: api/v1/test/unauthorize
         [HttpGet]
-        [Route("unauthorize")]
+        [Route(UnauthorizeRoute)]
         public IActionResult GetUnauthorize()
         {
             return Ok("Unauthorize - success");
@@ -54,7 +54,7 @@ namespace CoralTime.Api.v1
         // GET: api/v1/test/authorize
         [Authorize]
         [HttpGet]
-        [Route("authorize")]
+        [Route(AuthorizeRoute)]
         public IActionResult GetAuthorize()
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
@@ -63,25 +63,25 @@ namespace CoralTime.Api.v1
         // GET: api/v1/test/authorize/ActiveUser
         [Authorize]
         [HttpGet]
-        [Route("authorize/activeuser")]
+        [Route(AuthorizeActiveUserRoute)]
         public IActionResult GetActiveUser()
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
         }
 
         // GET: api/v1/test/authorize/admin
-        [Authorize(Policy = "admin")]
+        [Authorize(Policy = ApplicationRoleAdmin)]
         [HttpGet]
-        [Route("authorize/admin")]
+        [Route(AuthorizeAdminRoute)]
         public IActionResult GetAuthorizeAdmin()
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
         }
 
         // GET: api/v1/test/authorize/user
-        [Authorize(Policy = "user")]
+        [Authorize(Policy = ApplicationRoleUser)]
         [HttpGet]
-        [Route("authorize/user")]
+        [Route(AuthorizeUserRoute)]
         public IActionResult GetAuthorizeUser()
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });

@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     public class AuthenticationSettingsController : BaseController<AuthenticationSettingsController, object>
     {
         private readonly IConfiguration _config;

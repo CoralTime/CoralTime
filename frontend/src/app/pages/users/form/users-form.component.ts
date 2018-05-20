@@ -1,26 +1,23 @@
-import { Observable } from 'rxjs/Observable';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-
-import { UsersService } from '../../../services/users.service';
+import { NgForm } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
 import { User } from '../../../models/user';
 import { Roles } from '../../../core/auth/permissions';
-import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthUser } from '../../../core/auth/auth-user';
 import { ArrayUtils } from '../../../core/object-utils';
-import { NgForm } from '@angular/forms';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
+import { UsersService } from '../../../services/users.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class FormUser {
-	confirmPassword: string;
 	email: string;
 	fullName: string;
 	id: number;
 	isActive: boolean;
-	password: string;
 	role: number;
-	sendInvitationEmail: boolean;
 	userName: string;
 
 	static fromUser(user: User) {
@@ -28,9 +25,7 @@ class FormUser {
 		instance.id = user.id;
 		instance.fullName = user.fullName;
 		instance.userName = user.userName;
-		instance.password = user.password;
 		instance.email = user.email;
-		instance.sendInvitationEmail = user.sendInvitationEmail;
 		instance.isActive = user.id ? user.isActive : true;
 
 		if (user.isAdmin) {
@@ -55,11 +50,9 @@ class FormUser {
 			isAdmin: this.role === Roles.admin,
 			isManager: user.isManager,
 			isWeeklyTimeEntryUpdatesSend: user.isWeeklyTimeEntryUpdatesSend,
-			password: this.password,
 			projectsCount: user.projectsCount,
 			sendEmailDays: user.sendEmailDays,
 			sendEmailTime: user.sendEmailTime,
-			sendInvitationEmail: this.sendInvitationEmail || false,
 			timeFormat: user.timeFormat,
 			userName: this.userName,
 			weekStart: user.weekStart
@@ -77,33 +70,26 @@ export class UsersFormComponent implements OnInit {
 	@Input() user: User;
 	@Output() onSaved = new EventEmitter();
 
+	authUser: AuthUser;
+	submitButtonText: string;
 	dialogHeader: string;
 	emailPattern = EMAIL_PATTERN;
-	isRequestLoading: boolean = false;
+	isRequestLoading: boolean;
+	isValidateLoading: boolean;
+	impersonateUser: User;
+	isActive: boolean;
+	isNewUser: boolean;
 	model: FormUser;
 	roleModel: any;
-	submitButtonText: string;
+	showErrors: boolean[] = []; // [showEmailError, showFullNameError, showUserNameError]
+	stateModel: any;
+	stateText: string;
 	userNotification: string;
-
-	errorFullNameMessage: boolean;
-	errorUserNameMessage: boolean;
-	errorEmailMessage: boolean;
-	errorPasswordMessage: boolean;
-	errorConfirmPasswordMessage: boolean;
-	isEmailValid: boolean = true;
-
-	authUser: AuthUser;
-	impersonateUser: User;
 
 	roles = [
 		{value: Roles.admin, title: 'admin'},
 		{value: Roles.user, title: 'user'}
 	];
-
-	stateModel: any;
-	isActive: boolean;
-	isNewUser: boolean;
-	stateText: string;
 
 	states = [
 		{value: true, title: 'active'},
@@ -112,6 +98,7 @@ export class UsersFormComponent implements OnInit {
 
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private translatePipe: TranslatePipe,
 	            private userService: UsersService) { }
 
@@ -129,7 +116,6 @@ export class UsersFormComponent implements OnInit {
 		this.dialogHeader = this.user.id ? 'Edit' : this.translatePipe.transform('Create New User');
 		this.userNotification = this.user.id ? 'Send update account email' : 'Send invitation email';
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);
-
 		this.stateText = this.user.isActive ? '' : 'Time entries of the deactivated user are still editable for managers.';
 	}
 
@@ -142,45 +128,20 @@ export class UsersFormComponent implements OnInit {
 		this.model.role = this.roleModel.value;
 	}
 
-	userFormValidate(): void {
-		if (!this.model.fullName) {
-			this.errorFullNameMessage = true;
-		}
-
-		if (!this.model.userName) {
-			this.errorUserNameMessage = true;
-		}
-
-		if (!this.model.email) {
-			this.errorEmailMessage = true;
-		}
-
-		if (this.model.email) {
-			this.isEmailValid = this.validateEmail(this.model.email);
-		}
-
-		if (!this.model.password) {
-			this.errorPasswordMessage = true;
-		}
-
-		if (!this.model.confirmPassword) {
-			this.errorConfirmPasswordMessage = true;
-		}
+	validateAndSubmit(form: NgForm): void {
+		this.isValidateLoading = true;
+		this.validateForm(form)
+			.finally(() => this.isValidateLoading = false)
+			.subscribe((isFormValid: boolean) => {
+				if (isFormValid) {
+					this.submit();
+				}
+			});
 	}
 
-	validateEmail(email): boolean {
-		return EMAIL_PATTERN.test(email);
-	}
-
-	save(userForm: NgForm): void {
-		this.userFormValidate();
-
-		if (!userForm.valid) {
-			return;
-		}
-
-		let updatedUser = this.model.toUser(this.user);
+	private submit(): void {
 		let submitObservable: Observable<any>;
+		let updatedUser = this.model.toUser(this.user);
 
 		if (updatedUser.id) {
 			submitObservable = this.userService.odata.Put(updatedUser, updatedUser.id.toString());
@@ -189,27 +150,56 @@ export class UsersFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
 
-				if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
-					this.impersonationService.impersonationUser = updatedUser;
-					this.impersonationService.setStorage(updatedUser);
-					this.impersonationService.onChange.emit(updatedUser);
-				}
+					if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
+						this.impersonationService.impersonationUser = updatedUser;
+						this.impersonationService.setStorage(updatedUser);
+						this.impersonationService.onChange.emit(updatedUser);
+					}
 
-				if (this.authUser.id === updatedUser.id) {
-					this.userService.setUserInfo(updatedUser);
-				}
+					if (this.authUser.id === updatedUser.id) {
+						this.userService.setUserInfo(updatedUser);
+					}
 
-				this.onSaved.emit({
-					isNewUser: this.isNewUser
-				});
-			},
-			error => this.onSaved.emit({
-				isNewUser: this.isNewUser,
-				error: error
-			}));
+					this.onSaved.emit({
+						isNewUser: this.isNewUser
+					});
+				},
+				error => this.onSaved.emit({
+					isNewUser: this.isNewUser,
+					error: error
+				}));
+	}
+
+	private validateForm(form: NgForm): Observable<boolean> {
+		this.showErrors = [false, false, false];
+
+		let isEmailValidObservable: Observable<any>;
+		let isUserNameValidObservable: Observable<any>;
+
+		if (!this.model.email || !!form.controls['email'].errors) {
+			isEmailValidObservable = Observable.of(false);
+		} else {
+			isEmailValidObservable = this.userService.getUserByEmail(this.model.email)
+				.map((user) => !user || (user.id === this.model.id));
+		}
+
+		if (!this.model.userName) {
+			isUserNameValidObservable = Observable.of(false);
+		} else {
+			isUserNameValidObservable = this.userService.getUserByUsername(this.model.userName)
+				.map((user) => !user || (user.id === this.model.id));
+		}
+
+		return Observable.forkJoin(isEmailValidObservable, Observable.of(!!this.model.fullName), isUserNameValidObservable)
+			.map((response: boolean[]) =>
+				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
+					.every((showError) => showError === false)
+			);
 	}
 }

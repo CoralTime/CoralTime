@@ -30,7 +30,7 @@ namespace CoralTime.Services
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            var sub = context.Subject.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject).Value;
+            var sub = context.Subject.Claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject)?.Value;
             var user = await _userManager.FindByIdAsync(sub);
 
             var principal = await _claimsFactory.CreateAsync(user);
@@ -39,7 +39,7 @@ namespace CoralTime.Services
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).Distinct().ToList();
 
             claims.Add(new Claim(type: Constants.JwtIsManagerClaimType, value: user.IsManager.ToString().ToLower()));
-            claims.Add(new Claim(type: Constants.JwtRefreshTokenLifeTimeClaimType, value: _config["RefreshTokenLifetime"]));
+            claims.Add(new Claim(type: Constants.JwtRefreshTokenLifeTimeClaimType, value: _config["SlidingRefreshTokenLifetime"]));
 
             var resultClaims = new List<Claim>();
             foreach (var claim in claims)

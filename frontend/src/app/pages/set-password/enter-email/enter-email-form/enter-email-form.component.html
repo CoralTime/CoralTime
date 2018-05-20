@@ -1,0 +1,31 @@
+<form class="ct-login-form ct-set-password-form-1" [class.ct-set-password-form-7]="!activationCodeIsValid">
+    <div class="ct-nav-title1">Coral Time <span class="ct-logo-sm"></span></div>
+    <div class="ct-form-block">
+        <div>
+            <div class="ct-help-text">
+                <span *ngIf="!activationCodeIsValid" class="ct-error-text">Your link was expired. Please enter your email again.</span>
+                <span *ngIf="activationCodeIsValid">Enter your email and we'll send you a link to reset password for your account.</span>
+            </div>
+            <input class="ct-input" #contactEmail="ngModel" type="email" name="email"
+                   [email]="email" [(ngModel)]="email"
+                   [pattern]="emailPattern" required>
+        </div>
+
+        <div *ngIf="!isEmailValid"
+             class="ct-login-failed ct-error-text">Please provide a valid email.
+        </div>
+
+        <div *ngIf="errorMessage && isEmailValid"
+             class="ct-login-failed ct-error-text">{{errorMessage}}
+        </div>
+    </div>
+
+    <button mat-raised-button
+            class="ct-button ct-primary-button"
+            (click)="sendEmail()">Send
+    </button>
+
+    <div class="ct-login-links">
+        <div class="ct-add-link"><a [routerLink]="['/login']">Back to login page</a></div>
+    </div>
+</form>

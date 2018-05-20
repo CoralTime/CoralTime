@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using static CoralTime.Common.Constants.Constants;
+using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route(BaseControllerRoute)]
     public class PasswordController : BaseController<PasswordController, IMemberService>
     {
         public PasswordController(IMemberService service, ILogger<PasswordController> logger) 
@@ -16,39 +18,41 @@ namespace CoralTime.Api.v1
         //Put: api/v1/Password/2
         [Authorize]
         [HttpPut]
-        [Route("{memberId}")]
-        public async Task<IActionResult> ChangePasswordAsync(int memberId, [FromBody]MemberChangePasswordView member)
+        [Route(IdRoute)]
+        public async Task<IActionResult> ChangePasswordAsync(int id, [FromBody]MemberChangePasswordView member)
         {
-            member.Id = memberId;
-
+            member.Id = id;
             await _service.ChangePassword(member);
             return Ok();
         }
 
         //Post: api/v1/Password/2
-        [Authorize(Policy = "admin")]
+        [Authorize(Policy = ApplicationRoleAdmin)]
         [HttpPost]
-        [Route("{memberId}")]
-        public async Task<IActionResult> ResetPasswordAsync(int memberId)
+        [Route(IdRoute)]
+        public async Task<IActionResult> ResetPasswordAsync(int id)
         {
-            await _service.ResetPassword(memberId);
+            await _service.ResetPassword(id);
             return Ok();
         }
 
         // GET: api/v1/Password/sendforgotemail/email@email.com
         [HttpGet]
-        [Route("sendforgotemail/{email}")]
+        [Route(SendForgotEmailRoute)]
         public async Task<IActionResult> ResetPasswordAsync(string email)
         {
-            var serverUrl = GetBaseUrl();
-            var result = await _service.SentForgotEmailAsync(email, serverUrl);
-
+            var result = await _service.SentForgotEmailAsync(email, GetBaseUrl());
             return new JsonResult(result);
         }
 
+        //[HttpGet]
+        //// GET: api/v1/Password/create-password/email@email.com
+        //[Route("create-password/{email}")]
+        //public IActionResult SetNewPasswordAsync(string email) => new JsonResult(ResetPasswordAsync(email));
+
         // POST: api/v1/Password/changepasswordbytoken
         [HttpPost]
-        [Route("changepasswordbytoken")]
+        [Route(ChangePasswordByTokenRoute)]
         public async Task<IActionResult> ChangePasswordByTokenAsync([FromBody] MemberChangePasswordByTokenView model)
         {
             var result = await _service.ChangePasswordByTokenAsync(model);
@@ -58,19 +62,11 @@ namespace CoralTime.Api.v1
 
         // GET: api/v1/Password/checkforgotpasswordtoken
         [HttpGet]
-        [Route("checkforgotpasswordtoken/{token}")]
+        [Route(CheckPasswordByTokenWithTokenRoute)]
         public async Task<IActionResult> CheckForgotPasswordToken(string token)
         {
             var result = await _service.CheckForgotPasswordTokenAsync(token);
             return new JsonResult(result);
-        }
-
-        private string GetBaseUrl()
-        {
-            var request = Request;
-            var host = request.Host.ToUriComponent();
-
-            return $"{request.Scheme}://{host}";
         }
     }
 }

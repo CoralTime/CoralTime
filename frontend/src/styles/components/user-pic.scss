@@ -5,10 +5,12 @@ ct-user-pic {
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  border: 1px solid #ccc;
 
   &.ct-user-pic-avatar {
-    width: 200px;
+    width: 199px;
     height: 200px;
+    border: 1px solid #ccc;
   }
 
   img {

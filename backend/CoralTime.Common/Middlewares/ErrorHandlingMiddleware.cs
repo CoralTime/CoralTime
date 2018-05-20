@@ -49,6 +49,7 @@ namespace CoralTime.Common.Middlewares
                     message = exception.Message;
                     var sb = new StringBuilder();
 
+                    // For Identity Errors
                     if (ex.errors.Count > 0)
                     {
                         foreach (var errorView in ex.errors)
@@ -64,33 +65,38 @@ namespace CoralTime.Common.Middlewares
 
                     break;
                 }
+
                 case CoralTimeAlreadyExistsException ex:
                 {
-                    _logger.LogWarning($"CoralTimeAlreadyExistsException, {exception.Message} , {exception.StackTrace}");
+                    _logger.LogWarning($"CoralTimeAlreadyExistsException, {ex.Message} , {ex.StackTrace}");
                     code = HttpStatusCode.BadRequest;
-                    message = exception.Message;
+                    message = ex.Message;
                     break;
                 }
+
                 case CoralTimeEntityNotFoundException ex:
                 {
-                    _logger.LogWarning($"CoralTimeEntityNotFoundException, {exception.Message} , {exception.StackTrace}");
+                    _logger.LogWarning($"CoralTimeEntityNotFoundException, {ex.Message} , {ex.StackTrace}");
                     code = HttpStatusCode.BadRequest;
-                    message = exception.Message;
+                    message = ex.Message;
                     break;
                 }
+
                 case CoralTimeUnauthorizedException ex:
                 {
                     code = HttpStatusCode.Unauthorized;
                     message = exception.Message;
-                    _logger.LogWarning($"CoralTimeUnauthorizedException, {exception.Message} , {exception.StackTrace}");
+                    _logger.LogWarning($"CoralTimeUnauthorizedException, {ex.Message} , {ex.StackTrace}");
                     break;
                 }
+
                 case CoralTimeDangerException ex:
                 {
                     code = HttpStatusCode.BadRequest;
-                    _logger.LogError($"CoralTimeDangerException, {exception.Message} , {exception.StackTrace}");
+                    _logger.LogError($"CoralTimeDangerException, {ex.Message} , {ex.StackTrace}");
                     break;
                 }
+
                 case CoralTimeForbiddenException ex:
                 {
                     code = HttpStatusCode.Forbidden;
@@ -98,6 +104,7 @@ namespace CoralTime.Common.Middlewares
                     _logger.LogError($"CoralTimeForbiddenException, {exception.Message} , {exception.StackTrace}");
                     break;
                 }
+
                 default:
                 {
                     var exMessage = exception.Message;

@@ -1,13 +1,14 @@
 import {
 	Component, Input, Output, EventEmitter, forwardRef, HostBinding, ViewChild, AfterContentInit
 } from '@angular/core';
-import { IDatePickerDirectiveConfig, DatePickerComponent } from 'ng2-date-picker';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { IDatePickerDirectiveConfig, DatePickerComponent } from 'ng2-date-picker';
 import { IDay } from 'ng2-date-picker/day-calendar/day.model';
 import { WeekDays } from 'ng2-date-picker/common/types/week-days.type';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { DateUtils } from '../../../models/calendar';
 
 const WEEK_DAYS: WeekDays[] = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'st'];
 
@@ -167,19 +168,12 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 		this.dateChanged.emit(date);
 	}
 
-	dateToString(date: Date | Moment | string): string {
-		if (date instanceof Date) {
-			return date.toISOString();
-		}
-		return moment(date).toISOString();
-	}
-
 	private convertValueToArrayOfString(date: any): string[] {
 		if (!this.multiselect) {
 			date = date ? [date] : [];
 		} else {
 			date = date ? [...date] : [];
 		}
-		return date.map(date => this.dateToString(date));
+		return date.map(date => DateUtils.formatDateToString(date));
 	}
 }

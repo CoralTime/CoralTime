@@ -10,25 +10,12 @@ namespace CoralTime.DAL.Repositories
         public TaskTypeRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
+        public override TaskType LinkedCacheGetByName(string name) => LinkedCacheGetList().FirstOrDefault(p => p.Name == name);
 
-        public override TaskType LinkedCacheGetByName(string name)
-        {
-            return LinkedCacheGetList().FirstOrDefault(p => p.Name == name);
-        }
+        public override TaskType LinkedCacheGetById(int id) => LinkedCacheGetList().FirstOrDefault(x => x.Id == id); 
 
-        public override TaskType LinkedCacheGetById(int id)
-        {
-            return LinkedCacheGetList().FirstOrDefault(x => x.Id == id);
-        }
+        public override IQueryable<TaskType> GetIncludes(IQueryable<TaskType> query) => query.Include(t => t.Project);
 
-        public override TaskType GetById(object id)
-        {
-            return LinkedCacheGetList().FirstOrDefault(z => z.Id == (int) id);
-        }
-
-        public override IQueryable<TaskType> GetIncludes(IQueryable<TaskType> query)
-        {
-            return query.Include(t => t.Project);
-        }
+        public override TaskType GetQueryWithIncludesById(int id) => GetQueryWithIncludes().FirstOrDefault(x => x.Id == id);
     }
 }

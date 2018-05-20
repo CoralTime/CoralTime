@@ -54,8 +54,6 @@ export class UsersComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllUsers();
-
 		if (!this.isAllUsers) {
 			this.loadLazy();
 		}
@@ -65,31 +63,33 @@ export class UsersComponent implements OnInit {
 		this.subject.debounceTime(500).switchMap(() => {
 			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 		})
-			.subscribe(
-				(res: PagedResult<User>) => {
+			.subscribe((res: PagedResult<User>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllUsers();
 				},
-				error => this.notificationService.danger('Error loading Users.')
+				() => this.notificationService.danger('Error loading Users.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllUsers();
-
 		if (event) {
 			this.lastEvent = event;
-			this.isAllUsers = false;
 		}
 		if (updatePage) {
 			this.updatingGrid = updatePage;
 			this.lastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllUsers = false;
+			this.pagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.lastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllUsers) {

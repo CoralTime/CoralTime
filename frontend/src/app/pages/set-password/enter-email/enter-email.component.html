@@ -1,0 +1,15 @@
+<ct-enter-email-form *ngIf="!emailSubmitted" (emailSubmitted)="displayEmailSubmittedMessage($event)"></ct-enter-email-form>
+
+<div *ngIf="emailSubmitted" class="ct-login-form ct-set-password-form-2">
+    <div class="ct-help-text">
+        <span>If an account exists with this email address, we will send instructions to you shortly. If you don't receive the email, please contact support.</span>
+    </div>
+
+    <div *ngIf="!emailSubmitted" class="ct-error-text ct-help-text">
+        {{errorMessage}}
+    </div>
+
+    <div class="ct-login-links">
+        <div class="ct-add-link"><a [routerLink]="['/login']">Back to login page</a></div>
+    </div>
+</div>

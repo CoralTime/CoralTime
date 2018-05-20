@@ -3,8 +3,11 @@
     <span class="ct-hours-planned">{{getTotalEstimatedTime(projectTimeEntries)}}</span>
 </div>
 <div class="ct-calendar clearfix">
-    <ct-calendar-day [dayInfo]="dayInfo"
-                     class="ct-calendar-day"
-                     [class.ct-calendar-day-active]="false">
+    <ct-calendar-day class="ct-calendar-day" #calendarDay
+                     [class.ct-calendar-day-active]="false"
+                     [@slideCalendar]="animationState"
+                     [@.disabled]="animationDisabled"
+                     [animationDelay]="500"
+                     [dayInfo]="dayInfo">
     </ct-calendar-day>
 </div>

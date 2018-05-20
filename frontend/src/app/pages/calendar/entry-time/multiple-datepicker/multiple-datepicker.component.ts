@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { DateUtils, Time, TimeEntry } from '../../../../models/calendar';
+import { DateUtils, TimeEntry } from '../../../../models/calendar';
 import * as moment from 'moment';
 import Moment = moment.Moment;
 
@@ -10,8 +10,6 @@ import Moment = moment.Moment;
 
 export class MultipleDatepickerComponent {
 	@Input() firstDayOfWeek: number;
-	@Input() timeActual: Time;
-	@Input() timeEstimated: Time;
 	@Input() timeEntry: TimeEntry;
 
 	@Output() onSubmit: EventEmitter<string[]> = new EventEmitter();
@@ -26,8 +24,22 @@ export class MultipleDatepickerComponent {
 		});
 	}
 
+	getHours(time: number = 0): string {
+		let hours = Math.floor(time / 3600 );
+		return this.formatTime(hours);
+	}
+
+	getMinutes(time: number = 0): string {
+		let min = Math.floor((time % 3600) / 60) ;
+		return this.formatTime(min);
+	}
+
 	submit(): void {
 		this.isCalendarShown = false;
 		this.onSubmit.emit(this.dateList);
+	}
+
+	private formatTime(time: number): string {
+		return (time >= 0 && time < 10) ? '0' + time : time + '';
 	}
 }

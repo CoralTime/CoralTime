@@ -1,11 +1,12 @@
-import { Observable } from 'rxjs/Observable';
-import { ClientsService } from '../../../services/clients.service';
-import { Client } from '../../../models/client';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
-import { ArrayUtils } from '../../../core/object-utils';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
+import { Observable } from 'rxjs/Observable';
+import { Client } from '../../../models/client';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
+import { ArrayUtils } from '../../../core/object-utils';
+import { ClientsService } from '../../../services/clients.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class FormClient {
 	id: number;
@@ -43,29 +44,27 @@ class FormClient {
 })
 
 export class ClientFormComponent implements OnInit {
-	client: Client;
-	dialogHeader: string;
-	submitButtonText: string;
-	errorMessage: string;
+	@Input() client: Client;
+	@Output() onSubmit = new EventEmitter();
 
-	isActive: boolean;
-	isRequestLoading: boolean = false;
+	dialogHeader: string;
+	isNewClient: boolean;
+	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	emailPattern = EMAIL_PATTERN;
+	model: FormClient;
+	showErrors: boolean[] = []; // [showEmailError, showNameError]
 	stateModel: any;
 	stateText: string;
+	submitButtonText: string;
 
 	states = [
 		{value: true, title: 'active'},
 		{value: false, title: 'archived'}
 	];
 
-	model: FormClient;
-
-	@Output() onSubmit = new EventEmitter();
-
-	private isNewClient: boolean;
-
 	constructor(private clientsService: ClientsService,
+	            private loadingService: LoadingMaskService,
 	            private translatePipe: TranslatePipe) {
 	}
 
@@ -80,28 +79,25 @@ export class ClientFormComponent implements OnInit {
 		this.stateText = this.client.isActive ? '' : 'All projects assigned to the archived client are not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
 	}
 
-	checkIsNameEmpty(): void {
-		this.errorMessage = null;
-
-		if (!this.model.name) {
-			this.errorMessage = 'Client name is required.';
-			return;
-		}
-	}
-
 	stateOnChange(): void {
 		this.model.isActive = this.stateModel.value;
 		this.stateText = this.stateModel.value ? '' : 'All projects assigned to the archived client are not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
 	}
 
-	submit(form: NgForm): void {
-		this.checkIsNameEmpty();
-		if (form.invalid) {
-			return;
-		}
+	validateAndSubmit(form: NgForm): void {
+		this.isValidateLoading = true;
+		this.validateForm(form)
+			.finally(() => this.isValidateLoading = false)
+			.subscribe((isFormValid: boolean) => {
+				if (isFormValid) {
+					this.submit();
+				}
+			});
+	}
 
-		this.client = this.model.toClient(this.client);
+	private submit(): void {
 		let submitObservable: Observable<any>;
+		this.client = this.model.toClient(this.client);
 
 		if (this.client.id) {
 			submitObservable = this.clientsService.odata.Put(this.client, this.client.id.toString());
@@ -110,17 +106,39 @@ export class ClientFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit({
-					isNewClient: this.isNewClient
-				});
-			},
-			error => this.onSubmit.emit({
-				isNewClient: this.isNewClient,
-				error: error
-			})
-		);
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
+					this.onSubmit.emit({
+						isNewClient: this.isNewClient
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewClient: this.isNewClient,
+					error: error
+				})
+			);
+	}
+
+	private validateForm(form: NgForm): Observable<boolean> {
+		this.showErrors = [false, false];
+
+		let isEmailValidObservable = Observable.of(!form.controls['email'].errors);
+		let isNameValidObservable: Observable<any>;
+
+		if (!this.model.name) {
+			isNameValidObservable = Observable.of(false);
+		} else {
+			isNameValidObservable = this.clientsService.getClientByName(this.model.name)
+				.map((client) => !client || (client.id === this.model.id));
+		}
+
+		return Observable.forkJoin(isEmailValidObservable, isNameValidObservable)
+			.map((response: boolean[]) =>
+				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
+					.every((showError) => showError === false)
+			);
 	}
 }

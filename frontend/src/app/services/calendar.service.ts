@@ -1,10 +1,10 @@
-import { Observable } from 'rxjs';
 import { Injectable, EventEmitter } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { TimeEntry, CalendarDay, DateUtils } from '../models/calendar';
 import { ArrayUtils } from '../core/object-utils';
 import { ConstantService } from '../core/constant.service';
 import * as moment from 'moment';
-import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class CalendarService {

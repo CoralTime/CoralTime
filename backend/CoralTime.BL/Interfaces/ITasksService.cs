@@ -1,20 +1,17 @@
-﻿using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Tasks;
+﻿using CoralTime.ViewModels.Tasks;
 using System.Collections.Generic;
 
 namespace CoralTime.BL.Interfaces
 {
     public interface ITasksService
     {
-        IEnumerable<TaskType> GetAllTaskTypes();
+        IEnumerable<TaskTypeView> Get();
 
-        TaskType GetById(int id);
+        TaskTypeView GetById(int id);
 
-        TaskType Create(TaskView timeEntryTypeData);
+        TaskTypeView Create(TaskTypeView timeEntryTypeData);
 
-        TaskType Update(dynamic timeEntryTypeData);
-
-        TaskType Patch(dynamic timeEntryTypeData);
+        TaskTypeView Update(TaskTypeView timeEntryTypeData);
 
         bool Delete(int id);
     }

@@ -33,11 +33,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
-	isFocusClassShown: boolean;
 	isFormChanged: boolean;
 	isFromToFormChanged: boolean;
 	isFromToFormFocus: boolean;
 	isRequestLoading: boolean;
+	isTasksLoading: boolean;
 	isTimerShown: boolean;
 	projectList: Project[];
 	projectModel: Project;
@@ -196,7 +196,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private isTimerValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid(true)) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			return false;
 		}
 
@@ -341,7 +341,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 				this.closeEntryTimeForm.emit();
 			},
-			error => {
+			() => {
 				this.isRequestLoading = false;
 
 				if (!this.currentTimeEntry.id) {
@@ -385,11 +385,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	private isSubmitDataValid(): boolean {
 		if (!this.isCurrentTrackedTimeValid()) {
-			this.notificationService.danger('Total actual time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			return false;
 		}
 		if (!this.isEstimatedTimeValid()) {
-			this.notificationService.danger('Total planned time can\'t be more than 24 hours.');
+			this.notificationService.danger('Total planned time should be less than 24 hours.');
 			return false;
 		}
 		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid()) {
@@ -446,17 +446,20 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private loadTasks(projectId?: number): void {
-		this.tasksService.getActiveTasks(projectId).subscribe((res) => {
-			this.taskList = this.filterTasks(res.data);
-			this.taskModel = ArrayUtils.findByProperty(this.taskList, 'id', this.currentTimeEntry.taskTypesId || this.userInfo.defaultTaskId);
+		this.isTasksLoading = true;
+		this.tasksService.getActiveTasks(projectId)
+			.finally(() => this.isTasksLoading = false)
+			.subscribe((res) => {
+				this.taskList = this.filterTasks(res.data);
+				this.taskModel = ArrayUtils.findByProperty(this.taskList, 'id', this.currentTimeEntry.taskTypesId || this.userInfo.defaultTaskId);
 
-			if (!this.isTasksLoaded && this.taskModel) {
-				this.timeEntry.taskTypesId = this.taskModel.id;
-				this.timeEntry.taskName = this.taskModel.name;
-			}
+				if (!this.isTasksLoaded && this.taskModel) {
+					this.timeEntry.taskTypesId = this.taskModel.id;
+					this.timeEntry.taskName = this.taskModel.name;
+				}
 
-			this.isTasksLoaded = true;
-		});
+				this.isTasksLoaded = true;
+			});
 	}
 
 	private filterTasks(tasks: Task[]): Task[] {

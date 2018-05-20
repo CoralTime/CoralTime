@@ -91,7 +91,8 @@ export class ClientsService {
 
 		return query.Exec()
 			.flatMap(result => {
-				return Observable.of(new Client(result[0]));
+				let client = result[0] ? new Client(result[0]) : null;
+				return Observable.of(client);
 			});
 	}
 }

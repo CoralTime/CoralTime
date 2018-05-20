@@ -47,8 +47,6 @@ export class ClientsComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllClients();
-
 		if (!this.isAllClients) {
 			this.loadLazy();
 		}
@@ -62,31 +60,33 @@ export class ClientsComponent implements OnInit {
 				return this.clientsService.getManagerClientsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 			}
 		})
-			.subscribe(
-				(res: PagedResult<Client>) => {
+			.subscribe((res: PagedResult<Client>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllClients();
 				},
-				error => this.notificationService.danger('Error loading clients.')
+				() => this.notificationService.danger('Error loading clients.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllClients();
-
 		if (event) {
 			this.lastEvent = event;
-			this.isAllClients = false;
 		}
 		if (updatePage) {
 			this.updatingGrid = updatePage;
 			this.lastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllClients = false;
+			this.pagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.lastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllClients) {

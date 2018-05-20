@@ -1,6 +1,6 @@
 <div class="ct-dialog ct-dialog-add ct-clients-dialog">
     <div class="ct-dialog-title">
-        <span>{{dialogHeader}}</span><span>{{ client.name }}</span>
+        <span>{{dialogHeader}}</span><span>{{client.name}}</span>
         <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
     </div>
 
@@ -9,15 +9,13 @@
             <div>
                 <label class="ct-form-label">Client Name</label>
                 <div class="ct-required-field-container">
-                    <input class="ct-input ct-full-width" [ctClientNameValidator]="model" name="name"
-                           maxlength="200" ctValidateOnblur [(ngModel)]="model.name"
-                           pattern=".*[^\s]+.*" required #clientName="ngModel" autofocus
-                           (ngModelChange)="checkIsNameEmpty()">
+                    <input class="ct-input ct-full-width" name="name"
+                           maxlength="200" [(ngModel)]="model.name"
+                           required autofocus
+                           (ngModelChange)="showErrors[1] = false">
                 </div>
-                <div class="ct-error-text" *ngIf="clientName.errors?.ctClientNameInvalid">Client with this name already exists</div>
-                <div *ngIf="errorMessage && !clientName.errors?.ctClientNameInvalid"
-                     class="ct-login-failed ct-error-text">{{errorMessage}}
-                </div>
+                <div *ngIf="showErrors[1] && !model.name" class="ct-error-text">Client name is required.</div>
+                <div *ngIf="showErrors[1] && model.name" class="ct-error-text">Client with this name already exists</div>
             </div>
 
             <div *ngIf="client.id">
@@ -35,9 +33,10 @@
 
             <div>
                 <label class="ct-form-label">Contact Email</label>
-                <input class="ct-input ct-full-width" #contactEmail="ngModel" type="email" name="email" maxlength="200"
-                       [email]="!!model.email" [(ngModel)]="model.email" [pattern]="emailPattern" ctValidateOnblur>
-                <div class="ct-error-text" *ngIf="!contactEmail.pristine && contactEmail.errors">Invalid email</div>
+                <input class="ct-input ct-full-width" type="email" name="email" maxlength="200"
+                       [(ngModel)]="model.email" [pattern]="emailPattern"
+                       (ngModelChange)="showErrors[0] = false">
+                <div class="ct-error-text" *ngIf="showErrors[0]">Invalid email</div>
             </div>
 
             <div>
@@ -47,8 +46,11 @@
         </div>
 
         <div class="ct-buttons-block" mat-dialog-actions>
-            <button mat-raised-button class="ct-button ct-blue-button" (click)="submit(clientForm)"
-                    [disabled]="isRequestLoading || clientName.errors?.ctClientNameInvalid">{{submitButtonText}}
+            <button mat-raised-button class="ct-button ct-blue-button"
+                    [class.ct-loading]="isValidateLoading"
+                    [disabled]="isValidateLoading || isRequestLoading"
+                    (click)="validateAndSubmit(clientForm)">
+                {{submitButtonText}}
             </button>
             <button mat-dialog-close class="ct-cancel-button">Cancel</button>
         </div>

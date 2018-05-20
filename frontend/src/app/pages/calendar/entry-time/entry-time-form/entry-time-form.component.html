@@ -8,7 +8,7 @@
                        [name]="'project'"
                        [defaultValue]="!isArchivedProjectShown() ? timeEntry.projectName : timeEntry.projectName + ' (archived)'"
                        [displayName]="'name'" [trackBy]="'id'"
-                       [maxHeight]="formHeight - 103"
+                       [maxHeight]="formHeight - 101"
                        [(ngModel)]="projectModel"
                        (ngModelChange)="projectOnChange(projectModel)"
                        [required]="!currentTimeEntry.id"
@@ -22,10 +22,12 @@
     <div class="ct-task">
         <div class="ct-task-name">
             <div class="ct-required-field-container">
-                <ct-select [name]="'task'" [class.ct-archived]="isArchivedTaskShown()"
+                <ct-select [name]="'task'"
+                           [class.ct-archived]="isArchivedTaskShown()"
+                           [class.ct-loading]="isTasksLoading"
                            [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
                            [displayName]="'name'" [trackBy]="'id'"
-                           [maxHeight]="formHeight - 152"
+                           [maxHeight]="formHeight - 149"
                            [(ngModel)]="taskModel"
                            (ngModelChange)="taskOnChange(taskModel)"
                            [required]="!currentTimeEntry.id"
@@ -108,8 +110,7 @@
             <input id="timeEstimated" name="timeEstimated" autocomplete="off" time
                    [(ngModel)]="timeEstimated"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="timeEstimatedOnChange()"
-                   [disabled]="isTimerShown">
+                   (ngModelChange)="timeEstimatedOnChange()">
         </div>
     </div>
     <div class="ct-form-actions clearfix">

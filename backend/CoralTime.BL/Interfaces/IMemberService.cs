@@ -30,11 +30,7 @@ namespace CoralTime.BL.Interfaces
 
         #region Emails.
 
-        Task SentInvitationEmailAsync(MemberView member, string baseUrl);
-
-        Task SentUpdateAccountEmailAsync(MemberView member, string baseUrl);
-
-        Task<PasswordForgotEmailResultView> SentForgotEmailAsync(string email, string url);
+        Task<PasswordForgotEmailResultView> SentForgotEmailAsync(string email, string serverUrl);
 
         Task<CheckForgotPasswordTokenResultView> CheckForgotPasswordTokenAsync(string token);
 

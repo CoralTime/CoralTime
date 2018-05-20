@@ -54,7 +54,7 @@ namespace CoralTime.DAL.Repositories
             return GetIncludes(GetQueryAsNoTraking());
         }
 
-        public virtual T GetQueryByIdWithIncludes(int id)
+        public virtual T GetQueryWithIncludesById(int id)
         {
             return null;
         }

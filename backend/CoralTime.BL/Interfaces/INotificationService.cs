@@ -4,11 +4,8 @@ namespace CoralTime.BL.Interfaces
 {
     public interface INotificationService
     {
-        //Task ByMemberSettings();
+        Task ByProjectSettingsAsync(string baseUrl);
 
-        Task ByProjectSettings();
-        
-        //Task CheckTasksAsync(string userName);
-        //Task SendNotificationAsync(Member member, Project project);
+        Task SendWeeklyTimeEntryUpdatesAsync(string baseUrl);
     }
 }

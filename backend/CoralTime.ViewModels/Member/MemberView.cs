@@ -30,8 +30,6 @@ namespace CoralTime.ViewModels.Member
 
         public string UserName { get; set; }
 
-        public string Password { get; set; }
-
         public string Email { get; set; }
 
         public bool IsAdmin { get; set; }
@@ -39,8 +37,6 @@ namespace CoralTime.ViewModels.Member
         public bool IsManager { get; set; }
 
         public bool IsActive { get; set; }
-
-        public bool SendInvitationEmail { get; set; }
 
         public IEnumerable<ProjectView> Projects { get; set; }
 

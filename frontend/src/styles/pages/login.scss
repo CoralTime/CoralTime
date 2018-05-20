@@ -1,5 +1,5 @@
 .ct-login-page,
-.ct-forgot-password {
+.ct-set-password {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -88,7 +88,7 @@
     }
   }
 
-  .ct-forgot-password-form-1 {
+  .ct--password-form-1 {
     max-height: 190px;
 
     .ct-login-links, button {
@@ -96,19 +96,19 @@
     }
   }
 
-  .ct-forgot-password-form-2 {
+  .ct-set-password-form-2 {
     max-height: 145px;
   }
 
-  .ct-forgot-password-form-3 {
+  .ct-set-password-form-3 {
     max-height: 374px;
   }
 
-  .ct-forgot-password-form-5 {
+  .ct-set-password-form-5 {
     max-height: 115px;
   }
 
-  .ct-forgot-password-form-7 {
+  .ct-set-password-form-7 {
     max-height: 207px;
   }
 
@@ -124,7 +124,7 @@
   }
 
   .ct-login-links {
-    margin-top: 22px;
+    margin-top: 27px;
     text-align: right;
 
     .ct-add-link a {
@@ -144,7 +144,7 @@
   .ct-primary-button {
     float: right;
     background-color: #5eb2cf;
-    margin-top: 20px;
+    margin-top: 25px;
 
     .material-icons {
       top: -2px;
@@ -161,7 +161,7 @@
 }
 
 .ct-login-page:before,
-.ct-forgot-password:before {
+.ct-set-password:before {
   position: fixed;
   content: '';
   left: 0;
