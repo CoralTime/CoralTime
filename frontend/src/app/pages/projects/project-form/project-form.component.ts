@@ -6,6 +6,7 @@ import { Project } from '../../../models/project';
 import { Client } from '../../../models/client';
 import { ArrayUtils } from '../../../core/object-utils';
 import { ProjectsService } from '../../../services/projects.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 export class FormProject {
 	id: number;
@@ -63,8 +64,10 @@ export class ProjectFormComponent implements OnInit {
 	defaultClientName: string;
 	dialogHeader: string;
 	isClientSelectDisabled: boolean;
+	isClientsLoading: boolean;
 	isNewProject: boolean;
 	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	model: FormProject;
 	showNameError: boolean;
 	stateModel: any;
@@ -77,20 +80,13 @@ export class ProjectFormComponent implements OnInit {
 	];
 
 	constructor(private clientsService: ClientsService,
+	            private loadingService: LoadingMaskService,
 	            private projectsService: ProjectsService,
 	            private translatePipe: TranslatePipe) {
 	}
 
 	ngOnInit() {
-		this.clientsService.getClients().subscribe((clients) => {
-			this.clients = clients;
-			this.clientModel = this.clients.filter((client) => client.id === this.project.clientId)[0];
-
-			if (this.model.clientName && !this.clientModel) {
-				this.defaultClientName = this.model.clientName + ' (archived)';
-				this.isClientSelectDisabled = true;
-			}
-		});
+		this.getClients();
 
 		let project = this.project;
 		this.isNewProject = !project;
@@ -100,6 +96,21 @@ export class ProjectFormComponent implements OnInit {
 		this.model = FormProject.formProject(this.project);
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);
 		this.stateText = this.project.isActive ? '' : 'Archived project is not suggested for time tracking in calendar. Time entries are read only for team members, but still editable for managers.';
+	}
+
+	getClients(): void {
+		this.isClientsLoading = true;
+		this.clientsService.getClients()
+			.finally(() => this.isClientsLoading = false)
+			.subscribe((clients) => {
+				this.clients = clients;
+				this.clientModel = this.clients.filter((client) => client.id === this.project.clientId)[0];
+
+				if (this.model.clientName && !this.clientModel) {
+					this.defaultClientName = this.model.clientName + ' (archived)';
+					this.isClientSelectDisabled = true;
+				}
+			});
 	}
 
 	stateOnChange(): void {
@@ -113,14 +124,14 @@ export class ProjectFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(): void {
-		this.isRequestLoading = true;
-		this.validateForm().subscribe((isFormInvalid: boolean) => {
-				this.isRequestLoading = false;
+		this.isValidateLoading = true;
+		this.validateForm()
+			.finally(() => this.isValidateLoading = false)
+			.subscribe((isFormInvalid: boolean) => {
 				if (!isFormInvalid) {
 					this.submit();
 				}
-			},
-			() => this.isRequestLoading = false);
+			});
 	}
 
 	private submit(): void {
@@ -134,17 +145,20 @@ export class ProjectFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
-				this.onSubmit.emit({
-					isNewProject: this.isNewProject
-				});
-			},
-			error => this.onSubmit.emit({
-				isNewProject: this.isNewProject,
-				error: error
-			}));
+		this.loadingService.addLoading();
+		submitObservable.finally(() => {
+			this.isRequestLoading = false;
+			this.loadingService.removeLoading();
+		})
+			.subscribe(() => {
+					this.onSubmit.emit({
+						isNewProject: this.isNewProject
+					});
+				},
+				error => this.onSubmit.emit({
+					isNewProject: this.isNewProject,
+					error: error
+				}));
 	}
 
 	private validateForm(): Observable<boolean> {

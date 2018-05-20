@@ -1,19 +1,22 @@
 import {
 	animate,
+	animateChild,
+	query,
+	stagger,
 	state,
-	group,
 	style,
 	transition,
 	trigger,
-	query,
-	animateChild,
-	AnimationTriggerMetadata,
+	AnimationTriggerMetadata
 } from '@angular/animations';
 
-export const ctCalendarAnimations: {
+export const ctCalendarAnimation: {
 	readonly slideCalendar: AnimationTriggerMetadata;
 } = {
 	slideCalendar: trigger('slideCalendar', [
+		state('hide', style({
+			opacity: 0
+		})),
 		transition('left => void', [
 			style({
 				position: 'relative',
@@ -28,7 +31,7 @@ export const ctCalendarAnimations: {
 				})
 			)
 		]),
-		transition('void => left', [
+		transition('void => left, hide => left', [
 			style({
 				position: 'relative',
 				left: '30%',
@@ -39,7 +42,8 @@ export const ctCalendarAnimations: {
 					left: '0',
 					opacity: 1
 				})
-			)
+			),
+			query('@*', animateChild(), {optional: true})
 		]),
 		transition('right => void', [
 			style({
@@ -55,7 +59,7 @@ export const ctCalendarAnimations: {
 				})
 			)
 		]),
-		transition('void => right', [
+		transition('void => right, hide => right', [
 			style({
 				position: 'relative',
 				left: '-30%',
@@ -66,6 +70,39 @@ export const ctCalendarAnimations: {
 					left: '0',
 					opacity: 1
 				})
+			),
+			query('@*', animateChild(), {optional: true})
+		])
+	])
+};
+
+export const ctCalendarDayAnimation: {
+	readonly slideCalendarTask: AnimationTriggerMetadata;
+} = {
+	slideCalendarTask: trigger('slideCalendarTask', [
+		state('hide', style({
+			opacity: 0
+		})),
+		transition('hide => show', [
+			style({
+				overflow: 'hidden',
+				opacity: 1
+			}),
+			query('.ct-calendar-task', [
+					style({
+						transform: 'translateY(150px)',
+						opacity: 0
+					}),
+					stagger(50, [
+						animate('.5s ease',
+							style({
+								transform: 'translateY(0)',
+								opacity: 1
+							})
+						)
+					]),
+				],
+				{optional: true}
 			)
 		])
 	])

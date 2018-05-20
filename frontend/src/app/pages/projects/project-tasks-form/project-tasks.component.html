@@ -21,6 +21,7 @@
                          [value]="tasksPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"
+                         [loading]="!isAllTasks"
                          [globalFilter]="gb"
                          [resizeObservable]="resizeObservable"
                          (onLazyLoad)="updateTasks($event)"
@@ -42,9 +43,9 @@
 
                 <p-column field="projectDel" header="Actions">
                     <ng-template let-col let-projectTask="rowData" pTemplate="body">
-                        <a *ngIf="projectTask.projectId"
-                           (click)="removeTask(projectTask)"
-                           class="ct-grid-link ct-grid-ellipse ct-grid-delete">
+                        <a *ngIf="projectTask.projectId" #removeBtn
+                           class="ct-grid-link ct-grid-ellipse ct-grid-delete"
+                           (click)="removeTask(projectTask, removeBtn)">
                             <i class="material-icons" aria-hidden="true">clear</i>
                         </a>
                     </ng-template>

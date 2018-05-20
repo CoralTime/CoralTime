@@ -1,21 +1,25 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { CalendarDay, DateUtils, TimeEntry } from '../../../../models/calendar';
+import { NotificationService } from '../../../../core/notification.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { EntryTimeComponent } from '../../entry-time/entry-time.component';
-import { NotificationService } from '../../../../core/notification.service';
 import { MAX_TIMER_VALUE } from '../calendar-task/calendar-task.component';
-import { Observable } from 'rxjs/Observable';
 import * as moment from 'moment';
+import { ctCalendarDayAnimation } from '../../calendar.animation';
 
 @Component({
 	selector: 'ct-calendar-day',
-	templateUrl: 'calendar-day.component.html'
+	templateUrl: 'calendar-day.component.html',
+	animations: [ctCalendarDayAnimation.slideCalendarTask]
 })
 
 export class CalendarDayComponent implements OnInit {
+	@Input() animationDelay: number;
 	@Input() dayInfo: CalendarDay;
 	@ViewChild('entryForm') entryForm: EntryTimeComponent;
 
+	animationState: string;
 	canChangeDragEnter: boolean = true;
 	changeDragEnterTimeout: any;
 	draggedTimeEntry: TimeEntry;
@@ -35,6 +39,7 @@ export class CalendarDayComponent implements OnInit {
 			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
 				timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
 		}
+		this.triggerAnimation();
 	}
 
 	addNewTimeEntry(currentDate: string): void {
@@ -69,8 +74,13 @@ export class CalendarDayComponent implements OnInit {
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
-	deleteTimeEntry(): void {
+	deleteTimeEntry(index?: number): void {
 		this.isEntryFormOpened = false;
+	}
+
+	triggerAnimation(): void {
+		this.animationState = 'hide';
+		setTimeout(() => this.animationState = 'show', this.animationDelay);
 	}
 
 	// DRAG ACTIONS
@@ -98,8 +108,7 @@ export class CalendarDayComponent implements OnInit {
 			if (DateUtils.formatDateToString(this.draggedTimeEntry.date) === this.dayInfo.date) {
 				return;
 			}
-			if (!this.isNewTrackedTimeValid(this.dayInfo.date, this.draggedTimeEntry.timeValues.timeActual)) {
-				this.notificationService.danger('Total actual time should be less than 24 hours.');
+			if (!this.isSubmitDataValid(this.dayInfo.date, this.draggedTimeEntry)) {
 				return;
 			}
 			this.draggedTimeEntry.date = this.dayInfo.date;
@@ -121,7 +130,7 @@ export class CalendarDayComponent implements OnInit {
 					this.calendarService.timeEntriesUpdated.emit();
 					this.draggedTimeEntry = null;
 				},
-				error => {
+				() => {
 					this.notificationService.danger('Error moving Time Entry.');
 				});
 		}
@@ -180,9 +189,50 @@ export class CalendarDayComponent implements OnInit {
 		}, 200);
 	}
 
-	private isNewTrackedTimeValid(newDate: string, time: number): boolean {
-		let dayInfo = this.calendarService.getDayInfoByDate(newDate);
-		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
-		return totalTrackedTimeForDay + time <= MAX_TIMER_VALUE;
+	private getDayInfo(date: string): CalendarDay {
+		return this.calendarService.getDayInfoByDate(date);
+	}
+
+	private getTotalTime(dayInfo: CalendarDay, field: string): number {
+		return this.calendarService.getTotalTimeForDay(dayInfo, field);
+	}
+
+	private isNewTrackedTimeValid(newDate: string, timeEntry: TimeEntry): boolean {
+		let totalActualTimeForDay = this.getTotalTime(this.getDayInfo(newDate), 'timeActual');
+		return totalActualTimeForDay + timeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
+	}
+
+	private isNewPlannedTimeValid(newDate: string, timeEntry: TimeEntry): boolean {
+		let totalEstimatedTimeForDay = this.getTotalTime(this.getDayInfo(newDate), 'timeEstimated');
+		return totalEstimatedTimeForDay + timeEntry.timeValues.timeEstimated <= MAX_TIMER_VALUE;
+	}
+
+	private isFromToTimeValid(newDate: string, timeEntry: TimeEntry): boolean {
+		let dayInfo = this.getDayInfo(newDate);
+		return dayInfo.timeEntries
+			.filter((item: TimeEntry) => item.timeOptions.isFromToShow && item.id !== timeEntry.id)
+			.every((item: TimeEntry) => {
+				return item.timeValues.timeFrom >= timeEntry.timeValues.timeTo
+					|| timeEntry.timeValues.timeFrom >= item.timeValues.timeTo;
+			});
+	}
+
+	private isSubmitDataValid(date: string, timeEntry: TimeEntry): boolean {
+		if (!this.isNewTrackedTimeValid(date, timeEntry)) {
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
+			return false;
+		}
+
+		if (!this.isNewPlannedTimeValid(date, timeEntry)) {
+			this.notificationService.danger('Total planned time should be less than 24 hours.');
+			return false;
+		}
+
+		if (!this.isFromToTimeValid(date, timeEntry)) {
+			this.notificationService.danger('Selected time period already exists.');
+			return false;
+		}
+
+		return true;
 	}
 }

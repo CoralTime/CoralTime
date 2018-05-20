@@ -17,6 +17,7 @@
                          [value]="assignedUsersPagedResult?.data"
                          scrollable="true" [sortField]="'fullName'"
                          [responsive]="true" [lazy]="true"
+                         [loading]="!isAllAssignedUsers"
                          [globalFilter]="gb"
                          [resizeObservable]="resizeObservable"
                          (onLazyLoad)="updateAssignedUsers($event)"
@@ -39,22 +40,22 @@
 
                 <p-column header="Access Level" styleClass="ct-access-level" [style]="{'width':'180px'}">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
-                        <ct-select *ngIf="authUser.role == 1 && userProject.id"
+                        <ct-select *ngIf="authUser.role == 1 && userProject.id" #select1
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [name]="'role'"
                                    [displayName]="'name'" [trackBy]="'id'"
                                    [icon]="'chevron-down'"
                                    [container]="tableWrapper.el.nativeElement"
                                    [(ngModel)]="userProject.role"
-                                   (change)="changeRole(userProject)"
+                                   (change)="changeRole(userProject, select1.el.nativeElement)"
                                    [options]="projectRoles">
                         </ct-select>
                         <ct-select *ngIf="authUser.role == 1 && !userProject.id" [name]="'role'"
-                                   class="ct-users-project-edit-role ct-select-ellipse"
+                                   class="ct-users-project-edit-role ct-select-ellipse" #select2
                                    [displayName]="'name'" [trackBy]="'id'"
                                    [icon]="'chevron-down'"
                                    [(ngModel)]="userProject.role"
-                                   (change)="assignToPublic(userProject)"
+                                   (change)="assignToPublic(userProject, select2.el.nativeElement)"
                                    [options]="projectRoles">
                         </ct-select>
                         <span *ngIf="authUser.role > 1"
@@ -69,8 +70,8 @@
                                 && (authUser.role == 1
                                 || authUser.role == 4
                                 && userProject.roleName != 'manager')"
-                           (click)="removeFromProject(userProject)" class="ct-grid-link ct-grid-ellipse ct-grid-delete"
-                           [class.ct-disabled]="isRequestLoading">
+                           class="ct-grid-link ct-grid-ellipse ct-grid-delete" #removeBtn
+                           (click)="removeFromProject(userProject, removeBtn)">
                             <i class="material-icons" aria-hidden="true">clear</i>
                         </a>
                         <span *ngIf="!userProject.id">Public</span>
@@ -82,6 +83,7 @@
                          [value]="notAssignedUsersPagedResult?.data"
                          scrollable="true" [sortField]="'fullName'"
                          [responsive]="true" [lazy]="true"
+                         [loading]="!isAllNotAssignedUsers"
                          [globalFilter]="gb"
                          [resizeObservable]="resizeObservable"
                          (onLazyLoad)="updateNotAssignedUsers($event)"
@@ -104,8 +106,7 @@
 
                 <p-column header="Actions">
                     <ng-template let-col let-user="rowData" pTemplate="body">
-                        <span (click)="addToProject(user)" class="ct-grid-button"
-                              [class.ct-disabled]="isRequestLoading">Add to Team</span>
+                        <span class="ct-grid-button" (click)="addToProject(user, $event.target)">Add to Team</span>
                     </ng-template>
                 </p-column>
             </p-dataTable>

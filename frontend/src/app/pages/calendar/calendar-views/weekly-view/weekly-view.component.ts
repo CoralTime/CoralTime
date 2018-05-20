@@ -8,12 +8,13 @@ import { User } from '../../../../models/user';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { ImpersonationService } from '../../../../services/impersonation.service';
-import { ctCalendarAnimations } from '../../calendar-animation';
+import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
+import { ctCalendarAnimation } from '../../calendar.animation';
 
 @Component({
 	selector: 'ct-calendar-weekly-view',
 	templateUrl: 'weekly-view.component.html',
-	animations: [ctCalendarAnimations.slideCalendar]
+	animations: [ctCalendarAnimation.slideCalendar]
 })
 
 export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
@@ -21,10 +22,12 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 	animationState: string;
 	animationDisabled: boolean = false;
+	animationDelayArray: number[] = [];
 	calendar: CalendarDay[];
 	date: string;
 	daysInCalendar: number;
 	firstDayOfWeek: number;
+	oldDate: string;
 	projects: Project[] = [];
 	projectIds: number[];
 	projectTimeEntries: TimeEntry[] = [];
@@ -38,6 +41,7 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private route: ActivatedRoute) {
 	}
 
@@ -50,13 +54,13 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		});
 
 		this.route.params.subscribe((params: Params) => {
-			let oldDate = this.date || DateUtils.formatDateToString(new Date());
+			this.oldDate = this.date || DateUtils.formatDateToString(new Date());
 			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
 			this.projectIds = params['projectIds'] ? params['projectIds'].split(',') : null;
 
-			this.triggerAnimation(oldDate, this.date);
+			this.triggerAnimation(this.oldDate, this.date);
 			this.setAvailablePeriod(window.innerWidth);
-			this.getTimeEntries(this.projectIds, params['date'] && oldDate === this.date);
+			this.getTimeEntries(this.projectIds, params['date'] && this.oldDate === this.date);
 		});
 
 		this.timeEntriesSubscription = this.calendarService.timeEntriesUpdated
@@ -82,8 +86,12 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 
 	getTimeEntries(projIds?: number[], disableAnimation: boolean = false): void {
 		this.animationDisabled = disableAnimation;
+		this.loadingService.addLoading();
 		this.calendarService.getTimeEntries(this.startDay, this.daysInCalendar)
-			.finally(() => setTimeout(() => this.animationDisabled = false, 500))
+			.finally(() => {
+				this.loadingService.removeLoading();
+				setTimeout(() => this.animationDisabled = false, 500);
+			})
 			.subscribe((res) => {
 				this.timeEntries = res;
 
@@ -171,8 +179,9 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 				}
 			});
 		});
-		this.calendar = newCalendar;
-		this.calendarService.calendar = newCalendar;
+
+		this.setAnimationDelayArray(newCalendar);
+		this.setCalendar(newCalendar);
 	}
 
 	ngOnDestroy() {
@@ -183,6 +192,37 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	private moveDate(date: string, dif: number): string {
 		let newDate = moment(date).toDate();
 		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
+	}
+
+	private isDayNotChanged(oldDay: CalendarDay, newDay: CalendarDay): boolean {
+		return !!oldDay && oldDay.timeEntries.length === newDay.timeEntries.length &&
+			oldDay.timeEntries.every((item, i) => item.id === newDay.timeEntries[i].id);
+	}
+
+	private setAnimationDelayArray(newCalendar: CalendarDay[]): void {
+		let delay: number = 500;
+		this.animationDelayArray = [];
+
+		newCalendar.forEach((day: CalendarDay, i) => {
+			if (!this.isDayNotChanged(this.calendar[i], day)) {
+				this.animationDelayArray[i] = delay;
+				delay += 100;
+			}
+		});
+	}
+
+	private setCalendar(newCalendar: CalendarDay[]): void {
+		if (newCalendar.length === this.calendar.length && this.oldDate === this.date) {
+			newCalendar.forEach((day, i) => {
+				if (this.animationDelayArray[i] > 0) {
+					this.calendar[i] = day;
+				}
+			});
+		} else {
+			this.calendar = newCalendar;
+		}
+
+		this.calendarService.calendar = newCalendar;
 	}
 
 	private triggerAnimation(oldDate: string, newDate: string): void {

@@ -1,19 +1,19 @@
-import { Subject } from 'rxjs/Subject';
-import { ProjectSettingsFormComponent } from './project-settings-form/project-settings-form.component';
-import { ProjectFormComponent } from './project-form/project-form.component';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs/Subject';
 import { Project } from '../../models/project';
-import { ProjectsService } from '../../services/projects.service';
+import { AuthUser } from '../../core/auth/auth-user';
+import { PagedResult } from '../../services/odata';
+import { AuthService } from '../../core/auth/auth.service';
+import { ROWS_ON_PAGE } from '../../core/constant.service';
+import { ImpersonationService } from '../../services/impersonation.service';
 import { NotificationService } from '../../core/notification.service';
-import { PagedResult } from '../../services/odata/query';
+import { ProjectsService } from '../../services/projects.service';
+import { ProjectSettingsFormComponent } from './project-settings-form/project-settings-form.component';
+import { ProjectFormComponent } from './project-form/project-form.component';
 import { ProjectTasksComponent } from './project-tasks-form/project-tasks.component';
 import { ProjectUsersComponent } from './project-members-form/project-members.component';
-import { AuthUser } from '../../core/auth/auth-user';
-import { AuthService } from '../../core/auth/auth.service';
-import { Router } from '@angular/router';
-import { ImpersonationService } from '../../services/impersonation.service';
-import { ROWS_ON_PAGE } from '../../core/constant.service';
 
 @Component({
 	selector: 'ct-projects',
@@ -58,8 +58,6 @@ export class ProjectsComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (!this.isAllProjects) {
 			this.loadLazy();
 		}
@@ -69,31 +67,33 @@ export class ProjectsComponent implements OnInit {
 		this.subject.debounceTime(500).switchMap(() => {
 			return this.projectsService.getManagerProjectsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 		})
-			.subscribe(
-				(res: PagedResult<Project>) => {
+			.subscribe((res: PagedResult<Project>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (event) {
 			this.lastEvent = event;
-			this.isAllProjects = false;
 		}
 		if (updatePage) {
 			this.updatingGrid = updatePage;
 			this.lastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllProjects = false;
+			this.pagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.lastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllProjects) {
@@ -106,7 +106,7 @@ export class ProjectsComponent implements OnInit {
 		});
 	}
 
-	private checkIsAllUnassignedProjects(): void {
+	private checkIsAllProjects(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllProjects = true;
 		}

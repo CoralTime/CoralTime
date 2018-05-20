@@ -1,28 +1,45 @@
-ct-loading-bar {
-  position: absolute;
-}
-
-#loading-bar {
-  pointer-events: none;
+#loading-mask {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, .8);
   opacity: 0;
+  z-index: -1;
 
-  &.active {
-    opacity: 1;
+  .loading-mask-content {
+    position: absolute;
+    top: calc(50% - 100px);
+    left: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    background: url(./assets/icons/ct.logo-2.svg) no-repeat center center;
+    background-size: contain;
+    opacity: 0;
+    animation: ld-spin-fast 1s infinite;
+    transform-origin: 51px 53px;
   }
 
-  .ct-loading-spinner {
-    svg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 99999;
-      width: 50px !important;
-      height: 50px !important;
-    }
+  &.ct-active, &.ct-active .loading-mask-content {
+    transition: opacity 1s ease .3s;
+    opacity: 1;
+    z-index: 9999;
+  }
+}
 
-    circle {
-      stroke: #29d;
-    }
+@keyframes ld-spin-fast {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(360deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1080deg);
   }
 }

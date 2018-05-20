@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { SetPasswordService, PasswordChangingStatus } from '../set-password.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService } from '../../../../core/notification.service';
+import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
 
 const ERRORS_PASSWORD_CHANGING = [
 	'success',
@@ -26,7 +27,8 @@ export class EnterNewPasswordFormComponent implements OnInit {
 	password2: string;
 	token: string;
 
-	constructor(private notificationService: NotificationService,
+	constructor(private loadingService: LoadingMaskService,
+	            private notificationService: NotificationService,
 	            private route: ActivatedRoute,
 	            private router: Router,
 	            private setPasswordService: SetPasswordService) {
@@ -39,8 +41,10 @@ export class EnterNewPasswordFormComponent implements OnInit {
 	}
 
 	saveNewPassword(token: string, password: string): void {
+		this.loadingService.addLoading();
 		this.setPasswordService.saveNewPassword(token, password).then((passwordChangeStatus) => {
 			this.errorMessage = null;
+			this.loadingService.removeLoading();
 			if (!passwordChangeStatus) {
 				this.errorMessage = ERRORS_PASSWORD_CHANGING[5];
 				return 0;

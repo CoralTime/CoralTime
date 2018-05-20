@@ -53,6 +53,9 @@ namespace CoralTime.BL.Services
                     MemberEmail = member.MemberEmail
                 };
 
+                var emailTextByProjectSettings = string.Empty;
+                var subjectByProjectSettings = string.Empty;
+
                 foreach (var project in member.Projects)
                 {
                     var editionPeriodDays = GetRangeNotificationDays(todayDate, project.NotificationDay, out var notificationPeriodFirstDay, out var notificationPeriodLastDay);
@@ -85,11 +88,11 @@ namespace CoralTime.BL.Services
                         memberWithProjectsNotifications.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
                     }
 
-                    var subjectByProjectSettings = CreateEmailSubjectByProjectSettings(memberWithProjectsNotifications.MemberEmail);
-                    var emailTextByProjectSettings = CreateEmailTextForEmailByProjectSettings(baseUrl, memberWithProjectsNotifications);
-
-                    await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotifications.MemberEmail, subjectByProjectSettings);
+                    subjectByProjectSettings = CreateEmailSubjectByProjectSettings(memberWithProjectsNotifications.MemberEmail);
+                    emailTextByProjectSettings = CreateEmailTextForEmailByProjectSettings(baseUrl, memberWithProjectsNotifications);
                 }
+
+                await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotifications.MemberEmail, subjectByProjectSettings);
             }
         }
 
