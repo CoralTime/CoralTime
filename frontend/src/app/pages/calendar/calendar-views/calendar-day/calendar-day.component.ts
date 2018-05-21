@@ -209,7 +209,7 @@ export class CalendarDayComponent implements OnInit {
 
 	private isFromToTimeValid(newDate: string, timeEntry: TimeEntry): boolean {
 		let dayInfo = this.getDayInfo(newDate);
-		return dayInfo.timeEntries
+		return !dayInfo || dayInfo.timeEntries
 			.filter((item: TimeEntry) => item.timeOptions.isFromToShow && item.id !== timeEntry.id)
 			.every((item: TimeEntry) => {
 				return item.timeValues.timeFrom >= timeEntry.timeValues.timeTo

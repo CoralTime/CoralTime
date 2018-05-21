@@ -190,7 +190,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	private isFromToTimeValid(newDate: string): boolean {
 		let dayInfo = this.getDayInfo(newDate);
-		return dayInfo.timeEntries
+		return !dayInfo || dayInfo.timeEntries
 			.filter((timeEntry: TimeEntry) => timeEntry.timeOptions.isFromToShow && timeEntry.id !== this.timeEntry.id)
 			.every((timeEntry: TimeEntry) => {
 				return timeEntry.timeValues.timeFrom >= this.timeEntry.timeValues.timeTo
