@@ -212,9 +212,9 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	}
 
 	private setCalendar(newCalendar: CalendarDay[]): void {
-		if (newCalendar.length === this.calendar.length && this.oldDate === this.date) {
+		if (newCalendar.length === this.calendar.length) {
 			newCalendar.forEach((day, i) => {
-				if (this.animationDelayArray[i] > 0) {
+				if (this.calendar[i].date !== day.date || this.animationDelayArray[i] > 0) {
 					this.calendar[i] = day;
 				}
 			});
