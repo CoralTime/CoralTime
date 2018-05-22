@@ -30,13 +30,13 @@
 
     <p-column *ngIf="showColumnIds.indexOf(4) > -1" styleClass="ct-cell-start" field="timeFrom" header="Start">
         <ng-template let-item="rowData" pTemplate="body">
-            <span>{{getTimeString(item.timeValues.timeFrom)}}</span>
+            <span>{{getTimeString(item.timeValues.timeFrom, false, user.timeFormat === 12)}}</span>
         </ng-template>
     </p-column>
 
     <p-column *ngIf="showColumnIds.indexOf(4) > -1" styleClass="ct-cell-finish" field="timeTo" header="Finish">
         <ng-template let-item="rowData" pTemplate="body">
-            <span>{{getTimeString(item.timeValues.timeTo)}}</span>
+            <span>{{getTimeString(item.timeValues.timeTo, false, user.timeFormat === 12)}}</span>
         </ng-template>
     </p-column>
 

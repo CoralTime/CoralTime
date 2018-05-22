@@ -46,6 +46,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	lockReason: string = '';
 	selectedDate: string;
 	ticks: number;
+	timeFormat: number;
 	timerValue: string;
 	timerSubscription: Subscription;
 
@@ -64,6 +65,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			let user = this.impersonationService.impersonationUser || data.user;
 			this.firstDayOfWeek = user.weekStart;
 			this.isUserAdmin = data.user.isAdmin;
+			this.timeFormat = data.user.timeFormat;
 		});
 
 		this.selectedDate = this.timeEntry.date;
@@ -360,10 +362,16 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	setTimeString(s: number): string {
+	setTimeString(s: number, formatToAmPm: boolean = false): string {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
+
+		if (formatToAmPm) {
+			let t = new Date().setHours(0, 0, s);
+			return moment(t).format('hh:mm A');
+		}
+
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
