@@ -46,10 +46,9 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	lockReason: string = '';
 	selectedDate: string;
 	ticks: number;
+	timeFormat: number;
 	timerValue: string;
 	timerSubscription: Subscription;
-
-	private totalTrackedTimeForDay: number;
 
 	constructor(private route: ActivatedRoute,
 	            private calendarService: CalendarService,
@@ -64,6 +63,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			let user = this.impersonationService.impersonationUser || data.user;
 			this.firstDayOfWeek = user.weekStart;
 			this.isUserAdmin = data.user.isAdmin;
+			this.timeFormat = data.user.timeFormat;
 		});
 
 		this.selectedDate = this.timeEntry.date;
@@ -234,16 +234,20 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		if (errorMessage) {
 			let currentTimeEntry = new TimeEntry(this.timeEntry);
+			let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
+			let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
+			let timeTimerStart = Math.max(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
+				- new Date().getTimezoneOffset() * 60, 0); // locale format
 
 			currentTimeEntry.timeOptions = {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
 			currentTimeEntry.timeValues = {
-				timeActual: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual),
+				timeActual: finalTimerValue,
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual,
-				timeTo: MAX_TIMER_VALUE
+				timeFrom: Math.min(MAX_TIMER_VALUE, timeTimerStart + finalTimerValue) - finalTimerValue,
+				timeTo: Math.min(MAX_TIMER_VALUE, timeTimerStart + finalTimerValue)
 			};
 
 			this.autoStopTimer();
@@ -309,8 +313,8 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	private isTrackedTimeValid(): boolean {
-		this.totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
-		return this.totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+		let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
+		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
 	}
 
 	private saveTimerStatus(): Promise<any> {
@@ -360,10 +364,16 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	setTimeString(s: number): string {
+	setTimeString(s: number, formatToAmPm: boolean = false): string {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
+
+		if (formatToAmPm) {
+			let t = new Date().setHours(0, 0, s);
+			return moment(t).format('hh:mm A');
+		}
+
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 
