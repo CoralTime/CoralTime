@@ -50,8 +50,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	timerValue: string;
 	timerSubscription: Subscription;
 
-	private totalTrackedTimeForDay: number;
-
 	constructor(private route: ActivatedRoute,
 	            private calendarService: CalendarService,
 	            private dialog: MatDialog,
@@ -236,16 +234,20 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		if (errorMessage) {
 			let currentTimeEntry = new TimeEntry(this.timeEntry);
+			let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
+			let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
+			let timeTimerStart = Math.max(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
+				- new Date().getTimezoneOffset() * 60, 0); // locale format
 
 			currentTimeEntry.timeOptions = {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
 			currentTimeEntry.timeValues = {
-				timeActual: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual),
+				timeActual: finalTimerValue,
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual,
-				timeTo: MAX_TIMER_VALUE
+				timeFrom: Math.min(MAX_TIMER_VALUE, timeTimerStart + finalTimerValue) - finalTimerValue,
+				timeTo: Math.min(MAX_TIMER_VALUE, timeTimerStart + finalTimerValue)
 			};
 
 			this.autoStopTimer();
@@ -311,8 +313,8 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	private isTrackedTimeValid(): boolean {
-		this.totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
-		return this.totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+		let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
+		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
 	}
 
 	private saveTimerStatus(): Promise<any> {
