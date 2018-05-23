@@ -236,18 +236,18 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			let currentTimeEntry = new TimeEntry(this.timeEntry);
 			let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
 			let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
-			let timeTimerStart = Math.max(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
-				- new Date().getTimezoneOffset() * 60, 0); // locale format
+			let timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
+				- new Date().getTimezoneOffset() * 60); // locale format
 
 			currentTimeEntry.timeOptions = {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
 			currentTimeEntry.timeValues = {
-				timeActual: finalTimerValue,
+				timeActual: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue),
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: Math.min(MAX_TIMER_VALUE, timeTimerStart + finalTimerValue) - finalTimerValue,
-				timeTo: Math.min(MAX_TIMER_VALUE, timeTimerStart + finalTimerValue)
+				timeFrom: timeTimerStart,
+				timeTo: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue) + timeTimerStart
 			};
 
 			this.autoStopTimer();
@@ -315,6 +315,10 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	private isTrackedTimeValid(): boolean {
 		let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
 		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+	}
+
+	private limitTimerValue(time: number): number {
+		return Math.min(Math.max(time, 0), MAX_TIMER_VALUE);
 	}
 
 	private saveTimerStatus(): Promise<any> {
