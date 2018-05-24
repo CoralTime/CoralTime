@@ -1,0 +1,11 @@
+<div class="ct-color-picker">
+    <p-colorPicker [(ngModel)]="modelValue" #colorPicker></p-colorPicker>
+    <input class="ct-input" #input="ngModel"
+           [name]="name"
+           [disabled]="disabled"
+           [(ngModel)]="modelValue"
+           [minlength]="7"
+           pattern="^#?([a-fA-F0-9]{6})$" required
+           [textMask]="{mask: colorMask, guide: false, keepCharPositions: true}"
+           (change)="writeValue(modelValue)">
+</div>

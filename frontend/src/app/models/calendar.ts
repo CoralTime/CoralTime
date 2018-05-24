@@ -61,7 +61,7 @@ export class TimeEntry {
 	timeValues: TimeValues;
 
 	constructor(data = null) {
-		this.color = data && data.color || 0;
+		this.color = data && data.color || 14147298;
 		this.date = data && data.date;
 		this.description = data && data.description;
 		this.id = data && data.id;
