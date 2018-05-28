@@ -182,14 +182,14 @@ export class UsersFormComponent implements OnInit {
 		let isEmailValidObservable: Observable<any>;
 		let isUserNameValidObservable: Observable<any>;
 
-		if (!this.model.email || !!form.controls['email'].errors) {
+		if (!this.model.email.trim() || !!form.controls['email'].errors) {
 			isEmailValidObservable = Observable.of(false);
 		} else {
 			isEmailValidObservable = this.userService.getUserByEmail(this.model.email)
 				.map((user) => !user || (user.id === this.model.id));
 		}
 
-		if (!this.model.userName) {
+		if (!this.model.userName.trim()) {
 			isUserNameValidObservable = Observable.of(false);
 		} else {
 			isUserNameValidObservable = this.userService.getUserByUsername(this.model.userName)
