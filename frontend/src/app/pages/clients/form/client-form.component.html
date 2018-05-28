@@ -14,8 +14,8 @@
                            required autofocus
                            (ngModelChange)="showErrors[1] = false">
                 </div>
-                <div *ngIf="showErrors[1] && !model.name" class="ct-error-text">Client name is required.</div>
-                <div *ngIf="showErrors[1] && model.name" class="ct-error-text">Client with this name already exists</div>
+                <div *ngIf="showErrors[1] && !model.name.trim()" class="ct-error-text">Client name is required.</div>
+                <div *ngIf="showErrors[1] && model.name.trim()" class="ct-error-text">Client with this name already exists</div>
             </div>
 
             <div *ngIf="client.id">

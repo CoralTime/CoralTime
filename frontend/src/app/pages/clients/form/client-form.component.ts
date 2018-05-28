@@ -128,7 +128,7 @@ export class ClientFormComponent implements OnInit {
 		let isEmailValidObservable = Observable.of(!form.controls['email'].errors);
 		let isNameValidObservable: Observable<any>;
 
-		if (!this.model.name) {
+		if (!this.model.name.trim()) {
 			isNameValidObservable = Observable.of(false);
 		} else {
 			isNameValidObservable = this.clientsService.getClientByName(this.model.name)

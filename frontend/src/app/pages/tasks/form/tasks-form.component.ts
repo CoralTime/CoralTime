@@ -120,7 +120,7 @@ export class TaskFormComponent implements OnInit {
 
 		let isNameValidObservable: Observable<any>;
 
-		if (!this.model.name) {
+		if (!this.model.name.trim()) {
 			isNameValidObservable = Observable.of(false);
 		} else {
 			isNameValidObservable = this.tasksService.getTaskByName(this.model.name)
