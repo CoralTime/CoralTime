@@ -1,10 +1,10 @@
 import { Component, Input, OnChanges } from '@angular/core';
-import { ArrayUtils } from '../../../core/object-utils';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '../../../models/user';
-import { ReportGridView, ReportItem } from '../../../models/reports';
-import { ImpersonationService } from '../../../services/impersonation.service';
 import * as moment from 'moment';
+import { ReportGridView, ReportItem } from '../../../models/reports';
+import { User } from '../../../models/user';
+import { ArrayUtils } from '../../../core/object-utils';
+import { ImpersonationService } from '../../../services/impersonation.service';
 
 export interface ReportGridData {
 	gridData: ReportGridView;
@@ -22,16 +22,15 @@ export class ReportsGridComponent implements OnChanges {
 	@Input() rowsNumber: number;
 	@Input() showColumnIds: number[] = [];
 
-	dateFormat: string;
 	gridDataRows: ReportItem[] = [];
+	user: User;
 
 	private lastEvent: any;
 
 	constructor(private impersonationService: ImpersonationService,
 	            private route: ActivatedRoute) {
 		this.route.data.forEach((data: { user: User }) => {
-			let user = this.impersonationService.impersonationUser || data.user;
-			this.dateFormat = user.dateFormat;
+			this.user = this.impersonationService.impersonationUser || data.user;
 		});
 	}
 
@@ -46,16 +45,21 @@ export class ReportsGridComponent implements OnChanges {
 			return;
 		}
 		let date = moment(utcDate);
-		return this.dateFormat ? date.format(this.dateFormat) : date.toDate().toLocaleDateString();
+		return this.user.dateFormat ? date.format(this.user.dateFormat) : date.toDate().toLocaleDateString();
 	}
 
-	getTimeString(time: number, showDefaultValue: boolean = false): string {
+	getTimeString(time: number, showDefaultValue: boolean = false, formatToAmPm: boolean = false): string {
 		let m = Math.floor(time / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
 
 		if (!showDefaultValue && h === 0 && m === 0) {
 			return '';
+		}
+
+		if (formatToAmPm) {
+			let t = new Date().setHours(0, 0, time);
+			return moment(t).format('hh:mm A');
 		}
 
 		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));

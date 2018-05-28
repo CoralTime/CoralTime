@@ -224,6 +224,9 @@ ct-entry-time {
       padding: 0 10px;
       font-size: 14px;
       line-height: 33px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

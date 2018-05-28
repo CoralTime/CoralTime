@@ -5,7 +5,7 @@
                (deleted)="deleteTimeEntry()"
                class="ct-border-{{timeEntry.color}}"></ct-entry-time>
 <div *ngIf="timeEntry.timeOptions.isFromToShow" class="ct-calendar-time-entry-period">
-    {{setTimeString(timeEntry.timeValues.timeFrom)}} - {{setTimeString(timeEntry.timeValues.timeTo)}}
+    {{setTimeString(timeEntry.timeValues.timeFrom, timeFormat === 12)}} - {{setTimeString(timeEntry.timeValues.timeTo, timeFormat === 12)}}
 </div>
 
 <a *ngIf="isTimeEntryAvailable && !isTimerShown"

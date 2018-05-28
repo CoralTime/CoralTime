@@ -79,7 +79,7 @@ export class CalendarService {
 		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === true);
 		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === false);
 
-		ArrayUtils.sortByField(arrayWithFromToPeriod, 'timeFrom');
+		ArrayUtils.sortByField(arrayWithFromToPeriod, 'timeValues', 1, 'timeFrom');
 		ArrayUtils.sortByField(otherTimeEntries, 'id');
 
 		return [...arrayWithFromToPeriod, ...otherTimeEntries];
