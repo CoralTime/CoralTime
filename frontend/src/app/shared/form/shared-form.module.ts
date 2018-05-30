@@ -9,7 +9,7 @@ import { InputListComponent } from './input-list/input-list.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { NgSlimScrollModule } from 'ngx-slimscroll';
 import { MaterialModule } from '../material.module';
-import { ColorPickerModule } from './color-picker1/color-picker.module';
+import { ColorPickerModule } from './color-picker/color-picker.module';
 
 @NgModule({
 	imports: [

@@ -8,7 +8,7 @@ import { Client } from '../../../models/client';
 import { ClientsService } from '../../../services/clients.service';
 import { ProjectsService } from '../../../services/projects.service';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
-import { hexToNumber, numberToHex } from '../../../shared/form/color-picker1/color-picker.component';
+import { hexToNumber, numberToHex } from '../../../shared/form/color-picker/color-picker.component';
 
 export class FormProject {
 	id: number;
@@ -28,7 +28,7 @@ export class FormProject {
 		instance.clientId = project.clientId;
 		instance.clientName = project.clientName;
 		instance.clientIsActive = project.clientIsActive;
-		instance.color = numberToHex(project.color ? project.color : 14147298);
+		instance.color = numberToHex(project.color, true);
 		instance.description = project.description;
 		instance.isActive = project.id ? project.isActive : true;
 		instance.isPrivate = project.isPrivate;
