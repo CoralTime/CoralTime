@@ -298,20 +298,6 @@ tr:hover .ct-grid-settings {
     }
   }
 
-  .ct-color- {
-    border: 1px solid $form-border;
-  }
-
-  $colors: $color1, $color2, $color3, $color4;
-  $i: -1;
-  @each $color in $colors {
-    $i: $i + 1;
-
-    .ct-color-#{$i} {
-      border: 1px solid transparent;
-    }
-  }
-
   .ct-grid-link {
     cursor: pointer;
 

@@ -16,6 +16,7 @@ import { ImpersonationService } from '../../../../services/impersonation.service
 import { TasksService } from '../../../../services/tasks.service';
 import { CalendarProjectsService } from '../../calendar-projects.service';
 import { MAX_TIMER_VALUE } from '../../calendar-views/calendar-task/calendar-task.component';
+import { numberToHex } from '../../../../shared/form/color-picker/color-picker.component';
 
 @Component({
 	selector: 'ct-entry-time-form',
@@ -88,6 +89,10 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 
 		this.getFormHeight();
+	}
+
+	numberToHex(value: number): string {
+		return numberToHex(value);
 	}
 
 	// PROJECT

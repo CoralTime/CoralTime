@@ -27,7 +27,7 @@
                      (onEndScrollEvent)="onEndScroll()">
             <p-column field="name" header="Project" [sortable]="true">
                 <ng-template let-col let-project="rowData" pTemplate="body">
-                    <span class="ct-grid-label ct-color-{{ project.color }}"></span>
+                    <span class="ct-grid-label ct-color" [ngStyle]="{color: numberToHex(project.color)}"></span>
                     <span (click)="openProjectDialog(project)" class="ct-grid-link-text" title="{{ project.name }}">{{ project.name }}</span>
                 </ng-template>
             </p-column>

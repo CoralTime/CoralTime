@@ -29,7 +29,7 @@
                 <p class="ct-profile-no-project" *ngIf="projects && !projects.length">You haven't assigned to any project yet.</p>
 
                 <div *ngFor="let project of projects; let i = index" class="ct-profile-project">
-                    <span class="ct-color-{{project.color}}"></span>
+                    <span class="ct-color" [ngStyle]="{color: numberToHex(project.color)}"></span>
 
                     <p class="ct-profile-project-name">{{project.name}}
                         <span>
