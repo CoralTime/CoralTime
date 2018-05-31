@@ -42,23 +42,30 @@ $color7: #dec4e8;
 
 $colors: $color0, $color1, $color2, $color3, $color4, $color5, $color6, $color7;
 
-$i: -1;
-@each $color in $colors {
-  $i: $i + 1;
-
-  .ct-color-#{$i} {
-    background-color: $color;
-  }
-
-  .ct-border-#{$i} {
-    border-left: 5px solid $color;
-  }
-}
-
 .ct-color {
   background-color: currentColor;
 }
 
-.ct-border- {
-  border-left: 5px solid $form-border;
+.ct-border-color {
+  border-left: 5px solid currentColor;
+}
+
+.ct-container-color {
+  .ct-time-period {
+    border-top-color: currentColor;
+    border-bottom-color: currentColor;
+  }
+
+  .ct-time-path, .ct-timer {
+    background-color: currentColor;
+    border-radius: 0;
+  }
+
+  .slimscroll-grid {
+    background-color: currentColor !important;
+  }
+
+  .ct-submit {
+    background-color: currentColor;
+  }
 }

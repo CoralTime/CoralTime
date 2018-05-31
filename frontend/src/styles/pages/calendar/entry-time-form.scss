@@ -316,7 +316,7 @@ ct-entry-time {
     padding: 14px 0 12px;
     font-size: 0;
 
-    > button, > div {
+    .ct-timer, .ct-time-path {
       display: inline-block;
       box-sizing: border-box;
       border: 0;
@@ -327,7 +327,11 @@ ct-entry-time {
       line-height: 36px;
       font-size: 15px;
       cursor: pointer;
-      color: $nav-background !important;
+      color: inherit;
+
+      > * {
+        color: $nav-background !important;
+      }
 
       &:focus, &.ct-focus {
         outline: 1px solid rgba(9, 156, 206, .3);
@@ -349,20 +353,21 @@ ct-entry-time {
         position: relative;
         cursor: not-allowed;
       }
+    }
 
-      &.ct-timer {
-        float: left;
+    .ct-timer {
+      float: left;
 
-        .ct-actions-icon {
-          background: url(./assets/icons/runtimer.svg) no-repeat center;
-        }
+      .ct-actions-icon {
+        background: url(./assets/icons/runtimer.svg) no-repeat center;
       }
-      &.ct-time-path {
-        float: right;
+    }
 
-        .ct-actions-icon {
-          background: url(./assets/icons/fromto.svg) no-repeat center;
-        }
+    .ct-time-path {
+      float: right;
+
+      .ct-actions-icon {
+        background: url(./assets/icons/fromto.svg) no-repeat center;
       }
     }
 
@@ -508,6 +513,10 @@ ct-entry-time {
   .ct-form-actions {
     padding: $formPadding 0 0;
 
+    .mat-button-wrapper {
+      color: $inactiveText;
+    }
+
     .ct-close {
       padding: 0;
       cursor: pointer;
@@ -536,38 +545,6 @@ ct-entry-time {
       width: 100%;
       height: 100%;
     }
-  }
-}
-
-$i: -1;
-@each $color in $colors {
-  $i: $i + 1;
-
-  .ct-container-color-#{$i} {
-    .ct-time-period {
-      border-top-color: $color;
-      border-bottom-color: $color;
-    }
-
-    .ct-time-path, .ct-timer {
-      background-color: $color;
-      border-radius: 0;
-    }
-
-    .slimscroll-grid {
-      background-color: $color !important;
-    }
-  }
-}
-
-.ct-container-color-0 {
-  .ct-time-period {
-    border-top-color: $color0;
-    border-bottom-color: $color0;
-  }
-
-  .slimscroll-grid {
-    background-color: $color0 !important;
   }
 }
 
