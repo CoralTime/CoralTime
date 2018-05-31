@@ -372,7 +372,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private isFromToTimeValid2(): boolean {
-		return this.currentTimeEntry.timeValues.timeFrom > 0
+		return this.currentTimeEntry.timeValues.timeFrom >= 0
 			&& this.currentTimeEntry.timeValues.timeTo < MAX_TIMER_VALUE;
 	}
 

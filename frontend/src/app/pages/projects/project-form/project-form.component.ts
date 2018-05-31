@@ -170,7 +170,7 @@ export class ProjectFormComponent implements OnInit {
 		let isColorValidObservable = Observable.of(form.controls['color'].valid);
 		let isNameValidObservable: Observable<any>;
 
-		if (!this.model.name) {
+		if (!this.model.name.trim()) {
 			isNameValidObservable = Observable.of(false);
 		} else {
 			isNameValidObservable = this.projectsService.getProjectByName(this.model.name)

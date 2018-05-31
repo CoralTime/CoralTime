@@ -14,8 +14,8 @@
                            (ngModelChange)="showNameError = false"
                            maxlength="200" required autofocus/>
                 </div>
-                <div *ngIf="showErrors[1] && !model.name" class="ct-error-text">Project name is required.</div>
-                <div *ngIf="showErrors[1] && model.name" class="ct-error-text">Project with this name already exists.</div>
+                <div *ngIf="showNameError && !model.name.trim()" class="ct-error-text">Project name is required.</div>
+                <div *ngIf="showNameError && model.name.trim()" class="ct-error-text">Project with this name already exists</div>
             </div>
 
             <div *ctIsGranted="'roleChangeProjectStatus'">
