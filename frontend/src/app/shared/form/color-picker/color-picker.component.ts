@@ -1,5 +1,5 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, Input, Output, EventEmitter, forwardRef, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, AfterContentInit } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
 import { ColorPicker } from 'primeng/primeng';
 
@@ -41,7 +41,7 @@ export function numberToHex(value: number, showOriginal?: boolean): string {
 	]
 })
 
-export class ColorPickerComponent implements ControlValueAccessor, Validator {
+export class ColorPickerComponent implements ControlValueAccessor, Validator, AfterContentInit {
 	@Input() name: string;
 
 	@Input('ngModel')
@@ -73,6 +73,19 @@ export class ColorPickerComponent implements ControlValueAccessor, Validator {
 	private _disabled: boolean;
 	private controlValueAccessorChangeFn: (value: any) => void = (value: any) => {};
 	private onTouched: () => any = () => {};
+
+	ngAfterContentInit() {
+		this.colorPicker.updateColorSelector = this.updateColorSelector.bind(this);
+	}
+
+	updateColorSelector(): void {
+		let that = this.colorPicker;
+		that.colorSelectorViewChild.nativeElement.style.backgroundColor = '#' + that.HSBtoHEX({
+			h: that.value.h,
+			s: 100,
+			b: 100
+		});
+	}
 
 	/**
 	 * Implemented as part of ControlValueAccessor.
