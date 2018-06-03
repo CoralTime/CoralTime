@@ -50,7 +50,7 @@ namespace CoralTime.BL.Services
                             })
                         }).ToList();
 
-                    foreach (var member in membersWithWeeklyTimeEntryUpdates.Where(x => x.MemberFullName == "YellowAdmin2_"))
+                    foreach (var member in membersWithWeeklyTimeEntryUpdates)
                     {
                         var isNotFillTimeEntries = false;
                         var isAnyFillTimeEntries = false;
