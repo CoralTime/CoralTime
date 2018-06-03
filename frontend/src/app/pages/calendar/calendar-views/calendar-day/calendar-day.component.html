@@ -1,6 +1,6 @@
 <div pDroppable="calendarTask" (onDrop)="drop()" (dragover)="onDragOver()" (onDragLeave)="onDragLeave()"
-     class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter">
-    <div class="ct-calendar-day-title" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
+     class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
+    <div class="ct-calendar-day-title" >
         <div class="ct-calendar-date">
             {{getDateNumber(dayInfo.date)}}
             <span>{{getDateString(dayInfo.date)}}</span>
