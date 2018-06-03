@@ -2,6 +2,7 @@
 using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System;
 using System.Collections.Generic;
+using CoralTime.ViewModels.TimeEntries;
 
 namespace CoralTime.Common.Constants
 {
@@ -280,5 +281,7 @@ namespace CoralTime.Common.Constants
         public const string ImageTypeSizeAvatar = "200";
 
         #endregion
+
+        public const int MockId = -1;
     }
 }

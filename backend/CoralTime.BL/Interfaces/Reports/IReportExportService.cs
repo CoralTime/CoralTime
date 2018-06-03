@@ -10,7 +10,7 @@ namespace CoralTime.BL.Interfaces.Reports
     public interface IReportExportService
     {
         Task<FileResult> ExportFileReportsGridAsync(ReportsGridView reportsGridData, HttpContext httpContext);
-        
-        Task<object> ExportEmailGroupedByType(ReportsExportEmailView emailData, Member memberFromNotification = null);
+
+        Task<object> ExportEmailGroupedByType(ReportsExportEmailView reportsExportEmailView, Member memberFromNotification = null, bool createMockTimeEntries = false);
     }
 }

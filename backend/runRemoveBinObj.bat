@@ -1,1 +1,0 @@
-Powershell.exe -executionpolicy remotesigned -File RemoveBinObj.ps1

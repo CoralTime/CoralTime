@@ -34,31 +34,24 @@ namespace CoralTime.BL.Services
                     var memberStartDayOfWeekStartByTodayDate = GetMemberStartDayOfWeekStartByTodayDate(todayDate);
 
                     var membersWithWeeklyTimeEntryUpdates = Uow.MemberRepository.LinkedCacheGetList()
-                        .Where(member => member.IsWeeklyTimeEntryUpdatesSend && member.WeekStart == memberStartDayOfWeekStartByTodayDate)
+                        .Where(member => member.IsWeeklyTimeEntryUpdatesSend &&member.WeekStart == memberStartDayOfWeekStartByTodayDate)
                         .Select(member => new
                         {
                             MemberId = member.Id,
                             MemberFullName = member.FullName,
                             MemberDateFormatId = member.DateFormatId,
                             MemberEmail = member.User.Email,
-                            
-                            Projects = member.MemberProjectRoles.Select(project => new
+
+                            Projects = member.MemberProjectRoles.Where(mpr => mpr.Project.IsActive)
+                            .Select(project => new
                             {
                                 Id = project.Project.Id,
                                 Name = project.Project.Name,
                             })
                         }).ToList();
 
-                    foreach (var member in membersWithWeeklyTimeEntryUpdates.Where(x=>x.MemberFullName == "Popkov Yan"))
+                    foreach (var member in membersWithWeeklyTimeEntryUpdates.Where(x => x.MemberFullName == "YellowAdmin2_"))
                     {
-                        var memberWithProjectsNotifications = new MemberWithProjecsNotifications
-                        {
-                            MemberId = member.MemberId,
-                            MemberFullName = member.MemberFullName,
-                            MemberDateFormatId = member.MemberDateFormatId,
-                            MemberEmail = member.MemberEmail
-                        };
-
                         var isNotFillTimeEntries = false;
                         var isAnyFillTimeEntries = false;
 
@@ -93,9 +86,17 @@ namespace CoralTime.BL.Services
 
                         if (isNotFillTimeEntries || isAnyFillTimeEntries)
                         {
+                            var memberWithProjectsNotifications = new MemberWithProjecsNotifications
+                            {
+                                MemberId = member.MemberId,
+                                MemberFullName = member.MemberFullName,
+                                MemberDateFormatId = member.MemberDateFormatId,
+                                MemberEmail = member.MemberEmail
+                            };
+
                             var subjectNotFilledTimeEnttries = CreateEmailSubjectWeeklyTimeEntryUpdates(memberWithProjectsNotifications.MemberEmail);
 
-                            var emailText = CreateEmailTextWeeklyNotifications(baseUrl, memberWithProjectsNotifications, isNotFillTimeEntries, isAnyFillTimeEntries);
+                            var emailText = CreateEmailTextWeeklyNotifications(baseUrl, memberWithProjectsNotifications.MemberFullName, isNotFillTimeEntries, isAnyFillTimeEntries);
 
                             var reportsExportEmailView = new ReportsExportEmailView
                             {
@@ -117,16 +118,16 @@ namespace CoralTime.BL.Services
 
                             var memberFromNotification = Uow.MemberRepository.LinkedCacheGetById(member.MemberId);
 
-                            await _reportExportService.ExportEmailGroupedByType(reportsExportEmailView, memberFromNotification);
+                            await _reportExportService.ExportEmailGroupedByType(reportsExportEmailView, memberFromNotification, true);
                         }
                     }
                 }
             }
         }
 
-        private string CreateEmailTextWeeklyNotifications(string baseUrl, MemberWithProjecsNotifications memberWithProjectsNotifications, bool isNotFillTimeEntries, bool isAnyFillTimeEntries)
+        private string CreateEmailTextWeeklyNotifications(string baseUrl, string memberFullName, bool isNotFillTimeEntries, bool isAnyFillTimeEntries)
         {
-            var sbEmailText = new StringBuilder($"Hello, {memberWithProjectsNotifications.MemberFullName}! ");
+            var sbEmailText = new StringBuilder($"Hello, {memberFullName}! ");
 
             if (isNotFillTimeEntries)
             {

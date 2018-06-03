@@ -22,15 +22,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 UpdateReportMembers(memberFromNotification);
             }
 
-            var dateFrom = reportsGridView.CurrentQuery.DateFrom;
-            var dateTo = reportsGridView.CurrentQuery.DateTo;
-
-            var groupById = reportsGridView.CurrentQuery.GroupById;
-            var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
-
-            var dateFormatId = reportsGridView.DateFormatId;
-
-            var reportTotalView = new ReportTotalView(groupById, showColumnIds, dateFormatId, dateFrom, dateTo);
+            var reportTotalView = InitializeReportTotalView(reportsGridView);
 
             var filteredTimeEntries = GetFilteredTimeEntries(reportsGridView);
             if (filteredTimeEntries.Any())
@@ -79,6 +71,20 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             }
 
+            return reportTotalView;
+        }
+
+        public ReportTotalView InitializeReportTotalView(ReportsGridView reportsGridView)
+        {
+            var dateFrom = reportsGridView.CurrentQuery.DateFrom;
+            var dateTo = reportsGridView.CurrentQuery.DateTo;
+
+            var groupById = reportsGridView.CurrentQuery.GroupById;
+            var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
+
+            var dateFormatId = reportsGridView.DateFormatId;
+
+            var reportTotalView = new ReportTotalView(groupById, showColumnIds, dateFormatId, dateFrom, dateTo);
             return reportTotalView;
         }
 

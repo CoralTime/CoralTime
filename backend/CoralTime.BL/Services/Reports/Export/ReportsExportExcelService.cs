@@ -130,12 +130,15 @@ namespace CoralTime.BL.Services.Reports.Export
 
                     ++RowIndex;
 
-                    // List of Items
-                    foreach (var groupedItem in groupedItems.Items)
+                    if (!groupedItems.Items.Select(x => x.TaskId).Contains(-1))
                     {
-                        CreateRowOfItems(reportTotalView, groupedItems, groupedItem, sheet, workbook);
+                        // List of Items
+                        foreach (var groupedItem in groupedItems.Items)
+                        {
+                            CreateRowOfItems(reportTotalView, groupedItems, groupedItem, sheet, workbook);
 
-                        ++RowIndex;
+                            ++RowIndex;
+                        }
                     }
 
                     // TOTAL FOR
