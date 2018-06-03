@@ -335,11 +335,13 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
+            let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
+            let roundTicks = (this.ticks <60)? 60: this.roundTime(this.ticks);
 			currentTimeEntry.timeValues = {
-				timeActual: this.ticks,
+				timeActual: roundTicks,
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
-				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
+				timeFrom: Math.max(secondsFromStartDay - roundTicks, 0),
+				timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
 			};
 		}
 
@@ -355,6 +357,10 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 					return error;
 				});
 	}
+
+    private roundTime (time: number): number {
+        return time - time % 60;
+    }
 
 	// GENERAL
 

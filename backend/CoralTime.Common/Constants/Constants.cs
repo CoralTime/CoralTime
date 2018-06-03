@@ -126,6 +126,7 @@ namespace CoralTime.Common.Constants
         public const string SecureHeaderValueService = "SecureHeaderValueService";
 
         public const int SecondsInThisDay = 86400;
+        public const int SecondsInMinute = 60;
 
         public static string EnvName { get; set; }
         
