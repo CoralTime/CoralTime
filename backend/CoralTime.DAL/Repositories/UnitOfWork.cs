@@ -66,10 +66,13 @@ namespace CoralTime.DAL.Repositories
             var userNameCurrent = GetUserNameCurrentFromHttpContext(httpContextAccessor);
             var userNameImpersonated = GetUserNameImpersonatedFromHttpContext(httpContextAccessor);
 
-            CheckApplicationUsers(userNameCurrent, userNameImpersonated);
+            if (userNameCurrent != null && userNameImpersonated != null)
+            {
+                CheckApplicationUsers(userNameCurrent, userNameImpersonated);
 
-            MemberCurrent = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
-            MemberImpersonated = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
+                MemberCurrent = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
+                MemberImpersonated = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
+            }
         }
 
         private void CheckApplicationUsers(string userNameCurrent, string userNameImpersonated)
