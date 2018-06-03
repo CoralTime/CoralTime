@@ -14,7 +14,7 @@ namespace CoralTime.BL.Services
 {
     public partial class NotificationsService
     {
-        private string CreateEmailSubjectWeeklyTimeEntryUpdates(string emailMember) => $"Reminder to fill Time Entries {emailMember} by Weekly TimeEntry Updates";
+        private string CreateEmailSubjectWeeklyTimeEntryUpdates(string emailMember) => new StringBuilder($"Reminder to fill Time Entries {emailMember} by Weekly TimeEntry Updates").ToString();
 
         public async Task SendWeeklyTimeEntryUpdatesAsync(string baseUrl)
         {
@@ -32,7 +32,7 @@ namespace CoralTime.BL.Services
 
                     var memberStartDayOfWeekStartByTodayDate = GetMemberStartDayOfWeekStartByTodayDate(todayDate);
 
-                    var members = Uow.MemberRepository.LinkedCacheGetList()
+                    var membersWithWeeklyTimeEntryUpdates = Uow.MemberRepository.LinkedCacheGetList()
                         .Where(member => member.IsWeeklyTimeEntryUpdatesSend && member.WeekStart == memberStartDayOfWeekStartByTodayDate)
                         .Select(member => new
                         {
@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services
                             })
                         }).ToList();
 
-                    foreach (var member in members)
+                    foreach (var member in membersWithWeeklyTimeEntryUpdates.Where(x=>x.MemberFullName == "Popkov Yan"))
                     {
                         var memberWithProjectsNotifications = new MemberWithProjecsNotifications
                         {
@@ -96,9 +96,6 @@ namespace CoralTime.BL.Services
 
                             var emailText = CreateEmailTextWeeklyNotifications(baseUrl, memberWithProjectsNotifications, isNotFillTimeEntries, isAnyFillTimeEntries);
 
-                            // TODO!
-                            // Uow.MemberImpersonated = Uow.MemberRepository.GetQueryByMemberId(memberWithProjectsNotifications.MemberId);
-
                             var reportsExportEmailView = new ReportsExportEmailView
                             {
                                 Comment = emailText,
@@ -117,7 +114,9 @@ namespace CoralTime.BL.Services
                                 }
                             };
 
-                            await _reportExportService.ExportEmailGroupedByType(reportsExportEmailView);
+                            var memberFromNotification = Uow.MemberRepository.LinkedCacheGetById(member.MemberId);
+
+                            await _reportExportService.ExportEmailGroupedByType(reportsExportEmailView, memberFromNotification);
                         }
                     }
                 }

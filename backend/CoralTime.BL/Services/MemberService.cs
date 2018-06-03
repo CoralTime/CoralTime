@@ -182,7 +182,7 @@ namespace CoralTime.BL.Services
 
             if (memberByName.Id != memberId && !memberByName.User.IsAdmin)
             {
-                throw new CoralTimeForbiddenException($"Member with userName {BaseApplicationUserCurrent.UserName} can't change other user's data.");
+                throw new CoralTimeForbiddenException($"Member with userName {BaseMemberCurrent.User.UserName} can't change other user's data.");
             }
 
             if (! EmailChecker.IsValidEmail(memberView.Email))
@@ -743,7 +743,7 @@ namespace CoralTime.BL.Services
 
         private IEnumerable<Member> GetAllMembersCommon()
         {
-            if (BaseApplicationUserImpersonated.IsAdmin || BaseApplicationUserImpersonated.IsManager)
+            if (BaseMemberImpersonated.User.IsAdmin || BaseMemberImpersonated.User.IsManager)
             {
                 var membersAll = Uow.MemberRepository.LinkedCacheGetList();
                 if (membersAll == null)
@@ -754,10 +754,10 @@ namespace CoralTime.BL.Services
                 return membersAll;
             }
 
-            var memberById = Uow.MemberRepository.LinkedCacheGetByUserName(BaseApplicationUserImpersonated.UserName);
+            var memberById = Uow.MemberRepository.LinkedCacheGetByUserName(BaseMemberImpersonated.User.UserName);
             if (memberById == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member by user id {BaseApplicationUserImpersonated.Id} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member by user id {BaseMemberImpersonated.User.Id} not found.");
             }
 
             return new List<Member> { memberById };

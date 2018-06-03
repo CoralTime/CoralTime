@@ -1,4 +1,5 @@
-﻿using CoralTime.ViewModels.Reports.Request.Emails;
+﻿using CoralTime.DAL.Models;
+using CoralTime.ViewModels.Reports.Request.Emails;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,6 @@ namespace CoralTime.BL.Interfaces.Reports
     {
         Task<FileResult> ExportFileReportsGridAsync(ReportsGridView reportsGridData, HttpContext httpContext);
         
-        Task<object> ExportEmailGroupedByType(ReportsExportEmailView emailData);
+        Task<object> ExportEmailGroupedByType(ReportsExportEmailView emailData, Member memberFromNotification = null);
     }
 }

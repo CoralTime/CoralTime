@@ -3,14 +3,15 @@ using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Emails;
 using MimeKit;
 using System.Threading.Tasks;
+using CoralTime.DAL.Models;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {
-        public async Task<object> ExportEmailGroupedByType(ReportsExportEmailView reportsExportEmailView)
+        public async Task<object> ExportEmailGroupedByType(ReportsExportEmailView reportsExportEmailView, Member memberFromNotification = null)
         {
-            var groupByProjects = _reportService.GetReportsGrid(reportsExportEmailView);
+            var groupByProjects = _reportService.GetReportsGrid(reportsExportEmailView, memberFromNotification);
              
             await SendReportWithGroupingAsync(reportsExportEmailView, groupByProjects);
 

@@ -37,7 +37,7 @@ namespace CoralTime.BL.Services
             IsTaskTypeNameHasChars(taskTypeView.Name);
             IsNameUnique(taskTypeView);
 
-            if (taskTypeView.ProjectId != null && !BaseApplicationUserCurrent.IsAdmin)
+            if (taskTypeView.ProjectId != null && !BaseMemberCurrent.User.IsAdmin)
             {
                 if (taskTypeView.ProjectId != null)
                 {
@@ -91,7 +91,7 @@ namespace CoralTime.BL.Services
 
             #endregion We shouldn't change projectId for Tasks
 
-            if (taskTypeView.ProjectId != null && !BaseApplicationUserCurrent.IsAdmin)
+            if (taskTypeView.ProjectId != null && !BaseMemberCurrent.User.IsAdmin)
             {
                 var project = Uow.ProjectRepository.LinkedCacheGetById((int)taskTypeView.ProjectId);
                 if (project == null)

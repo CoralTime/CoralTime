@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
+using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
@@ -8,12 +9,23 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
     {
         private IReportsSettingsService _reportsSettingsService;
 
+        public string SingleFilteredProjectName { get; private set; } = null;
+
+        public Member ReportMemberCurrent { get; private set; }
+        public Member ReportMemberImpersonated { get; private set; }
+
         public ReportsService(UnitOfWork uow, IMapper mapper, IReportsSettingsService reportsSettingsService)
             : base(uow, mapper)
         {
             _reportsSettingsService = reportsSettingsService;
+
+            UpdateReportMembers(BaseMemberImpersonated);
         }
 
-        public string SingleFilteredProjectName { get; private set; } = null;
+        private void UpdateReportMembers(Member memberFromNotification)
+        {
+            ReportMemberCurrent = memberFromNotification;
+            ReportMemberImpersonated = memberFromNotification;
+        }
     }
 }

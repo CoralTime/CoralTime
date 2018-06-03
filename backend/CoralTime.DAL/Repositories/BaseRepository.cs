@@ -32,49 +32,25 @@ namespace CoralTime.DAL.Repositories
 
         #region GetQuery.
 
-        public virtual IQueryable<T> GetIncludes(IQueryable<T> query)
-        {
-            return query;
-        }
+        public virtual IQueryable<T> GetIncludes(IQueryable<T> query) => query;
         
-        public virtual IQueryable<T> GetQueryWithIncludes()
-        {
-            return GetIncludes(_dbSet);
-        }
+        public virtual IQueryable<T> GetQueryWithIncludes() => GetIncludes(_dbSet);
 
-        public virtual IQueryable<T> GetQueryWithoutIncludes()
-        {
-            return _dbSet;
-        }
+        public virtual IQueryable<T> GetQueryWithoutIncludes() => _dbSet;
 
-        public virtual IQueryable<T> GetQueryAsNoTraking()
-        {
-            return _dbSet.AsNoTracking();
-        }
+        public virtual IQueryable<T> GetQueryAsNoTraking() => _dbSet.AsNoTracking();
 
-        public virtual IQueryable<T> GetQueryAsNoTrackingWithIncludes()
-        {
-            return GetIncludes(GetQueryAsNoTraking());
-        }
+        public virtual IQueryable<T> GetQueryAsNoTrackingWithIncludes() => GetIncludes(GetQueryAsNoTraking());
 
-        public virtual T GetQueryWithIncludesById(int id)
-        {
-            return null;
-        }
+        public virtual T GetQueryWithIncludesById(int id) => null;
 
         #endregion
 
         #region LinkedCache. 
 
-        public virtual T LinkedCacheGetByName(string name)
-        {
-            return null;
-        }
+        public virtual T LinkedCacheGetByName(string name) => null;
 
-        public virtual T LinkedCacheGetById(int Id)
-        {
-            return null;
-        }
+        public virtual T LinkedCacheGetById(int Id) => null;
 
         public virtual List<T> LinkedCacheGetList()
         {

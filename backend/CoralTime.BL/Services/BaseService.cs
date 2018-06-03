@@ -9,8 +9,8 @@ namespace CoralTime.BL.Services
         protected UnitOfWork Uow { get; }
         protected IMapper Mapper { get; }
         
-        protected ApplicationUser BaseApplicationUserCurrent => Uow.ApplicationUserCurrent;
-        protected ApplicationUser BaseApplicationUserImpersonated => Uow.ApplicationUserImpersonated;
+        protected ApplicationUser BaseApplicationUserCurrent => Uow.MemberCurrent.User;
+        protected ApplicationUser BaseApplicationUserImpersonated => Uow.MemberImpersonated.User;
 
         protected Member BaseMemberCurrent => Uow.MemberCurrent;
         protected Member BaseMemberImpersonated => Uow.MemberImpersonated;

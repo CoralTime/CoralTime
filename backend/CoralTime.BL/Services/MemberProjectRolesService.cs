@@ -39,7 +39,7 @@ namespace CoralTime.BL.Services
 
             #region Constrain for admin:
 
-            if (BaseApplicationUserImpersonated.IsAdmin)
+            if (BaseMemberImpersonated.User.IsAdmin)
             {
                 // Add MemberProjectRoles from db to result.
                 memberProjectRoleView.AddRange(allMemberProjectRoles);
@@ -63,7 +63,7 @@ namespace CoralTime.BL.Services
 
             #region Constrain for Manager
 
-            if (BaseApplicationUserImpersonated.IsManager)
+            if (BaseMemberImpersonated.User.IsManager)
             {
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 

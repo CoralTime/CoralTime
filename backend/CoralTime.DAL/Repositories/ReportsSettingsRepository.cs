@@ -11,30 +11,14 @@ namespace CoralTime.DAL.Repositories
         public ReportsSettingsRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<ReportsSettings> GetIncludes(IQueryable<ReportsSettings> query)
-        {
-            return query
-                .Include(x => x.Member);
-        }
+        public override IQueryable<ReportsSettings> GetIncludes(IQueryable<ReportsSettings> query) => query.Include(x => x.Member);
 
-        public List<ReportsSettings> GetEntitiesFromContex_ByMemberId(int memberId)
-        {
-            return GetQueryWithIncludes().Where(x => x.MemberId == memberId).ToList();
-        }
+        public List<ReportsSettings> GetQueryByMemberId(int memberId) => GetQueryWithIncludes().Where(x => x.MemberId == memberId).ToList();
+        
+        public ReportsSettings GetQueryByMemberIdQueryId(int memberId, int? queryId) => GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
 
-        public ReportsSettings GetEntityFromContex_ByMemberIdQueryId(int memberId, int? queryId)
-        {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.Id == queryId);
-        }
+        public ReportsSettings GetQueryByMemberIdQueryName(int memberId, string queryName) => GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
 
-        public ReportsSettings GetEntityFromContext_ByMemberIdQueryName(int memberId, string queryName)
-        {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.MemberId == memberId && x.QueryName == queryName);
-        }
-
-        public List<ReportsSettings> LinkedCacheGetByMemberId(int memberId)
-        {
-            return LinkedCacheGetList().Where(x => x.MemberId == memberId).ToList();
-        }
+        public List<ReportsSettings> LinkedCacheGetByMemberId(int memberId) => LinkedCacheGetList().Where(x => x.MemberId == memberId).ToList();
     }
 }

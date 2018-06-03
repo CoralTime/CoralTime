@@ -32,23 +32,21 @@ namespace CoralTime.DAL.Repositories
 
         #region LinkedCache.
 
-        public Member LinkedCacheGetByUserIdAndCheck(string userId)
+        public Member LinkedCacheGetByUserNameAndCheck(string userName)
         {
-            var relatedMemberByName = LinkedCacheGetByUserId(userId);
+            var relatedMemberByName = LinkedCacheGetByUserName(userName);
             if (relatedMemberByName == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userId} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with UserName: {userName} not found.");
             }
 
             return relatedMemberByName;
         }
 
+        public Member LinkedCacheGetByUserName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
         public Member LinkedCacheGetByUserId(string userId) => LinkedCacheGetList().FirstOrDefault(m => m.User.Id == userId);
 
         public override Member LinkedCacheGetByName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
-
-        public Member LinkedCacheGetByUserName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
-
         public override Member LinkedCacheGetById(int id) => LinkedCacheGetList().FirstOrDefault(m => m.Id == id);
 
         #endregion

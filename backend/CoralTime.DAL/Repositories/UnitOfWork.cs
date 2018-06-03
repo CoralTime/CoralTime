@@ -54,9 +54,6 @@ namespace CoralTime.DAL.Repositories
         private IMemoryCache MemoryCache { get; }
         private string UserId { get; }
 
-        public ApplicationUser ApplicationUserCurrent { get; }
-        public ApplicationUser ApplicationUserImpersonated { get; }
-
         public Member MemberCurrent { get; }
         public Member MemberImpersonated { get; }
 
@@ -69,14 +66,19 @@ namespace CoralTime.DAL.Repositories
             var userNameCurrent = GetUserNameCurrentFromHttpContext(httpContextAccessor);
             var userNameImpersonated = GetUserNameImpersonatedFromHttpContext(httpContextAccessor);
 
-            ApplicationUserCurrent = GetApplicationUserCurrent(userNameCurrent);
-            ApplicationUserImpersonated = GetApplicationUserImpersonated(userNameImpersonated);
+            CheckApplicationUsers(userNameCurrent, userNameImpersonated);
 
-            MemberCurrent = GetMemberCurrent(userNameCurrent);
-            MemberImpersonated = GetMemberImpersonated(userNameImpersonated);
+            MemberCurrent = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
+            MemberImpersonated = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
         }
 
-        #region Ger User Names from Http Context from Headers
+        private void CheckApplicationUsers(string userNameCurrent, string userNameImpersonated)
+        {
+            UserRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
+            UserRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
+        }
+        
+        #region Get User Names from Http Context from Headers
 
         private string GetUserIdFromHttpContext(IHttpContextAccessor httpContextAccessor) =>
             httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
@@ -121,16 +123,6 @@ namespace CoralTime.DAL.Repositories
         #endregion
 
         #endregion
-
-        #region Get and check ApplicationUser and Member by Current and Impersonated roles;
-
-        private ApplicationUser GetApplicationUserCurrent(string userNameCurrent) => UserRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
-        private ApplicationUser GetApplicationUserImpersonated(string userNameImpersonated) => UserRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
-
-        private Member GetMemberCurrent(string userNameCurrent) => MemberRepository.LinkedCacheGetByUserIdAndCheck(GetApplicationUserCurrent(userNameCurrent)?.Id);
-        private Member GetMemberImpersonated(string userNameImpersonated) => MemberRepository.LinkedCacheGetByUserIdAndCheck(GetApplicationUserImpersonated(userNameImpersonated)?.Id);
-
-        #endregion Get and check ApplicationUser and Member by Current and Impersonated roles;
 
         public int Save()
         {

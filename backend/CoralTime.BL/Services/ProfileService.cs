@@ -84,13 +84,13 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"The project with id {projectId} not found or is not active");
             }
 
-            var userHaveAccess = BaseApplicationUserImpersonated.IsAdmin
+            var userHaveAccess = BaseMemberImpersonated.User.IsAdmin
                 || !project.IsPrivate
                 || Uow.MemberProjectRoleRepository.LinkedCacheGetList().Exists(r => r.ProjectId == projectId && r.MemberId == BaseMemberImpersonated.Id);
 
             if (!userHaveAccess)
             {
-                throw new CoralTimeForbiddenException($"User with userName {BaseApplicationUserImpersonated.UserName} has no access to project with id {projectId}");
+                throw new CoralTimeForbiddenException($"User with userName {BaseMemberImpersonated.User.UserName} has no access to project with id {projectId}");
             }
 
             var projectMembers = new List<Member>();
