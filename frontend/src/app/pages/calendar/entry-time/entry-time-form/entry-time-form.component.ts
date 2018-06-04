@@ -33,7 +33,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
-	isFormChanged: boolean;
+	isActualTimeChanged: boolean;
+	isEstimatedTimeChanged: boolean;
 	isFromToFormChanged: boolean;
 	isFromToFormFocus: boolean;
 	isRequestLoading: boolean;
@@ -102,7 +103,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	projectOnChange(projectModel: Project): void {
-		this.isFormChanged = true;
 		this.currentTimeEntry.projectId = projectModel.id;
 		this.currentTimeEntry.projectName = projectModel.name;
 		this.currentTimeEntry.projectName = projectModel.name;
@@ -117,7 +117,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	taskOnChange(taskModel: Task): void {
-		this.isFormChanged = true;
 		this.currentTimeEntry.taskTypesId = taskModel.id;
 		this.currentTimeEntry.taskName = taskModel.name;
 	}
@@ -126,7 +125,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	descriptionOnChange(): void {
 		this.getFormHeight();
-		this.isFormChanged = true;
 	}
 
 	// TIMER
@@ -248,7 +246,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	validateFromToForm(timeFrom: string, timeTo: string): void {
-		this.isFormChanged = true;
 		this.isFromToFormChanged = true;
 		this.isFromToFormFocus = false;
 
@@ -279,14 +276,14 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	timeActualOnChange(): void {
 		this.closeFromToForm();
-		this.isFormChanged = true;
+		this.isActualTimeChanged = true;
 		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeActual);
 		this.currentTimeEntry.timeValues.timeFrom = null;
 		this.currentTimeEntry.timeValues.timeTo = null;
 	}
 
 	timeEstimatedOnChange(): void {
-		this.isFormChanged = true;
+		this.isEstimatedTimeChanged = true;
 		this.currentTimeEntry.timeValues.timeEstimated = this.convertFormValueToSeconds(this.timeEstimated);
 	}
 
@@ -363,6 +360,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private isFromToTimeValid(): boolean {
+		this.setDayInfo();
 		return this.dayInfo.timeEntries
 			.filter((timeEntry: TimeEntry) => timeEntry.timeOptions.isFromToShow && timeEntry.id !== this.currentTimeEntry.id)
 			.every((timeEntry: TimeEntry) => {
@@ -377,20 +375,20 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private isSubmitDataValid(): boolean {
-		if (!this.isCurrentTrackedTimeValid()) {
+		if (this.isActualTimeChanged && !this.isCurrentTrackedTimeValid()) {
 			this.notificationService.danger('Total actual time should be less than 24 hours.');
 			return false;
 		}
-		if (!this.isEstimatedTimeValid()) {
+		if (this.isEstimatedTimeChanged && !this.isEstimatedTimeValid()) {
 			this.notificationService.danger('Total planned time should be less than 24 hours.');
 			return false;
 		}
-		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid()) {
-			this.notificationService.danger('Selected time period already exists.');
+		if (this.currentTimeEntry.timeOptions.isFromToShow && this.isFromToFormChanged && !this.isFromToTimeValid2()) {
+			this.notificationService.danger('Selected time period should be within one day.');
 			return false;
 		}
-		if (this.currentTimeEntry.timeOptions.isFromToShow && !this.isFromToTimeValid2()) {
-			this.notificationService.danger('Selected time period should be within one day.');
+		if (this.currentTimeEntry.timeOptions.isFromToShow && this.isFromToFormChanged && !this.isFromToTimeValid()) {
+			this.notificationService.danger('Selected time period already exists.');
 			return false;
 		}
 
