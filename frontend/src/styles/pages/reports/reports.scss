@@ -13,6 +13,22 @@ $fieldHeight: 30px;
 
 .ct-reports-page {
 
+  .ct-actual-label {
+    background: $label-background;
+  }
+
+  .ct-estimated-label {
+    background: $form-border;
+  }
+
+  .ct-actual-label, .ct-estimated-label {
+    color: #ffffff;
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
   .ct-menu-item {
     line-height: 36px;
     height: 36px;
@@ -90,22 +106,6 @@ $fieldHeight: 30px;
     .ui-cell-data {
       line-height: 15px !important;
       font-size: 13px !important;
-    }
-
-    .ct-actual-label, .ct-estimated-label {
-      color: #ffffff;
-      padding: 2px 4px;
-      border-radius: 5px;
-      display: inline-block;
-      margin-bottom: 5px;
-    }
-
-    .ct-actual-label {
-      background: $label-background;
-    }
-
-    .ct-estimated-label {
-      background: $form-border;
     }
 
     .ct-total-time-container {
@@ -636,7 +636,7 @@ $fieldHeight: 30px;
     margin-top: 40px;
     h3 {
       font-weight: 400;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
 
     .ui-datatable-tablewrapper table {
@@ -669,10 +669,10 @@ $fieldHeight: 30px;
       }
     }
     .ct-cell-task {
-      width: 380px;
+      width: 360px;
     }
     .ct-cell-start {
-      width: 150px;
+      width: 170px;
     }
 
     .ct-cell-actual {
@@ -703,6 +703,8 @@ $fieldHeight: 30px;
   ct-range-datepicker {
     position: absolute;
     top: 31px;
+    right: 0;
+    left: 0;
     width: 100%;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -780,8 +782,12 @@ $fieldHeight: 30px;
   }
 }
 
+.ct-report-query-links {
+  margin-top: 10px;
+}
+
 .ct-report-filters-block {
-  margin-bottom: 15px;
+  margin-bottom: 0;
 
   label {
     display: block;
@@ -789,6 +795,7 @@ $fieldHeight: 30px;
   > div {
     display: inline-block;
     width: 100%;
+    margin-bottom: 10px;
   }
 
    .ct-select {

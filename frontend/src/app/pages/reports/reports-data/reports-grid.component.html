@@ -60,8 +60,9 @@
 
     <p-column *ngIf="showColumnIds.indexOf(4)> -1" styleClass="ct-cell-start" field="hours" header="Hours">
         <ng-template let-item="rowData" pTemplate="body">
-            <span class="ct-actual-label" *ngIf="getTimeString(item.timeValues.timeActual)">Actual: {{getTimeString(item.timeValues.timeActual)}}</span>
+            <span>{{formatDate(gridData?.groupByType.date)}}</span>&nbsp;&nbsp;
             <span class="ct-estimated-label" *ngIf="getTimeString(item.timeValues.timeEstimated)">Estimated: {{getTimeString(item.timeValues.timeEstimated)}}</span>
+            <span class="ct-actual-label" *ngIf="getTimeString(item.timeValues.timeActual)">Actual: {{getTimeString(item.timeValues.timeActual)}}</span>
             <div>
                 <span *ngIf="getTimeString(item.timeValues.timeFrom)">from {{getTimeString(item.timeValues.timeFrom)}}</span>
                 <span *ngIf="item.timeValues.timeFrom == 0 && item.timeValues.timeTo">from 00:00</span>
@@ -90,37 +91,37 @@
 
 <div class="ct-grid-container ct-total-time-container" *ngIf="groupById != 0 && gridData?.items.length > 0">
     <label>
-        Total for
+        Total actual hours for
         <span>{{gridData?.groupByType.projectName || gridData?.groupByType.memberName
             || formatDate(gridData?.groupByType.date) || gridData?.groupByType.clientName}}</span>
     </label>
 
     <div class="ct-total-hours-tracked" *ngIf="gridData.timeTotalFor">
-        <span>{{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}</span>
+        <span class="ct-actual-label">{{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}</span>
     </div>
     <!--<div class="ui-datatable-tablewrapper">-->
-        <!--<table>-->
-            <!--<tr>-->
-                <!--<td *ngIf="groupById != 3 && showColumnIds.indexOf(2) > -1" class="ct-cell-date"></td>-->
-                <!--<td *ngIf="groupById != 4" class="ct-cell-client"></td>-->
-                <!--&lt;!&ndash;<td *ngIf="groupById != 1" class="ct-cell-project"></td>&ndash;&gt;-->
-                <!--<td *ngIf="groupById != 2" class="ct-cell-user"></td>-->
-                <!--<td class="ct-cell-task"></td>-->
-                <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(4) > -1" class="ct-cell-start"></td>&ndash;&gt;-->
-                <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(4) > -1" class="ct-cell-finish"></td>&ndash;&gt;-->
+    <!--<table>-->
+    <!--<tr>-->
+    <!--<td *ngIf="groupById != 3 && showColumnIds.indexOf(2) > -1" class="ct-cell-date"></td>-->
+    <!--<td *ngIf="groupById != 4" class="ct-cell-client"></td>-->
+    <!--&lt;!&ndash;<td *ngIf="groupById != 1" class="ct-cell-project"></td>&ndash;&gt;-->
+    <!--<td *ngIf="groupById != 2" class="ct-cell-user"></td>-->
+    <!--<td class="ct-cell-task"></td>-->
+    <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(4) > -1" class="ct-cell-start"></td>&ndash;&gt;-->
+    <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(4) > -1" class="ct-cell-finish"></td>&ndash;&gt;-->
 
-                <!--<td class="ct-cell-actual">-->
-                    <!---->
-                <!--</td>-->
+    <!--<td class="ct-cell-actual">-->
+    <!---->
+    <!--</td>-->
 
-                <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(1) > -1" class="ct-cell-start">&ndash;&gt;-->
-                <!--&lt;!&ndash;<div class="ct-total-hours-planned" *ngIf="gridData.timeTotalFor">&ndash;&gt;-->
-                <!--&lt;!&ndash;<span>{{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}</span>&ndash;&gt;-->
-                <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                <!--&lt;!&ndash;</td>&ndash;&gt;-->
-                <!--&lt;!&ndash;TODO: ??? &ndash;&gt;-->
-                <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(3) > -1"></td>&ndash;&gt;-->
-            <!--</tr>-->
-        <!--</table>-->
+    <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(1) > -1" class="ct-cell-start">&ndash;&gt;-->
+    <!--&lt;!&ndash;<div class="ct-total-hours-planned" *ngIf="gridData.timeTotalFor">&ndash;&gt;-->
+    <!--&lt;!&ndash;<span>{{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}</span>&ndash;&gt;-->
+    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+    <!--&lt;!&ndash;</td>&ndash;&gt;-->
+    <!--&lt;!&ndash;TODO: ??? &ndash;&gt;-->
+    <!--&lt;!&ndash;<td *ngIf="showColumnIds.indexOf(3) > -1"></td>&ndash;&gt;-->
+    <!--</tr>-->
+    <!--</table>-->
     <!--</div>-->
 </div>
