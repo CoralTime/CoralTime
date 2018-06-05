@@ -64,9 +64,9 @@
             <span class="ct-estimated-label" *ngIf="getTimeString(item.timeValues.timeEstimated)">Estimated: {{getTimeString(item.timeValues.timeEstimated)}}</span>
             <span class="ct-actual-label" *ngIf="getTimeString(item.timeValues.timeActual)">Actual: {{getTimeString(item.timeValues.timeActual)}}</span>
             <div>
-                <span *ngIf="getTimeString(item.timeValues.timeFrom)">from {{getTimeString(item.timeValues.timeFrom)}}</span>
-                <span *ngIf="item.timeValues.timeFrom == 0 && item.timeValues.timeTo">from 00:00</span>
-                <span *ngIf="getTimeString(item.timeValues.timeTo)"> to {{getTimeString(item.timeValues.timeTo)}}</span>
+                <span *ngIf="getTimeString(item.timeValues.timeFrom)">from {{getTimeString(item.timeValues.timeFrom, false, user.timeFormat === 12)}}</span>
+                <!--<span *ngIf="item.timeValues.timeFrom == 0 && item.timeValues.timeTo">from 00:00</span>-->
+                <span *ngIf="getTimeString(item.timeValues.timeTo)"> to {{getTimeString(item.timeValues.timeTo, false, user.timeFormat === 12)}}</span>
             </div>
         </ng-template>
     </p-column>
