@@ -18,7 +18,7 @@
                         <div class="ct-collapsed-menu-footer">
                             <div class="ct-query-block" *ngIf="queryItems.length">
                                 <span *ngIf="queryItems.length" class="ct-query-text" (click)="querySelect.toggleSelect()">
-                                    {{queryModel?.queryName || 'Saved Query'}}<i *ngIf="!queryModel" class="material-icons">arrow_drop_down</i>
+                                    {{queryModel?.queryName || 'Select Saved Query'}}<i *ngIf="!queryModel" class="material-icons">arrow_drop_down</i>
                                     <span *ngIf="queryModel" class="ct-clear-icon material-icons" (click)="deleteQuery(queryModel)">clear</span>
                                 </span>
 
@@ -136,7 +136,7 @@
                                        [options]="groupByItems">
                             </ct-select>
                         </div>
-                        <div>
+                        <div class="ct-report-query-links">
                             <div class="ct-query-add-box" (click)="openQueryDialog()" title="Save query">
                                 <i class="material-icons">add</i> <span>Save query</span>
                             </div>
@@ -209,9 +209,9 @@
                 </div>
 
                 <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">
-                    <label>Total</label>
+                    <label>Total actual hours</label>
                     <div class="ct-total-hours-tracked" *ngIf="showColumnIds?.indexOf(1) > -1">
-                        <span>{{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
+                        <span class="ct-actual-label">{{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
                     </div>
                 </div>
             </div>
