@@ -1,12 +1,13 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoralTime.DAL.Models.Member;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
@@ -186,7 +187,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private IQueryable<TimeEntry> GetTimeEntryByDate(DateTime dateFrom, DateTime dateTo)
         {
             // #0 Get timeEntriesByDate.s
-            var timeEntriesByDate = Uow.TimeEntryRepository.GetQueryWithIncludes()
+            var timeEntriesByDate = Uow.TimeEntryRepository.GetQuery()
                 .Include(x => x.Project).ThenInclude(x => x.Client)
                 .Include(x => x.Member.User)
                 .Include(x => x.TaskType)

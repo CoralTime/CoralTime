@@ -1,4 +1,3 @@
-using AutoMapper;
 using CoralTime.BL.Interfaces;
 using CoralTime.ViewModels.Tasks;
 using Microsoft.AspNet.OData;

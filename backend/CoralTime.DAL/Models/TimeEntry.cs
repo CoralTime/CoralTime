@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models
 {
-    public class TimeEntry : LogChanges, ITimeValues
+    public class TimeEntry : LogChanges.LogChanges, ITimeValues
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,7 +19,7 @@ namespace CoralTime.DAL.Models
         public int MemberId { get; set; }
 
         [ForeignKey("MemberId")]
-        public Member Member { get; set; }
+        public Member.Member Member { get; set; }
 
         public int TaskTypesId { get; set; }
 

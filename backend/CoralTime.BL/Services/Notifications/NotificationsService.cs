@@ -1,13 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using CoralTime.BL.Interfaces;
+using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using System.Threading.Tasks;
-using CoralTime.BL.Interfaces.Reports;
 
-namespace CoralTime.BL.Services
+namespace CoralTime.BL.Services.Notifications
 {
     public partial class NotificationsService : BaseService, INotificationService
     {

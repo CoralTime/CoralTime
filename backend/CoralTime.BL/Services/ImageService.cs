@@ -4,7 +4,6 @@ using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertViewToModel;
-using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.BL.Services
 {
@@ -211,7 +211,7 @@ namespace CoralTime.BL.Services
 
         public void SaveImagesFromDbToFolder()
         {
-            var memberImages = Uow.MemberImageRepository.GetQueryAsNoTraking().ToArray();
+            var memberImages = Uow.MemberImageRepository.GetQuery(asNoTracking : true).ToArray();
 
             foreach (var memberImage in memberImages)
             {

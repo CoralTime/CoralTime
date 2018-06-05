@@ -126,16 +126,20 @@ namespace CoralTime.BL.Services
             return memberView;
         }
 
-        public ProjectView Create(ProjectView projectData)
+        public ProjectView Create(dynamic projectView)
         {
-            // TODO rewrite!
-            projectData.Name = projectData.Name == null
-                ? projectData.Name
-                : projectData.Name.Trim();
+            var localName = (string) projectView.name;
+            var isNameUnique = Uow.ProjectRepository.LinkedCacheGetByName(localName) == null;
 
-            var isNameUnique = Uow.ProjectRepository.LinkedCacheGetByName(projectData.Name) == null;
+            var project = Mapper.Map<ProjectView, Project>(new ProjectView
+            {
+                ClientId = projectView.clientId,
+                Color = projectView.color,
+                IsActive = projectView.isActive,
+                Name = projectView.name,
+                ClientIsActive = projectView.clientIsActive
+            });
 
-            var project = Mapper.Map<ProjectView, Project>(projectData);
             project.IsActive = true;
             project.IsPrivate = true;
 
@@ -225,7 +229,7 @@ namespace CoralTime.BL.Services
 
             if (projectView.isActive != null && !(bool)projectView.isActive)
             {
-                var timeEntries = Uow.TimeEntryRepository.GetQueryWithIncludes()
+                var timeEntries = Uow.TimeEntryRepository.GetQuery()
                     .Where(t => t.ProjectId == projectById.Id && t.Date.Date == DateTime.Now.Date)
                     .ToList();
 

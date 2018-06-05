@@ -1,23 +1,22 @@
-﻿using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Projects;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using CoralTime.DAL.Models;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static ProjectView GetView(this Project project, IMapper _mapper)
+        public static ViewModels.Projects.ProjectView GetView(this Project project, IMapper _mapper)
         {
-            var projectByManagerView = _mapper.Map<Project, ProjectView>(project);
+            var projectByManagerView = _mapper.Map<Project, ViewModels.Projects.ProjectView>(project);
 
             return projectByManagerView;
         }
 
-        public static ProjectView GetViewManageProjectsOfManager(this Project project, IMapper _mapper, int allMembersActiveCount = 0, List<TaskType> globalTasks = null)
+        public static ViewModels.Projects.ProjectView GetViewManageProjectsOfManager(this Project project, IMapper _mapper, int allMembersActiveCount = 0, List<TaskType> globalTasks = null)
         {
-            var projectByManagerView = _mapper.Map<Project, ProjectView>(project);
+            var projectByManagerView = _mapper.Map<Project, ViewModels.Projects.ProjectView>(project);
 
             projectByManagerView.MembersCount = project.IsPrivate
                 ? project.MemberProjectRoles.Select(r => r.Member.User).Count(x => x.IsActive)
@@ -27,9 +26,9 @@ namespace CoralTime.DAL.ConvertModelToView
             return projectByManagerView;
         }
 
-        public static ProjectView GetViewTimeTrackerAllProjects(this Project project, IMapper _mapper, int allMembersCount = 0, string userName = null, List<TaskType> globalTasks = null)
+        public static ViewModels.Projects.ProjectView GetViewTimeTrackerAllProjects(this Project project, IMapper _mapper, int allMembersCount = 0, string userName = null, List<TaskType> globalTasks = null)
         {
-            var projectAdminView = _mapper.Map<Project, ProjectView>(project);
+            var projectAdminView = _mapper.Map<Project, ViewModels.Projects.ProjectView>(project);
 
             // TODO compare MembersCount from ProjectsOfManager.
             projectAdminView.MembersCount = project.IsPrivate
@@ -41,9 +40,9 @@ namespace CoralTime.DAL.ConvertModelToView
             return projectAdminView;
         }
 
-        public static ProjectView GetViewProjectFromProjMemberRole(this Project project, IMapper _mapper, string userName = null, List<TaskType> globalTasks = null)
+        public static ViewModels.Projects.ProjectView GetViewProjectFromProjMemberRole(this Project project, IMapper _mapper, string userName = null, List<TaskType> globalTasks = null)
         {
-            var projectManagerMemberView = _mapper.Map<Project, ProjectView>(project);
+            var projectManagerMemberView = _mapper.Map<Project, ViewModels.Projects.ProjectView>(project);
 
             projectManagerMemberView.IsCurrentUserOnProject = project.MemberProjectRoles == null
                 ? !project.IsPrivate
@@ -54,9 +53,9 @@ namespace CoralTime.DAL.ConvertModelToView
             return projectManagerMemberView;
         }
 
-        public static ProjectView GetViewProjectByManager(this Project project, IMapper _mapper, string userName = null, List<TaskType> globalTasks = null)
+        public static ViewModels.Projects.ProjectView GetViewProjectByManager(this Project project, IMapper _mapper, string userName = null, List<TaskType> globalTasks = null)
         {
-            var projectByManagerView = _mapper.Map<Project, ProjectView>(project);
+            var projectByManagerView = _mapper.Map<Project, ViewModels.Projects.ProjectView>(project);
 
             projectByManagerView.TasksCount = CustomTasksWithGlobalTasksCount(project, globalTasks);
             projectByManagerView.MembersCount = project.MemberProjectRoles.Count(r => r.Member.User.IsActive);

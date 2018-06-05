@@ -1,22 +1,21 @@
-﻿using AutoMapper;
-using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Member;
-using System.Linq;
+﻿using System.Linq;
+using AutoMapper;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static MemberView GetView(this Member member, IMapper _mapper, string urlIcon)
+        public static ViewModels.Member.MemberView GetView(this Member member, IMapper _mapper, string urlIcon)
         {
-            var memberView = _mapper.Map<Member, MemberView>(member);
+            var memberView = _mapper.Map<Member, ViewModels.Member.MemberView>(member);
 
             memberView.UrlIcon = urlIcon;
             
             return memberView;
         }
 
-        public static MemberView GetViewWithProjectCount(this Member member, IMapper _mapper, string urlIcon)
+        public static ViewModels.Member.MemberView GetViewWithProjectCount(this Member member, IMapper _mapper, string urlIcon)
         {
             var memberView = member.GetView(_mapper, urlIcon);
 
@@ -25,7 +24,7 @@ namespace CoralTime.DAL.ConvertModelToView
             return memberView;
         }
 
-        public static MemberView GetViewWithGlobalProjectsCount(this Member member, int[] globalActiveProjIds, IMapper _mapper, string urlIcon)
+        public static ViewModels.Member.MemberView GetViewWithGlobalProjectsCount(this Member member, int[] globalActiveProjIds, IMapper _mapper, string urlIcon)
         {
             var memberViewWithGlobalProjectsCount = member.GetView(_mapper, urlIcon);
 

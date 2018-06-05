@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Emails;
 using MimeKit;
 using System.Threading.Tasks;
 using CoralTime.Common.Constants;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
 
 namespace CoralTime.BL.Services.Reports.Export
 {

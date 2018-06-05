@@ -1,7 +1,6 @@
-﻿using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
+namespace CoralTime.ViewModels.Reports.Responce.DropDowns
 {
     public class ReportDropDowns
     {

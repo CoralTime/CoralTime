@@ -112,7 +112,7 @@ namespace CoralTime.BL.Services
 
             if (!taskTypeView.IsActive)
             {
-                var timeEntries = Uow.TimeEntryRepository.GetQueryWithIncludes()
+                var timeEntries = Uow.TimeEntryRepository.GetQuery()
                     .Where(t => t.TaskTypesId == taskType.Id && t.Date.Date == DateTime.Now.Date)
                     .ToList();
 

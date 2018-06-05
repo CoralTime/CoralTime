@@ -2,7 +2,6 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Constants;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels.Reports;
 using CoralTime.ViewModels.Reports.Request.Grid;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +12,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
 
 namespace CoralTime.BL.Services.Reports.Export
 {

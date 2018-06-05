@@ -1,4 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Request.MemberWithProjectsLightIds;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Responce.MemberWithProjectsLight;
 
 namespace CoralTime.BL.Interfaces
 {
@@ -7,5 +11,11 @@ namespace CoralTime.BL.Interfaces
         Task ByProjectSettingsAsync(string baseUrl);
 
         Task SendWeeklyTimeEntryUpdatesAsync(string baseUrl);
+
+        List<MemberWithProjectsLightView> GetMembersWithProjectsNotification(List<MemberWithProjectsIdsView> memberWithProjectsIds = null);
+
+        Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null);
+
+        Task SendWeeklyNotificationsForMembers(string baseUrl, DateTime todayDate, int[] membersIds = null);
     }
 }

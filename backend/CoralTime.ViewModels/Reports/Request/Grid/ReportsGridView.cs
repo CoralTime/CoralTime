@@ -6,6 +6,6 @@
 
         public int? FileTypeId { get; set; }
 
-        public ReportsSettingsView CurrentQuery { get; set; }
+        public ReportsSettingsView.ReportsSettingsView CurrentQuery { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using CoralTime.ViewModels.TimeEntries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.BL.Services
 {
@@ -20,7 +21,7 @@ namespace CoralTime.BL.Services
 
         public IEnumerable<TimeEntryView> GetAllTimeEntries(DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
-            var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQueryWithIncludes()
+            var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQuery()
                 .Where(tEntry => tEntry.MemberId == BaseMemberImpersonated.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
                 .ToList();
 
@@ -261,7 +262,7 @@ namespace CoralTime.BL.Services
 
         private void CheckTotalTimeAtDay(Member memberByName, TimeEntryView timeEntryView, TimeEntry timeEntryById = null)
         {
-            var totalTimeForDay = Uow.TimeEntryRepository.GetQueryWithIncludes()
+            var totalTimeForDay = Uow.TimeEntryRepository.GetQuery()
                 .Where(tEntry => tEntry.MemberId == memberByName.Id && tEntry.Date.Date == timeEntryView.Date.Date)
                 .Sum(tEntry => tEntry.TimeActual);
 

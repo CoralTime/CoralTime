@@ -1,4 +1,4 @@
-﻿using CoralTime.ViewModels.Interfaces;
+﻿using CoralTime.ViewModels.Member.MemberImage;
 
 namespace CoralTime.ViewModels.Member
 {

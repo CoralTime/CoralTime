@@ -1,4 +1,4 @@
-﻿namespace CoralTime.ViewModels.Member
+﻿namespace CoralTime.ViewModels.Member.MemberPasswordView
 {
     public class ChangePasswordResultView
     {

@@ -1,6 +1,5 @@
 ﻿using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
-using CoralTime.DAL.Models;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +7,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Linq;
+using CoralTime.DAL.Repositories.Member;
+using CoralTime.DAL.Repositories.User;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -54,8 +55,8 @@ namespace CoralTime.DAL.Repositories
         private IMemoryCache MemoryCache { get; }
         private string UserId { get; }
 
-        public Member MemberCurrent { get; }
-        public Member MemberImpersonated { get; }
+        public Models.Member.Member MemberCurrent { get; }
+        public Models.Member.Member MemberImpersonated { get; }
 
         public UnitOfWork(AppDbContext appDbContext, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
         {
@@ -146,5 +147,8 @@ namespace CoralTime.DAL.Repositories
                 throw new CoralTimeDangerException("Other errors related to data saving", e);
             }
         }
+
+
+        public void SingleCacheClearByKey(string key) => MemoryCache.Remove(key);
     }
 }

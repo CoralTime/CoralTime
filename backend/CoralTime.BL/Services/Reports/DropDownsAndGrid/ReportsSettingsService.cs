@@ -2,9 +2,9 @@
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertViewToModel;
-using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels.Reports.Request.Grid;
+using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {

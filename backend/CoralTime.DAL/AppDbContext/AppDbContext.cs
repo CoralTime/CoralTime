@@ -4,6 +4,8 @@ using IdentityServer4.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using CoralTime.DAL.Models.Member;
+using CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.DAL
 {

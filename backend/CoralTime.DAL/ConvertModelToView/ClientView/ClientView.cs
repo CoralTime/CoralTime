@@ -1,22 +1,21 @@
 ﻿using System.Linq;
 using AutoMapper;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Clients;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static ClientView GetView(this Client client, IMapper _mapper)
+        public static ViewModels.Clients.ClientView GetView(this Client client, IMapper _mapper)
         {
-            var clientView = _mapper.Map<Client, ClientView>(client);
+            var clientView = _mapper.Map<Client, ViewModels.Clients.ClientView>(client);
 
             clientView.ProjectsCount = client.Projects?.Count ?? 0;
 
             return clientView;
         }
 
-        public static ClientView GetViewActiveInactiveProjectsForClientCount(this Client client, IMapper _mapper)
+        public static ViewModels.Clients.ClientView GetViewActiveInactiveProjectsForClientCount(this Client client, IMapper _mapper)
         {
             var clientView = GetView(client, _mapper);
 

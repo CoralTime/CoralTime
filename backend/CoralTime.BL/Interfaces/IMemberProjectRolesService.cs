@@ -22,9 +22,6 @@ namespace CoralTime.BL.Interfaces
 
         void Delete(int id);
 
-        //TODO DELETE???
-        IEnumerable<ProjectView> GetAllProjectsByManager();
-        
         bool FixAllManagerRoles();
 
         IEnumerable<MemberView> GetNotAssignMembersAtProjByProjectId(int projectId);

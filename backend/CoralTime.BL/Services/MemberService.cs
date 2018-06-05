@@ -7,9 +7,12 @@ using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Errors;
 using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.Member.MemberPasswordView;
+using CoralTime.ViewModels.Notifications.ByWeeklyUpdates;
 using CoralTime.ViewModels.Projects;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -302,6 +305,19 @@ namespace CoralTime.BL.Services
             return meberView;
         }
 
+        public List<MemberWeeklyNotificationByDayOfWeekView> GetMembersWithWeeklyNotifications() => Uow.MemberRepository.LinkedCacheGetList()
+            .Where(member => member.IsWeeklyTimeEntryUpdatesSend)
+            .GroupBy(member => member.WeekStart.ToString())
+            .Select(item => new MemberWeeklyNotificationByDayOfWeekView
+            {
+                WeekStartName = item.Key,
+                Members = item.Select(member => new MemberWeeklyNotificationView
+                {
+                    Id = member.Id,
+                    FullName = member.FullName
+                }).ToList()
+            }).ToList();
+
         #region Change Password.
 
         public async Task ChangePassword(MemberChangePasswordView member)
@@ -387,7 +403,7 @@ namespace CoralTime.BL.Services
 
             if (result.Succeeded)
             {
-                var tokenToDeleteIds = Uow.UserForgotPassRequestRepository.GetQueryWithIncludes()
+                var tokenToDeleteIds = Uow.UserForgotPassRequestRepository.GetQuery()
                     .Where(x => x.Email == userForgotPassRequest.Email)
                     .Select(y => y.Id)
                     .ToList();
@@ -618,7 +634,7 @@ namespace CoralTime.BL.Services
 
         public void UpdateUserClaims(int memberId)
         {
-            var memberById = Uow.MemberRepository.GetQueryWithIncludes().FirstOrDefault(m => m.Id == memberId);
+            var memberById = Uow.MemberRepository.GetQuery().FirstOrDefault(m => m.Id == memberId);
 
             #region v1.
 

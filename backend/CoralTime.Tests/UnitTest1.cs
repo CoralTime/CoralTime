@@ -1,9 +1,9 @@
-﻿using CoralTime.DAL.Models;
-using GeekLearning.Testavior.Environment;
+﻿using GeekLearning.Testavior.Environment;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.Tests
 {

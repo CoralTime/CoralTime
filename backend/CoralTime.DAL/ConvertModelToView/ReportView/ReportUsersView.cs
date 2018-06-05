@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
+using CoralTime.DAL.Models.Member;
+using CoralTime.ViewModels.Reports.Responce.DropDowns;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
