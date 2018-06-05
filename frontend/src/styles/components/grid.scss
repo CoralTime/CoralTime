@@ -100,11 +100,12 @@
 
 .ct-manage-add {
   position: relative;
+  padding-left: 25px;
 
   &:before, &:after {
     position: absolute;
     content: '';
-    left: -17px;
+    left: 8px;
     top: 4px;
     width: 1px;
     height: 17px;
@@ -114,7 +115,7 @@
   &:after {
     height: 1px;
     width: 17px;
-    left: -25px;
+    left: 0;
     top: 12px;
   }
 }

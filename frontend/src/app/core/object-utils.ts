@@ -17,7 +17,7 @@ export class ObjectUtils {
 	static deepEqualWithEvery(x, y) {
 		return (x && y && typeof x === 'object' && typeof y === 'object') ?
 			(Object.keys(x).length === Object.keys(y).length) &&
-			Object.keys(x).every(function(key) {
+			Object.keys(x).every(function (key) {
 				return ObjectUtils.deepEqualWithEvery(x[key], y[key]);
 			}, true) : (x === y);
 	}
@@ -43,10 +43,10 @@ export class ArrayUtils {
 		return arr.find((obj: any) => obj[propertyName] === propertyValue);
 	}
 
-	static sortByField(array: any[], field: string, sortOrder: number = 1) {
+	static sortByField(array: any[], field: string, sortOrder: number = 1, subField?: string) {
 		return array.sort(function (a, b) {
-			let x = a[field];
-			let y = b[field];
+			let x = subField ? a[field][subField] : a[field];
+			let y = subField ? b[field][subField] : b[field];
 
 			if (sortOrder < 0) {
 				return ((x < y) ? 1 : ((x > y) ? -1 : 0));
