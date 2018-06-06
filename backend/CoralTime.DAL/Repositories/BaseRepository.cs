@@ -14,8 +14,11 @@ namespace CoralTime.DAL.Repositories
     {
         private readonly DbContext _db;
         private readonly DbSet<T> _dbSet;
+
         private readonly ICacheManager _cacheManager;
-        private static readonly object LockObject = new object();
+
+        private static readonly object LockCacheObject = new object();
+
         private readonly string _userId;
 
         protected BaseRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
@@ -81,7 +84,7 @@ namespace CoralTime.DAL.Repositories
                 var items = _cacheManager.CachedListGet<T>(key);
                 if (items == null)
                 {
-                    lock (LockObject)
+                    lock (LockCacheObject)
                     {
                         items = _cacheManager.CachedListGet<T>(key);
                         if (items == null)
@@ -150,11 +153,8 @@ namespace CoralTime.DAL.Repositories
         {
             if (entity is ILogChanges entityILogChange)
             {
-                entityILogChange.CreatorId = _userId;
-                entityILogChange.CreationDate = DateTime.Now;
-
-                entityILogChange.LastEditorUserId = _userId;
-                entityILogChange.LastUpdateDate = DateTime.Now;
+                SetInfoAboutUserThatCratedEntity(entityILogChange);
+                SetInfoAboutUserThatUpdatedEntity(entityILogChange);
 
                 entity = (T)entityILogChange;
             }
@@ -168,11 +168,8 @@ namespace CoralTime.DAL.Repositories
             {
                 foreach (var entityILogChange in entitiesILogChange)
                 {
-                    entityILogChange.CreatorId = _userId;
-                    entityILogChange.CreationDate = DateTime.Now;
-
-                    entityILogChange.LastUpdateDate = DateTime.Now;
-                    entityILogChange.LastEditorUserId = _userId;
+                    SetInfoAboutUserThatCratedEntity(entityILogChange);
+                    SetInfoAboutUserThatUpdatedEntity(entityILogChange);
                 }
 
                 entities = (IEnumerable<T>)entitiesILogChange;
@@ -185,8 +182,7 @@ namespace CoralTime.DAL.Repositories
         {
             if (entity is ILogChanges entityILogChange)
             {
-                entityILogChange.LastEditorUserId = _userId;
-                entityILogChange.LastUpdateDate = DateTime.Now;
+                SetInfoAboutUserThatUpdatedEntity(entityILogChange);
 
                 entity = (T)entityILogChange;
             }
@@ -200,8 +196,7 @@ namespace CoralTime.DAL.Repositories
             {
                 foreach (var entityILogChange in entitiesILogChange)
                 {
-                    entityILogChange.LastEditorUserId = _userId;
-                    entityILogChange.LastUpdateDate = DateTime.Now;
+                    SetInfoAboutUserThatUpdatedEntity(entityILogChange);
                 }
 
                 entities = (IEnumerable<T>)entitiesILogChange;
@@ -222,6 +217,7 @@ namespace CoralTime.DAL.Repositories
             {
                 _dbSet.Attach(entityToDelete);
             }
+
             _dbSet.Remove(entityToDelete);
         }
 
@@ -241,6 +237,18 @@ namespace CoralTime.DAL.Repositories
         public int ExecuteSqlCommand(string command, params object[] parameters)
         {
             return _db.Database.ExecuteSqlCommand(command, parameters);
+        }
+
+        private void SetInfoAboutUserThatCratedEntity(ILogChanges entityILogChange)
+        {
+            entityILogChange.CreatorId = _userId;
+            entityILogChange.CreationDate = DateTime.Now;
+        }
+
+        private void SetInfoAboutUserThatUpdatedEntity(ILogChanges entityILogChange)
+        {
+            entityILogChange.LastUpdateDate = DateTime.Now;
+            entityILogChange.LastEditorUserId = _userId;
         }
 
         #endregion

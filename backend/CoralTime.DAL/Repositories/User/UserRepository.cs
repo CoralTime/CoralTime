@@ -10,11 +10,8 @@ namespace CoralTime.DAL.Repositories
     {
         public UserRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
-
-        public override ApplicationUser LinkedCacheGetByName(string userName)
-        {
-            return LinkedCacheGetList().FirstOrDefault(p => p.UserName == userName);
-        }
+        
+        public override ApplicationUser LinkedCacheGetByName(string userName) => LinkedCacheGetList().FirstOrDefault(p => p.UserName == userName);
 
         public ApplicationUser LinkedCacheGetByUserNameAndCheck(string userName)
         {
@@ -22,7 +19,7 @@ namespace CoralTime.DAL.Repositories
             {
                 return null;
             }
-
+            
             var relatedUserByName = LinkedCacheGetByName(userName);
             if (relatedUserByName == null)
             {

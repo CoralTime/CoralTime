@@ -12,7 +12,7 @@ namespace CoralTime.Api.v1.Reports.Export
     [Route(BaseControllerRoute)]
     public class ReportsExportFileController : BaseController<ReportsExportFileController, IReportExportService>
     {
-        public ReportsExportFileController(IReportExportService service, ILogger<ReportsExportFileController> logger)
+        public ReportsExportFileController(ILogger<ReportsExportFileController> logger, IReportExportService service)
             : base(logger, service) { }
 
         [HttpPost]

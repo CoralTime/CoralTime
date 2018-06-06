@@ -82,7 +82,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var queryDateFrom = reportsGridView.CurrentQuery.DateFrom;
             var queryDateTo = reportsGridView.CurrentQuery.DateTo;
 
-            var memberImpersonatedId = MemberImpersonated.Id;
+            var memberImpersonatedId = BaseMemberImpersonated.Id;
             var currentQuery = reportsGridView.CurrentQuery;
 
             var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
@@ -107,7 +107,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private List<TimeEntry> GetFilteredTimeEntries(ReportsGridView reportsGridView)
         {
-            var memberImpersonated = MemberImpersonated;
+            var memberImpersonated = BaseMemberImpersonated;
 
             var dateFrom = new DateTime();
             var dateTo = new DateTime();

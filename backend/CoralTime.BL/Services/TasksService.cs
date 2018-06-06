@@ -37,7 +37,7 @@ namespace CoralTime.BL.Services
             IsTaskTypeNameHasChars(taskTypeView.Name);
             IsNameUnique(taskTypeView);
 
-            if (taskTypeView.ProjectId != null && !ApplicationUserCurrent.IsAdmin)
+            if (taskTypeView.ProjectId != null && !BaseApplicationUserCurrent.IsAdmin)
             {
                 if (taskTypeView.ProjectId != null)
                 {
@@ -49,7 +49,7 @@ namespace CoralTime.BL.Services
 
                     var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
-                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == MemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == BaseMemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
                     if (memberProjectRole == null)
                     {
                         throw new CoralTimeForbiddenException("Forbidden");
@@ -91,7 +91,7 @@ namespace CoralTime.BL.Services
 
             #endregion We shouldn't change projectId for Tasks
 
-            if (taskTypeView.ProjectId != null && !ApplicationUserCurrent.IsAdmin)
+            if (taskTypeView.ProjectId != null && !BaseApplicationUserCurrent.IsAdmin)
             {
                 var project = Uow.ProjectRepository.LinkedCacheGetById((int)taskTypeView.ProjectId);
                 if (project == null)
@@ -102,7 +102,7 @@ namespace CoralTime.BL.Services
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
                 var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
-                    .FirstOrDefault(r => r.MemberId == MemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                    .FirstOrDefault(r => r.MemberId == BaseMemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
 
                 if (memberProjectRole == null)
                 {

@@ -8,7 +8,7 @@ namespace CoralTime.BL.Interfaces
     {
         IEnumerable<ProjectView> TimeTrackerAllProjects();
 
-        IEnumerable<ProjectView> ManageProjectsOfManager();
+        IEnumerable<ManagerProjectsView> ManageProjectsOfManager();
 
         ProjectView GetById(int id);
 
