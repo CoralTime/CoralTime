@@ -1,32 +1,21 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace CoralTime.Api.v1
 {
-    public abstract class BaseController<T, S> : Controller where T : class
+    public abstract class BaseController<TController, TService> : Controller 
+        where TController : class
     {
-        protected readonly ILogger<T> _logger;
-        protected readonly IMapper _mapper;
-        protected readonly S _service;
+        protected readonly ILogger<TController> _logger;
+        protected readonly TService _service;
 
-        public BaseController(ILogger<T> logger, IMapper mapper, S service)
-        {
-            _logger = logger;
-            _mapper = mapper;
-            _service = service;
-        }
-
-        public BaseController(ILogger<T> logger, S service)
+        protected BaseController(ILogger<TController> logger, TService service)
         {
             _logger = logger;
             _service = service;
         }
 
-        public BaseController(ILogger<T> logger)
-        {
-            _logger = logger;
-        }
+        protected BaseController(ILogger<TController> logger) => _logger = logger;
         
         protected string GetBaseUrl() => $"{Request.Scheme}://{Request.Host.Host}:{Request.Host.Port}";
     }

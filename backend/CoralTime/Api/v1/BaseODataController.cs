@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CoralTime.Common.Middlewares;
+﻿using CoralTime.Common.Middlewares;
 using CoralTime.ViewModels.Errors;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Mvc;
@@ -11,20 +10,12 @@ using System.Linq;
 namespace CoralTime.Api.v1
 {
     [EnableQuery]
-    public abstract class BaseODataController<T, S> : ODataController where T : class
+    public abstract class BaseODataController<TController, TService> : ODataController where TController : class
     {
-        protected readonly ILogger<T> _logger;
-        protected readonly IMapper _mapper;
-        protected readonly S _service;
+        protected readonly ILogger<TController> _logger;
+        protected readonly TService _service;
 
-        public BaseODataController(ILogger<T> logger, IMapper mapper, S service)
-        {
-            _logger = logger;
-            _mapper = mapper;
-            _service = service;
-        }
-
-        public BaseODataController(ILogger<T> logger, S service)
+        protected BaseODataController(ILogger<TController> logger, TService service)
         {
             _logger = logger;
             _service = service;

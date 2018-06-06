@@ -17,8 +17,8 @@ namespace CoralTime.Api.v1.Odata
     [Authorize]
     public class TasksController : BaseODataController<TasksController, ITasksService>
     {
-        public TasksController(ITasksService service, IMapper mapper, ILogger<TasksController> logger)
-            : base(logger, mapper, service) { }
+        public TasksController(ITasksService service, ILogger<TasksController> logger)
+            : base(logger, service) { }
 
 
         // GET: api/v1/odata/Tasks

@@ -1,4 +1,3 @@
-using AutoMapper;
 using CoralTime.BL.Interfaces;
 using CoralTime.ViewModels.Member;
 using Microsoft.AspNet.OData;
@@ -18,12 +17,8 @@ namespace CoralTime.Api.v1.Odata.Members
     [Route(BaseODataControllerRoute)]
     public class MembersController : BaseODataController<MembersController, IMemberService>
     {
-        private readonly IImageService _avatarService;
-        public MembersController(IMemberService service, ILogger<MembersController> logger, IMapper mapper, IImageService avatarService)
-            : base(logger, mapper, service)
-        {
-            _avatarService = avatarService;
-        }
+        public MembersController(ILogger<MembersController> logger, IMemberService service)
+            : base(logger, service) { }
 
         // GET: api/v1/odata/Members
         [HttpGet]

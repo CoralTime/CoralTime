@@ -41,7 +41,7 @@ namespace CoralTime.BL.Services
                             MemberDateFormatId = member.DateFormatId,
                             MemberEmail = member.User.Email,
                             
-                            Project = member.MemberProjectRoles.Select(project => new
+                            Projects = member.MemberProjectRoles.Select(project => new
                             {
                                 Id = project.Project.Id,
                                 Name = project.Project.Name,
@@ -61,7 +61,7 @@ namespace CoralTime.BL.Services
                         var isNotFillTimeEntries = false;
                         var isAnyFillTimeEntries = false;
 
-                        foreach (var project in member.Project)
+                        foreach (var project in member.Projects)
                         {
                             var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQueryWithIncludes()
                                 .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.MemberId)
@@ -96,7 +96,8 @@ namespace CoralTime.BL.Services
 
                             var emailText = CreateEmailTextWeeklyNotifications(baseUrl, memberWithProjectsNotifications, isNotFillTimeEntries, isAnyFillTimeEntries);
 
-                            Uow.MemberImpersonated = Uow.MemberRepository.GetQueryByMemberId(memberWithProjectsNotifications.MemberId);
+                            // TODO!
+                            // Uow.MemberImpersonated = Uow.MemberRepository.GetQueryByMemberId(memberWithProjectsNotifications.MemberId);
 
                             var reportsExportEmailView = new ReportsExportEmailView
                             {
@@ -108,9 +109,11 @@ namespace CoralTime.BL.Services
                                 CurrentQuery = new ReportsSettingsView
                                 {
                                     DateFrom = lastWorkWeekFirstDay,
-                                    DateTo  = lastWorkWeekLastDay,
+                                    DateTo = lastWorkWeekLastDay,
                                     GroupById = (int) Constants.ReportsGroupByIds.Project,
-                                    ShowColumnIds = new[] { 1, 2, 3, 4 }
+                                    ShowColumnIds = new[] { 1, 2, 3, 4 },
+                                    ProjectIds = member.Projects.Select(x => x.Id).ToArray(),
+                                    MemberIds = new[] { member.MemberId }
                                 }
                             };
 

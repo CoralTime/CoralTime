@@ -1,4 +1,5 @@
-﻿using CoralTime.DAL.Models;
+﻿using CoralTime.Common.Exceptions;
+using CoralTime.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Linq;
@@ -21,44 +22,34 @@ namespace CoralTime.DAL.Repositories
                 .Include(m => m.TimeEntries);
         }
 
-        public Member GetQueryByMemberId(int memberId)
-        {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.Id == memberId);
-        }
+        public Member GetQueryByMemberId(int memberId) =>  GetQueryWithIncludes().FirstOrDefault(x => x.Id == memberId);
 
-        public Member GetQueryByUserId(string userId)
-        {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.UserId == userId);
-        }
+        public Member GetQueryByUserId(string userId) => GetQueryWithIncludes().FirstOrDefault(x => x.UserId == userId);
 
-        public Member GetQueryByUserName(string userName)
-        {
-            return GetQueryWithIncludes().FirstOrDefault(x => x.User.UserName == userName);
-        }
+        public Member GetQueryByUserName(string userName) => GetQueryWithIncludes().FirstOrDefault(x => x.User.UserName == userName);
 
         #endregion
 
         #region LinkedCache.
 
-        public override Member LinkedCacheGetByName(string userName)
+        public Member LinkedCacheGetByUserIdAndCheck(string userId)
         {
-            return LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
+            var relatedMemberByName = LinkedCacheGetByUserId(userId);
+            if (relatedMemberByName == null)
+            {
+                throw new CoralTimeEntityNotFoundException($"Member with userName {userId} not found.");
+            }
+
+            return relatedMemberByName;
         }
 
-        public Member LinkedCacheGetByUserId(string userId)
-        {
-            return LinkedCacheGetList().FirstOrDefault(m => m.User.Id == userId);
-        }
+        public Member LinkedCacheGetByUserId(string userId) => LinkedCacheGetList().FirstOrDefault(m => m.User.Id == userId);
 
-        public Member LinkedCacheGetByUserName(string userName)
-        {
-            return LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
-        }
+        public override Member LinkedCacheGetByName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
 
-        public override Member LinkedCacheGetById(int id)
-        {
-            return LinkedCacheGetList().FirstOrDefault(m => m.Id == id);
-        }
+        public Member LinkedCacheGetByUserName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
+
+        public override Member LinkedCacheGetById(int id) => LinkedCacheGetList().FirstOrDefault(m => m.Id == id);
 
         #endregion
     }

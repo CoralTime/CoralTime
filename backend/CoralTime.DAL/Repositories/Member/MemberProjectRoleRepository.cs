@@ -16,6 +16,7 @@ namespace CoralTime.DAL.Repositories
             _context = context;
         }
 
+        //TODO it's not need because of we are have same method in Projectsrole repository???
         public int GetManagerRoleId()
         {
             return _context.ProjectRoles.FirstOrDefault(r => r.Name.Equals(Constants.ProjectRoleManager)).Id;

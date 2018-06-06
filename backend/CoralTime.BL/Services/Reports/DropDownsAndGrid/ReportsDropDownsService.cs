@@ -72,7 +72,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public ReportDropDownView GetReportsDropDowns()
         {
-            var memberImpersonated = MemberImpersonated;
+            var memberImpersonated = BaseMemberImpersonated;
 
             return new ReportDropDownView
             {
@@ -260,7 +260,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var today = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).Date;
             var yesterday = today.AddDays(-1);
 
-            var memberDayOfWeekStart = MemberImpersonated.WeekStart == Constants.WeekStart.Monday
+            var memberDayOfWeekStart = BaseMemberImpersonated.WeekStart == Constants.WeekStart.Monday
                 ? DayOfWeek.Monday
                 : DayOfWeek.Sunday;
 

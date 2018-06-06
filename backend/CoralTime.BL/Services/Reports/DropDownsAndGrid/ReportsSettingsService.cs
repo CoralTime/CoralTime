@@ -37,7 +37,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             if (!IsDefaultQuery(reportsSettingsView.QueryName))
             {
-                var memberId = MemberImpersonated.Id;
+                var memberId = BaseMemberImpersonated.Id;
 
                 var reportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContext_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
                 if (reportsSettings == null)
@@ -63,7 +63,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public void DeleteCustomQuery(int queryId)
         {
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberIdQueryId(MemberImpersonated.Id, queryId);
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberIdQueryId(BaseMemberImpersonated.Id, queryId);
 
             if (getReportsSettingsByid == null)
             {

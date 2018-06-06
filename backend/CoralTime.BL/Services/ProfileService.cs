@@ -23,7 +23,6 @@ namespace CoralTime.BL.Services
     {
         private readonly IConfiguration _config;
         private readonly IMemberService _memberService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly bool _isDemo;
         private readonly IImageService _avatarService;
 
@@ -32,7 +31,6 @@ namespace CoralTime.BL.Services
         {
             _config = config;
             _memberService = memberService;
-            _httpContextAccessor = httpContextAccessor;
             _isDemo = bool.Parse(_config["DemoSiteMode"]);
             _avatarService = avatarService;
         }
@@ -44,20 +42,8 @@ namespace CoralTime.BL.Services
 
         public List<ProfileProjectView> GetMemberProjects()
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (user == null || !user.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"User with userName {ImpersonatedUserName} not found or is not active");
-            }
-
-            var member = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (member == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with user with userName {ImpersonatedUserName} not found");
-            }
-
             var projects = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
-                .Where(r => r.MemberId == member.Id && r.Project.IsActive)
+                .Where(r => r.MemberId == BaseMemberImpersonated.Id && r.Project.IsActive)
                 .Select(r => r.Project)
                 .ToList();
 
@@ -72,20 +58,18 @@ namespace CoralTime.BL.Services
 
             if (projects.Count > 0)
             {
-                var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
-
                 return projects.Select(project => new ProfileProjectView
                 {
                     Id = project.Id,
                     ManagersNames = allRolesForAllProjects
-                        .Where(x => x.ProjectId == project.Id && x.RoleId == managerRoleId)
+                        .Where(x => x.ProjectId == project.Id && x.RoleId == Uow.ProjectRoleRepository.GetManagerRoleId())
                         .Select(x => x.Member.FullName)
                         .ToArray(),
                     MemberCount = allRolesForAllProjects.Count(x => x.ProjectId == project.Id),
                     Name = project.Name,
                     IsPrivate = project.IsPrivate,
                     Color = project.Color,
-                    IsPrimary = project.Id == member.DefaultProjectId
+                    IsPrimary = project.Id == BaseMemberImpersonated.DefaultProjectId
                 }).ToList();
             }
 
@@ -94,31 +78,19 @@ namespace CoralTime.BL.Services
 
         public IEnumerable<ProjectMembersView> GetProjectMembers(int projectId)
         {
-            var user = Uow.UserRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (user == null || !user.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"The user with userName {ImpersonatedUserName} not found or is not active");
-            }
-
-            var member = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (member == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"The member with userName {ImpersonatedUserName} not found");
-            }
-
             var project = Uow.ProjectRepository.LinkedCacheGetById(projectId);
             if (project == null || !project.IsActive)
             {
                 throw new CoralTimeEntityNotFoundException($"The project with id {projectId} not found or is not active");
             }
 
-            var userHaveAccess = user.IsAdmin
+            var userHaveAccess = BaseApplicationUserImpersonated.IsAdmin
                 || !project.IsPrivate
-                || Uow.MemberProjectRoleRepository.LinkedCacheGetList().Exists(r => r.ProjectId == projectId && r.MemberId == member.Id);
+                || Uow.MemberProjectRoleRepository.LinkedCacheGetList().Exists(r => r.ProjectId == projectId && r.MemberId == BaseMemberImpersonated.Id);
 
             if (!userHaveAccess)
             {
-                throw new CoralTimeForbiddenException($"User with userName {ImpersonatedUserName} has no access to project with id {projectId}");
+                throw new CoralTimeForbiddenException($"User with userName {BaseApplicationUserImpersonated.UserName} has no access to project with id {projectId}");
             }
 
             var projectMembers = new List<Member>();
@@ -160,8 +132,7 @@ namespace CoralTime.BL.Services
 
         public MemberView PatchPreferences(MemberPreferencesView memberPreferencesView)
         {
-            CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
-            memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
+            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberCurrent.Id);
             memberByName.DefaultProjectId = memberPreferencesView.DefaultProjectId;
             memberByName.DefaultTaskId = memberPreferencesView.DefaultTaskId;
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;
@@ -192,8 +163,7 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeForbiddenException("Full name can't be changed on demo site");
             }
 
-            CheckRelatedEntities(ImpersonatedUserName, out var memberByName);
-            memberByName = Uow.MemberRepository.GetQueryByUserName(ImpersonatedUserName);
+            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberImpersonated.Id);
             memberByName.FullName = memberPreferencesView.FullName;
           
             Uow.MemberRepository.Update(memberByName);
@@ -208,39 +178,6 @@ namespace CoralTime.BL.Services
             var memberView = memberByName.GetView(Mapper, urlIcon);
 
             return memberView;
-        }
-
-        private void CheckRelatedEntities(string userName, out Member relatedMemberByName)
-        {
-            GetRelatedUserByName(userName);
-            relatedMemberByName = GetRelatedMemberByUserName(userName);
-        }
-
-        private ApplicationUser GetRelatedUserByName(string userName)
-        {
-            var relatedUserByName = Uow.UserRepository.LinkedCacheGetByName(userName);
-            if (relatedUserByName == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"User {userName} not found.");
-            }
-
-            if (!relatedUserByName.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"User {userName} is not active.");
-            }
-
-            return relatedUserByName;
-        }
-
-        private Member GetRelatedMemberByUserName(string userName)
-        {
-            var relatedMemberByName = Uow.MemberRepository.LinkedCacheGetByName(userName);
-            if (relatedMemberByName == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {userName} not found.");
-            }
-
-            return relatedMemberByName;
         }
     }
 }
