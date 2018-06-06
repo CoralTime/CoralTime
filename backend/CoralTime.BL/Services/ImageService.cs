@@ -52,7 +52,7 @@ namespace CoralTime.BL.Services
                 var memberEmail = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
 
                 var imageSize = GetValueImageByType(imageType, Constants.ImageTypeSizeAvatar, Constants.ImageTypeSizeIcon);
-                imagePath = $"http://www.gravatar.com/avatar/{GetMD5(memberEmail)}?d={"robohash"}&s={imageSize}";
+                imagePath = $"https://www.gravatar.com/avatar/{GetMD5(memberEmail)}?d={"robohash"}&s={imageSize}";
             }
             else
             {
