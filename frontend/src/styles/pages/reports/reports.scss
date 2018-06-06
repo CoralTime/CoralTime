@@ -13,6 +13,10 @@ $fieldHeight: 30px;
 
 .ct-reports-page {
 
+  .ct-screen-mode {
+    line-height: 16px;
+  }
+
   .ct-actual-label {
     background: $label-background;
   }
@@ -23,7 +27,7 @@ $fieldHeight: 30px;
 
   .ct-actual-label, .ct-estimated-label {
     color: #ffffff;
-    padding: 2px 4px;
+    padding: 4px;
     border-radius: 5px;
     display: inline-block;
     margin-bottom: 5px;
@@ -65,27 +69,17 @@ $fieldHeight: 30px;
     position: relative;
     border-top: 2px solid #f1f1f1;
     border-bottom: 2px solid #f1f1f1;
-    //margin: 0 20px 40px 0;
-    //background: $blue-grid-header;
     margin-top: 0;
     padding: 20px;
 
-    //table {
-    //  width: 100%;
-    //  margin-bottom: 0 !important;
-    //}
-    //
-    //td {
-    //  box-sizing: border-box;
-    //}
+    .ct-actual-label, .ct-estimated-label {
+      position: relative;
+      top: -5px;
+    }
+
 
     label {
-      //position: absolute;
-      //top: 0;
-      //left: 20px;
-      //height: 38px;
-      //line-height: 38px;
-      font-size: 14px;
+         font-size: 14px;
       color: $main-blue;
       text-transform: uppercase;
       font-weight: 700;
@@ -107,30 +101,7 @@ $fieldHeight: 30px;
       line-height: 15px !important;
       font-size: 13px !important;
     }
-
-    .ct-total-time-container {
-      //margin: -12px 0 0;
-      //
-      //span {
-      //  display: inline-block;
-      //  max-width: 400px;
-      //  overflow: hidden;
-      //  text-overflow: ellipsis;
-      //  white-space: nowrap;
-      //  vertical-align: bottom;
-      //}
-    }
   }
-
-  //.ct-reports-data {
-  //  padding-right: 20px;
-  //}
-
-  //.ct-total-time-container {
-  //  td {
-  //    font-weight: bold;
-  //  }
-  //}
 
   .ct-page-container .ct-page-header {
     height: auto;
@@ -140,18 +111,6 @@ $fieldHeight: 30px;
     z-index: 995;
     background: $nav-background;
     width: 100%;
-
-    //width: 61%;
-    //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
-
-    //&:before {
-    //  content: '';
-    //  position: absolute;
-    //  height: 20px;
-    //  width: 100%;
-    //  background: $gray-page-background;
-    //  top: -20px;
-    //}
   }
 
   .ct-grid-container .ui-cell-data {
@@ -193,8 +152,8 @@ $fieldHeight: 30px;
       }
 
       .ct-prev {
-         left: 0;
-       }
+        left: 0;
+      }
 
       .ct-next {
         right: 0;
@@ -209,7 +168,6 @@ $fieldHeight: 30px;
   .ct-query-add-box, .ct-reports-reset-link {
     display: inline-block;
   }
-
 
   .ct-query-add-box {
     cursor: pointer;
@@ -246,9 +204,6 @@ $fieldHeight: 30px;
     .ct-select-component {
       margin: 0;
       position: absolute;
-      //width: 208px;
-      //right: 3px;
-      //right: -37px;
       left: 0;
       top: 35px;
       right: 0;
@@ -311,10 +266,6 @@ $fieldHeight: 30px;
       position: absolute;
       top: 17px;
     }
-
-    //.ct-query-text:hover + .ct-close, .ct-close:hover {
-    //  display: inline-block;
-    //}
   }
 
   .ct-collapsed-menu-footer {
@@ -355,7 +306,7 @@ $fieldHeight: 30px;
     > div {
       cursor: pointer;
 
-      >span {
+      > span {
         font-weight: 400;
       }
     }
@@ -380,13 +331,6 @@ $fieldHeight: 30px;
     > div {
       display: inline-block;
       padding: 0 13px 0 11px;
-      //width: 256px;
-
-      //&:hover {
-      //  .fa {
-      //    color: $nav-link-border;
-      //  }
-      //}
     }
 
     .fa {
@@ -418,11 +362,6 @@ $fieldHeight: 30px;
     display: inline-block;
     position: relative;
     top: 9px;
-    //border-left: 1px solid $border-сolor;
-    //right: 36%;
-    //position: absolute;
-    //top: 43px;
-    //margin-right: 10px;
 
     [class *="-button"] {
       position: relative;
@@ -547,13 +486,7 @@ $fieldHeight: 30px;
 
   .ct-reports-grid {
     display: inline-block;
-    //margin-bottom: 20px;
     background-color: #ffffff;
-    //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
-
-    //&:first-child {
-    //  margin-top: 70px;
-    //}
 
     .ui-datatable-thead:after {
       width: 100%;
@@ -637,6 +570,7 @@ $fieldHeight: 30px;
     h3 {
       font-weight: 400;
       margin-bottom: 3px;
+      line-height: 18px;
     }
 
     .ui-datatable-tablewrapper table {
@@ -680,24 +614,6 @@ $fieldHeight: 30px;
         padding-left: 10px;
       }
     }
-    //
-    //.ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {
-    //  width: 220px;
-    //}
-    //
-    //.ct-cell-actual, .ct-cell-estimated, .ct-cell-start, .ct-cell-finish {
-    //  width: 100px;
-    //}
-
-    //@media (max-width: 1600px) {
-    //  .ct-cell-actual, .ct-cell-estimated, .ct-cell-start, .ct-cell-finish {
-    //    width: 90px;
-    //  }
-    //
-    //  .ct-cell-project, .ct-cell-client, .ct-cell-user, .ct-cell-task {
-    //    width: 150px;
-    //  }
-    //}
   }
 
   ct-range-datepicker {
@@ -798,7 +714,7 @@ $fieldHeight: 30px;
     margin-bottom: 10px;
   }
 
-   .ct-select {
+  .ct-select {
     line-height: 35px;
     padding-left: 5px;
   }
@@ -845,5 +761,5 @@ $fieldHeight: 30px;
   margin-bottom: 20px;
   //padding-right: 30px;
   display: inline-block;
-  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 }
