@@ -1,7 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { LoadingBarService } from '@ngx-loading-bar/core';
 import { ReportsService, } from '../../services/reposts.service';
 import {
 	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
@@ -21,6 +20,7 @@ import { ConfirmationComponent } from '../../shared/confirmation/confirmation.co
 import { ReportGridData } from './reports-data/reports-grid.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 
 const ROWS_TOTAL_NUMBER = 50;
 
@@ -83,7 +83,7 @@ export class ReportsComponent implements OnInit {
 	constructor(private authService: AuthService,
 	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
-	            private loadingBarService: LoadingBarService,
+	            private loadingService: LoadingMaskService,
 	            private notificationService: NotificationService,
 	            private rangeDatepickerService: RangeDatepickerService,
 	            private reportsService: ReportsService,
@@ -165,13 +165,16 @@ export class ReportsComponent implements OnInit {
 			currentQuery: this.reportFilters
 		};
 
-		this.reportsService.getReportGrid(filters).subscribe((res: ReportGrid) => {
-				this.reportsGridData = res;
-				this.gridData = this.getNextGridDataPage(this.reportsGridData.groupedItems, []);
-			},
-			() => {
-				this.notificationService.danger('Error loading reports grid.');
-			});
+		this.loadingService.addLoading();
+		this.reportsService.getReportGrid(filters)
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe((res: ReportGrid) => {
+					this.reportsGridData = res;
+					this.gridData = this.getNextGridDataPage(this.reportsGridData.groupedItems, []);
+				},
+				() => {
+					this.notificationService.danger('Error loading reports grid.');
+				});
 	}
 
 	getTimeString(time: number, showDefaultValue: boolean = false): string {
@@ -263,11 +266,9 @@ export class ReportsComponent implements OnInit {
 		if (!this.isGridLoading && !this.isAllGridRowsShown(this.gridData)
 			&& window.scrollY > this.scrollContainer.nativeElement.offsetHeight - window.innerHeight - 20) {
 			this.isGridLoading = true;
-			this.loadingBarService.start();
 
 			setTimeout(() => {
 				this.getNextGridDataPage(this.reportsGridData.groupedItems, this.gridData);
-				this.loadingBarService.complete();
 				this.isGridLoading = false;
 			}, 0);
 		}
@@ -295,12 +296,14 @@ export class ReportsComponent implements OnInit {
 	}
 
 	deleteQuery(queryModel: ReportFilters): void {
+		this.loadingService.addLoading();
 		this.reportsService.deleteQuery(queryModel.queryId)
+			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
 					this.notificationService.success('Report query has been successfully deleted.');
 					this.updateQueryItems();
 				},
-				error => this.notificationService.danger('Error deleting report query.'));
+				() => this.notificationService.danger('Error deleting report query.'));
 	}
 
 	queryOnChange(queryModel: ReportFilters): void {
@@ -311,9 +314,12 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private updateQueryItems(): void {
-		this.reportsService.getReportDropdowns().subscribe((reportDropdowns: ReportDropdowns) => {
-			this.setReportsQueryItems(reportDropdowns);
-		});
+		this.loadingService.addLoading();
+		this.reportsService.getReportDropdowns()
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe((reportDropdowns: ReportDropdowns) => {
+				this.setReportsQueryItems(reportDropdowns);
+			});
 	}
 
 	// DATEPICKER
@@ -479,7 +485,10 @@ export class ReportsComponent implements OnInit {
 			currentQuery: this.reportFilters
 		};
 
-		this.reportsService.exportAs(filters).subscribe();
+		this.loadingService.addLoading();
+		this.reportsService.exportAs(filters)
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe();
 	}
 
 	formatDate(utcDate: Moment): string {

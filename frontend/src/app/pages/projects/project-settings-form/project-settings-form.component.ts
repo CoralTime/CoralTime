@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy, Input
 
 import { ProjectsService } from '../../../services/projects.service';
 import { Project } from '../../../models/project';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class ProjectSettingsModel {
 	color: number;
@@ -60,7 +61,8 @@ export class ProjectSettingsFormComponent implements OnInit {
 		{value: 1, viewValue: 'Week'}
 	];
 
-	constructor(private projectsService: ProjectsService) {
+	constructor(private loadingService: LoadingMaskService,
+	            private projectsService: ProjectsService) {
 	}
 
 	ngOnInit() {
@@ -76,6 +78,10 @@ export class ProjectSettingsFormComponent implements OnInit {
 		let updatedProject = this.model.toProject();
 		let observable = this.projectsService.odata.Put(updatedProject, updatedProject.id.toString());
 
-		observable.subscribe(res => this.onSaved.emit());
+		this.loadingService.addLoading();
+		observable.subscribe(() => {
+			this.loadingService.removeLoading();
+			this.onSaved.emit();
+		});
 	}
 }

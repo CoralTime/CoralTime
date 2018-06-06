@@ -44,8 +44,6 @@ export class TasksComponent implements OnInit {
 	}
 
 	onEndScroll(): void {
-		this.checkIsAllTasks();
-
 		if (!this.isAllTasks) {
 			this.loadLazy();
 		}
@@ -59,31 +57,33 @@ export class TasksComponent implements OnInit {
 				return this.tasksService.getManagerTasksWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
 			}
 		})
-			.subscribe(
-				(res: PagedResult<Task>) => {
+			.subscribe((res: PagedResult<Task>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;
 					} else {
 						this.pagedResult.data = this.pagedResult.data.concat(res.data);
 					}
+
 					this.lastEvent.first = this.pagedResult.data.length;
 					this.updatingGrid = false;
+					this.checkIsAllTasks();
 				},
-				error => this.notificationService.danger('Error loading tasks.')
+				() => this.notificationService.danger('Error loading tasks.')
 			);
 	}
 
 	loadLazy(event = null, updatePage?: boolean): void {
-		this.checkIsAllTasks();
-
 		if (event) {
 			this.lastEvent = event;
-			this.isAllTasks = false;
 		}
 		if (updatePage) {
-			this.updatingGrid = updatePage;
+			this.updatingGrid = true;
 			this.lastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllTasks = false;
+			this.pagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.lastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllTasks) {
@@ -132,6 +132,7 @@ export class TasksComponent implements OnInit {
 			this.lastEvent.first = 0;
 			this.lastEvent.pageCount = 1;
 		}
+
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
 	}

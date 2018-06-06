@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AdalConfig, Authentication } from 'adal-ts';
 import { AuthService } from '../../core/auth/auth.service';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
-
-import { AdalConfig, Authentication } from 'adal-ts';
 import { AzureSettings, LoginSettings } from './login.service';
+import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	templateUrl: 'login.component.html'
@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
 
 	constructor(private authService: AuthService,
 	            private auth: AuthGuard,
+	            private loadingService: LoadingMaskService,
 	            private route: ActivatedRoute,
 	            private router: Router) {
 	}
@@ -35,7 +36,9 @@ export class LoginComponent implements OnInit {
 
 	login(): void {
 		this.errorMessage = null;
+		this.loadingService.addLoading();
 		this.authService.login(this.username, this.password)
+			.finally(() => this.loadingService.removeLoading())
 			.subscribe(
 				data => this.router.navigateByUrl('/' + this.auth.url),
 				error => this.handleError(error)

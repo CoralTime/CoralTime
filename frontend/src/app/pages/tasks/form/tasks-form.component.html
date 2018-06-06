@@ -14,8 +14,8 @@
                            (ngModelChange)="showNameError = false"
                            maxlength="200" required #taskName="ngModel" autofocus/>
                 </div>
-                <div *ngIf="showNameError && !model.name" class="ct-error-text">Task name is required.</div>
-                <div *ngIf="showNameError && model.name" class="ct-error-text">Task with this name already exists</div>
+                <div *ngIf="showNameError && !model.name.trim()" class="ct-error-text">Task name is required.</div>
+                <div *ngIf="showNameError && model.name.trim()" class="ct-error-text">Task with this name already exists</div>
             </div>
 
             <div *ngIf="task.id">
@@ -39,7 +39,8 @@
 
         <div class="ct-buttons-block" mat-dialog-actions>
             <button mat-raised-button class="ct-button ct-blue-button"
-                    [disabled]="isRequestLoading"
+                    [class.ct-loading]="isValidateLoading"
+                    [disabled]="isValidateLoading || isRequestLoading"
                     (click)="validateAndSubmit()">
                 {{submitButtonText}}
             </button>

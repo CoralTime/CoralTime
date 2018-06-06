@@ -1,22 +1,21 @@
 import {
 	Component, Input, OnInit, HostBinding, EventEmitter, Output, OnDestroy, ElementRef
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription, Observable } from 'rxjs';
+import { Roles } from '../../../../core/auth/permissions';
+import { TimeEntry, DateUtils, CalendarDay, Time } from '../../../../models/calendar';
 import { Project } from '../../../../models/project';
 import { Task } from '../../../../models/task';
-import { TimeEntry, DateUtils, CalendarDay, Time } from '../../../../models/calendar';
-import { Subscription, Observable } from 'rxjs';
-import { ArrayUtils } from '../../../../core/object-utils';
-import { TasksService } from '../../../../services/tasks.service';
-import { CalendarService } from '../../../../services/calendar.service';
-import { NotificationService } from '../../../../core/notification.service';
-import { CalendarProjectsService } from '../../calendar-projects.service';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { Roles } from '../../../../core/auth/permissions';
-import { MAX_TIMER_VALUE } from '../../calendar-views/calendar-task/calendar-task.component';
-import { ImpersonationService } from '../../../../services/impersonation.service';
-import { ActivatedRoute } from '@angular/router';
 import { User } from '../../../../models/user';
-import { SelectItem } from 'primeng/primeng';
+import { ArrayUtils } from '../../../../core/object-utils';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { NotificationService } from '../../../../core/notification.service';
+import { CalendarService } from '../../../../services/calendar.service';
+import { ImpersonationService } from '../../../../services/impersonation.service';
+import { TasksService } from '../../../../services/tasks.service';
+import { CalendarProjectsService } from '../../calendar-projects.service';
+import { MAX_TIMER_VALUE } from '../../calendar-views/calendar-task/calendar-task.component';
 
 @Component({
 	selector: 'ct-entry-time-form',
@@ -33,11 +32,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
-	isFocusClassShown: boolean;
 	isFormChanged: boolean;
 	isFromToFormChanged: boolean;
 	isFromToFormFocus: boolean;
 	isRequestLoading: boolean;
+	isTasksLoading: boolean;
 	isTimerShown: boolean;
 	projectList: Project[];
 	projectModel: Project;
@@ -52,17 +51,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	timerSubscription: Subscription;
 	timerValue: Time;
 	userInfo: User;
-	afternoonList: SelectItem[] = [
-		{
-			label: 'AM',
-			value: 0
-		},
-		{
-			label: 'PM',
-			value: 1
-		}
-	];
-	afternoonModel: SelectItem = this.afternoonList[0];
 
 	private isTasksLoaded: boolean = false;
 	private dayInfo: CalendarDay;
@@ -341,7 +329,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 				this.closeEntryTimeForm.emit();
 			},
-			error => {
+			() => {
 				this.isRequestLoading = false;
 
 				if (!this.currentTimeEntry.id) {
@@ -379,7 +367,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private isFromToTimeValid2(): boolean {
-		return this.currentTimeEntry.timeValues.timeFrom > 0
+		return this.currentTimeEntry.timeValues.timeFrom >= 0
 			&& this.currentTimeEntry.timeValues.timeTo < MAX_TIMER_VALUE;
 	}
 
@@ -446,17 +434,20 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private loadTasks(projectId?: number): void {
-		this.tasksService.getActiveTasks(projectId).subscribe((res) => {
-			this.taskList = this.filterTasks(res.data);
-			this.taskModel = ArrayUtils.findByProperty(this.taskList, 'id', this.currentTimeEntry.taskTypesId || this.userInfo.defaultTaskId);
+		this.isTasksLoading = true;
+		this.tasksService.getActiveTasks(projectId)
+			.finally(() => this.isTasksLoading = false)
+			.subscribe((res) => {
+				this.taskList = this.filterTasks(res.data);
+				this.taskModel = ArrayUtils.findByProperty(this.taskList, 'id', this.currentTimeEntry.taskTypesId || this.userInfo.defaultTaskId);
 
-			if (!this.isTasksLoaded && this.taskModel) {
-				this.timeEntry.taskTypesId = this.taskModel.id;
-				this.timeEntry.taskName = this.taskModel.name;
-			}
+				if (!this.isTasksLoaded && this.taskModel) {
+					this.timeEntry.taskTypesId = this.taskModel.id;
+					this.timeEntry.taskName = this.taskModel.name;
+				}
 
-			this.isTasksLoaded = true;
-		});
+				this.isTasksLoaded = true;
+			});
 	}
 
 	private filterTasks(tasks: Task[]): Task[] {

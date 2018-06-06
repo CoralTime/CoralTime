@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
+import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	selector: 'ct-signin-oidc',
@@ -13,6 +14,7 @@ export class SignInOidcComponent implements OnInit {
 
 	constructor(private auth: AuthGuard,
 	            private authService: AuthService,
+	            private loadingService: LoadingMaskService,
 	            private route: ActivatedRoute,
 	            private router: Router) {
 	}
@@ -25,7 +27,9 @@ export class SignInOidcComponent implements OnInit {
 	}
 
 	loginSSO(id_token: string): void {
+		this.loadingService.addLoading();
 		this.authService.loginSSO(this.id_token)
+			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
 					this.router.navigate(['/' + this.auth.url]);
 				}

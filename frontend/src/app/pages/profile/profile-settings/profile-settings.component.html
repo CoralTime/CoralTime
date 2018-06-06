@@ -82,6 +82,7 @@
                         <div>
                             <label class="ct-form-label">Default Task</label>
                             <ct-select [name]="'defaultTask'"
+                                       [class.ct-loading]="isTasksLoading"
                                        [displayName]="'name'" [trackBy]="'id'"
                                        [(ngModel)]="taskModel"
                                        (ngModelChange)="userModel.defaultTaskId = taskModel.id"

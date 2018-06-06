@@ -12,7 +12,6 @@ import {
 import { ReadMoreComponent } from './read-more/read-more.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { DirectivesModule } from './directives/directives.module';
-import { LoadingBarComponent } from './loading-indicator/loading-bar.component';
 import { DatepickerModule } from './form/datepicker/datepicker.module';
 import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
@@ -33,11 +32,10 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		DatepickerModule,
 		DataTableModule,
 		MenuModule,
-		SharedFormModule,
+		SharedFormModule
 	],
 	declarations: [
 		ReadMoreComponent,
-		LoadingBarComponent,
 		ConfirmationComponent,
 		ExpansionPanelComponent,
 		UserPicComponent
@@ -52,7 +50,6 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		CalendarModule,
 		ReadMoreComponent,
 		TranslateModule,
-		LoadingBarComponent,
 		TranslateModule,
 		DirectivesModule,
 		DatepickerModule,

@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
-
 import { User } from '../../../models/user';
 import { Roles } from '../../../core/auth/permissions';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -11,6 +10,7 @@ import { ArrayUtils } from '../../../core/object-utils';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
 import { UsersService } from '../../../services/users.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 class FormUser {
 	email: string;
@@ -74,7 +74,8 @@ export class UsersFormComponent implements OnInit {
 	submitButtonText: string;
 	dialogHeader: string;
 	emailPattern = EMAIL_PATTERN;
-	isRequestLoading: boolean = false;
+	isRequestLoading: boolean;
+	isValidateLoading: boolean;
 	impersonateUser: User;
 	isActive: boolean;
 	isNewUser: boolean;
@@ -97,6 +98,7 @@ export class UsersFormComponent implements OnInit {
 
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private translatePipe: TranslatePipe,
 	            private userService: UsersService) { }
 
@@ -127,15 +129,14 @@ export class UsersFormComponent implements OnInit {
 	}
 
 	validateAndSubmit(form: NgForm): void {
-		this.isRequestLoading = true;
+		this.isValidateLoading = true;
 		this.validateForm(form)
+			.finally(() => this.isValidateLoading = false)
 			.subscribe((isFormValid: boolean) => {
-					this.isRequestLoading = false;
-					if (isFormValid) {
-						this.submit();
-					}
-				},
-				() => this.isRequestLoading = false);
+				if (isFormValid) {
+					this.submit();
+				}
+			});
 	}
 
 	private submit(): void {
@@ -149,28 +150,30 @@ export class UsersFormComponent implements OnInit {
 		}
 
 		this.isRequestLoading = true;
-		submitObservable.toPromise().then(
-			() => {
-				this.isRequestLoading = false;
+		this.loadingService.addLoading();
+		submitObservable.finally(() => this.loadingService.removeLoading())
+			.subscribe(
+				() => {
+					this.isRequestLoading = false;
 
-				if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
-					this.impersonationService.impersonationUser = updatedUser;
-					this.impersonationService.setStorage(updatedUser);
-					this.impersonationService.onChange.emit(updatedUser);
-				}
+					if (this.impersonationService.impersonationId && this.impersonationService.impersonationUser.id === updatedUser.id) {
+						this.impersonationService.impersonationUser = updatedUser;
+						this.impersonationService.setStorage(updatedUser);
+						this.impersonationService.onChange.emit(updatedUser);
+					}
 
-				if (this.authUser.id === updatedUser.id) {
-					this.userService.setUserInfo(updatedUser);
-				}
+					if (this.authUser.id === updatedUser.id) {
+						this.userService.setUserInfo(updatedUser);
+					}
 
-				this.onSaved.emit({
-					isNewUser: this.isNewUser
-				});
-			},
-			error => this.onSaved.emit({
-				isNewUser: this.isNewUser,
-				error: error
-			}));
+					this.onSaved.emit({
+						isNewUser: this.isNewUser
+					});
+				},
+				error => this.onSaved.emit({
+					isNewUser: this.isNewUser,
+					error: error
+				}));
 	}
 
 	private validateForm(form: NgForm): Observable<boolean> {
@@ -179,14 +182,14 @@ export class UsersFormComponent implements OnInit {
 		let isEmailValidObservable: Observable<any>;
 		let isUserNameValidObservable: Observable<any>;
 
-		if (!this.model.email || !!form.controls['email'].errors) {
+		if (!this.model.email.trim() || !!form.controls['email'].errors) {
 			isEmailValidObservable = Observable.of(false);
 		} else {
 			isEmailValidObservable = this.userService.getUserByEmail(this.model.email)
 				.map((user) => !user || (user.id === this.model.id));
 		}
 
-		if (!this.model.userName) {
+		if (!this.model.userName.trim()) {
 			isUserNameValidObservable = Observable.of(false);
 		} else {
 			isUserNameValidObservable = this.userService.getUserByUsername(this.model.userName)

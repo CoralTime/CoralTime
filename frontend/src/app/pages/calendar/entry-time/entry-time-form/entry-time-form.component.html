@@ -22,7 +22,9 @@
     <div class="ct-task">
         <div class="ct-task-name">
             <div class="ct-required-field-container">
-                <ct-select [name]="'task'" [class.ct-archived]="isArchivedTaskShown()"
+                <ct-select [name]="'task'"
+                           [class.ct-archived]="isArchivedTaskShown()"
+                           [class.ct-loading]="isTasksLoading"
                            [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
                            [displayName]="'name'" [trackBy]="'id'"
                            [maxHeight]="formHeight - 149"

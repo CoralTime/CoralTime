@@ -8,6 +8,7 @@ import { AuthGuard } from '../../../core/auth/auth-guard.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
 import { ProjectsService } from '../../../services/projects.service';
 import { UsersService } from '../../../services/users.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
 interface MenuItem {
 	label?: string;
@@ -65,6 +66,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	            private aclService: AclService,
 	            private auth: AuthGuard,
 	            private impersonationService: ImpersonationService,
+	            private loadingService: LoadingMaskService,
 	            private projectsService: ProjectsService,
 	            private usersService: UsersService) {
 	}
@@ -102,8 +104,10 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	}
 
 	getUserInfo(): void {
+		this.loadingService.addLoading();
 		this.usersService.getUserInfo(this.authUser.id).then((userInfo: User) => {
-			this.userInfo =  userInfo;
+			this.loadingService.removeLoading();
+			this.userInfo = userInfo;
 		});
 	}
 
@@ -134,11 +138,14 @@ export class NavigationComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this.projectsService.getManagerProjectsCount().subscribe(count => {
-			this.showManageMenu = !!count;
-			this.authService.isUserAdminOrManager = !!count;
-			this.authService.adminOrManagerParameterOnChange.emit();
-		});
+		this.loadingService.addLoading();
+		this.projectsService.getManagerProjectsCount()
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe(count => {
+				this.showManageMenu = !!count;
+				this.authService.isUserAdminOrManager = !!count;
+				this.authService.adminOrManagerParameterOnChange.emit();
+			});
 	}
 
 	signOut(): void {

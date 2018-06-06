@@ -15,7 +15,7 @@
                            (ngModelChange)="showErrors[1] = false"
                            maxlength="200" required autofocus/>
                 </div>
-                <div *ngIf="showErrors[1] && !model.fullName" class="ct-error-text">Full Name is required!</div>
+                <div *ngIf="showErrors[1] && !model.fullName.trim()" class="ct-error-text">Full Name is required!</div>
             </div>
 
             <div>
@@ -27,8 +27,8 @@
                            [(ngModel)]="model.userName"
                            maxlength="200" required/>
                 </div>
-                <div *ngIf="showErrors[2] && !model.userName" class="ct-error-text">Username is required!</div>
-                <div *ngIf="showErrors[2] && model.userName" class="ct-error-text">User with this username already exists.</div>
+                <div *ngIf="showErrors[2] && !model.userName.trim()" class="ct-error-text">Username is required!</div>
+                <div *ngIf="showErrors[2] && model.userName.trim()" class="ct-error-text">User with this username already exists.</div>
             </div>
 
             <div *ngIf="user.id">
@@ -57,9 +57,9 @@
                 </div>
 
                 <ng-template [ngIf]="showErrors[0]">
-                    <div *ngIf="!model.email" class="ct-error-text">Email is required!</div>
-                    <div *ngIf="model.email && !email.errors?.pattern" class="ct-error-text">User with this email already exists</div>
-                    <div *ngIf="model.email && email.errors?.pattern" class="ct-error-text">Invalid email</div>
+                    <div *ngIf="!model.email.trim()" class="ct-error-text">Email is required!</div>
+                    <div *ngIf="model.email.trim() && !email.errors?.pattern" class="ct-error-text">User with this email already exists</div>
+                    <div *ngIf="model.email.trim() && email.errors?.pattern" class="ct-error-text">Invalid email</div>
                 </ng-template>
             </div>
 
@@ -77,6 +77,7 @@
 
         <div class="ct-buttons-block" mat-dialog-actions>
             <button mat-raised-button class="ct-button ct-blue-button"
+                    [class.ct-loading]="isValidateLoading || isValidateLoading"
                     [disabled]="isRequestLoading"
                     (click)="validateAndSubmit(userForm)">
                 {{submitButtonText}}

@@ -13,14 +13,16 @@ import { CustomErrorHandler } from './raven-error-handler';
 import { UserPicService } from '../services/user-pic.service';
 import { ApplyTokenInterceptor } from './apply-token.interceptor';
 import { RefreshTokenInterceptor } from './refresh-token.interceptor';
-import { LoadingBarInterceptor } from './loading-bar.interceptor';
+import { LoadingMaskModule } from '../shared/loading-indicator/loading-mask.module';
 
 @NgModule({
 	imports: [
-		HttpClientModule
+		HttpClientModule,
+		LoadingMaskModule
 	],
 	exports: [
-		HttpClientModule
+		HttpClientModule,
+		LoadingMaskModule
 	],
 	providers: [
 		{
@@ -39,11 +41,6 @@ import { LoadingBarInterceptor } from './loading-bar.interceptor';
 		{
 			provide: HTTP_INTERCEPTORS,
 			useClass: RefreshTokenInterceptor,
-			multi: true
-		},
-		{
-			provide: HTTP_INTERCEPTORS,
-			useClass: LoadingBarInterceptor,
 			multi: true
 		},
 		AclService,

@@ -1,16 +1,16 @@
-import { UserProject } from '../../../models/user-project';
-import { NotificationService } from '../../../core/notification.service';
-import { UsersService } from '../../../services/users.service';
-import { User } from '../../../models/user';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { PagedResult } from '../../../services/odata/query';
 import { Subject } from 'rxjs/Subject';
-import { ProjectRole } from '../../../models/project-role';
-import { Project } from '../../../models/project';
 import { ArrayUtils } from '../../../core/object-utils';
-import { SettingsService } from '../../../services/settings.service';
-import { ProjectRolesService } from '../../../services/project-roles.service';
+import { Project } from '../../../models/project';
+import { ProjectRole } from '../../../models/project-role';
+import { UserProject } from '../../../models/user-project';
+import { User } from '../../../models/user';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
+import { NotificationService } from '../../../core/notification.service';
+import { PagedResult } from '../../../services/odata';
+import { ProjectRolesService } from '../../../services/project-roles.service';
+import { UsersService } from '../../../services/users.service';
+import { SettingsService } from '../../../services/settings.service';
 
 @Component({
 	selector: 'ct-user-project-assignment',
@@ -25,7 +25,6 @@ export class UserProjectAssignmentComponent implements OnInit {
 	filterStr: string = '';
 	projectRoles: ProjectRole[];
 	resizeObservable: Subject<any> = new Subject();
-	isRequestLoading: boolean;
 	wrapperHeightObservable: Subject<any> = new Subject();
 
 	assignedProjectsPagedResult: PagedResult<UserProject>;
@@ -73,8 +72,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUserProjectsWithCount(this.assignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
-			.subscribe(
-				(res: PagedResult<UserProject>) => {
+			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedProjectsPagedResult || !this.assignedProjectsLastEvent.first || this.updatingAssignedProjectsGrid) {
 						this.assignedProjectsPagedResult = res;
 					} else {
@@ -88,30 +86,30 @@ export class UserProjectAssignmentComponent implements OnInit {
 					this.assignedProjectsLastEvent.first = this.assignedProjectsPagedResult.data.length;
 					this.updatingAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllAssignedProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	onAssignedProjectsEndScroll(): void {
-		this.checkIsAllAssignedProjects();
-
 		if (!this.isAllAssignedProjects) {
 			this.updateAssignedProjects();
 		}
 	}
 
 	updateAssignedProjects(event = null, updatePage?: boolean): void {
-		this.checkIsAllAssignedProjects();
-
 		if (event) {
 			this.assignedProjectsLastEvent = event;
-			this.isAllAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingAssignedProjectsGrid = updatePage;
 			this.assignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllAssignedProjects = false;
+			this.assignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedProjects) {
@@ -136,40 +134,40 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
 			return this.usersService.getUnassignedProjectsWithCount(this.notAssignedProjectsLastEvent, this.filterStr, this.user.id);
 		})
-			.subscribe(
-				(res: PagedResult<Project>) => {
+			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;
 					} else {
 						this.notAssignedProjectsPagedResult.data = this.notAssignedProjectsPagedResult.data.concat(res.data);
 					}
+
 					this.notAssignedProjectsLastEvent.first = this.notAssignedProjectsPagedResult.data.length;
 					this.updatingNotAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
+					this.checkIsAllUnassignedProjects();
 				},
-				error => this.notificationService.danger('Error loading projects.')
+				() => this.notificationService.danger('Error loading projects.')
 			);
 	}
 
 	onNotAssignedProjectsEndScroll(): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (!this.isAllNotAssignedProjects) {
 			this.updateNotAssignedProjects();
 		}
 	}
 
 	updateNotAssignedProjects(event = null, updatePage?: boolean): void {
-		this.checkIsAllUnassignedProjects();
-
 		if (event) {
 			this.notAssignedProjectsLastEvent = event;
-			this.isAllNotAssignedProjects = false;
 		}
 		if (updatePage) {
 			this.updatingNotAssignedProjectsGrid = updatePage;
 			this.notAssignedProjectsLastEvent.first = 0;
+		}
+		if (event || updatePage) {
 			this.isAllNotAssignedProjects = false;
+			this.notAssignedProjectsPagedResult = null;
+			this.resizeObservable.next(true);
 		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedProjects) {
@@ -190,27 +188,27 @@ export class UserProjectAssignmentComponent implements OnInit {
 
 	// GENERAL
 
-	addToUser(project: Project): void {
-		this.isRequestLoading = true;
+	addToUser(project: Project, target: HTMLElement): void {
+		target.classList.add('ct-loading');
 		this.usersService.assignProjectToUser(this.user.id, project.id, this.defaultProjectRole.id)
-			.subscribe(
-				() => {
-					this.isRequestLoading = false;
+			.subscribe(() => {
 					this.notificationService.success('Project successfully assigned.');
 					this.filterStr = '';
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
 				},
 				() => {
+					target.classList.remove('ct-loading');
 					this.notificationService.danger('Error adding project.');
 				}
 			);
 	}
 
-	assignToPublic(userProject: UserProject): void {
+	assignToPublic(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
 		this.usersService.assignProjectToUser(userProject.memberId, userProject.projectId, userProject.roleId)
-			.subscribe(
-				() => {
+			.finally(() => target.classList.remove('ct-loading'))
+			.subscribe(() => {
 					this.notificationService.success('Access level has been changed.');
 					this.updateAssignedProjects();
 				},
@@ -220,32 +218,34 @@ export class UserProjectAssignmentComponent implements OnInit {
 			);
 	}
 
-	changeRole(userProject: UserProject): void {
-		this.usersService.changeRole(userProject.id, userProject.role.id).subscribe(
-			() => {
-				this.notificationService.success('Access level has been changed.');
-				this.updateAssignedProjects();
-			},
-			() => {
-				this.notificationService.danger('Access level has not been changed.');
-			}
-		);
+	changeRole(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.changeRole(userProject.id, userProject.role.id)
+			.finally(() => target.classList.remove('ct-loading'))
+			.subscribe(() => {
+					this.notificationService.success('Access level has been changed.');
+					this.updateAssignedProjects();
+				},
+				() => {
+					this.notificationService.danger('Access level has not been changed.');
+				}
+			);
 	}
 
-	removeFromUser(userProject: UserProject): void {
-		this.isRequestLoading = true;
-		this.usersService.removeFromProject(userProject).subscribe(
-			() => {
-				this.isRequestLoading = false;
-				this.notificationService.success('User was removed from project.');
-				this.filterStr = '';
-				this.updateAssignedProjects(null, true);
-				this.updateNotAssignedProjects(null, true);
-			},
-			() => {
-				this.notificationService.danger('Error removing project.');
-			}
-		);
+	removeFromUser(userProject: UserProject, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.usersService.removeFromProject(userProject)
+			.subscribe(() => {
+					this.notificationService.success('User was removed from project.');
+					this.filterStr = '';
+					this.updateAssignedProjects(null, true);
+					this.updateNotAssignedProjects(null, true);
+				},
+				() => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger('Error removing project.');
+				}
+			);
 	}
 
 	onResize(): void {

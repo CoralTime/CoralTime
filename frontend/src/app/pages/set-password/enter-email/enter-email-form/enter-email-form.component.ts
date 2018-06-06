@@ -1,7 +1,8 @@
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { EMAIL_PATTERN } from '../../../../core/constant.service';
 import { EnterEmailService, EmailSendingStatus } from '../enter-email.service';
 import { SetPasswordService } from '../../enter-new-password/set-password.service';
-import { EMAIL_PATTERN } from '../../../../core/constant.service';
+import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
 
 const ERRORS_EMAIL_SENDING = [
 	'success',
@@ -26,6 +27,7 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 	errorCode: number;
 
 	constructor(private enterEmailService: EnterEmailService,
+	            private loadingService: LoadingMaskService,
 	            private setPasswordService: SetPasswordService) {
 	}
 
@@ -39,27 +41,30 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 		if (!this.email) {
 			this.errorMessage = 'A valid email address is required.';
 		} else if (this.isEmailValid) {
-			this.enterEmailService.sendEmail(this.email).subscribe((emailResponse) => {
-				this.errorMessage = null;
+			this.loadingService.addLoading();
+			this.enterEmailService.sendEmail(this.email)
+				.finally(() => this.loadingService.removeLoading())
+				.subscribe((emailResponse) => {
+					this.errorMessage = null;
 
-				if (emailResponse.isSentEmail) {
-					this.emailSubmitted.emit(emailResponse);
-				} else {
-					this.errorCode = emailResponse.message;
-					this.errorMessage = ERRORS_EMAIL_SENDING[this.errorCode];
+					if (emailResponse.isSentEmail) {
+						this.emailSubmitted.emit(emailResponse);
+					} else {
+						this.errorCode = emailResponse.message;
+						this.errorMessage = ERRORS_EMAIL_SENDING[this.errorCode];
 
-					if (this.errorCode === 1) {
-						this.errorMessage = 'This email isn\'t in our system. Make sure you typed your address correctly, or contact support.';
+						if (this.errorCode === 1) {
+							this.errorMessage = 'This email isn\'t in our system. Make sure you typed your address correctly, or contact support.';
+						}
+
+						if (this.errorCode === 5) {
+							this.errorMessage = 'You can\'t log in to this account. Please contact support.';
+						}
 					}
 
-					if (this.errorCode === 5) {
-						this.errorMessage = 'You can\'t log in to this account. Please contact support.';
-					}
-				}
-
-				this.activationCodeIsValid = true;
-				this.setPasswordService.restoreCodeIsExpired = false;
-			});
+					this.activationCodeIsValid = true;
+					this.setPasswordService.restoreCodeIsExpired = false;
+				});
 		}
 	}
 
