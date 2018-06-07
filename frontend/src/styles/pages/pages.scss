@@ -14,10 +14,16 @@ html, body {
 
 .ct-wrapper {
   height: 100%;
+  background: $gray-page-background;
 }
 
 .ct-content {
+  //box-sizing: border-box;
+  //height: 100%;
   padding: 70px 20px 0;
+  background: $gray-page-background;
+  //overflow-x: hidden;
+  //overflow-y: scroll;
 }
 
 .ct-page-container {
