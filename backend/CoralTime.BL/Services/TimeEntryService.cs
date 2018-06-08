@@ -396,7 +396,16 @@ namespace CoralTime.BL.Services
 
             #endregion
 
-            #region #2. Update other values.
+            #region #2: Round time from timer 
+            
+            if (timeEntryView.TimeOptions.TimeTimerStart == -1)
+            {
+                RoundTimeEntryTime(timeEntryView);
+            }
+            
+            #endregion
+            
+            #region #3. Update other values.
 
             timeEntry.Date = timeEntryView.Date.Date;
 
@@ -410,6 +419,24 @@ namespace CoralTime.BL.Services
             timeEntry.IsFromToShow = timeEntryView.TimeOptions.IsFromToShow;
 
             #endregion
+        }
+
+        private static void RoundTimeEntryTime(TimeEntryView timeEntryView)
+        {
+            var roundActualTime = (timeEntryView.TimeValues.TimeActual < Constants.SecondsInMinute) 
+                    ? Constants.SecondsInMinute 
+                    : RoundTime(timeEntryView.TimeValues.TimeActual);
+            
+            if (timeEntryView.TimeValues.TimeActual == roundActualTime) 
+                return;
+            timeEntryView.TimeValues.TimeActual = roundActualTime;
+            timeEntryView.TimeValues.TimeTo = RoundTime(timeEntryView.TimeValues.TimeTo ?? 0);
+            timeEntryView.TimeValues.TimeFrom = timeEntryView.TimeValues.TimeTo - roundActualTime;
+        }
+
+        private static int RoundTime(int time)
+        {
+            return time - time % Constants.SecondsInMinute;
         }
 
         #endregion
