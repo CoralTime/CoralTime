@@ -16,6 +16,13 @@
   background: url(./assets/icons/ct.manage1.svg) no-repeat center center;
 }
 
+.ct-admin-icon {
+  left: 24px;
+  background-image: url(./assets/icons/ct.admin1.svg);
+  background-size: 45% !important;
+  background-repeat: no-repeat;
+}
+
 .ct-reports-icon {
   background: url(./assets/icons/ct.reports1.svg) no-repeat center center;
 }
@@ -23,6 +30,10 @@
 .ct-nav-menu li:hover, .mat-menu-item:hover, .active {
   .ct-timetracker-icon {
     background: url(./assets/icons/ct.timetracker2.svg) no-repeat center center;
+  }
+
+  .ct-admin-icon {
+    background-image: url(./assets/icons/ct.admin2.svg);
   }
 
   .ct-manage-icon {

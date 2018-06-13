@@ -16,5 +16,6 @@ export const Permissions = {
 	roleAssignProjectMember: Roles.admin | Roles.user,
 	roleViewMember: Roles.admin,
 	roleEditMember: Roles.admin,
-	roleDisableMember: Roles.admin
+	roleDisableMember: Roles.admin,
+	roleViewAdminPanel: Roles.admin,
 };
