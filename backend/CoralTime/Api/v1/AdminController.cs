@@ -1,17 +1,18 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.Common.Attributes;
 using CoralTime.ViewModels.Notifications.ByProjectSettings.Request.MemberWithProjectsLightIds;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static CoralTime.Common.Constants.Constants;
 using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
 {
     [Route(BaseControllerRoute)]
-    [ServiceFilter(typeof(CheckSecureHeaderServiceFilter))]
+    [Authorize(Roles = ApplicationRoleAdmin)]
     public class AdminController : BaseController<AdminController, IAdminService>
     {
         private readonly IMemberProjectRoleService _roleService;
