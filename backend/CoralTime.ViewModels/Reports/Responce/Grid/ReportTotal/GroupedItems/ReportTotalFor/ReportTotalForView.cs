@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.TimeTotalFor;
 
-namespace CoralTime.ViewModels.Reports
+namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor
 {
     public class ReportTotalForView : ReportItemsView
     {

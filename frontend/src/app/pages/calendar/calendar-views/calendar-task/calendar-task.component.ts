@@ -2,19 +2,20 @@ import {
 	Component, Input, ViewChild, EventEmitter, Output, OnInit, OnDestroy, QueryList,
 	ViewChildren, ElementRef
 } from '@angular/core';
-import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
-import { Subscription, Observable } from 'rxjs';
-import { CalendarService } from '../../../../services/calendar.service';
-import { NotificationService } from '../../../../core/notification.service';
-import { MultipleDatepickerComponent } from '../../entry-time/multiple-datepicker/multiple-datepicker.component';
 import { MatDialogRef, MatDialog } from '@angular/material';
-import { MenuComponent } from '../../../../shared/menu/menu.component';
-import { User } from '../../../../models/user';
 import { ActivatedRoute } from '@angular/router';
-import { ImpersonationService } from '../../../../services/impersonation.service';
-import { EntryTimeComponent } from '../../entry-time/entry-time.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { Subscription, Observable } from 'rxjs';
+import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
+import { User } from '../../../../models/user';
+import { NotificationService } from '../../../../core/notification.service';
+import { CalendarService } from '../../../../services/calendar.service';
+import { ImpersonationService } from '../../../../services/impersonation.service';
+import { EntryTimeComponent } from '../../entry-time/entry-time.component';
+import { MultipleDatepickerComponent } from '../../entry-time/multiple-datepicker/multiple-datepicker.component';
+import { numberToHex } from '../../../../shared/form/color-picker/color-picker.component';
+import { MenuComponent } from '../../../../shared/menu/menu.component';
 
 export const MAX_TIMER_VALUE = 86399;
 
@@ -46,10 +47,9 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	lockReason: string = '';
 	selectedDate: string;
 	ticks: number;
+	timeFormat: number;
 	timerValue: string;
 	timerSubscription: Subscription;
-
-	private totalTrackedTimeForDay: number;
 
 	constructor(private route: ActivatedRoute,
 	            private calendarService: CalendarService,
@@ -64,6 +64,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			let user = this.impersonationService.impersonationUser || data.user;
 			this.firstDayOfWeek = user.weekStart;
 			this.isUserAdmin = data.user.isAdmin;
+			this.timeFormat = data.user.timeFormat;
 		});
 
 		this.selectedDate = this.timeEntry.date;
@@ -190,7 +191,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	private isFromToTimeValid(newDate: string): boolean {
 		let dayInfo = this.getDayInfo(newDate);
-		return dayInfo.timeEntries
+		return !dayInfo || dayInfo.timeEntries
 			.filter((timeEntry: TimeEntry) => timeEntry.timeOptions.isFromToShow && timeEntry.id !== this.timeEntry.id)
 			.every((timeEntry: TimeEntry) => {
 				return timeEntry.timeValues.timeFrom >= this.timeEntry.timeValues.timeTo
@@ -234,16 +235,20 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		if (errorMessage) {
 			let currentTimeEntry = new TimeEntry(this.timeEntry);
+			let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
+			let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
+			let timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
+				- new Date().getTimezoneOffset() * 60); // locale format
 
 			currentTimeEntry.timeOptions = {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
 			currentTimeEntry.timeValues = {
-				timeActual: MAX_TIMER_VALUE - (this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual),
+				timeActual: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue),
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual,
-				timeTo: MAX_TIMER_VALUE
+				timeFrom: timeTimerStart,
+				timeTo: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue) + timeTimerStart
 			};
 
 			this.autoStopTimer();
@@ -309,8 +314,12 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	private isTrackedTimeValid(): boolean {
-		this.totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
-		return this.totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+		let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
+		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+	}
+
+	private limitTimerValue(time: number): number {
+		return Math.min(Math.max(time, 0), MAX_TIMER_VALUE);
 	}
 
 	private saveTimerStatus(): Promise<any> {
@@ -326,11 +335,13 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
+            let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
+            let roundTicks = (this.ticks <60)? 60: this.roundTime(this.ticks);
 			currentTimeEntry.timeValues = {
-				timeActual: this.ticks,
+				timeActual: roundTicks,
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
-				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
+				timeFrom: Math.max(secondsFromStartDay - roundTicks, 0),
+				timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
 			};
 		}
 
@@ -347,11 +358,19 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				});
 	}
 
+    private roundTime (time: number): number {
+        return time - time % 60;
+    }
+
 	// GENERAL
 
 	calculateCalendarTaskHeight(): number {
 		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 95 - 42;
 		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - 25 : taskHeight;
+	}
+
+	numberToHex(value: number): string {
+		return numberToHex(value);
 	}
 
 	openEntryTimeForm() {
@@ -360,10 +379,16 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	setTimeString(s: number): string {
+	setTimeString(s: number, formatToAmPm: boolean = false): string {
 		let m = Math.floor(s / 60);
 		let h = Math.floor(m / 60);
 		m = m - h * 60;
+
+		if (formatToAmPm) {
+			let t = new Date().setHours(0, 0, s);
+			return moment(t).format('hh:mm A');
+		}
+
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
 	}
 

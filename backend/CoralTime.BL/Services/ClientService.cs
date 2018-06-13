@@ -110,7 +110,7 @@ namespace CoralTime.BL.Services
             if (UpdateService<Client>.HasField(clientData, "isActive"))
             {
                 var isActive = (bool)clientData["isActive"];
-                var clientProjects = Uow.ClientRepository.GetQueryWithIncludes()
+                var clientProjects = Uow.ClientRepository.GetQuery()
                     .Include(c => c.Projects)
                     .FirstOrDefault(c => c.Id == client.Id)
                     .Projects;
@@ -138,7 +138,7 @@ namespace CoralTime.BL.Services
 
         private void StopTimerForProjectTimeEntries(int projectId)
         {
-            var timeEntries = Uow.TimeEntryRepository.GetQueryWithIncludes()
+            var timeEntries = Uow.TimeEntryRepository.GetQuery()
                 .Where(t => t.ProjectId == projectId && t.Date.Date == DateTime.Now.Date)
                 .ToList();
 

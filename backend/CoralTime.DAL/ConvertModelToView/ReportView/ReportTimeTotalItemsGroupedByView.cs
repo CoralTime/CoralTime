@@ -1,11 +1,16 @@
-﻿using CoralTime.Common.Helpers;
-using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using static CoralTime.Common.Constants.Constants;
+using CoralTime.Common.Constants;
+using CoralTime.Common.Helpers;
+using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items.TimeValues;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
@@ -53,30 +58,30 @@ namespace CoralTime.DAL.ConvertModelToView
 
         private static ReportItemsView MapTimeEntryToReportGridItemsView(TimeEntry timeEntry, ReportItemsView reportItemsView)
         {
-            reportItemsView.ClientId = timeEntry.Project.Client == null ? WithoutClient.Id : timeEntry.Project.Client.Id;
+            reportItemsView.ClientId = timeEntry.Project.Client == null ? Constants.WithoutClient.Id : timeEntry.Project.Client.Id;
             reportItemsView.ProjectId = timeEntry.Project.Id;
             reportItemsView.MemberId = timeEntry.Member.Id;
             reportItemsView.TaskId = timeEntry.TaskType.Id;
             reportItemsView.TaskName = timeEntry.TaskType.Name;
 
-            reportItemsView.ClientName = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Client
+            reportItemsView.ClientName = reportItemsView.GroupByTypeId == (int)Constants.ReportsGroupByIds.Client
                 ? null
-                : timeEntry.Project.Client == null ? WithoutClient.Name : timeEntry.Project.Client.Name;
-            reportItemsView.ProjectName = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Project ? null : timeEntry.Project.Name;
-            reportItemsView.MemberName = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.User ? null : timeEntry.Member.FullName;
-            reportItemsView.Date = reportItemsView.GroupByTypeId == (int)ReportsGroupByIds.Date
+                : timeEntry.Project.Client == null ? Constants.WithoutClient.Name : timeEntry.Project.Client.Name;
+            reportItemsView.ProjectName = reportItemsView.GroupByTypeId == (int)Constants.ReportsGroupByIds.Project ? null : timeEntry.Project.Name;
+            reportItemsView.MemberName = reportItemsView.GroupByTypeId == (int)Constants.ReportsGroupByIds.User ? null : timeEntry.Member.FullName;
+            reportItemsView.Date = reportItemsView.GroupByTypeId == (int)Constants.ReportsGroupByIds.Date
                 ? null
-                : reportItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowDate)
+                : reportItemsView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowDate)
                     ? (DateTime?)timeEntry.Date
                     : null;
 
-            reportItemsView.Notes = reportItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowNotes) ? timeEntry.Description ?? string.Empty : null;
+            reportItemsView.Notes = reportItemsView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowNotes) ? timeEntry.Description ?? string.Empty : null;
             reportItemsView.TimeValues = new TimeValuesView
             {
-                TimeFrom = reportItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? (int?)timeEntry.TimeFrom : null,
-                TimeTo = reportItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? (int?)timeEntry.TimeTo : null,
+                TimeFrom = reportItemsView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowStartFinish) ? (int?)timeEntry.TimeFrom : null,
+                TimeTo = reportItemsView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowStartFinish) ? (int?)timeEntry.TimeTo : null,
                 TimeActual = timeEntry.TimeActual,
-                TimeEstimated = reportItemsView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowEstimatedTime) ? (int?)timeEntry.TimeEstimated : null
+                TimeEstimated = reportItemsView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowEstimatedTime) ? (int?)timeEntry.TimeEstimated : null
             };
 
             return reportItemsView;
@@ -108,7 +113,7 @@ namespace CoralTime.DAL.ConvertModelToView
                 reportItemsGroupByTypeView.DisplayNames = reportTotalView.DisplayNames;
             }
 
-            reportTotalView.TimeTotal.TimeEstimatedTotal = showColumnIds.Contains((int) ShowColumnModelIds.ShowEstimatedTime)
+            reportTotalView.TimeTotal.TimeEstimatedTotal = showColumnIds.Contains((int) Constants.ShowColumnModelIds.ShowEstimatedTime)
                 ? reportTotalView.TimeTotal.TimeEstimatedTotal
                 : null;
 
@@ -164,7 +169,7 @@ namespace CoralTime.DAL.ConvertModelToView
                     reportTotalForGroupTypeView.GroupByType.ClientId = client.Id;
                     reportTotalForGroupTypeView.GroupByType.ClientName = client.Name;
 
-                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayName = client.Id == WithoutClient.Id ? null : reportTotalForGroupTypeView.DisplayNames.DisplayNameClient + ": ";
+                    reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayName = client.Id == Constants.WithoutClient.Id ? null : reportTotalForGroupTypeView.DisplayNames.DisplayNameClient + ": ";
                     reportTotalForGroupTypeView.GroupByType.GroupByTypeDisplayNameValue = client.Name;
                     //reportTimeTotalForItemsView.DisplayNames.DisplayNameClient = reportTimeTotalForItemsView.GroupByTypeId == (int)ReportsGroupBy.Client ? null : reportTimeTotalForItemsView.DisplayNames.DisplayNameClient;
 
@@ -192,7 +197,7 @@ namespace CoralTime.DAL.ConvertModelToView
                 reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor += groupingTimeEntries.TimeValues.TimeEstimated;
             }
 
-            reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor = reportTotalForView.ShowColumnIds.Contains((int) ShowColumnModelIds.ShowEstimatedTime)
+            reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor = reportTotalForView.ShowColumnIds.Contains((int) Constants.ShowColumnModelIds.ShowEstimatedTime)
                 ? reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor
                 : null;
 
@@ -201,16 +206,16 @@ namespace CoralTime.DAL.ConvertModelToView
 
         private static void HideDisplayNamesByGroupingAndShowColumnsIds(ReportTotalView reportTotalView)
         {
-            reportTotalView.DisplayNames.DisplayNameProject = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Project ? null : reportTotalView.DisplayNames.DisplayNameProject;
-            reportTotalView.DisplayNames.DisplayNameMember = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.User ? null : reportTotalView.DisplayNames.DisplayNameMember;
-            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Date ? null : reportTotalView.DisplayNames.DisplayNameDate;
-            reportTotalView.DisplayNames.DisplayNameClient = reportTotalView.GroupByTypeId == (int)ReportsGroupByIds.Client ? null : reportTotalView.DisplayNames.DisplayNameClient;
+            reportTotalView.DisplayNames.DisplayNameProject = reportTotalView.GroupByTypeId == (int)Constants.ReportsGroupByIds.Project ? null : reportTotalView.DisplayNames.DisplayNameProject;
+            reportTotalView.DisplayNames.DisplayNameMember = reportTotalView.GroupByTypeId == (int)Constants.ReportsGroupByIds.User ? null : reportTotalView.DisplayNames.DisplayNameMember;
+            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.GroupByTypeId == (int)Constants.ReportsGroupByIds.Date ? null : reportTotalView.DisplayNames.DisplayNameDate;
+            reportTotalView.DisplayNames.DisplayNameClient = reportTotalView.GroupByTypeId == (int)Constants.ReportsGroupByIds.Client ? null : reportTotalView.DisplayNames.DisplayNameClient;
 
-            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowDate) ? reportTotalView.DisplayNames.DisplayNameDate : null;
-            reportTotalView.DisplayNames.DisplayNameNotes = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowNotes) ? reportTotalView.DisplayNames.DisplayNameNotes : null;
-            reportTotalView.DisplayNames.DisplayNameTimeFrom = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeFrom : null;
-            reportTotalView.DisplayNames.DisplayNameTimeTo = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeTo : null;
-            reportTotalView.DisplayNames.DisplayNameTimeEstimated = reportTotalView.ShowColumnIds.Contains((int)ShowColumnModelIds.ShowEstimatedTime) ? reportTotalView.DisplayNames.DisplayNameTimeEstimated : null;
+            reportTotalView.DisplayNames.DisplayNameDate = reportTotalView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowDate) ? reportTotalView.DisplayNames.DisplayNameDate : null;
+            reportTotalView.DisplayNames.DisplayNameNotes = reportTotalView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowNotes) ? reportTotalView.DisplayNames.DisplayNameNotes : null;
+            reportTotalView.DisplayNames.DisplayNameTimeFrom = reportTotalView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeFrom : null;
+            reportTotalView.DisplayNames.DisplayNameTimeTo = reportTotalView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowStartFinish) ? reportTotalView.DisplayNames.DisplayNameTimeTo : null;
+            reportTotalView.DisplayNames.DisplayNameTimeEstimated = reportTotalView.ShowColumnIds.Contains((int)Constants.ShowColumnModelIds.ShowEstimatedTime) ? reportTotalView.DisplayNames.DisplayNameTimeEstimated : null;
         }
     }
 }

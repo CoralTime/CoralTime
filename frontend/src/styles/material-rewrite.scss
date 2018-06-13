@@ -1,5 +1,6 @@
 .cdk-overlay-dark-backdrop {
   position: fixed;
+  background: rgb(0, 0, 0);
 }
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
@@ -136,7 +137,7 @@
 }
 
 .mat-checkbox-label, .mat-radio-label-content {
-  font-family: $robotoRegular;
+  font-family: $baseFontFamily;
 }
 
 .cdk-overlay-container {

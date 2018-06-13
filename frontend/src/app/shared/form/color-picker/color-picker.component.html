@@ -1,16 +1,10 @@
-<!--Added to allow select be focused-->
-<input class="ct-input-hidden-control" (focus)="toggleControl()">
-<div class="ct-color-picker" [class.ct-control-opened]="isOpen" [canClickOverlay]="canClickOverlay"
-     (clickOutside)="closeControl()">
-    <div class="ct-color-value" (click)="toggleControl()">
-        <span class="ct-color-circle ct-color-{{ selectedColor }}"></span>
-        <mat-icon title="Color">{{isOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</mat-icon>
-    </div>
-    <div class="ct-color-picker-popup">
-        <mat-option *ngFor="let color of options" [value]="color" role="option"
-                    (click)="selectColor(color)"
-                    [ngClass]="{ 'mat-option': true, 'mat-selected': isColorSelected(color)}">
-            <span class="ct-color-circle ct-color-{{color}}"></span>
-        </mat-option>
-    </div>
+<div class="ct-color-picker">
+    <p-colorPicker [ngModel]="bgColor"
+                   (onChange)="writeValue($event.value)" #colorPicker></p-colorPicker>
+    <input class="ct-input"
+           [name]="name"
+           [disabled]="disabled"
+           [(ngModel)]="modelValue"
+           [textMask]="{mask: colorMask, guide: false, keepCharPositions: true}"
+           (ngModelChange)="writeValue(modelValue)">
 </div>

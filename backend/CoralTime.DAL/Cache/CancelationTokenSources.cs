@@ -1,65 +1,51 @@
 ﻿using CoralTime.DAL.Models;
 using System.Collections.Generic;
+using System.Text;
+using CoralTime.DAL.Models.Member;
+using CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.DAL.Cache
 {
     public static class CancelationTokenSources
     {
         private const string Prefix = "cts_";
-        private static readonly string ProjectClassName = Prefix + typeof(Project).Name;
-        private static readonly string ClientClassName = Prefix + typeof(Client).Name;
-        private static readonly string MemberClassName = Prefix + typeof(Member).Name;
-        private static readonly string TaskTypeClassName = Prefix + typeof(TaskType).Name;
-        private static readonly string TimeEntryClassName = Prefix + typeof(TimeEntry).Name;
-        private static readonly string MemberProjectRoleClassName = Prefix + typeof(MemberProjectRole).Name;
-        private static readonly string ApplicationUserClassName = Prefix + typeof(ApplicationUser).Name;
-        private static readonly string MemberAvatarClassName = Prefix + typeof(MemberImage).Name;
-        private static readonly string ReportsSettingsClassName = Prefix + typeof(ReportsSettings).Name;
+        private static readonly string ProjectClassName = new StringBuilder(Prefix + typeof(Project).Name).ToString();
+        private static readonly string ClientClassName = new StringBuilder(Prefix + typeof(Client).Name).ToString();
+        private static readonly string MemberClassName = new StringBuilder(Prefix + typeof(Member).Name).ToString();
+        private static readonly string TaskTypeClassName = new StringBuilder(Prefix + typeof(TaskType).Name).ToString();
+        private static readonly string TimeEntryClassName = new StringBuilder(Prefix + typeof(TimeEntry).Name).ToString();
+        private static readonly string MemberProjectRoleClassName = new StringBuilder(Prefix + typeof(MemberProjectRole).Name).ToString();
+        private static readonly string ApplicationUserClassName = new StringBuilder(Prefix + typeof(ApplicationUser).Name).ToString();
+        private static readonly string MemberAvatarClassName = new StringBuilder(Prefix + typeof(MemberImage).Name).ToString();
+        private static readonly string ReportsSettingsClassName = new StringBuilder(Prefix + typeof(ReportsSettings).Name).ToString();
 
-        public static List<string> GetCancelationTokenSourcesNames()
+        public static List<string> GetCancelationTokenSourcesNames() => new List<string>
         {
-            return new List<string>
-            {
-                ProjectClassName,
-                ClientClassName,
-                MemberClassName,
-                TaskTypeClassName,
-                TimeEntryClassName,
-                MemberProjectRoleClassName,
-                ApplicationUserClassName,
-                MemberAvatarClassName,
-                ReportsSettingsClassName
-            };
-        }
-
+            ProjectClassName,
+            ClientClassName,
+            MemberClassName,
+            TaskTypeClassName,
+            TimeEntryClassName,
+            MemberProjectRoleClassName,
+            ApplicationUserClassName,
+            MemberAvatarClassName,
+            ReportsSettingsClassName
+        };
+    
         public static List<string> GetNamesCancelationTokenSourcesForType<T>()
         {
             var names = new List<string>();
-            var typeName = Prefix + typeof(T).Name;
+            var typeName = new StringBuilder(Prefix + typeof(T).Name).ToString();
+
+            // Has relation with AppUser 
+            if (typeName == ApplicationUserClassName)
+            {
+                names.AddRange(new List<string> { typeName, MemberClassName });
+            }
 
             if (typeName == ProjectClassName)
             {
                 names.AddRange(new List<string> { typeName, ApplicationUserClassName, ClientClassName, MemberProjectRoleClassName, MemberClassName, TaskTypeClassName });
-            }
-
-            if (typeName == ClientClassName)
-            {
-                names.AddRange(new List<string> { typeName });
-            }
-
-            if (typeName == MemberClassName)
-            {
-                names.AddRange(new List<string> { typeName, ApplicationUserClassName });
-            }
-
-            if (typeName == TaskTypeClassName)
-            {
-                names.AddRange(new List<string> { typeName, ProjectClassName });
-            }
-
-            if (typeName == TimeEntryClassName)
-            {
-                names.AddRange(new List<string> { typeName, ProjectClassName, TaskTypeClassName, MemberClassName, MemberProjectRoleClassName, ApplicationUserClassName });
             }
 
             if (typeName == MemberProjectRoleClassName)
@@ -67,9 +53,15 @@ namespace CoralTime.DAL.Cache
                 names.AddRange(new List<string> { typeName, ProjectClassName, MemberClassName, ApplicationUserClassName });
             }
 
-            if (typeName == ApplicationUserClassName)
+            // Has relation with Member 
+            if (typeName == MemberClassName)
             {
-                names.AddRange(new List<string> { typeName, MemberClassName });
+                names.AddRange(new List<string> { typeName, ApplicationUserClassName });
+            }
+
+            if (typeName == TimeEntryClassName)
+            {
+                names.AddRange(new List<string> { typeName, ProjectClassName, TaskTypeClassName, MemberClassName, MemberProjectRoleClassName, ApplicationUserClassName });
             }
 
             if (typeName == MemberAvatarClassName)
@@ -80,6 +72,17 @@ namespace CoralTime.DAL.Cache
             if (typeName == ReportsSettingsClassName)
             {
                 names.AddRange(new List<string> { typeName, MemberClassName });
+            }
+
+            // Separate Entities
+            if (typeName == TaskTypeClassName)
+            {
+                names.AddRange(new List<string> { typeName, ProjectClassName });
+            }
+
+            if (typeName == ClientClassName)
+            {
+                names.AddRange(new List<string> { typeName });
             }
 
             return names;

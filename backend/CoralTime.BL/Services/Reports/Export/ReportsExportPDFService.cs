@@ -1,9 +1,9 @@
-﻿using CoralTime.ViewModels.Reports;
-using CoralTime.ViewModels.Reports.Responce.Export;
+﻿using CoralTime.ViewModels.Reports.Responce.Export;
 using RazorLight;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
 using WkWrap.Core;
 
 namespace CoralTime.BL.Services.Reports.Export

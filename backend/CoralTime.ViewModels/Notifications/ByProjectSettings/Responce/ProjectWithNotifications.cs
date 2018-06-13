@@ -1,4 +1,4 @@
-﻿namespace CoralTime.ViewModels.Notifications
+﻿namespace CoralTime.ViewModels.Notifications.ByProjectSettings.Responce
 {
     public class ProjectWithNotifications
     {

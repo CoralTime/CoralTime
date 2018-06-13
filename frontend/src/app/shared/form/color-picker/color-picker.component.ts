@@ -1,36 +1,58 @@
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Component, Input, Output, EventEmitter, forwardRef, HostListener } from '@angular/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-
-export const COLOR_PICKER_CONTROL_VALUE_ACCESSOR: any = {
-	provide: NG_VALUE_ACCESSOR,
-	useExisting: forwardRef(() => ColorPickerComponent),
-	multi: true
-};
+import { Component, Input, Output, EventEmitter, forwardRef, ViewChild, AfterContentInit } from '@angular/core';
+import { ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
+import { ColorPicker } from 'primeng/primeng';
 
 export class ColorPickerChange {
 	source: ColorPickerComponent;
-	value: number;
+	value: string;
+}
+
+export const GRAY_COLOR = '#d7dee2';
+
+export function hexToNumber(hex: string): number {
+	return parseInt(((hex.indexOf('#') > -1) ? hex.substring(1) : hex), 16);
+}
+
+export function numberToHex(value: number, showOriginal?: boolean): string {
+	let res = value.toString(16);
+
+	if (showOriginal) {
+		return '#' + res;
+	}
+
+	return res && res.length === 6 ? '#' + res : GRAY_COLOR;
 }
 
 @Component({
 	selector: 'ct-color-picker',
 	templateUrl: 'color-picker.component.html',
-	providers: [COLOR_PICKER_CONTROL_VALUE_ACCESSOR]
+	providers: [
+		{
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: forwardRef(() => ColorPickerComponent),
+			multi: true
+		},
+		{
+			provide: NG_VALIDATORS,
+			useExisting: forwardRef(() => ColorPickerComponent),
+			multi: true
+		}
+	]
 })
 
-export class ColorPickerComponent implements ControlValueAccessor {
-	@Input('canClickOverlay') canClickOverlay: boolean = false;
-	@Input('name') name: string;
-	@Input('options') options: any[];
+export class ColorPickerComponent implements ControlValueAccessor, Validator, AfterContentInit {
+	@Input() name: string;
 
-	@Output() change: EventEmitter<ColorPickerChange> = new EventEmitter<ColorPickerChange>();
+	@Input('ngModel')
+	get bgColor(): string {
+		return this._bgColor;
+	};
 
-	isOpen: boolean = false;
-	oldSelectedColor: number;
-	selectedColor: number;
-
-	private _disabled: boolean = false;
+	set bgColor(value: string) {
+		this.modelValue = value;
+		this._bgColor = this.isColorValid(value) ? value : this._bgColor || GRAY_COLOR;
+	};
 
 	@Input()
 	get disabled(): boolean {
@@ -41,33 +63,39 @@ export class ColorPickerComponent implements ControlValueAccessor {
 		this._disabled = coerceBooleanProperty(value);
 	}
 
-	private _controlValueAccessorChangeFn: (value: any) => void = () => {};
+	@Output() change: EventEmitter<ColorPickerChange> = new EventEmitter<ColorPickerChange>();
+	@ViewChild('colorPicker') colorPicker: ColorPicker;
+
+	colorMask = ['#', /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/];
+	modelValue: string;
+
+	private _bgColor: string;
+	private _disabled: boolean;
+	private controlValueAccessorChangeFn: (value: any) => void = (value: any) => {};
 	private onTouched: () => any = () => {};
 
-	constructor() {
+	ngAfterContentInit() {
+		this.colorPicker.updateColorSelector = this.updateColorSelector.bind(this);
 	}
 
-	isColorSelected(color: number): boolean {
-		return this.selectedColor === color;
-	}
-
-	selectColor(option: any) {
-		this.selectedColor = option;
-		this.onTouched();
-		this.closeControl();
-
-		if (option !== this.oldSelectedColor) {
-			this._emitChangeEvent();
-		}
+	updateColorSelector(): void {
+		let that = this.colorPicker;
+		that.colorSelectorViewChild.nativeElement.style.backgroundColor = '#' + that.HSBtoHEX({
+			h: that.value.h,
+			s: 100,
+			b: 100
+		});
 	}
 
 	/**
 	 * Implemented as part of ControlValueAccessor.
 	 */
-	writeValue(selectedColor: any = null) {
-		this.selectedColor = selectedColor;
-		if (this.selectedColor) {
-			this._controlValueAccessorChangeFn(this.selectedColor);
+	writeValue(value: string) {
+		this.modelValue = value;
+		this.emitChangeEvent();
+
+		if (this.isColorValid(value)) {
+			this.bgColor = value;
 		}
 	}
 
@@ -75,7 +103,7 @@ export class ColorPickerComponent implements ControlValueAccessor {
 	 * Implemented as part of ControlValueAccessor.
 	 */
 	registerOnChange(fn: (value: any) => void) {
-		this._controlValueAccessorChangeFn = fn;
+		this.controlValueAccessorChangeFn = fn;
 	}
 
 	/**
@@ -92,69 +120,25 @@ export class ColorPickerComponent implements ControlValueAccessor {
 		this.disabled = isDisabled;
 	}
 
-	closeControl(): void {
-		this.isOpen = false;
+	/**
+	 * Implemented as part of Validator.
+	 */
+	validate(c: FormControl): { [key: string]: any } {
+		return (this.isColorValid(this.modelValue)) ? null : {
+			colorInvalid: true
+		};
 	}
 
-	openControl(): void {
-		this.isOpen = true;
-		this.oldSelectedColor = this.selectedColor;
+	private isColorValid(value: string): boolean {
+		return !!value && /^#?([a-fA-F0-9]{6})$/.test(value);
 	}
 
-	toggleControl(): void {
-		if (!this._disabled) {
-			if (this.isOpen) {
-				this.closeControl();
-			} else {
-				this.openControl();
-			}
-		}
-	}
-
-	private _emitChangeEvent() {
+	private emitChangeEvent() {
 		let event = new ColorPickerChange();
 		event.source = this;
-		event.value = this.selectedColor;
+		event.value = this.modelValue;
 
-		this._controlValueAccessorChangeFn(this.selectedColor);
+		this.controlValueAccessorChangeFn(this.modelValue);
 		this.change.emit(event);
-	}
-
-	@HostListener('document:keydown', ['$event'])
-	onKeyDown(event: KeyboardEvent): void {
-		if (!this.isOpen) {
-			return;
-		}
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		let maxValue = this.options.length - 1;
-		let halfOfMaxValue = Math.ceil(maxValue / 2);
-
-		if (event.key === 'ArrowDown') {
-			this.selectedColor = this.selectedColor < halfOfMaxValue ? this.selectedColor + halfOfMaxValue : this.selectedColor;
-			return;
-		}
-
-		if (event.key === 'ArrowUp') {
-			this.selectedColor = +this.selectedColor >= halfOfMaxValue ? this.selectedColor - halfOfMaxValue : this.selectedColor;
-			return;
-		}
-
-		if (event.key === 'ArrowLeft') {
-			this.selectedColor = Math.max(+this.selectedColor - 1, 0);
-			return;
-		}
-
-		if (event.key === 'ArrowRight') {
-			this.selectedColor = Math.min(+this.selectedColor + 1, maxValue);
-			return;
-		}
-
-		if (event.key === 'Enter') {
-			this.toggleControl();
-			return;
-		}
 	}
 }

@@ -1,3 +1,5 @@
+import { GRAY_COLOR, hexToNumber } from '../shared/form/color-picker/color-picker.component';
+
 export class Project {
 	clientId: number;
 	clientName: string;
@@ -18,26 +20,22 @@ export class Project {
 	tasksCount: number;
 
 	constructor(data = null) {
-		if (!data) {
-			return;
-		}
-
-		this.clientId = data.clientId;
-		this.clientName = data.clientName;
-		this.clientIsActive = data.clientIsActive;
-		this.color = data.color ? data.color : 0;
-		this.daysBeforeStopEditTimeEntries = data.daysBeforeStopEditTimeEntries;
-		this.description = data.description;
-		this.id = data.id;
-		this.isActive = data.isActive;
-		this.isCurrentUserOnProject = data.isCurrentUserOnProject;
-		this.isNotificationEnabled = data.isNotificationEnabled;
-		this.isPrivate = data.isPrivate;
-		this.isTimeLockEnabled = data.isTimeLockEnabled;
-		this.lockPeriod = data.lockPeriod;
-		this.notificationDay = data.notificationDay;
-		this.membersCount = data.membersCount;
-		this.name = data.name;
-		this.tasksCount = data.tasksCount;
+		this.clientId = data && data.clientId;
+		this.clientName = data && data.clientName;
+		this.clientIsActive = data && data.clientIsActive;
+		this.color = data && data.color || hexToNumber(GRAY_COLOR);
+		this.daysBeforeStopEditTimeEntries = data && data.daysBeforeStopEditTimeEntries;
+		this.description = data && data.description;
+		this.id = data && data.id;
+		this.isActive = data && data.isActive;
+		this.isCurrentUserOnProject = data && data.isCurrentUserOnProject;
+		this.isNotificationEnabled = data && data.isNotificationEnabled;
+		this.isPrivate = data && data.isPrivate;
+		this.isTimeLockEnabled = data && data.isTimeLockEnabled;
+		this.lockPeriod = data && data.lockPeriod;
+		this.notificationDay = data && data.notificationDay;
+		this.membersCount = data && data.membersCount;
+		this.name = data && data.name;
+		this.tasksCount = data && data.tasksCount;
 	}
 }

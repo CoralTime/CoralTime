@@ -1,9 +1,9 @@
 using CoralTime.BL.Interfaces;
-using CoralTime.ViewModels.Member;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using CoralTime.ViewModels.Member.MemberPasswordView;
 using static CoralTime.Common.Constants.Constants;
 using static CoralTime.Common.Constants.Constants.Routes;
 

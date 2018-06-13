@@ -67,7 +67,7 @@ namespace CoralTime.Api.v1.Odata.Projects
         // POST api/v1/odata/Projects
         [Authorize(Roles = ApplicationRoleAdmin)]
         [HttpPost]
-        public IActionResult Create([FromBody]ProjectView projectData)
+        public IActionResult Create([FromBody]dynamic projectData)
         {
             if (!ModelState.IsValid)
             {

@@ -1,5 +1,6 @@
 <form #entryTimeForm="ngForm" entryTimeFilled
-      class="ct-form-container ct-container-color-{{currentTimeEntry.color}}">
+      class="ct-form-container ct-container-color"
+      [ngStyle]="{color: numberToHex(currentTimeEntry.color)}">
     <!--Added to allow form be focused-->
     <input class="ct-input-hidden-control" autofocus>
     <div class="ct-title">
@@ -114,10 +115,9 @@
         </div>
     </div>
     <div class="ct-form-actions clearfix">
-        <button mat-button
-                class="ct-submit mat-button ct-color-{{currentTimeEntry.color}}"
+        <button mat-button class="ct-submit mat-button"
                 (click)="submit()"
-                [disabled]="entryTimeForm.invalid || entryTimeForm.pristine || isRequestLoading">Done
+                [disabled]="entryTimeForm.invalid || isRequestLoading">Done
         </button>
         <button type="button" class="ct-close" (click)="closeForm()" ctClickClose>Cancel</button>
     </div>

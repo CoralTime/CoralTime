@@ -1,15 +1,15 @@
+using System;
 using CoralTime.BL.Interfaces;
+using CoralTime.Common.Constants;
 using CoralTime.ViewModels.TimeEntries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using static CoralTime.Common.Constants.Constants.Routes;
 
-namespace CoralTime.Api.v1.Odata
+namespace CoralTime.Api.v1
 {
     [Authorize]
-    [Route(BaseControllerRoute)]
+    [Route(Constants.Routes.BaseControllerRoute)]
     public class TimeEntriesController : BaseController<TimeEntriesController, ITimeEntryService>
     {
         public TimeEntriesController(ITimeEntryService service, ILogger<TimeEntriesController> logger)
@@ -20,7 +20,7 @@ namespace CoralTime.Api.v1.Odata
         public IActionResult Get(DateTimeOffset dateBegin, DateTimeOffset dateEnd) => new JsonResult(_service.GetAllTimeEntries(dateBegin, dateEnd));
 
         // GET api/v1/odata/TimeEntries(2)
-        [HttpGet(IdRoute)]
+        [HttpGet(Constants.Routes.IdRoute)]
         public IActionResult GetById(int id) => new JsonResult(_service.GetById(id));
 
         // POST api/v1/odata/TimeEntries
@@ -28,7 +28,7 @@ namespace CoralTime.Api.v1.Odata
         public IActionResult Create([FromBody] TimeEntryView timeEntryView) => new JsonResult(_service.Create(timeEntryView));
 
         // PUT api/v1/odata/TimeEntries(2)
-        [HttpPut(IdRoute)]
+        [HttpPut(Constants.Routes.IdRoute)]
         public IActionResult Update(int id, [FromBody]TimeEntryView timeEntryView)
         {
             timeEntryView.Id = id;
@@ -36,7 +36,7 @@ namespace CoralTime.Api.v1.Odata
         }
 
         // DELETE api/v1/odata/TimeEntries(1)
-        [HttpDelete(IdRoute)]
+        [HttpDelete(Constants.Routes.IdRoute)]
         public IActionResult Delete(int id)
         {
             _service.Delete(id);

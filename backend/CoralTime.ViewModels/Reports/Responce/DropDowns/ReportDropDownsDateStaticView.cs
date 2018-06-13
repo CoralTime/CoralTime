@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy
+namespace CoralTime.ViewModels.Reports.Responce.DropDowns
 {
     public class ReportDropDownsDateStaticView : ReportCommonDropDownsView
     {

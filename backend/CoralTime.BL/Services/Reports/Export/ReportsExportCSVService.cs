@@ -1,7 +1,4 @@
-﻿using CoralTime.ViewModels.Reports;
-using System.Collections.Generic;
-
-namespace CoralTime.BL.Services.Reports.Export
+﻿namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService
     {

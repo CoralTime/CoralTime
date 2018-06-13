@@ -12,94 +12,42 @@ namespace CoralTime.DAL.Cache
         private const int SlidingExpirationTime = 10000; //TODO: will be refactored?
         private const int AbsoluteExpirationTime = 10000; //TODO: Can this be removed?
         private static readonly object LockObject = new object();
-        private IMemoryCache _cache;
+        private IMemoryCache _memoryCache;
 
         public CacheManagerInProcess(IMemoryCache memoryCache)
         {
-            _cache = memoryCache;
+            _memoryCache = memoryCache;
 
             // Add Types Cancelation Sources
             var cancellationTokenSources = CancelationTokenSources.GetCancelationTokenSourcesNames();
-            cancellationTokenSources.ForEach(key => _cache.Set(key, new CancellationTokenSource()));
+            cancellationTokenSources.ForEach(key => _memoryCache.Set(key, new CancellationTokenSource()));
         }
 
-        #region Linked.
-
-        public void LinkedPut<T>(string cacheKey, T item, DateTime? absoluteExpiration = null, TimeSpan? slidingExpiration = null) where T : class
-        {
-            lock (LockObject)
-            {
-                var slidingExpirationValue = slidingExpiration ?? TimeSpan.FromMinutes(SlidingExpirationTime);
-                var absoluteExpirationTimeValue = absoluteExpiration ?? DateTime.Now + TimeSpan.FromMinutes(AbsoluteExpirationTime);
-
-                // Set cache options.
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                {
-                    AbsoluteExpiration = absoluteExpirationTimeValue,
-                    SlidingExpiration = slidingExpirationValue
-                };
-                var tokens = GetCancellationTokens<T>();
-                tokens.ForEach(t=> cacheEntryOptions.AddExpirationToken(t));
-                // Save data in cache.
-                _cache.Set<T>(cacheKey, item, cacheEntryOptions);
-            }
-        }
-
-        public void LinkedPutList<T>(string key, List<T> data, DateTime? absoluteExpiration = null, TimeSpan? slidingExpiration = null) where T : class
-        {
-            lock (LockObject)
-            {
-                var slidingExpirationValue = slidingExpiration ?? TimeSpan.FromMinutes(SlidingExpirationTime);
-                var absoluteExpirationTimeValue = absoluteExpiration ?? DateTime.Now + TimeSpan.FromMinutes(AbsoluteExpirationTime);
-
-                // Set cache options.
-                var cacheEntryOptions = new MemoryCacheEntryOptions()
-                {
-                    AbsoluteExpiration = absoluteExpirationTimeValue,
-                    SlidingExpiration = slidingExpirationValue
-                };
-
-                var tokens = GetCancellationTokens<T>();
-                tokens.ForEach(t => cacheEntryOptions.AddExpirationToken(t));
-
-                // Save data in cache.
-                _cache.Set(key, data, cacheEntryOptions);
-            }
-        }
-
-        public void LinkedCacheClear<T>()
-        {
-            var listSources = CancelationTokenSources.GetNamesCancelationTokenSourcesForType<T>();
-            lock (LockObject)
-            {
-                listSources.ForEach(ClearItemByCancellationToken);
-            }
-        }
-
-        #endregion
-
-        #region Single.
-
-        public List<T> CachedListGet<T>(string cacheKey) where T : class
+        public List<T> GetList<T>(string cacheKey) where T : class
         {
             List<T> item;
             lock (LockObject)
             {
-                item = _cache.Get(cacheKey) as List<T>;
+                item = _memoryCache.Get(cacheKey) as List<T>;
             }
 
             return item;
         }
 
+        //TODO rewrite!
         public T Get<T>(string cacheKey, Func<T> funcCallBack, DateTime? absoluteExpiration = null, TimeSpan? slidingExpiration = null) where T : class
         {
             T item;
+
             lock (LockObject)
             {
-                item = _cache.Get(cacheKey) as T;
+                item = _memoryCache.Get(cacheKey) as T;
             }
 
-            if (item != null) { return item; }
+            if (item != null)
+            {
+                return item;
+            }
 
             item = funcCallBack();
 
@@ -115,7 +63,7 @@ namespace CoralTime.DAL.Cache
                     SlidingExpiration = slidingExpirationValue
                 };
 
-                item = _cache.Set(cacheKey, item, cacheEntryOptions);
+                item = _memoryCache.Set(cacheKey, item, cacheEntryOptions);
             }
 
             return item;
@@ -126,19 +74,89 @@ namespace CoralTime.DAL.Cache
             T item;
             lock (LockObject)
             {
-                item = _cache.Get(cacheKey) as T;
+                item = _memoryCache.Get(cacheKey) as T;
             }
 
             return item;
         }
 
-        public void Remove(string key)
+        public void RemoveByKey(string key)
         {
             lock (LockObject)
             {
-                _cache.Remove(key);
+                _memoryCache.Remove(key);
             }
         }
+
+        public void RemoveByKeys(IEnumerable<string> keys)
+        {
+            lock (LockObject)
+            {
+                foreach (var key in keys)
+                {
+                    RemoveByKey(key);
+                }
+            }
+        }
+
+        #region Linked.
+
+        public void PutLinked<T>(string cacheKey, T entity, DateTime? absoluteExpiration = null, TimeSpan? slidingExpiration = null) where T : class
+        {
+            lock (LockObject)
+            {
+                var slidingExpirationValue = slidingExpiration ?? TimeSpan.FromMinutes(SlidingExpirationTime);
+                var absoluteExpirationTimeValue = absoluteExpiration ?? DateTime.Now + TimeSpan.FromMinutes(AbsoluteExpirationTime);
+
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                {
+                    AbsoluteExpiration = absoluteExpirationTimeValue,
+                    SlidingExpiration = slidingExpirationValue
+                };
+
+                var tokens = GetCancellationTokens<T>();
+                tokens.ForEach(token => cacheEntryOptions.AddExpirationToken(token));
+                
+                // Save data in cache.
+                _memoryCache.Set<T>(cacheKey, entity, cacheEntryOptions);
+            }
+        }
+
+        public void PutLinkedList<T>(string cacheKey, List<T> linkedList, DateTime? absoluteExpiration = null, TimeSpan? slidingExpiration = null) where T : class
+        {
+            lock (LockObject)
+            {
+                var slidingExpirationValue = slidingExpiration ?? TimeSpan.FromMinutes(SlidingExpirationTime);
+                var absoluteExpirationTimeValue = absoluteExpiration ?? DateTime.Now + TimeSpan.FromMinutes(AbsoluteExpirationTime);
+
+                // Set cache options.
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                {
+                    AbsoluteExpiration = absoluteExpirationTimeValue,
+                    SlidingExpiration = slidingExpirationValue
+                };
+
+                var tokens = GetCancellationTokens<T>();
+                tokens.ForEach(token => cacheEntryOptions.AddExpirationToken(token));
+
+                // Save data in cache.
+                _memoryCache.Set(cacheKey, linkedList, cacheEntryOptions);
+            }
+        }
+
+        public void ClearLinkedLists<T>()
+        {
+            var listSources = CancelationTokenSources.GetNamesCancelationTokenSourcesForType<T>();
+            lock (LockObject)
+            {
+                listSources.ForEach(ClearItemByCancellationToken);
+            }
+        }
+
+        #endregion
+
+        #region Single.
 
         public void Put<T>(string cacheKey, T item, DateTime? absoluteExpiration = null, TimeSpan? slidingExpiration = null) where T : class
         {
@@ -155,7 +173,7 @@ namespace CoralTime.DAL.Cache
                 };
 
                 // Save data in cache.
-                _cache.Set<T>(cacheKey, item, cacheEntryOptions);
+                _memoryCache.Set<T>(cacheKey, item, cacheEntryOptions);
             }
         }
 
@@ -163,18 +181,7 @@ namespace CoralTime.DAL.Cache
         {
             lock (LockObject)
             {
-                _cache.Set(key, data, TimeSpan.FromMinutes(SlidingExpirationTime));
-            }
-        }
-
-        public void Remove(IEnumerable<string> keys)
-        {
-            lock (LockObject)
-            {
-                foreach (var key in keys)
-                {
-                    Remove(key);
-                }
+                _memoryCache.Set(key, data, TimeSpan.FromMinutes(SlidingExpirationTime));
             }
         }
 
@@ -182,9 +189,9 @@ namespace CoralTime.DAL.Cache
         {
             lock (LockObject)
             {
-                _cache.Dispose();
+                _memoryCache.Dispose();
                 var options = new MemoryCacheOptions();
-                _cache = new MemoryCache(options);
+                _memoryCache = new MemoryCache(options);
             }
         }
 
@@ -194,8 +201,8 @@ namespace CoralTime.DAL.Cache
         {
             var cts = GetCancellationTokenSource(cancellationTokenSourceName);
             cts.Cancel();
-            _cache.Remove(cancellationTokenSourceName);
-            _cache.Set(cancellationTokenSourceName, new CancellationTokenSource());
+            _memoryCache.Remove(cancellationTokenSourceName);
+            _memoryCache.Set(cancellationTokenSourceName, new CancellationTokenSource());
         }
 
         private List<CancellationChangeToken> GetCancellationTokens<T>()
@@ -206,7 +213,7 @@ namespace CoralTime.DAL.Cache
         
         private CancellationTokenSource GetCancellationTokenSource(string cancellationTokenSourceName)
         {
-            return _cache.Get<CancellationTokenSource>(cancellationTokenSourceName);
+            return _memoryCache.Get<CancellationTokenSource>(cancellationTokenSourceName);
         }
 
         private CancellationChangeToken GetCancellationChangeToken(string cancellationTokenSourceName)

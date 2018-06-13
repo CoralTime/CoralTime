@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoralTime.ViewModels.Reports
+namespace CoralTime.ViewModels.Reports.Request.ReportsSettingsView
 {
     public interface IReportsSettingsView
     {

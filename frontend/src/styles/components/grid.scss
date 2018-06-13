@@ -100,11 +100,12 @@
 
 .ct-manage-add {
   position: relative;
+  padding-left: 25px;
 
   &:before, &:after {
     position: absolute;
     content: '';
-    left: -17px;
+    left: 8px;
     top: 4px;
     width: 1px;
     height: 17px;
@@ -114,7 +115,7 @@
   &:after {
     height: 1px;
     width: 17px;
-    left: -25px;
+    left: 0;
     top: 12px;
   }
 }
@@ -214,7 +215,7 @@ tr:hover .ct-grid-settings {
       .ui-datatable-emptymessage {
         text-align: left !important;
         background: #fff !important;
-        padding-top: 30px;
+        padding-top: 15px;
       }
     }
 
@@ -244,7 +245,7 @@ tr:hover .ct-grid-settings {
       }
 
       tr, td, th {
-        background: transparent !important;
+        background: #ffffff !important;
         color: $grid-text;
         text-transform: capitalize;
         font-size: $baseFont;
@@ -297,20 +298,6 @@ tr:hover .ct-grid-settings {
     }
   }
 
-  .ct-color- {
-    border: 1px solid $form-border;
-  }
-
-  $colors: $color1, $color2, $color3, $color4;
-  $i: -1;
-  @each $color in $colors {
-    $i: $i + 1;
-
-    .ct-color-#{$i} {
-      border: 1px solid transparent;
-    }
-  }
-
   .ct-grid-link {
     cursor: pointer;
 
@@ -356,6 +343,7 @@ tr:hover .ct-grid-settings {
     background: white;
     border-radius: 12.5px;
     padding: 0 9px;
+    white-space: nowrap;
 
     span {
       color: transparent;

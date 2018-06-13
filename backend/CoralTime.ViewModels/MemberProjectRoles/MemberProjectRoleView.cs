@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using CoralTime.ViewModels.Projects;
 using CoralTime.ViewModels.Member;
-using CoralTime.ViewModels.Interfaces;
+using CoralTime.ViewModels.Member.MemberImage;
 
 namespace CoralTime.ViewModels.MemberProjectRoles
 {

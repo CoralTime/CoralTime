@@ -1,6 +1,7 @@
-﻿using CoralTime.ViewModels.Reports;
+﻿using CoralTime.DAL.Models.Member;
 using CoralTime.ViewModels.Reports.Request.Grid;
-using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
+using CoralTime.ViewModels.Reports.Responce.DropDowns;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
 
 namespace CoralTime.BL.Interfaces.Reports
 {
@@ -10,8 +11,10 @@ namespace CoralTime.BL.Interfaces.Reports
 
         ReportDropDownView GetReportsDropDowns();
 
-        ReportTotalView GetReportsGrid(ReportsGridView reportsGridView);
+        ReportTotalView GetReportsGrid(ReportsGridView reportsGridView, Member memberFromNotification = null);
 
         void CheckAndSaveCurrentQuery(ReportsGridView reportsGridView);
+
+        ReportTotalView InitializeReportTotalView(ReportsGridView reportsGridView);
     }
 }

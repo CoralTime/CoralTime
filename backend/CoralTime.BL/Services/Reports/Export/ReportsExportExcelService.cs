@@ -1,6 +1,5 @@
 ﻿using CoralTime.Common.Constants;
 using CoralTime.DAL.ConvertModelToView;
-using CoralTime.ViewModels.Reports;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
@@ -8,6 +7,9 @@ using NPOI.XSSF.UserModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems;
+using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items;
 
 namespace CoralTime.BL.Services.Reports.Export
 {
@@ -130,12 +132,15 @@ namespace CoralTime.BL.Services.Reports.Export
 
                     ++RowIndex;
 
-                    // List of Items
-                    foreach (var groupedItem in groupedItems.Items)
+                    if (!groupedItems.Items.Select(x => x.TaskId).Contains(Constants.MockId))
                     {
-                        CreateRowOfItems(reportTotalView, groupedItems, groupedItem, sheet, workbook);
+                        // List of Items
+                        foreach (var groupedItem in groupedItems.Items)
+                        {
+                            CreateRowOfItems(reportTotalView, groupedItems, groupedItem, sheet, workbook);
 
-                        ++RowIndex;
+                            ++RowIndex;
+                        }
                     }
 
                     // TOTAL FOR

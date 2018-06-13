@@ -1,19 +1,17 @@
-﻿using System.Collections.Generic;
-using CoralTime.DAL.Models;
+﻿using System.Linq;
+using CoralTime.DAL.Models.Member;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System.Linq;
 
-namespace CoralTime.DAL.Repositories
+namespace CoralTime.DAL.Repositories.Member
 {
-    public class MemberImageRepository: BaseRepository<MemberImage>
+    public class MemberImageRepository: GenericRepository<MemberImage>
     {
         public MemberImageRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<MemberImage> GetIncludes(IQueryable<MemberImage> query)
-        {
-            return query.Include(x => x.Member).Select(x => new MemberImage
+        public override IQueryable<MemberImage> GetIncludes(IQueryable<MemberImage> query) => query.Include(x => x.Member)
+            .Select(x => new MemberImage
             {
                 Id = x.Id,
                 Member = x.Member,
@@ -26,11 +24,7 @@ namespace CoralTime.DAL.Repositories
                 LastEditorUserId = x.LastEditorUserId,
                 LastUpdateDate = x.LastUpdateDate
             });
-        }
 
-        public MemberImage LinkedCacheGetByMemberId(int memberId)
-        {
-            return LinkedCacheGetList().FirstOrDefault(m => m.MemberId == memberId);
-        }
+        public MemberImage LinkedCacheGetByMemberId(int memberId) =>LinkedCacheGetList().FirstOrDefault(m => m.MemberId == memberId);
     }
 }

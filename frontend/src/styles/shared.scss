@@ -5,8 +5,8 @@ $smallFont: 12px;
 
 $button-font-size: 17px;
 
-$baseFontFamily: $robotoRegular;
-$navFontFamily: $roboto;
+$baseFontFamily: $muliFont;
+$navFontFamily: $muliFont;
 
 body, html {
   margin: 0;
@@ -93,6 +93,7 @@ h5 {
 .ui-column-title, .ct-input-label {
   font-family: inherit;
   font-size: $baseFont;
+  color: $nav-background;
 }
 
 .ct-input-label {
@@ -183,11 +184,12 @@ h5 {
   color: $nav-link-border;
   font-size: 16px;
   font-family: inherit;
-  line-height: 16px;
+  line-height: 16px !important;
   cursor: pointer;
   transition: .3s;
   display: inline-block;
   position: relative;
+  top: 25px;
 
   &:hover {
     color: $nav-background !important;
@@ -236,6 +238,10 @@ h5 {
   border-bottom: 1px dotted;
   text-decoration: none;
   cursor: pointer;
+}
+
+.ct-default-text {
+  color: $nav-background;
 }
 
 .mat-input-underline {

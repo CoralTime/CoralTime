@@ -1,7 +1,7 @@
-﻿using CoralTime.ViewModels.Reports.Request.Grid;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
-namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
+namespace CoralTime.ViewModels.Reports.Responce.DropDowns
 {
     public class ReportDropDownValues : ReportDropDowns
     {
