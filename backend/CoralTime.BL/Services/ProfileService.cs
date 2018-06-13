@@ -131,7 +131,7 @@ namespace CoralTime.BL.Services
 
         public MemberView PatchPreferences(MemberPreferencesView memberPreferencesView)
         {
-            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberCurrent.Id);
+            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberImpersonated.Id);
             memberByName.DefaultProjectId = memberPreferencesView.DefaultProjectId;
             memberByName.DefaultTaskId = memberPreferencesView.DefaultTaskId;
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;
