@@ -48,12 +48,12 @@
 
     </p-column>
 
-    <p-column *ngIf="showColumnIds.indexOf(4)> -1" styleClass="ct-cell-start" field="hours" header="Hours">
+    <p-column styleClass="ct-cell-start" field="hours" header="Hours">
         <ng-template let-item="rowData" pTemplate="body">
             <span *ngIf="gridData.groupByType.date">{{formatDate(gridData?.groupByType.date)}}</span>&nbsp;&nbsp;
             <span class="ct-estimated-label" *ngIf="item.timeValues.timeEstimated > 0">Estimated: {{getTimeString(item.timeValues.timeEstimated)}}</span>
-            <span class="ct-actual-label" *ngIf="getTimeString(item.timeValues.timeActual)">Actual: {{getTimeString(item.timeValues.timeActual)}}</span>
-            <div>
+            <span class="ct-actual-label" *ngIf="item.timeValues.timeActual > 0">Actual: {{getTimeString(item.timeValues.timeActual)}}</span>
+            <div *ngIf="showColumnIds.indexOf(4)> -1">
                 <span *ngIf="getTimeString(item.timeValues.timeFrom)">from {{getTimeString(item.timeValues.timeFrom, false, user.timeFormat === 12)}}</span>
                 <span *ngIf="item.timeValues.timeFrom == 0 && item.timeValues.timeTo">from 00:00</span>
                 <span *ngIf="getTimeString(item.timeValues.timeTo)"> to {{getTimeString(item.timeValues.timeTo, false, user.timeFormat === 12)}}</span>
