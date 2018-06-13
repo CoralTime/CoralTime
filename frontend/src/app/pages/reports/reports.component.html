@@ -152,8 +152,7 @@
                     <!--Current Week Summary-->
                     <!--</mat-expansion-panel-header>-->
 
-                    <!--&lt;!&ndash;<img src="http://www.conceptdraw.com/solution-park/resource/images/solutions/pie-charts/Graphs-and-Chatrs-Pie-Chart-Europe-Browser-Usage-Share.png"/>&ndash;&gt;-->
-                    <!--</mat-expansion-panel>-->
+                  <!--</mat-expansion-panel>-->
 
                 </mat-accordion>
             </div>
@@ -212,19 +211,10 @@
                     <label>Total Hours</label>
 
                     <div class="ct-total-hours-tracked">
-                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)" class="ct-estimated-label">&nbsp;&nbsp;Estimated: {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
+                        <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-estimated-label">&nbsp;&nbsp;Estimated: {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
                         <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-actual-label">Actual: {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
                     </div>
-
                 </div>
-
-
-                <!--<div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">-->
-                <!--<label>Total actual hours</label>-->
-                <!--<div class="ct-total-hours-tracked" *ngIf="showColumnIds?.indexOf(1) > -1">-->
-                <!--<span class="ct-actual-label">{{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>-->
-                <!--</div>-->
-                <!--</div>-->
             </div>
         </div>
     </div>
