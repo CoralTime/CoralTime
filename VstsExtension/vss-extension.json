@@ -1,0 +1,70 @@
+{
+	"manifestVersion": 1,
+	"id": "sample-extension",
+	"version": "0.1.21",
+	"name": "My first sample extension",
+	"description": "A sample Visual Studio Services extension.",
+	"publisher": "BoYar",
+	"targets": [
+		{
+			"id": "Microsoft.VisualStudio.Services"
+			}
+		],
+	"icons": {
+		"default": "images/icon.png"
+	 },
+	"contributions": [
+		{
+			"id": "BoYar.HelloWorld",
+			"type": "ms.vss-work-web.work-item-form-control",
+			"description": "Adds a 'Hello' hub to the Work hub group.",
+			"targets": [
+				"ms.vss-work-web.work-item-form"
+				],
+			"properties": {
+				"name": "Hello",
+				"order": 99,
+				"uri": "hello-world.html",
+				"height": 500 
+			}
+		},
+		{
+			"id": "BoYar.HelloWorldToolbar",
+			"type": "ms.vss-web.action",
+			"description": "Adds a 'Hello' hub to the Work hub group.",
+			"targets": [
+				"ms.vss-work-web.work-item-toolbar-menu"
+				],
+			"properties": {
+				"text": "Custom work item toolbar action",
+                "title": "ms.vss-work-web.work-item-toolbar-menu",
+                "icon": "images/iconToolbar.png",
+                "toolbarText": "Custom action 2",
+                "group": "actions",
+                "uri": "startTimerHtml.html",
+				"name": "StartTimer",
+                "registeredObjectId": "StartTimer"
+			}
+		}
+	],
+	"scopes": [
+		"vso.work"
+	],
+	"files": [
+		{
+			"path": "hello-world.html", "addressable": true
+		},
+		{
+			"path": "startTimerHtml.html", "addressable": true
+		},
+		{
+			"path": "scripts", "addressable": true
+		},
+		{
+			"path": "node_modules", "addressable": true
+		},
+		{
+			"path": "images", "addressable": true
+		}
+	]
+}
