@@ -15,7 +15,7 @@ namespace CoralTime.Common.Helpers
             return DateFormats.FirstOrDefault(x => x.DateFormatId == dateFormatId)?.DateFormatDotNet;
         }
 
-        public string GetDateFormaDotNetShortById(int dateFormatId)
+        public string GetDateFormatDotNetShortById(int dateFormatId)
         {
             return DateFormats.FirstOrDefault(x => x.DateFormatId == dateFormatId)?.DateFormatDotNetShort;
         }

@@ -1,14 +1,16 @@
-﻿using CoralTime.Common.Exceptions;
-using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Notifications;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoralTime.Common.Exceptions;
+using CoralTime.Common.Helpers;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Request.MemberWithProjectsLightIds;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Responce;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Responce.MemberWithProjectsLight;
 
-namespace CoralTime.BL.Services
+namespace CoralTime.BL.Services.Notifications
 {
     public partial class NotificationsService
     {
@@ -18,39 +20,25 @@ namespace CoralTime.BL.Services
 
             if (IsWorkDay(todayDate))
             {
-                await GetMembersWithNotificationsProjectsAsync(todayDate, baseUrl);
+                await SendToMemberNotificationsByProjectsSettingsAsync(todayDate, baseUrl);
             }
         }
 
-        private async Task GetMembersWithNotificationsProjectsAsync(DateTime todayDate, string baseUrl)
+        public async Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
         {
-            var currentHour = todayDate.TimeOfDay.Hours;
-
-            var members = Uow.MemberRepository.LinkedCacheGetList()
-                .Where(member => member.SendEmailTime == currentHour && member.MemberProjectRoles.Any(mpr => mpr.Project.IsNotificationEnabled && mpr.Project.IsActive && mpr.Project.IsPrivate && mpr.Project.NotificationDay > 0))
-                .Select(member => new
-                {
-                    MemberId = member.Id,
-                    MemberFullName = member.FullName,
-                    MemberDateFormatId = member.DateFormatId,
-                    MemberEmail = member.User.Email,
-
-                    Projects = member.MemberProjectRoles.Where(mpr => mpr.Project.IsNotificationEnabled && mpr.Project.IsActive && mpr.Project.IsPrivate && mpr.Project.NotificationDay > 0).Select(project => new
-                    {
-                        Id = project.Project.Id,
-                        Name = project.Project.Name,
-                        NotificationDay = project.Project.NotificationDay
-                    })
-                }).ToList();
+            var members = GetMembersWithProjectsNotification(memberWithProjectsIds);
 
             foreach (var member in members)
             {
-                var memberWithProjectsNotifications = new MemberWithProjecsNotifications
+                var memberWithProjectsNotificationsForEmail = new MemberWithProjecsNotificationsView
                 {
-                    MemberId = member.MemberId,
-                    MemberFullName = member.MemberFullName,
-                    MemberDateFormatId = member.MemberDateFormatId,
-                    MemberEmail = member.MemberEmail
+                    MemberLight = new MemberLightView
+                    {
+                        Id = member.Id,
+                        FullName = member.FullName,
+                        DateFormatId = member.DateFormatId,
+                        Email = member.Email
+                    }
                 };
 
                 var emailTextByProjectSettings = string.Empty;
@@ -60,8 +48,8 @@ namespace CoralTime.BL.Services
                 {
                     var editionPeriodDays = GetRangeNotificationDays(todayDate, project.NotificationDay, out var notificationPeriodFirstDay, out var notificationPeriodLastDay);
 
-                    var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQueryWithIncludes()
-                        .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.MemberId)
+                    var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQuery()
+                        .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.Id)
                         .Where(tEntry => tEntry.Date.Date >= notificationPeriodFirstDay && tEntry.Date.Date <= notificationPeriodLastDay)
                         .Select(tEntry => tEntry.Date)
                         .ToList();
@@ -85,15 +73,41 @@ namespace CoralTime.BL.Services
                             }
                         };
 
-                        memberWithProjectsNotifications.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
+                        memberWithProjectsNotificationsForEmail.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
                     }
 
-                    subjectByProjectSettings = CreateEmailSubjectByProjectSettings(memberWithProjectsNotifications.MemberEmail);
-                    emailTextByProjectSettings = CreateEmailTextForEmailByProjectSettings(baseUrl, memberWithProjectsNotifications);
+                    subjectByProjectSettings = CreateEmailSubjectByProjectSettings(memberWithProjectsNotificationsForEmail.MemberLight.Email);
+                    emailTextByProjectSettings = CreateEmailTextForEmailByProjectSettings(baseUrl, memberWithProjectsNotificationsForEmail);
                 }
 
-                await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotifications.MemberEmail, subjectByProjectSettings);
+                await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotificationsForEmail.MemberLight.Email, subjectByProjectSettings);
             }
+        }
+
+        public List<MemberWithProjectsLightView> GetMembersWithProjectsNotification(List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
+        {
+            var mprByMemberIdAndProjectIds = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
+                .Where(mpr => memberWithProjectsIds?.Select(memberId => memberId.MemberId).Contains(mpr.MemberId) ?? true)
+                .Where(mpr => memberWithProjectsIds?.Select(memberId => memberId.ProjectIds).Any(projectIds => projectIds.Contains(mpr.ProjectId)) ?? true)
+                .Where(mpr => mpr.Project.IsNotificationEnabled && mpr.Project.IsActive && mpr.Project.IsPrivate && mpr.Project.NotificationDay > 0);
+
+            var result = mprByMemberIdAndProjectIds.GroupBy(mpr => mpr.Member)
+                .Select(items => new MemberWithProjectsLightView
+                {
+                    Id = items.Key.Id,
+                    FullName = items.Key.FullName,
+                    DateFormatId = items.Key.DateFormatId,
+                    Email = items.Key.User.Email,
+
+                    Projects = items.Select(mpr => new ProjectLightView
+                    {
+                        Id = mpr.Project.Id,
+                        Name = mpr.Project.Name,
+                        NotificationDay = mpr.Project.NotificationDay
+                    }).ToList()
+                }).ToList();
+
+            return result;
         }
 
         private bool IsWorkDay(DateTime date) => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday;
@@ -139,16 +153,16 @@ namespace CoralTime.BL.Services
 
         private string CreateEmailSubjectByProjectSettings(string emailMember) => $"Reminder to fill time entry {emailMember} by Project Settigs";
 
-        private string CreateEmailTextForEmailByProjectSettings(string baseUrl, MemberWithProjecsNotifications memberWithProjecsNotifications)
+        private string CreateEmailTextForEmailByProjectSettings(string baseUrl, MemberWithProjecsNotificationsView memberWithProjecsNotifications)
         {
-            var sbEmailText = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberFullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
+            var sbEmailText = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberLight.FullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
 
             if (memberWithProjecsNotifications.ProjectsWithDatesEditing.Count > 1)
             {
                 sbEmailText.Append("the following projects:<br>");
             }
 
-            var dateFormatShort = new GetDateFormat().GetDateFormaDotNetShortById(memberWithProjecsNotifications.MemberDateFormatId);
+            var dateFormatShort = new GetDateFormat().GetDateFormatDotNetShortById(memberWithProjecsNotifications.MemberLight.DateFormatId);
 
             var indexCurrentProject = 0;
             foreach (var project in memberWithProjecsNotifications.ProjectsWithDatesEditing)
@@ -160,9 +174,7 @@ namespace CoralTime.BL.Services
                     sbEmailText.Append($"{++indexCurrentProject}. ");
                 }
 
-                var editionDaysFormat = string.Join(", </b><b>",
-                    project.EditionDays.EditionDays.Select(x => x.ToString(dateFormatShort, CultureInfo.InvariantCulture)));
-                var sbEditionDaysFormat = new StringBuilder($"<b>{editionDaysFormat}</b>");
+                var sbEditionDaysFormat = new StringBuilder($"<b>{string.Join(", </b><b>", project.EditionDays.EditionDays.Select(x => x.ToString(dateFormatShort, CultureInfo.InvariantCulture)))}</b>");
 
                 sbEmailText.Append($"<b>{project.ProjectWithDatesEditing.Name}</b> project for <b>{project.EditionDays.EditionDays.Length}</b> work{dayOrDays}: {sbEditionDaysFormat}.<br>");
             }

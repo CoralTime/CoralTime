@@ -37,7 +37,7 @@ namespace CoralTime.BL.Services
             IsTaskTypeNameHasChars(taskTypeView.Name);
             IsNameUnique(taskTypeView);
 
-            if (taskTypeView.ProjectId != null && !ApplicationUserCurrent.IsAdmin)
+            if (taskTypeView.ProjectId != null && !BaseMemberCurrent.User.IsAdmin)
             {
                 if (taskTypeView.ProjectId != null)
                 {
@@ -49,7 +49,7 @@ namespace CoralTime.BL.Services
 
                     var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
-                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == MemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == BaseMemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
                     if (memberProjectRole == null)
                     {
                         throw new CoralTimeForbiddenException("Forbidden");
@@ -91,7 +91,7 @@ namespace CoralTime.BL.Services
 
             #endregion We shouldn't change projectId for Tasks
 
-            if (taskTypeView.ProjectId != null && !ApplicationUserCurrent.IsAdmin)
+            if (taskTypeView.ProjectId != null && !BaseMemberCurrent.User.IsAdmin)
             {
                 var project = Uow.ProjectRepository.LinkedCacheGetById((int)taskTypeView.ProjectId);
                 if (project == null)
@@ -102,7 +102,7 @@ namespace CoralTime.BL.Services
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
                 var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
-                    .FirstOrDefault(r => r.MemberId == MemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                    .FirstOrDefault(r => r.MemberId == BaseMemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
 
                 if (memberProjectRole == null)
                 {
@@ -112,7 +112,7 @@ namespace CoralTime.BL.Services
 
             if (!taskTypeView.IsActive)
             {
-                var timeEntries = Uow.TimeEntryRepository.GetQueryWithIncludes()
+                var timeEntries = Uow.TimeEntryRepository.GetQuery()
                     .Where(t => t.TaskTypesId == taskType.Id && t.Date.Date == DateTime.Now.Date)
                     .ToList();
 

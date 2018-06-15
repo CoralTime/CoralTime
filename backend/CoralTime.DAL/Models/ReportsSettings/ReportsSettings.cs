@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoralTime.DAL.Models
+namespace CoralTime.DAL.Models.ReportsSettings
 {
-    public class ReportsSettings : LogChanges, IReportsSettings
+    public class ReportsSettings : LogChanges.LogChanges, IReportsSettings
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,7 +15,7 @@ namespace CoralTime.DAL.Models
         public int MemberId { get; set; }
 
         [ForeignKey("MemberId")]
-        public Member Member { get; set; }
+        public Member.Member Member { get; set; }
 
         public DateTime? DateFrom { get; set; }
 

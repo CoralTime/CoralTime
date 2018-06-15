@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.Common.Exceptions;
-using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.ConvertViewToModel;
-using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.DAL.Repositories;
-using CoralTime.ViewModels.Reports.Request.Grid;
+using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -14,16 +13,16 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         public ReportsSettingsService(UnitOfWork uow, IMapper mapper)
             : base(uow, mapper) { }
 
-        public void UpdateCurrentQuery(ReportsSettingsView reportsSettingsView, int memberImpersonatedId)
+        public void UpdateCurrentQuery(ReportsSettingsView reportsSettingsView)
         {
-            var reportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContext_ByMemberIdQueryName(memberImpersonatedId, reportsSettingsView.QueryName);
+            var reportsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdQueryName(BaseMemberImpersonated.Id, reportsSettingsView.QueryName);
             if (reportsSettings != null)
             {
-                ResetIsCustomQueryForAllQueryThisMember(memberImpersonatedId);
+                ResetIsCustomQueryForAllQueryThisMember();
 
-                reportsSettings.GetModel(reportsSettingsView, memberImpersonatedId);
+                reportsSettings.GetModel(reportsSettingsView, BaseMemberImpersonated.Id);
+
                 Uow.ReportsSettingsRepository.Update(reportsSettings);
-
                 Uow.Save();
                 Uow.ReportsSettingsRepository.LinkedCacheClear();
             }
@@ -37,16 +36,14 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             if (!IsDefaultQuery(reportsSettingsView.QueryName))
             {
-                var memberId = MemberImpersonated.Id;
-
-                var reportsSettings = Uow.ReportsSettingsRepository.GetEntityFromContext_ByMemberIdQueryName(memberId, reportsSettingsView.QueryName);
+                var reportsSettings = Uow.ReportsSettingsRepository.GetQueryByMemberIdQueryName(BaseMemberImpersonated.Id, reportsSettingsView.QueryName);
                 if (reportsSettings == null)
                 {
-                    ResetIsCustomQueryForAllQueryThisMember(memberId);
+                    ResetIsCustomQueryForAllQueryThisMember();
 
-                    reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, memberId);
+                    reportsSettings = new ReportsSettings().GetModel(reportsSettingsView, BaseMemberImpersonated.Id);
+
                     Uow.ReportsSettingsRepository.Insert(reportsSettings);
-
                     Uow.Save();
                     Uow.ReportsSettingsRepository.LinkedCacheClear();
                 }
@@ -63,7 +60,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         public void DeleteCustomQuery(int queryId)
         {
-            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetEntityFromContex_ByMemberIdQueryId(MemberImpersonated.Id, queryId);
+            var getReportsSettingsByid = Uow.ReportsSettingsRepository.GetQueryByMemberIdQueryId(BaseMemberImpersonated.Id, queryId);
 
             if (getReportsSettingsByid == null)
             {
@@ -74,7 +71,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 Uow.ReportsSettingsRepository.Delete(getReportsSettingsByid);
                 Uow.Save();
-
                 Uow.ReportsSettingsRepository.LinkedCacheClear();
             }
             else
@@ -83,14 +79,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private bool IsDefaultQuery(string queryName)
-        {
-            return string.IsNullOrEmpty(queryName);
-        }
+        private bool IsDefaultQuery(string queryName) => string.IsNullOrEmpty(queryName);
 
-        private void ResetIsCustomQueryForAllQueryThisMember(int memberId)
+        private void ResetIsCustomQueryForAllQueryThisMember()
         {
-            var allQueries = Uow.ReportsSettingsRepository.GetEntitiesFromContex_ByMemberId(memberId);
+            var allQueries = Uow.ReportsSettingsRepository.GetQueryByMemberId(BaseMemberImpersonated.Id);
             if (allQueries != null && allQueries.Count > 0)
             {
                 allQueries.ForEach(query => query.IsCurrentQuery = false);

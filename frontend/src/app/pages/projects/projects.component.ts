@@ -14,6 +14,7 @@ import { ProjectSettingsFormComponent } from './project-settings-form/project-se
 import { ProjectFormComponent } from './project-form/project-form.component';
 import { ProjectTasksComponent } from './project-tasks-form/project-tasks.component';
 import { ProjectUsersComponent } from './project-members-form/project-members.component';
+import { numberToHex } from '../../shared/form/color-picker/color-picker.component';
 
 @Component({
 	selector: 'ct-projects',
@@ -166,6 +167,10 @@ export class ProjectsComponent implements OnInit {
 
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
+	}
+
+	numberToHex(value: number): string {
+		return numberToHex(value);
 	}
 
 	onResize(): void {

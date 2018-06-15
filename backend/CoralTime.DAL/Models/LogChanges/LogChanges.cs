@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoralTime.DAL.Models
+namespace CoralTime.DAL.Models.LogChanges
 {
     public class LogChanges : ILogChanges
     {

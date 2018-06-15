@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Repositories;
 
 namespace CoralTime.BL.Services
@@ -9,14 +10,13 @@ namespace CoralTime.BL.Services
         protected UnitOfWork Uow { get; }
         protected IMapper Mapper { get; }
         
-        protected ApplicationUser ApplicationUserCurrent => Uow.ApplicationUserCurrent;
-        protected ApplicationUser ApplicationUserImpersonated => Uow.ApplicationUserImpersonated;
-        protected Member MemberCurrent => Uow.MemberCurrent;
-        protected Member MemberImpersonated => Uow.MemberImpersonated;
-        protected string CurrentUserName => Uow.CurrentUserName;
-        protected string ImpersonatedUserName => Uow.ImpersonatedUserName;
+        protected ApplicationUser BaseApplicationUserCurrent => Uow.MemberCurrent.User;
+        protected ApplicationUser BaseApplicationUserImpersonated => Uow.MemberImpersonated.User;
 
-        public BaseService(UnitOfWork uow, IMapper mapper)
+        protected Member BaseMemberCurrent => Uow.MemberCurrent;
+        protected Member BaseMemberImpersonated => Uow.MemberImpersonated;
+
+        protected BaseService(UnitOfWork uow, IMapper mapper = null)
         {
             Uow = uow;
             Mapper = mapper;

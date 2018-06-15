@@ -1,7 +1,7 @@
 ﻿using CoralTime.Common.Constants;
 using CoralTime.Common.Helpers;
-using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports.Request.Grid;
+using CoralTime.DAL.Models.ReportsSettings;
+using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
 namespace CoralTime.DAL.ConvertModelToView
 {

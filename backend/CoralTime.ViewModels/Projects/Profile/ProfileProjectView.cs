@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CoralTime.ViewModels.Profiles
+namespace CoralTime.ViewModels.Projects.Profile
 {
     public class ProfileProjectView
     {

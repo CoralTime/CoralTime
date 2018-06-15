@@ -1,9 +1,10 @@
 <i class="material-icons ct-lock-icon" *ngIf="!isTimeEntryAvailable"
    [title]="lockReason">lock</i>
-<ct-entry-time #form [timeEntry]="timeEntry"
+<ct-entry-time #form class="ct-border-color"
+               [ngStyle]="{color: numberToHex(timeEntry.color)}"
+               [timeEntry]="timeEntry"
                (timerUpdated)="updateTimer()"
-               (deleted)="deleteTimeEntry()"
-               class="ct-border-{{timeEntry.color}}"></ct-entry-time>
+               (deleted)="deleteTimeEntry()"></ct-entry-time>
 <div *ngIf="timeEntry.timeOptions.isFromToShow" class="ct-calendar-time-entry-period">
     {{setTimeString(timeEntry.timeValues.timeFrom, timeFormat === 12)}} - {{setTimeString(timeEntry.timeValues.timeTo, timeFormat === 12)}}
 </div>

@@ -5,25 +5,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class ProjectRoleRepository : BaseRepository<ProjectRole>
+    public class ProjectRoleRepository : GenericRepository<ProjectRole>
     {
         public ProjectRoleRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-        public int GetManagerRoleId()
-        {
-            return LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleManager).Id;
-        }
+        public override IQueryable<ProjectRole> GetIncludes(IQueryable<ProjectRole> query) => query;
 
-        public int GetMemberRoleId()
-        {
-            return LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleMember).Id;
-        }
+        public int GetManagerRoleId() => LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleManager).Id;
 
-        public ProjectRole GetMemberRole()
-        {
-            var memberRole = LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleMember);
-            return memberRole;
-        }
+        public int GetMemberRoleId() => LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleMember).Id;
+
+        public ProjectRole GetMemberRole() =>  LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleMember);
     }
 }

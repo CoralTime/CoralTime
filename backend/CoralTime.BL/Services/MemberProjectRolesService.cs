@@ -2,15 +2,14 @@
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertModelToView;
-using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.MemberProjectRoles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.BL.Services
 {
@@ -30,7 +29,7 @@ namespace CoralTime.BL.Services
         {
             var memberProjectRoleView = new List<MemberProjectRoleView>();
 
-            var memberByName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
+            //var memberByName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
 
             // Get MemberProjectRoles from DB.
             var allMemberProjectRoles = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -39,7 +38,7 @@ namespace CoralTime.BL.Services
 
             #region Constrain for admin:
 
-            if (memberByName.User.IsAdmin)
+            if (BaseMemberImpersonated.User.IsAdmin)
             {
                 // Add MemberProjectRoles from db to result.
                 memberProjectRoleView.AddRange(allMemberProjectRoles);
@@ -63,14 +62,14 @@ namespace CoralTime.BL.Services
 
             #region Constrain for Manager
 
-            if (memberByName.User.IsManager)
+            if (BaseMemberImpersonated.User.IsManager)
             {
                 var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
                 #region Get All projects ids where this member(not this user) has "manager role" at projects.
 
                 var targetedProjectIds = allMemberProjectRoles
-                    .Where(x => x.RoleId == managerRoleId && x.MemberId == memberByName.Id)
+                    .Where(x => x.RoleId == managerRoleId && x.MemberId == BaseMemberImpersonated.Id)
                     .Select(x => x.ProjectId)
                     .ToArray();
 
@@ -97,7 +96,7 @@ namespace CoralTime.BL.Services
             #region Constrain for user
 
             var resultForMember = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
-                .Where(p => p.MemberId == memberByName.Id && p.Project.IsActive)
+                .Where(p => p.MemberId == BaseMemberImpersonated.Id && p.Project.IsActive)
                 .Select(x => x.GetView(Mapper, _avatarService.GetUrlIcon(x.MemberId)))
                 .ToList();
 
@@ -203,17 +202,6 @@ namespace CoralTime.BL.Services
 
         public MemberProjectRoleView Create(MemberProjectRoleView memberProjectRoleView)
         {
-            var currentMember = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (currentMember == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {ImpersonatedUserName} not found.");
-            }
-
-            if (!currentMember.User.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {ImpersonatedUserName} is not active.");
-            }
-
             var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
                 .FirstOrDefault(r => r.ProjectId == memberProjectRoleView.ProjectId && r.MemberId == memberProjectRoleView.MemberId);
 
@@ -223,9 +211,9 @@ namespace CoralTime.BL.Services
             }
 
             //check if current user is manager on selected project and is trying to assign team member
-            var hasAccessAsManager = HasAccessAsManager(currentMember.Id, memberProjectRoleView);
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, memberProjectRoleView);
 
-            if (currentMember.User.IsAdmin || hasAccessAsManager)
+            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
             {
                 memberProjectRole = new MemberProjectRole
                 {
@@ -247,20 +235,20 @@ namespace CoralTime.BL.Services
                 return memberProjectRoleViewResult;
             }
 
-            throw new CoralTimeForbiddenException($"Member with id = {currentMember.Id} is not allowed to create MemberProjectRole on project with id = {memberProjectRoleView.ProjectId} and role with id = {memberProjectRoleView.RoleId}");
+            throw new CoralTimeForbiddenException($"Member with id = {BaseMemberImpersonated.Id} is not allowed to create MemberProjectRole on project with id = {memberProjectRoleView.ProjectId} and role with id = {memberProjectRoleView.RoleId}");
         }
 
+        // TODO remove dynamic!
         public MemberProjectRoleView Update(dynamic projectRole)
         {
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (memberByUserName == null)
+            if (BaseMemberImpersonated == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} not found.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {BaseMemberImpersonated.User.UserName} not found.");
             }
 
-            if (!memberByUserName.User.IsActive)
+            if (!BaseMemberImpersonated.User.IsActive)
             {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} is not active.");
+                throw new CoralTimeEntityNotFoundException($"Member with userName = {BaseMemberImpersonated.User.UserName} is not active.");
             }
 
             var memberProjectRoleById = Uow.MemberProjectRoleRepository.GetById((int)projectRole.Id);
@@ -270,9 +258,9 @@ namespace CoralTime.BL.Services
             }
 
             //check if current user is manager on selected project and is trying to assign team member
-            var hasAccessAsManager = HasAccessAsManager(memberByUserName.Id, projectRole);
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, projectRole);
 
-            if (memberByUserName.User.IsAdmin || hasAccessAsManager)
+            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
             {
                 if (projectRole.roleId == null)
                 {
@@ -298,31 +286,20 @@ namespace CoralTime.BL.Services
                 return memberProjectRoleViewResult;
             }
 
-            throw new CoralTimeForbiddenException($"Member with id = {memberByUserName.Id} is not allowed to update projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
+            throw new CoralTimeForbiddenException($"Member with id = {BaseMemberImpersonated.Id} is not allowed to update projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
         }
 
         public MemberProjectRoleView Patch(MemberProjectRoleView projectRole)
         {
-            var memberByUserName = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (memberByUserName == null)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} not found.");
-            }
-
-            if (!memberByUserName.User.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName = {ImpersonatedUserName} is not active.");
-            }
-
             var memberProjectRoleById = Uow.MemberProjectRoleRepository.GetById(projectRole.Id);
             if (memberProjectRoleById == null)
             {
                 throw new CoralTimeEntityNotFoundException($"ProjectRole with id = {projectRole.Id} not found");
             }
 
-            var hasAccessAsManager = HasAccessAsManager(memberByUserName.Id, projectRole);
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, projectRole);
 
-            if (memberByUserName.User.IsAdmin || hasAccessAsManager)
+            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
             {
                 memberProjectRoleById.RoleId = projectRole.RoleId;
 
@@ -338,30 +315,24 @@ namespace CoralTime.BL.Services
                 return memberProjectRoleVIewResult;
             }
 
-            throw new CoralTimeForbiddenException($"Member with id = {memberByUserName.Id} is not allowed to patch projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
+            throw new CoralTimeForbiddenException($"Member with id = {BaseMemberImpersonated.Id} is not allowed to patch projectRole on project with id = {projectRole.ProjectId} and role with id = {projectRole.RoleId}");
         }
 
         public void Delete(int id)
         {
-            var member = Uow.MemberRepository.LinkedCacheGetByName(ImpersonatedUserName);
-            if (member == null || !member.User.IsActive)
-            {
-                throw new CoralTimeEntityNotFoundException($"Member with userName {ImpersonatedUserName} not found or is not active");
-            }
-
             var projectRole = Uow.MemberProjectRoleRepository.GetById(id);
             if (projectRole == null)
             {
                 throw new CoralTimeEntityNotFoundException($"ProjectRole with id {id} not found");
             }
 
-            var hasAccessAsManager = HasAccessAsManager(member.Id, new MemberProjectRoleView
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, new MemberProjectRoleView
             {
                 ProjectId = projectRole.ProjectId,
                 RoleId = projectRole.RoleId
             });
 
-            if (member.User.IsAdmin || hasAccessAsManager)
+            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
             {
                 Uow.MemberProjectRoleRepository.Delete(id);
                 Uow.Save();
@@ -370,13 +341,8 @@ namespace CoralTime.BL.Services
             }
             else
             {
-                throw new CoralTimeForbiddenException($"Member with id {member.Id} is not allowed to delete projectRole on project with id {projectRole.ProjectId} and role with id {projectRole.RoleId}.");
+                throw new CoralTimeForbiddenException($"Member with id {BaseMemberImpersonated.Id} is not allowed to delete projectRole on project with id {projectRole.ProjectId} and role with id {projectRole.RoleId}.");
             }
-        }
-
-        public IEnumerable<ProjectView> GetAllProjectsByManager()
-        {
-            return _projectService.TimeTrackerAllProjects();
         }
 
         public bool FixAllManagerRoles()
@@ -405,9 +371,7 @@ namespace CoralTime.BL.Services
 
         private void UpdateIsManager(int memberId)
         {
-            var memberById = Uow.MemberRepository.GetQueryWithIncludes()
-                .Include(m => m.User)
-                .FirstOrDefault(m => m.Id == memberId);
+            var memberById = Uow.MemberRepository.GetQueryByMemberId(memberId);
 
             var isManager = CountManagerRoles(memberId) > 0;
 
@@ -421,12 +385,6 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private int CountManagerRoles(int memberId)
-        {
-            var managerRoleId = Uow.MemberProjectRoleRepository.GetManagerRoleId();
-
-            var result = Uow.MemberProjectRoleRepository.LinkedCacheGetList().Count(x => x.MemberId == memberId && x.RoleId == managerRoleId);
-            return result;
-        }
+        private int CountManagerRoles(int memberId) => Uow.MemberProjectRoleRepository.LinkedCacheGetList().Count(x => x.MemberId == memberId && x.RoleId == Uow.ProjectRoleRepository.GetManagerRoleId());
     }
 }

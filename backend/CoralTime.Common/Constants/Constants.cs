@@ -1,5 +1,4 @@
 ﻿using CoralTime.ViewModels.DateFormat;
-using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System;
 using System.Collections.Generic;
 
@@ -48,9 +47,12 @@ namespace CoralTime.Common.Constants
             public const string IdRouteWithMembers = IdRoute + WithMembers;
             public const string IdRouteWithProjects = IdRoute + WithProjects;
             public const string UpdateManagerRolesRoute = "UpdateManagerRoles";
+            public const string ResetCacheRoute = "ResetCache";
             public const string UpdateClaimsRoute = "UpdateClaims";
             public const string RefreshDataBaseRoute = "RefreshDataBase";
             public const string SaveImagesFromDbToStaticFilesRoute = "SaveImagesFromDbToStaticFiles";
+            public const string NotificationsByProjectSettingsRoute = "NotificationsByProjectSettings";
+            public const string NotificationsWeeklyRoute = "NotificationsWeekly";
             public const string SendForgotEmailRoute = "sendforgotemail/{email}";
             public const string ChangePasswordByTokenRoute = "changepasswordbytoken";
             public const string CheckPasswordByTokenRoute = "checkforgotpasswordtoken";
@@ -125,6 +127,7 @@ namespace CoralTime.Common.Constants
         public const string SecureHeaderValueService = "SecureHeaderValueService";
 
         public const int SecondsInThisDay = 86400;
+        public const int SecondsInMinute = 60;
 
         public static string EnvName { get; set; }
         
@@ -193,7 +196,6 @@ namespace CoralTime.Common.Constants
             new DateConvert {DateFormatId = 15, DateFormat = "M/D/YYYY", DateFormatDotNet = "M/d/yyyy", DateFormatDotNetShort = "M/d"},
             new DateConvert {DateFormatId = 16, DateFormat = "M-D-YYYY", DateFormatDotNet = "M-d-yyyy", DateFormatDotNetShort = "M-d"},
             new DateConvert {DateFormatId = 17, DateFormat = "M.D.YYYY", DateFormatDotNet = "M.d.yyyy", DateFormatDotNetShort = "M.d"},
-
         };
 
         public enum ReportsGroupByIds
@@ -280,5 +282,10 @@ namespace CoralTime.Common.Constants
         public const string ImageTypeSizeAvatar = "200";
 
         #endregion
+
+        public const int MockId = -1;
+
+        public const string CertificateKeys = "CertificateKeys";
+        public const string CertificateKeysTime = "CertificateKeysTime";
     }
 }

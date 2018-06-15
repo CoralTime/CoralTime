@@ -1,20 +1,21 @@
-﻿using CoralTime.Common.Constants;
-using CoralTime.Common.Exceptions;
-using CoralTime.Common.Helpers;
-using CoralTime.ViewModels.Notifications;
-using CoralTime.ViewModels.Reports.Request.Emails;
-using CoralTime.ViewModels.Reports.Request.Grid;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CoralTime.Common.Constants;
+using CoralTime.Common.Exceptions;
+using CoralTime.Common.Helpers;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Responce;
+using CoralTime.ViewModels.Notifications.ByProjectSettings.Responce.MemberWithProjectsLight;
+using CoralTime.ViewModels.Reports.Request.Emails;
+using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
-namespace CoralTime.BL.Services
+namespace CoralTime.BL.Services.Notifications
 {
     public partial class NotificationsService
     {
-        private string CreateEmailSubjectWeeklyTimeEntryUpdates(string emailMember) => $"Reminder to fill Time Entries {emailMember} by Weekly TimeEntry Updates";
+        private string CreateEmailSubjectWeeklyTimeEntryUpdates(string emailMember) => new StringBuilder($"Reminder to fill Time Entries {emailMember} by Weekly TimeEntry Updates").ToString();
 
         public async Task SendWeeklyTimeEntryUpdatesAsync(string baseUrl)
         {
@@ -24,106 +25,118 @@ namespace CoralTime.BL.Services
             {
                 var currentHour = todayDate.TimeOfDay.Hours;
 
-                if (currentHour == 1) 
+                if (currentHour == 1)
                 {
-                    CommonHelpers.SetRangeOfLastWorkWeekByDate(out var lastWorkWeekFirstDay, out var lastWorkWeekLastDay, todayDate);
-                    var diffDates = (lastWorkWeekLastDay - lastWorkWeekFirstDay).TotalDays;
-                    var editionPeriodDays = GetRangeNotificationDaysForLastWeek(lastWorkWeekFirstDay, diffDates);
-
-                    var memberStartDayOfWeekStartByTodayDate = GetMemberStartDayOfWeekStartByTodayDate(todayDate);
-
-                    var members = Uow.MemberRepository.LinkedCacheGetList()
-                        .Where(member => member.IsWeeklyTimeEntryUpdatesSend && member.WeekStart == memberStartDayOfWeekStartByTodayDate)
-                        .Select(member => new
-                        {
-                            MemberId = member.Id,
-                            MemberFullName = member.FullName,
-                            MemberDateFormatId = member.DateFormatId,
-                            MemberEmail = member.User.Email,
-                            
-                            Project = member.MemberProjectRoles.Select(project => new
-                            {
-                                Id = project.Project.Id,
-                                Name = project.Project.Name,
-                            })
-                        }).ToList();
-
-                    foreach (var member in members)
-                    {
-                        var memberWithProjectsNotifications = new MemberWithProjecsNotifications
-                        {
-                            MemberId = member.MemberId,
-                            MemberFullName = member.MemberFullName,
-                            MemberDateFormatId = member.MemberDateFormatId,
-                            MemberEmail = member.MemberEmail
-                        };
-
-                        var isNotFillTimeEntries = false;
-                        var isAnyFillTimeEntries = false;
-
-                        foreach (var project in member.Project)
-                        {
-                            var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQueryWithIncludes()
-                                .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.MemberId)
-                                .Where(tEntry => tEntry.Date.Date >= lastWorkWeekFirstDay && tEntry.Date.Date <= lastWorkWeekLastDay)
-                                .Select(tEntry => tEntry.Date.Date)
-                                .ToList();
-
-                            var datesWithoutTimeEntries = editionPeriodDays.Except(dateTimeEntryByNotificationRange).ToArray();
-
-                            var hasNotTimeEntries = dateTimeEntryByNotificationRange.Count == 0;
-                            var hasAnyTimeEntries = dateTimeEntryByNotificationRange.Any() && datesWithoutTimeEntries.Any();
-                            //var hasAllTimeEntries = datesWithoutTimeEntries.Length == 0;
-
-                            if (hasNotTimeEntries)
-                            {
-                                if (!isAnyFillTimeEntries)
-                                {
-                                    isNotFillTimeEntries = true;
-                                }
-                            }
-
-                            if (hasAnyTimeEntries)
-                            {
-                                isNotFillTimeEntries = false;
-                                isAnyFillTimeEntries = true;
-                            }
-                        }
-
-                        if (isNotFillTimeEntries || isAnyFillTimeEntries)
-                        {
-                            var subjectNotFilledTimeEnttries = CreateEmailSubjectWeeklyTimeEntryUpdates(memberWithProjectsNotifications.MemberEmail);
-
-                            var emailText = CreateEmailTextWeeklyNotifications(baseUrl, memberWithProjectsNotifications, isNotFillTimeEntries, isAnyFillTimeEntries);
-
-                            Uow.MemberImpersonated = Uow.MemberRepository.GetQueryByMemberId(memberWithProjectsNotifications.MemberId);
-
-                            var reportsExportEmailView = new ReportsExportEmailView
-                            {
-                                Comment = emailText,
-                                DateFormatId = memberWithProjectsNotifications.MemberDateFormatId,
-                                FileTypeId = (int) Constants.FileType.Excel,
-                                Subject = subjectNotFilledTimeEnttries,
-                                ToEmail = memberWithProjectsNotifications.MemberEmail,
-                                CurrentQuery = new ReportsSettingsView
-                                {
-                                    DateFrom = lastWorkWeekFirstDay,
-                                    DateTo  = lastWorkWeekLastDay,
-                                    GroupById = (int) Constants.ReportsGroupByIds.Project,
-                                    ShowColumnIds = new[] { 1, 2, 3, 4 }
-                                }
-                            };
-
-                            await _reportExportService.ExportEmailGroupedByType(reportsExportEmailView);
-                        }
-                    }
+                    await SendWeeklyNotificationsForMembers(baseUrl, todayDate);
                 }
             }
         }
 
-        private string CreateEmailTextWeeklyNotifications(string baseUrl, MemberWithProjecsNotifications memberWithProjectsNotifications, bool isNotFillTimeEntries, bool isAnyFillTimeEntries)
+        public async Task SendWeeklyNotificationsForMembers(string baseUrl, DateTime todayDate, int [] membersIds = null)
         {
-            var sbEmailText = new StringBuilder($"Hello, {memberWithProjectsNotifications.MemberFullName}! ");
+            CommonHelpers.SetRangeOfLastWorkWeekByDate(out var lastWorkWeekFirstDay, out var lastWorkWeekLastDay, todayDate);
+            var diffDates = (lastWorkWeekLastDay - lastWorkWeekFirstDay).TotalDays;
+            var editionPeriodDays = GetRangeNotificationDaysForLastWeek(lastWorkWeekFirstDay, diffDates);
+
+            var memberStartDayOfWeekStartByTodayDate = GetMemberStartDayOfWeekStartByTodayDate(todayDate);
+
+            var membersWithWeeklyTimeEntryUpdates = Uow.MemberRepository.LinkedCacheGetList()
+                .Where(member => membersIds?.Contains(member.Id) ?? true)
+                .Where(member => member.IsWeeklyTimeEntryUpdatesSend && member.WeekStart == memberStartDayOfWeekStartByTodayDate)
+                .Select(member => new
+                {
+                    MemberId = member.Id,
+                    MemberFullName = member.FullName,
+                    MemberDateFormatId = member.DateFormatId,
+                    MemberEmail = member.User.Email,
+
+                    Projects = member.MemberProjectRoles.Where(mpr => mpr.Project.IsActive)
+                        .Select(project => new
+                        {
+                            Id = project.Project.Id,
+                            Name = project.Project.Name,
+                        })
+                }).ToList();
+
+            foreach (var member in membersWithWeeklyTimeEntryUpdates)
+            {
+                var isNotFillTimeEntries = false;
+                var isAnyFillTimeEntries = false;
+
+                foreach (var project in member.Projects)
+                {
+                    var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQuery()
+                        .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.MemberId)
+                        .Where(tEntry => tEntry.Date.Date >= lastWorkWeekFirstDay && tEntry.Date.Date <= lastWorkWeekLastDay)
+                        .Select(tEntry => tEntry.Date.Date)
+                        .ToList();
+
+                    var datesWithoutTimeEntries = editionPeriodDays.Except(dateTimeEntryByNotificationRange).ToArray();
+
+                    var hasNotTimeEntries = dateTimeEntryByNotificationRange.Count == 0;
+                    var hasAnyTimeEntries = dateTimeEntryByNotificationRange.Any() && datesWithoutTimeEntries.Any();
+                    //var hasAllTimeEntries = datesWithoutTimeEntries.Length == 0;
+
+                    if (hasNotTimeEntries)
+                    {
+                        if (!isAnyFillTimeEntries)
+                        {
+                            isNotFillTimeEntries = true;
+                        }
+                    }
+
+                    if (hasAnyTimeEntries)
+                    {
+                        isNotFillTimeEntries = false;
+                        isAnyFillTimeEntries = true;
+                    }
+                }
+
+                if (isNotFillTimeEntries || isAnyFillTimeEntries)
+                {
+                    var memberWithProjectsNotifications = new MemberWithProjecsNotificationsView
+                    {
+                        MemberLight = new MemberLightView
+                        {
+                            Id = member.MemberId,
+                            FullName = member.MemberFullName,
+                            DateFormatId = member.MemberDateFormatId,
+                            Email = member.MemberEmail,
+                        }
+                    };
+
+                    var subjectNotFilledTimeEnttries = CreateEmailSubjectWeeklyTimeEntryUpdates(memberWithProjectsNotifications.MemberLight.Email);
+
+                    var emailText = CreateEmailTextWeeklyNotifications(baseUrl, memberWithProjectsNotifications.MemberLight.FullName, isNotFillTimeEntries, isAnyFillTimeEntries);
+
+                    var reportsExportEmailView = new ReportsExportEmailView
+                    {
+                        Comment = emailText,
+                        DateFormatId = memberWithProjectsNotifications.MemberLight.DateFormatId,
+                        FileTypeId = (int) Constants.FileType.Excel,
+                        Subject = subjectNotFilledTimeEnttries,
+                        ToEmail = memberWithProjectsNotifications.MemberLight.Email,
+                        CurrentQuery = new ReportsSettingsView
+                        {
+                            DateFrom = lastWorkWeekFirstDay,
+                            DateTo = lastWorkWeekLastDay,
+                            GroupById = (int) Constants.ReportsGroupByIds.Project,
+                            ShowColumnIds = new[] {1, 2, 3, 4},
+                            ProjectIds = member.Projects.Select(x => x.Id).ToArray(),
+                            MemberIds = new[] {member.MemberId}
+                        }
+                    };
+
+                    var memberFromNotification = Uow.MemberRepository.LinkedCacheGetById(member.MemberId);
+
+                    await _reportExportService.ExportEmailGroupedByType(reportsExportEmailView, memberFromNotification, true);
+                }
+            }
+        }
+
+        private string CreateEmailTextWeeklyNotifications(string baseUrl, string memberFullName, bool isNotFillTimeEntries, bool isAnyFillTimeEntries)
+        {
+            var sbEmailText = new StringBuilder($"Hello, {memberFullName}! ");
 
             if (isNotFillTimeEntries)
             {

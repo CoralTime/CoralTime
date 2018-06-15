@@ -1,5 +1,6 @@
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { GRAY_COLOR, hexToNumber } from '../shared/form/color-picker/color-picker.component';
 
 export class CalendarDay {
 	date: string;
@@ -61,7 +62,7 @@ export class TimeEntry {
 	timeValues: TimeValues;
 
 	constructor(data = null) {
-		this.color = data && data.color || 0;
+		this.color = data && data.color || hexToNumber(GRAY_COLOR);
 		this.date = data && data.date;
 		this.description = data && data.description;
 		this.id = data && data.id;

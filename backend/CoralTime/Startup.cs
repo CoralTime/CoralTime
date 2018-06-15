@@ -44,7 +44,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using IdentityServer4.Test;
+using CoralTime.BL.Services.Notifications;
 using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
 
@@ -215,6 +215,7 @@ namespace CoralTime
             services.AddScoped<IRefreshDataBaseService, RefreshDataBaseService>();
             services.AddScoped<CheckSecureHeaderServiceFilter>();
             services.AddScoped<CheckSecureHeaderNotificationFilter>();
+            services.AddScoped<IAdminService, AdminService>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)

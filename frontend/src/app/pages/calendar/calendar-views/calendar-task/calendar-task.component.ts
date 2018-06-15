@@ -2,19 +2,20 @@ import {
 	Component, Input, ViewChild, EventEmitter, Output, OnInit, OnDestroy, QueryList,
 	ViewChildren, ElementRef
 } from '@angular/core';
-import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
-import { Subscription, Observable } from 'rxjs';
-import { CalendarService } from '../../../../services/calendar.service';
-import { NotificationService } from '../../../../core/notification.service';
-import { MultipleDatepickerComponent } from '../../entry-time/multiple-datepicker/multiple-datepicker.component';
 import { MatDialogRef, MatDialog } from '@angular/material';
-import { MenuComponent } from '../../../../shared/menu/menu.component';
-import { User } from '../../../../models/user';
 import { ActivatedRoute } from '@angular/router';
-import { ImpersonationService } from '../../../../services/impersonation.service';
-import { EntryTimeComponent } from '../../entry-time/entry-time.component';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { Subscription, Observable } from 'rxjs';
+import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
+import { User } from '../../../../models/user';
+import { NotificationService } from '../../../../core/notification.service';
+import { CalendarService } from '../../../../services/calendar.service';
+import { ImpersonationService } from '../../../../services/impersonation.service';
+import { EntryTimeComponent } from '../../entry-time/entry-time.component';
+import { MultipleDatepickerComponent } from '../../entry-time/multiple-datepicker/multiple-datepicker.component';
+import { numberToHex } from '../../../../shared/form/color-picker/color-picker.component';
+import { MenuComponent } from '../../../../shared/menu/menu.component';
 
 export const MAX_TIMER_VALUE = 86399;
 
@@ -334,11 +335,13 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
+            let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
+            let roundTicks = (this.ticks <60)? 60: this.roundTime(this.ticks);
 			currentTimeEntry.timeValues = {
-				timeActual: this.ticks,
+				timeActual: roundTicks,
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0),
-				timeTo: Math.max(DateUtils.getSecondsFromStartDay(false) - this.ticks, 0) + this.ticks
+				timeFrom: Math.max(secondsFromStartDay - roundTicks, 0),
+				timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
 			};
 		}
 
@@ -355,11 +358,19 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				});
 	}
 
+    private roundTime (time: number): number {
+        return time - time % 60;
+    }
+
 	// GENERAL
 
 	calculateCalendarTaskHeight(): number {
 		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 95 - 42;
 		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - 25 : taskHeight;
+	}
+
+	numberToHex(value: number): string {
+		return numberToHex(value);
 	}
 
 	openEntryTimeForm() {

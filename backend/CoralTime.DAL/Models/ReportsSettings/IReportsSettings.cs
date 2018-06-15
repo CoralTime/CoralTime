@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoralTime.DAL.Models
+namespace CoralTime.DAL.Models.ReportsSettings
 {
     public interface IReportsSettings
     {

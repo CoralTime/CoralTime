@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.DAL
 {
@@ -37,6 +38,24 @@ namespace CoralTime.DAL
                 if (!isExistDataBase)
                 {
                     await InitializeDataBase(serviceProvider, configuration);
+                }
+                else
+                {
+                    // DB will be refreshed after clearing __EFMigrationsHistory table in Demo mode
+                    var isDemo = bool.Parse(configuration["DemoSiteMode"]);
+                    if (isDemo)
+                    {
+                        var x = DbContext.Database.GetPendingMigrations().Count();
+                        var y = DbContext.Database.GetMigrations().Count();
+
+                        var isMigrationsHistoryEmpty = y == x;
+
+                        if (isMigrationsHistoryEmpty)
+                        {
+                            await InitializeDataBase(serviceProvider, configuration);
+                            Environment.Exit(1);
+                        }
+                    }                   
                 }
             }
         }
@@ -603,23 +622,17 @@ namespace CoralTime.DAL
             return memberByName.User.IsAdmin || isMemberAssignAtProject;
         }
 
-        private static DateTime? CreateTimeEntryDate(int timeEntryDAyOfWeek)
+        private static DateTime? CreateTimeEntryDate(int timeEntryDayOfWeek)
         {
             DateTime? timeEntryDate = null;
 
-            if (0 <= timeEntryDAyOfWeek && timeEntryDAyOfWeek < 7)
+            if (0 <= timeEntryDayOfWeek && timeEntryDayOfWeek < 7)
             {
-                timeEntryDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, ConvertNumberOfDayToDayOfThisWeek(timeEntryDAyOfWeek));
+                var dayOfWeekToday = (int)DateTime.Today.DayOfWeek;
+                timeEntryDate = DateTime.Today.AddDays(timeEntryDayOfWeek - dayOfWeekToday);
             }
 
             return timeEntryDate;
-        }
-
-        private static int ConvertNumberOfDayToDayOfThisWeek(int timeEntryDayNumberOfWeek)
-        {
-            CommonHelpers.SetRangeOfThisWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, DateTime.Today);
-            var dayOfThisWeek = weekByTodayFirstDate.AddDays(timeEntryDayNumberOfWeek).Day;
-            return dayOfThisWeek;
         }
 
         #endregion

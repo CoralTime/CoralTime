@@ -342,6 +342,8 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 	checkContentHeight(): void {
 		if (this.isBarDisplay === false) {
 			this.loadMoreContent.emit();
+		} else {
+			this.scrollContent(0, true, false);
 		}
 	}
 

@@ -1,21 +1,20 @@
 ﻿using AutoMapper;
-using CoralTime.DAL.Models;
-using CoralTime.ViewModels.MemberProjectRoles;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static MemberProjectRoleView GetView(this MemberProjectRole memberProjRole, IMapper _mapper, string urlIcon)
+        public static ViewModels.MemberProjectRoles.MemberProjectRoleView GetView(this MemberProjectRole memberProjRole, IMapper _mapper, string urlIcon)
         {
-            var memberProjRoleView = _mapper.Map<MemberProjectRole, MemberProjectRoleView>(memberProjRole);
+            var memberProjRoleView = _mapper.Map<MemberProjectRole, ViewModels.MemberProjectRoles.MemberProjectRoleView>(memberProjRole);
 
             memberProjRoleView.UrlIcon = urlIcon;
 
             return memberProjRoleView;
         }
 
-        public static MemberProjectRoleView GetViewWithGlobalProjects(this MemberProjectRole memberProjRole, IMapper _mapper, string urlIcon)
+        public static ViewModels.MemberProjectRoles.MemberProjectRoleView GetViewWithGlobalProjects(this MemberProjectRole memberProjRole, IMapper _mapper, string urlIcon)
         {
             var memberProjRoleView = memberProjRole.GetView(_mapper, urlIcon);
 
