@@ -1,11 +1,14 @@
-﻿namespace CoralTime.ViewModels.Member.MemberNotificationView
+﻿using Newtonsoft.Json;
+
+namespace CoralTime.ViewModels.Member.MemberNotificationView
 {
-    public interface IMemberNotificationView
+    public class MemberNotificationView : IMemberNotificationView
     {
-        int Id { get; set; }
+        [JsonIgnore]
+        public int Id { get; set; }
 
-        int SendEmailTime { get; set; }
+        public int SendEmailTime { get; set; }
 
-        string SendEmailDays { get; set; }
+        public string SendEmailDays { get; set; }
     }
 }

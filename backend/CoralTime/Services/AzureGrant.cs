@@ -1,4 +1,5 @@
-﻿using CoralTime.DAL.Models;
+﻿using CoralTime.Common.Constants;
+using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Azure;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
@@ -125,16 +126,19 @@ namespace CoralTime.Services
 
         private async Task<CertificateKeys> GetCertificateKeysAsync()
         {
-            var result = _memoryCache.TryGetValue("CertificateKeys", out CertificateKeys certificates);
-            var timeResult = _memoryCache.TryGetValue("CertificateKeysTime", out DateTime certificatesTime);
-            if (!result || !timeResult || DateTime.Now.Subtract(certificatesTime).TotalHours >= 24)
+            var certificateKeys = _memoryCache.TryGetValue(Constants.CertificateKeys, out CertificateKeys certificates);
+            var certificateKeysTime = _memoryCache.TryGetValue(Constants.CertificateKeysTime, out DateTime certificatesTime);
+
+            if (!certificateKeys || !certificateKeysTime || DateTime.Now.Subtract(certificatesTime).TotalHours >= 24)
             {
                 var url = _config["Authentication:AzureAd:CertificatesUrl"];
                 var client = new HttpClient();
                 var json = await client.GetStringAsync(url);
+
                 certificates = JsonConvert.DeserializeObject<CertificateKeys>(json);
-                _memoryCache.Set("CertificateKeysTime", DateTime.Now);
-                _memoryCache.Set("CertificateKeys", certificates);
+                
+                _memoryCache.Set(Constants.CertificateKeysTime, DateTime.Now);
+                _memoryCache.Set(Constants.CertificateKeys, certificates);
             }
 
             return certificates;

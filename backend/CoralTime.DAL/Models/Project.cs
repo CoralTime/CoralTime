@@ -2,10 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CoralTime.Common.Constants;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.DAL.Models
 {
-    public class Project : LogChanges, IInitializeByName
+    public class Project : LogChanges.LogChanges, IInitializeByName
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

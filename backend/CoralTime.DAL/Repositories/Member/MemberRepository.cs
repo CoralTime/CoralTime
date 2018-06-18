@@ -1,19 +1,18 @@
-﻿using CoralTime.Common.Exceptions;
-using CoralTime.DAL.Models;
+﻿using System.Linq;
+using CoralTime.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System.Linq;
 
-namespace CoralTime.DAL.Repositories
+namespace CoralTime.DAL.Repositories.Member
 {
-    public class MemberRepository : BaseRepository<Member>
+    public class MemberRepository : GenericRepository<Models.Member.Member>
     {
         public MemberRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
         #region Get Query.
 
-        public override IQueryable<Member> GetIncludes(IQueryable<Member> query)
+        public override IQueryable<Models.Member.Member> GetIncludes(IQueryable<Models.Member.Member> query)
         {
             return query
                 .Include(m => m.User)
@@ -22,17 +21,17 @@ namespace CoralTime.DAL.Repositories
                 .Include(m => m.TimeEntries);
         }
 
-        public Member GetQueryByMemberId(int memberId) =>  GetQueryWithIncludes().FirstOrDefault(x => x.Id == memberId);
+        public Models.Member.Member GetQueryByMemberId(int memberId) =>  GetQuery().FirstOrDefault(x => x.Id == memberId);
 
-        public Member GetQueryByUserId(string userId) => GetQueryWithIncludes().FirstOrDefault(x => x.UserId == userId);
+        public Models.Member.Member GetQueryByUserId(string userId) => GetQuery().FirstOrDefault(x => x.UserId == userId);
 
-        public Member GetQueryByUserName(string userName) => GetQueryWithIncludes().FirstOrDefault(x => x.User.UserName == userName);
+        public Models.Member.Member GetQueryByUserName(string userName) => GetQuery().FirstOrDefault(x => x.User.UserName == userName);
 
         #endregion
 
         #region LinkedCache.
 
-        public Member LinkedCacheGetByUserNameAndCheck(string userName)
+        public Models.Member.Member LinkedCacheGetByUserNameAndCheck(string userName)
         {
             var relatedMemberByName = LinkedCacheGetByUserName(userName);
             if (relatedMemberByName == null)
@@ -43,11 +42,11 @@ namespace CoralTime.DAL.Repositories
             return relatedMemberByName;
         }
 
-        public Member LinkedCacheGetByUserName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
-        public Member LinkedCacheGetByUserId(string userId) => LinkedCacheGetList().FirstOrDefault(m => m.User.Id == userId);
+        public Models.Member.Member LinkedCacheGetByUserName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
+        public Models.Member.Member LinkedCacheGetByUserId(string userId) => LinkedCacheGetList().FirstOrDefault(m => m.User.Id == userId);
 
-        public override Member LinkedCacheGetByName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
-        public override Member LinkedCacheGetById(int id) => LinkedCacheGetList().FirstOrDefault(m => m.Id == id);
+        public override Models.Member.Member LinkedCacheGetByName(string userName) => LinkedCacheGetList().FirstOrDefault(m => m.User.UserName == userName);
+        public override Models.Member.Member LinkedCacheGetById(int id) => LinkedCacheGetList().FirstOrDefault(m => m.Id == id);
 
         #endregion
     }

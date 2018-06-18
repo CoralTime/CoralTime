@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Interfaces.Reports;
-using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Repositories;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid

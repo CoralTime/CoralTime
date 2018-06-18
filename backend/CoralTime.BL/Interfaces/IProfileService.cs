@@ -2,8 +2,8 @@
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
-using CoralTime.ViewModels.Profiles;
 using System.Collections.Generic;
+using CoralTime.ViewModels.Projects.Profile;
 
 namespace CoralTime.BL.Interfaces
 {

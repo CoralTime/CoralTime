@@ -1,4 +1,6 @@
-﻿namespace CoralTime.ViewModels.Reports.Responce.Export
+﻿using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
+
+namespace CoralTime.ViewModels.Reports.Responce.Export
 {
     public class ReportExportPDFView
     {

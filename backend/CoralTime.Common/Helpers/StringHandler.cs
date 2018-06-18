@@ -1,10 +1,10 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace CoralTime.Common.Helpers
 {
     public class StringHandler
     {
-
         public static string SeparateStringByUpperCase(string str)
         {
             char[] chars = str.ToCharArray();

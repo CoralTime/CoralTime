@@ -1,20 +1,19 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using CoralTime.Common.Constants;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.TimeEntries;
-using System.Linq;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        private static TimeEntryView GetView(this TimeEntry timeEntry, IMapper _mapper)
+        private static ViewModels.TimeEntries.TimeEntryView GetView(this TimeEntry timeEntry, IMapper _mapper)
         {
-            var tEntry = _mapper.Map<TimeEntry, TimeEntryView>(timeEntry);
+            var tEntry = _mapper.Map<TimeEntry, ViewModels.TimeEntries.TimeEntryView>(timeEntry);
             return tEntry;
         }
 
-        public static TimeEntryView GetView(this TimeEntry timeEntry, string userName, IMapper _mapper)
+        public static ViewModels.TimeEntries.TimeEntryView GetView(this TimeEntry timeEntry, string userName, IMapper _mapper)
         {
             var tEntryView = timeEntry.GetView(_mapper);
 

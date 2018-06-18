@@ -12,10 +12,7 @@ namespace CoralTime.Common.Attributes
 
         protected abstract string GetSecureHeaderValue();
 
-        protected BaseCheckSecureHeaderFilter(IConfiguration config)
-        {
-            _config = config;
-        }
+        protected BaseCheckSecureHeaderFilter(IConfiguration config) =>  _config = config;
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

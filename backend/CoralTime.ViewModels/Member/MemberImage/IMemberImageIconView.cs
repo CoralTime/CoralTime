@@ -1,4 +1,4 @@
-﻿namespace CoralTime.ViewModels.Interfaces
+﻿namespace CoralTime.ViewModels.Member.MemberImage
 {
     public interface IMemberImageIconView
     {

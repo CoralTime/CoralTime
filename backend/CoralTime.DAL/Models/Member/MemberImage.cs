@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CoralTime.DAL.Models
+namespace CoralTime.DAL.Models.Member
 {
-    public class MemberImage : LogChanges
+    public class MemberImage : LogChanges.LogChanges
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

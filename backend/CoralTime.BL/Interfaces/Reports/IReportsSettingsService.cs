@@ -1,4 +1,4 @@
-﻿using CoralTime.ViewModels.Reports.Request.Grid;
+﻿using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
 namespace CoralTime.BL.Interfaces.Reports
 {

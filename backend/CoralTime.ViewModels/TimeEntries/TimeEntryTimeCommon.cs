@@ -1,4 +1,4 @@
-﻿using CoralTime.ViewModels.Reports;
+﻿using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items.TimeValues;
 
 namespace CoralTime.ViewModels.TimeEntries
 {

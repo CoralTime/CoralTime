@@ -2,15 +2,14 @@
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertModelToView;
-using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.MemberProjectRoles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.BL.Services
 {
@@ -346,8 +345,6 @@ namespace CoralTime.BL.Services
             }
         }
 
-        public IEnumerable<ProjectView> GetAllProjectsByManager() => _projectService.TimeTrackerAllProjects();
-
         public bool FixAllManagerRoles()
         {
             var members = Uow.MemberRepository.LinkedCacheGetList().Select(x => x.Id).ToList();
@@ -388,12 +385,6 @@ namespace CoralTime.BL.Services
             }
         }
 
-        private int CountManagerRoles(int memberId)
-        {
-            var managerRoleId = Uow.MemberProjectRoleRepository.GetManagerRoleId();
-
-            var result = Uow.MemberProjectRoleRepository.LinkedCacheGetList().Count(x => x.MemberId == memberId && x.RoleId == managerRoleId);
-            return result;
-        }
+        private int CountManagerRoles(int memberId) => Uow.MemberProjectRoleRepository.LinkedCacheGetList().Count(x => x.MemberId == memberId && x.RoleId == Uow.ProjectRoleRepository.GetManagerRoleId());
     }
 }

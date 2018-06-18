@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CoralTime.Common.Constants;
 
-namespace CoralTime.DAL.Models
+namespace CoralTime.DAL.Models.Member
 {
-    public class Member : LogChanges
+    public class Member : LogChanges.LogChanges
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,7 +22,7 @@ namespace CoralTime.DAL.Models
 
         public List<TimeEntry> TimeEntries { get; set; }
 
-        public List<ReportsSettings> ReportsSettings { get; set; }
+        public List<ReportsSettings.ReportsSettings> ReportsSettings { get; set; }
 
         public MemberImage MemberImage { get; set; }
 

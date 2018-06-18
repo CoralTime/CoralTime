@@ -3,18 +3,17 @@ using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertModelToView;
-using CoralTime.DAL.ConvertModelToView.Profile;
-using CoralTime.DAL.Models;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.DateFormat;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Member.MemberPersonalInfoView;
 using CoralTime.ViewModels.Member.MemberPreferencesView;
-using CoralTime.ViewModels.Profiles;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
+using CoralTime.DAL.Models.Member;
+using CoralTime.ViewModels.Projects.Profile;
 using static CoralTime.Common.Constants.Constants;
 
 namespace CoralTime.BL.Services
@@ -132,7 +131,7 @@ namespace CoralTime.BL.Services
 
         public MemberView PatchPreferences(MemberPreferencesView memberPreferencesView)
         {
-            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberCurrent.Id);
+            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberImpersonated.Id);
             memberByName.DefaultProjectId = memberPreferencesView.DefaultProjectId;
             memberByName.DefaultTaskId = memberPreferencesView.DefaultTaskId;
             memberByName.DateFormatId = memberPreferencesView.DateFormatId;

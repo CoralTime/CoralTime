@@ -2,14 +2,14 @@
 using CoralTime.Common.Constants;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.Models;
-using CoralTime.ViewModels.Reports.Request.Grid;
-using CoralTime.ViewModels.Reports.Responce.DropDowns.Filters;
-using CoralTime.ViewModels.Reports.Responce.DropDowns.GroupBy;
 using System.Collections.Generic;
 using System.Linq;
 using CoralTime.Common.Helpers;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertViewToModel;
+using CoralTime.DAL.Models.ReportsSettings;
+using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
+using CoralTime.ViewModels.Reports.Responce.DropDowns;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {

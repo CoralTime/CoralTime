@@ -1,4 +1,4 @@
-﻿namespace CoralTime.ViewModels.Reports
+﻿namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items.TimeValues
 {
     public class TimeValuesView : ITimeValuesView
     {

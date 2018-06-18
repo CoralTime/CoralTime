@@ -1,19 +1,18 @@
 ﻿using CoralTime.Common.Exceptions;
 using CoralTime.DAL.Cache;
-using CoralTime.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoralTime.DAL.Interfaces;
+using CoralTime.DAL.Models.LogChanges;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public abstract class GenericRepository<TEntity> where TEntity : class
     {
-        private readonly DbContext _db;
-        private readonly DbSet<T> _dbSet;
+        private readonly DbContext _dbContext;
+        private readonly DbSet<TEntity> _dbSet;
 
         private readonly ICacheManager _cacheManager;
 
@@ -21,52 +20,59 @@ namespace CoralTime.DAL.Repositories
 
         private readonly string _userId;
 
-        protected BaseRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
+        protected GenericRepository(AppDbContext appDbContext, IMemoryCache memoryCache, string userId)
         {
-            _db = context;
-            _dbSet = _db.Set<T>();
+            _dbContext = appDbContext;
+            _dbSet = _dbContext.Set<TEntity>();
             _cacheManager = CacheMemoryFactory.CreateCacheMemory(memoryCache);
-
+              
             _userId = userId;
         }
 
+        private string GenerateCacheKey() => $"{ typeof(TEntity).Name}_CacheKey";
+
         #region GetQuery.
 
-        public virtual IQueryable<T> GetIncludes(IQueryable<T> query) => query;
-        
-        public virtual IQueryable<T> GetQueryWithIncludes() => GetIncludes(_dbSet);
+        public abstract IQueryable<TEntity> GetIncludes(IQueryable<TEntity> query);
 
-        public virtual IQueryable<T> GetQueryWithoutIncludes() => _dbSet;
+        // Use asNoTracking = TRUE for POST / PATCH type queries (if you want get entity from db and update their properties)
+        public IQueryable<TEntity> GetQuery(bool withIncludes = true, bool asNoTracking = false)
+        {
+            var localDbSet = withIncludes
+                ? GetIncludes(_dbSet)
+                : _dbSet;
 
-        public virtual IQueryable<T> GetQueryAsNoTraking() => _dbSet.AsNoTracking();
+            if (asNoTracking)
+            {
+                localDbSet = localDbSet.AsNoTracking();
+            }
 
-        public virtual IQueryable<T> GetQueryAsNoTrackingWithIncludes() => GetIncludes(GetQueryAsNoTraking());
-
-        public virtual T GetQueryWithIncludesById(int id) => null;
+            return localDbSet;
+        }
 
         #endregion
 
         #region LinkedCache. 
 
-        public virtual T LinkedCacheGetByName(string name) => null;
+        public virtual TEntity LinkedCacheGetByName(string name) => throw new CoralTimeDangerException("You forget override \"LinkedCacheGetByName\"");
 
-        public virtual T LinkedCacheGetById(int Id) => null;
+        public virtual TEntity LinkedCacheGetById(int Id) => throw new CoralTimeDangerException("You forget override \"LinkedCacheGetById\"");
 
-        public virtual List<T> LinkedCacheGetList()
+        public virtual List<TEntity> LinkedCacheGetList()
         {
             try
             {
                 var key = GenerateCacheKey();
-                var items = _cacheManager.CachedListGet<T>(key);
+                var items = _cacheManager.GetList<TEntity>(key);
                 if (items == null)
                 {
                     lock (LockCacheObject)
                     {
-                        items = _cacheManager.CachedListGet<T>(key);
+                        items = _cacheManager.GetList<TEntity>(key);
                         if (items == null)
                         {
-                            items = GetQueryAsNoTrackingWithIncludes().ToList();
-                            _cacheManager.LinkedPutList(key, items);
+                            items = GetQuery(asNoTracking:true).ToList();
+                            _cacheManager.PutLinkedList(key, items);
                         }
                     }
                 }
@@ -79,16 +85,13 @@ namespace CoralTime.DAL.Repositories
             }
         }
 
-        public virtual void LinkedCacheClear()
-        {
-            _cacheManager.LinkedCacheClear<T>();
-        }
+        public virtual void LinkedCacheClear() => _cacheManager.ClearLinkedLists<TEntity>();
 
         #endregion
 
         #region Single Cache.
 
-        protected int DefaultCacheTime { get; set; } = 800;
+        //protected int DefaultCacheTime { get; set; } = 800;
 
         //public virtual List<TEntity> GetCachedList(Func<List<TEntity>> getListFunc)
         //{
@@ -96,49 +99,42 @@ namespace CoralTime.DAL.Repositories
         //    return CacheManager.Get(key, getListFunc);
         //}
 
-        protected virtual string GenerateCacheKey()
-        {
-            var entityName = typeof(T).Name;
-            var key = $"{entityName}_CacheKey";
-            return key;
-        }
 
-        public string GenerateClientUniqueCacheKey(string userName)
-        {
-            var entityName = typeof(T).Name;
-            var key = $"{userName}_{entityName}_CacheKey";
-            return key;
-        }
+        //public string GenerateClientUniqueCacheKey(string userName)
+        //{
+        //    var entityName = typeof(T).Name;
+        //    var key = $"{userName}_{entityName}_CacheKey";
+        //    return key;
+        //}
 
-        public void ClearEntityCache()
-        {
-            var key = GenerateCacheKey();
-            _cacheManager.Remove(key);
-        }
+        //public void ClearEntityCache()
+        //{
+        //    var key = GenerateCacheKey();
+        //    _cacheManager.RemoveByKey(key);
+        //}
+
+        //public void SingleCacheClearByKey(string key) =>  _cacheManager.RemoveByKey(key);
 
         #endregion
 
-        #region CRUD.
-        
-        public virtual T GetById(object id)
-        {
-            return _dbSet.Find(id);
-        }
+        #region CRUD
 
-        public virtual void Insert(T entity)
+        public virtual TEntity GetById(object id) =>  _dbSet.Find(id);
+
+        public virtual void Insert(TEntity entity)
         {
             if (entity is ILogChanges entityILogChange)
             {
                 SetInfoAboutUserThatCratedEntity(entityILogChange);
                 SetInfoAboutUserThatUpdatedEntity(entityILogChange);
 
-                entity = (T)entityILogChange;
+                entity = (TEntity)entityILogChange;
             }
 
             _dbSet.Add(entity);
         }
 
-        public virtual void InsertRange(IEnumerable<T> entities)
+        public virtual void InsertRange(IEnumerable<TEntity> entities)
         {
             if (entities is IEnumerable<ILogChanges> entitiesILogChange)
             {
@@ -148,25 +144,25 @@ namespace CoralTime.DAL.Repositories
                     SetInfoAboutUserThatUpdatedEntity(entityILogChange);
                 }
 
-                entities = (IEnumerable<T>)entitiesILogChange;
+                entities = (IEnumerable<TEntity>)entitiesILogChange;
             }
 
             _dbSet.AddRange(entities);
         }
 
-        public virtual void Update(T entity)
+        public virtual void Update(TEntity entity)
         {
             if (entity is ILogChanges entityILogChange)
             {
                 SetInfoAboutUserThatUpdatedEntity(entityILogChange);
 
-                entity = (T)entityILogChange;
+                entity = (TEntity)entityILogChange;
             }
 
             _dbSet.Update(entity);
         }
 
-        public virtual void UpdateRange(IEnumerable<T> entities)
+        public virtual void UpdateRange(IEnumerable<TEntity> entities)
         {
             if (entities is IEnumerable<ILogChanges> entitiesILogChange)
             {
@@ -175,7 +171,7 @@ namespace CoralTime.DAL.Repositories
                     SetInfoAboutUserThatUpdatedEntity(entityILogChange);
                 }
 
-                entities = (IEnumerable<T>)entitiesILogChange;
+                entities = (IEnumerable<TEntity>)entitiesILogChange;
             }
 
             _dbSet.UpdateRange(entities);
@@ -187,9 +183,9 @@ namespace CoralTime.DAL.Repositories
             Delete(entityToDelete);
         }
 
-        public virtual void Delete(T entityToDelete)
+        public virtual void Delete(TEntity entityToDelete)
         {
-            if (_db.Entry(entityToDelete).State == EntityState.Detached)
+            if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
             {
                 _dbSet.Attach(entityToDelete);
             }
@@ -197,11 +193,11 @@ namespace CoralTime.DAL.Repositories
             _dbSet.Remove(entityToDelete);
         }
 
-        public virtual void DeleteRange(IEnumerable<T> entitiesToDelete)
+        public virtual void DeleteRange(IEnumerable<TEntity> entitiesToDelete)
         {
             foreach (var entityToDelete in entitiesToDelete)
             {
-                if (_db.Entry(entityToDelete).State == EntityState.Detached)
+                if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
                 {
                     _dbSet.Attach(entityToDelete);
                 }
@@ -210,10 +206,9 @@ namespace CoralTime.DAL.Repositories
             }
         }
 
-        public int ExecuteSqlCommand(string command, params object[] parameters)
-        {
-            return _db.Database.ExecuteSqlCommand(command, parameters);
-        }
+        #endregion
+
+        public int ExecuteSqlCommand(string command, params object[] parameters) => _dbContext.Database.ExecuteSqlCommand(command, parameters);
 
         private void SetInfoAboutUserThatCratedEntity(ILogChanges entityILogChange)
         {
@@ -226,7 +221,5 @@ namespace CoralTime.DAL.Repositories
             entityILogChange.LastUpdateDate = DateTime.Now;
             entityILogChange.LastEditorUserId = _userId;
         }
-
-        #endregion
     }
 }

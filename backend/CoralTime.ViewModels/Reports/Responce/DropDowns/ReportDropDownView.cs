@@ -1,6 +1,6 @@
-﻿using CoralTime.ViewModels.Reports.Request.Grid;
+﻿using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 
-namespace CoralTime.ViewModels.Reports.Responce.DropDowns.Filters
+namespace CoralTime.ViewModels.Reports.Responce.DropDowns
 {
     public class ReportDropDownView 
     {

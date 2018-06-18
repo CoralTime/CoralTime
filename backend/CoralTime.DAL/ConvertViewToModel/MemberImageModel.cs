@@ -1,4 +1,4 @@
-﻿using CoralTime.DAL.Models;
+﻿using CoralTime.DAL.Models.Member;
 
 namespace CoralTime.DAL.ConvertViewToModel
 {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
 using CoralTime.ViewModels.Member;
 
 namespace CoralTime.DAL.ConvertViewToModel

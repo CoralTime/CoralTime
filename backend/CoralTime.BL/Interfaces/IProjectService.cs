@@ -14,7 +14,7 @@ namespace CoralTime.BL.Interfaces
 
         ProjectView Update(dynamic project);
 
-        ProjectView Create(ProjectView newProject);
+        ProjectView Create(dynamic newProject);
 
         ProjectView Patch(dynamic project);
 

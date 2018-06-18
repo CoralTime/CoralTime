@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models
 {
-    public class TaskType : LogChanges, IInitializeByName
+    public class TaskType : LogChanges.LogChanges, IInitializeByName
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

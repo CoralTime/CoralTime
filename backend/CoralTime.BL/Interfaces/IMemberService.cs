@@ -1,5 +1,8 @@
 ﻿using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.Member;
 using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.Member.MemberPasswordView;
+using CoralTime.ViewModels.Notifications.ByWeeklyUpdates;
 using CoralTime.ViewModels.Projects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,6 +20,8 @@ namespace CoralTime.BL.Interfaces
         Task<MemberView> CreateNewUser(MemberView member, string baseUrl);
 
         Task<MemberView> Update(MemberView memberView, string baseUrl);
+
+        List<MemberWeeklyNotificationByDayOfWeekView> GetMembersWithWeeklyNotifications();
 
         #region Password.
 
