@@ -19,6 +19,7 @@ import { TasksService } from './services/tasks.service';
 import { UsersService } from './services/users.service';
 import { SettingsService } from './services/settings.service';
 import { ImpersonationService } from './services/impersonation.service';
+import { AdminService } from './services/admin.service';
 
 export function httpFactory(http: HttpClient) {
 	return new TranslateHttpLoader(http, 'assets/translate/i18n', '.json');
@@ -50,6 +51,7 @@ export function httpFactory(http: HttpClient) {
 		ImpersonationService,
 		ProjectRolesService,
 		ProjectsService,
+		AdminService,
 		SettingsService,
 		TasksService,
 		UsersService
