@@ -17,9 +17,9 @@ import { FocusDirective } from './autofocus.directive';
 import { DisableWhenRequestDirective } from './disable-when-request.directive';
 import { NgForIn } from './ngForIn.directive';
 import { ClickCloseDirective } from './click-close.directive';
+import { SlimscrollArrowsDirective } from './slimscroll-arrows.directive';
 
 @NgModule({
-	imports: [],
 	declarations: [
 		IsGrantedDirective,
 		EqualValidator,
@@ -39,7 +39,8 @@ import { ClickCloseDirective } from './click-close.directive';
 		ValidationOnBlurDirective,
 		DisableWhenRequestDirective,
 		NgForIn,
-		ClickCloseDirective
+		ClickCloseDirective,
+		SlimscrollArrowsDirective
 	],
 	exports: [
 		IsGrantedDirective,
@@ -59,7 +60,8 @@ import { ClickCloseDirective } from './click-close.directive';
 		ValidationOnBlurDirective,
 		DisableWhenRequestDirective,
 		NgForIn,
-		ClickCloseDirective
+		ClickCloseDirective,
+		SlimscrollArrowsDirective
 	]
 })
 

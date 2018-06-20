@@ -40,6 +40,7 @@ import { DomHandler } from 'primeng/components/dom/domhandler';
 import { ObjectUtils } from 'primeng/components/utils/objectutils';
 import { Subscription } from 'rxjs/Subscription';
 import { BlockableUI } from 'primeng/primeng';
+import { DirectivesModule } from '../directives/directives.module';
 
 @Component({
 	selector: 'p-dtRadioButton',
@@ -2796,7 +2797,7 @@ export class DataTable implements AfterViewChecked, AfterViewInit, AfterContentI
 }
 
 @NgModule({
-	imports: [CommonModule, SharedModule, PaginatorModule, FormsModule, NgSlimScrollModule],
+	imports: [CommonModule, SharedModule, PaginatorModule, FormsModule, NgSlimScrollModule, DirectivesModule],
 	exports: [DataTable, SharedModule],
 	declarations: [DataTable, DTRadioButton, DTCheckbox, ColumnHeaders, ColumnFooters, TableBody, ScrollableView]
 })

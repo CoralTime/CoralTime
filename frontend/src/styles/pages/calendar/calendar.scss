@@ -92,7 +92,6 @@ $calendarPhoneWidth: 809px;
   .ct-calendar-projects {
     float: right;
     width: 250px;
-    background: white;
 
     .ct-multiselect {
       border: none !important;
@@ -103,6 +102,7 @@ $calendarPhoneWidth: 809px;
         height: 30px;
         position: relative;
         right: 20px;
+        background: none;
       }
     }
 
@@ -184,10 +184,6 @@ $calendarPhoneWidth: 809px;
           background: $activeText !important;
         }
       }
-
-      .ct-calendar-add-task {
-        opacity: 1 !important;
-      }
     }
 
     .ct-calendar-day {
@@ -226,7 +222,8 @@ $calendarPhoneWidth: 809px;
         z-index: 1;
       }
 
-      .ct-calendar-task:hover .ct-menu-open-link, .ct-menu-open-link.ct-menu-opened {
+      .ct-calendar-task:hover .ct-menu-open-link,
+      .ct-menu-open-link.ct-menu-opened {
         opacity: 1;
       }
 
@@ -614,11 +611,16 @@ $calendarPhoneWidth: 809px;
       &:hover {
         .ct-calendar-add-task {
           opacity: 1;
+
           &:hover {
             cursor: pointer;
           }
         }
       }
+    }
+
+    .ct-calendar-day-active .ct-calendar-add-task {
+      opacity: 1 !important;
     }
   }
 
