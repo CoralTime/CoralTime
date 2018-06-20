@@ -1,7 +1,7 @@
 <div class="ct-textarea-component"
      [class.ct-can-resize]="canResize"
      [class.ct-focused]="isFocusClassShown">
-    <div class="ct-textarea-container" slimScroll #slimScroll='slimScroll'>
+    <div class="ct-textarea-container" slimScroll #slimScroll='slimScroll' [ctSlimScrollArrows]="slimScroll">
                 <textarea [name]="name" #autoSizer="matTextareaAutosize" matTextareaAutosize
                           [maxlength]="maxlength"
                           [placeholder]="placeholder"
