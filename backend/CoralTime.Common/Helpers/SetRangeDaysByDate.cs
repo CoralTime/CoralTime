@@ -1,4 +1,5 @@
 ﻿using System;
+using CoralTime.Common.Constants;
 
 namespace CoralTime.Common.Helpers
 {
@@ -64,6 +65,46 @@ namespace CoralTime.Common.Helpers
             SetRangeOfLastWeekByDate(out lastWorkWeekStart, out lastWorkWeekEnd, dayOfWeek, startOfWeek);
 
             lastWorkWeekEnd = lastWorkWeekEnd.AddDays(-2);
+        }
+
+        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(int? dayStaticId, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        {
+            var today = DateTime.Today;
+            switch (dayStaticId)
+            {
+                case (int) Constants.Constants.DatesStaticIds.Today:
+                    return (today, today);
+                        
+                case (int) Constants.Constants.DatesStaticIds.Yesterday:
+                    return (today.AddDays(-1), today.AddDays(-1));
+                
+                case (int) Constants.Constants.DatesStaticIds.ThisWeek:
+                    SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, today, startOfWeek);
+                    return (thisWeekStart, thisWeekEnd);
+  
+                case (int) Constants.Constants.DatesStaticIds.ThisMonth:
+                    SetRangeOfThisMonthByDate(out var monthDateStart, out var monthDateEnd, today);
+                    return (monthDateStart, monthDateEnd);
+                
+                case (int) Constants.Constants.DatesStaticIds.ThisYear:
+                    SetRangeOfThisYearByDate(out var yearDateStart, out var yearDateEnd, today);
+                    return (yearDateStart, yearDateEnd);
+                
+                case (int) Constants.Constants.DatesStaticIds.LastWeek:
+                    SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, today, startOfWeek);
+                    return (lastWeekStart, lastWeekEnd);    
+                
+                case (int) Constants.Constants.DatesStaticIds.LastMonth:
+                    SetRangeOfLastMonthByDate(out var lastMonthDateStart, out var lastMonthDateEnd, today);
+                    return (lastMonthDateStart, lastMonthDateEnd);  
+
+                case (int) Constants.Constants.DatesStaticIds.LastYear:
+                    SetRangeOfLastYearByDate(out var lastYearDateStart, out var lastYearDateEnd, today);
+                    return (lastYearDateStart, lastYearDateEnd);  
+                
+                    default:
+                        return (today, today);
+            }
         }
     }
 }

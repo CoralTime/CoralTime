@@ -230,7 +230,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(ReportMemberImpersonated.Id).Where(x => x.QueryName != null);
 
-            return customQueries.Select(x => x.GetView()).ToList();
+            return customQueries.Select(x => x.GetView(GetDayOfWeek(ReportMemberImpersonated.WeekStart))).ToList();
         }
 
         private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
@@ -251,15 +251,16 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             throw new CoralTimeDangerException($"Incorrect DateStaticId = { dateStaticId }");
         }
-
+        
+        private static DayOfWeek GetDayOfWeek(Constants.WeekStart day) => 
+            (day == Constants.WeekStart.Monday)? DayOfWeek.Monday : DayOfWeek.Sunday;
+        
         private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
         {
             var today = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).Date;
             var yesterday = today.AddDays(-1);
 
-            var memberDayOfWeekStart = ReportMemberImpersonated.WeekStart == Constants.WeekStart.Monday
-                ? DayOfWeek.Monday
-                : DayOfWeek.Sunday;
+            var memberDayOfWeekStart = GetDayOfWeek(ReportMemberImpersonated.WeekStart); 
 
             CommonHelpers.SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, today, memberDayOfWeekStart);
 
@@ -347,7 +348,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var reportsSettings = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(ReportMemberImpersonated.Id).FirstOrDefault(x => x.IsCurrentQuery);
 
-            return reportsSettings?.GetView();
+            return reportsSettings?.GetView(GetDayOfWeek(ReportMemberImpersonated.WeekStart));
         }
 
         private ReportsSettingsView CreateQueryWithDefaultValues()
@@ -364,7 +365,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             Uow.Save();
             Uow.ReportsSettingsRepository.LinkedCacheClear();
 
-            reportsSettingsView = reportsSettings.GetView();
+            reportsSettingsView = reportsSettings.GetView(GetDayOfWeek(ReportMemberImpersonated.WeekStart));
 
             return reportsSettingsView;
         }
