@@ -1,15 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
     <PackageReference Include="DotNetCore.NPOI" Version="1.0.2" />
@@ -18,5 +15,4 @@
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />
     <ProjectReference Include="..\CoralTime.DAL\CoralTime.DAL.csproj" />
   </ItemGroup>
-
 </Project>

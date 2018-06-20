@@ -16,17 +16,15 @@ namespace CoralTime.Api.v1
     public class AdminController : BaseController<AdminController, IAdminService>
     {
         private readonly IMemberProjectRoleService _roleService;
-        private readonly IRefreshDataBaseService _refreshDataBaseService;
         private readonly IImageService _avatarService;
         private readonly IMemberService _memberService;
         private readonly INotificationService _notificationService;
 
         public AdminController(ILogger<AdminController> logger, IAdminService service,
-            IMemberProjectRoleService roleService, IRefreshDataBaseService refreshDataBaseService,IImageService avatarService, IMemberService memberService, INotificationService notificationService)
+            IMemberProjectRoleService roleService, IImageService avatarService, IMemberService memberService, INotificationService notificationService)
             : base(logger, service)
         {
             _roleService = roleService;
-            _refreshDataBaseService = refreshDataBaseService;
             _avatarService = avatarService;
             _memberService = memberService;
             _notificationService = notificationService;
@@ -53,14 +51,6 @@ namespace CoralTime.Api.v1
         public ActionResult UpdateClaims()
         {
             _memberService.UpdateUsersClaims();
-            return Ok(true);
-        }
-
-        // GET api/v1/Admin/RefreshDataBase
-        [HttpGet] [Route(RefreshDataBaseRoute)]
-        public async Task<ActionResult>RefreshDataBase()
-        {
-            await _refreshDataBaseService.RefreshDataBase();
             return Ok(true);
         }
 
