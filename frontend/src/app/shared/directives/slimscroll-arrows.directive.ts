@@ -41,7 +41,7 @@ export class SlimscrollArrowsDirective {
 
 	@HostListener('document:mousedown', ['$event', '$event.target'])
 	onMouseDown(event: MouseEvent, targetElement: HTMLElement) {
-		if (!targetElement || !this.parent.contains(targetElement) || this.interval) {
+		if (!targetElement || (this.parent && !this.parent.contains(targetElement)) || this.interval) {
 			return;
 		}
 
