@@ -48,7 +48,7 @@ namespace CoralTime.DAL.ConvertModelToView
             }
             else
             {
-                var period = CommonHelpers.GetPeriod(settings.DateStaticId, startOfWeek);
+                var period = CommonHelpers.GetPeriod(settings.DateStaticId ?? 1, startOfWeek);
                 settings.DateFrom = period.DateFrom;
                 settings.DateTo = period.DateTo;
             }

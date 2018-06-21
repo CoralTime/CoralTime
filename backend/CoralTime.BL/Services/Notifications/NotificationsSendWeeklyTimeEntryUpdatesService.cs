@@ -27,18 +27,18 @@ namespace CoralTime.BL.Services.Notifications
 
                 if (currentHour == 1)
                 {
-                    await SendWeeklyNotificationsForMembers(baseUrl, todayDate);
+                    await SendWeeklyNotificationsForMembers(baseUrl);
                 }
             }
         }
 
-        public async Task SendWeeklyNotificationsForMembers(string baseUrl, DateTime todayDate, int [] membersIds = null)
+        private async Task SendWeeklyNotificationsForMembers(string baseUrl, int [] membersIds = null)
         {
-            CommonHelpers.SetRangeOfLastWorkWeekByDate(out var lastWorkWeekFirstDay, out var lastWorkWeekLastDay, todayDate);
-            var diffDates = (lastWorkWeekLastDay - lastWorkWeekFirstDay).TotalDays;
-            var editionPeriodDays = GetRangeNotificationDaysForLastWeek(lastWorkWeekFirstDay, diffDates);
+            var lastworkWeek = CommonHelpers.GetRangeOfLastWorkWeekByDate();
+            var diffDates = (lastworkWeek.DateTo - lastworkWeek.DateFrom).TotalDays;
+            var editionPeriodDays = GetRangeNotificationDaysForLastWeek(lastworkWeek.DateTo, diffDates);
 
-            var memberStartDayOfWeekStartByTodayDate = GetMemberStartDayOfWeekStartByTodayDate(todayDate);
+            var memberStartDayOfWeekStartByTodayDate = GetMemberStartDayOfWeekStartByTodayDate(DateTime.Today);
 
             var membersWithWeeklyTimeEntryUpdates = Uow.MemberRepository.LinkedCacheGetList()
                 .Where(member => membersIds?.Contains(member.Id) ?? true)
@@ -53,8 +53,8 @@ namespace CoralTime.BL.Services.Notifications
                     Projects = member.MemberProjectRoles.Where(mpr => mpr.Project.IsActive)
                         .Select(project => new
                         {
-                            Id = project.Project.Id,
-                            Name = project.Project.Name,
+                            project.Project.Id,
+                            project.Project.Name,
                         })
                 }).ToList();
 
@@ -67,7 +67,7 @@ namespace CoralTime.BL.Services.Notifications
                 {
                     var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQuery()
                         .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.MemberId)
-                        .Where(tEntry => tEntry.Date.Date >= lastWorkWeekFirstDay && tEntry.Date.Date <= lastWorkWeekLastDay)
+                        .Where(tEntry => tEntry.Date.Date >= lastworkWeek.DateTo && tEntry.Date.Date <= lastworkWeek.DateFrom)
                         .Select(tEntry => tEntry.Date.Date)
                         .ToList();
 
@@ -118,8 +118,8 @@ namespace CoralTime.BL.Services.Notifications
                         ToEmail = memberWithProjectsNotifications.MemberLight.Email,
                         CurrentQuery = new ReportsSettingsView
                         {
-                            DateFrom = lastWorkWeekFirstDay,
-                            DateTo = lastWorkWeekLastDay,
+                            DateFrom = lastworkWeek.DateTo,
+                            DateTo = lastworkWeek.DateFrom,
                             GroupById = (int) Constants.ReportsGroupByIds.Project,
                             ShowColumnIds = new[] {1, 2, 3, 4},
                             ProjectIds = member.Projects.Select(x => x.Id).ToArray(),

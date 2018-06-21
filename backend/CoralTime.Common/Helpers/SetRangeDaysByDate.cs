@@ -1,109 +1,111 @@
 ﻿using System;
-using CoralTime.Common.Constants;
+using DatesStaticIds = CoralTime.Common.Constants.Constants.DatesStaticIds;
 
 namespace CoralTime.Common.Helpers
 {
     public partial class CommonHelpers
     {
-        public static void SetRangeOfThisWeekByDate(out DateTime weekDateStart, out DateTime weekDateEnd, DateTime dayOfWeek, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisWeek(DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            int diff = dayOfWeek.DayOfWeek - startOfWeek;
+            return GetRangeOfWeekByDate(DateTime.Today, startOfWeek);
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisMonth()
+        {
+            return GetRangeOfMonthByDate(DateTime.Today);
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisYear() 
+        {
+            return GetRangeOfYearByDate(DateTime.Today);
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastWeek(DayOfWeek startOfWeek = DayOfWeek.Monday)
+        {
+            var thisWeek = GetRangeOfThisWeek(startOfWeek);
+            return (thisWeek.DateFrom.AddDays(-7).Date, thisWeek.DateTo.AddDays(-7).Date);
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastMonth()
+        {
+            return GetRangeOfMonthByDate(DateTime.Today.AddMonths(-1));
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastYear()
+        {
+            return GetRangeOfYearByDate(DateTime.Today.AddYears(-1));
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfWeekByDate(DateTime date, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        {
+            var diff = date.DayOfWeek - startOfWeek;
             if (diff < 0)
             {
                 diff += 7;
             }
-
-            weekDateStart = dayOfWeek.AddDays(-1 * diff).Date;
-            weekDateEnd = weekDateStart.AddDays(7).AddMilliseconds(-1);
+            
+            var weekDateStart = date.AddDays(-1 * diff).Date;
+            var weekDateEnd = weekDateStart.AddDays(7).AddMilliseconds(-1).Date;
+            return (weekDateStart, weekDateEnd);
         }
 
-        public static void SetRangeOfThisMonthByDate(out DateTime monthDateStart, out DateTime monthDateEnd, DateTime day)
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfMonthByDate(DateTime date)
         {
-            monthDateStart = new DateTime(day.Year, day.Month, 1);
-            monthDateEnd = new DateTime(day.Year, day.Month, 1).AddMonths(1).AddMilliseconds(-1);
+            var firstDay = new DateTime(date.Year, date.Month, 1);
+            var lastDay = firstDay.AddMonths(1).AddMilliseconds(-1).Date;
+            return (firstDay, lastDay);
         }
 
-        public static void SetRangeOfThisYearByDate(out DateTime yearDateStart, out DateTime yearDateEnd, DateTime day)
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfYearByDate(DateTime date)
         {
-            yearDateStart = new DateTime(day.Year, 1, 1);
-            yearDateEnd = new DateTime(day.Year + 1, 1, 1).AddMilliseconds(-1);
+            var firstDay = new DateTime(date.Year, 1, 1);
+            var lastDay = firstDay.AddYears(1).AddMilliseconds(-1).Date;
+            return (firstDay, lastDay);
+        }
+        
+        public static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastWorkWeekByDate(DayOfWeek startOfWeek = DayOfWeek.Monday)
+        {
+            var lastWeek = GetRangeOfLastWeek(startOfWeek);
+            return (lastWeek.DateFrom, lastWeek.DateTo.AddDays(-2).Date);
         }
 
-        public static void SetRangeOfLastWeekByDate(out DateTime lastWeekStart, out DateTime lastWeekEnd, DateTime dayOfWeek, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(int dayStaticId, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            SetRangeOfThisWeekByDate(out lastWeekStart, out lastWeekEnd, dayOfWeek, startOfWeek);
-
-            lastWeekStart = lastWeekStart.AddDays(-7);
-            lastWeekEnd = lastWeekEnd.AddDays(-7);
+            return GetPeriod((DatesStaticIds) dayStaticId, startOfWeek);
         }
 
-        public static void SetRangeOfLastMonthByDate(out DateTime lastMonthDateStart, out DateTime lastMonthDateEnd, DateTime day)
+        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(DatesStaticIds dayStaticId, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            SetRangeOfThisMonthByDate(out lastMonthDateStart, out lastMonthDateEnd, day);
-
-            lastMonthDateStart = lastMonthDateStart.AddMonths(-1);
-            lastMonthDateEnd = lastMonthDateEnd.AddMonths(-1);
-        }
-
-        public static void SetRangeOfLastYearByDate(out DateTime lastYearDateStart, out DateTime lastYearDateEnd, DateTime day)
-        {
-            SetRangeOfThisYearByDate(out lastYearDateStart, out lastYearDateEnd, day);
-
-            lastYearDateStart = lastYearDateStart.AddYears(-1);
-            lastYearDateEnd = lastYearDateEnd.AddYears(-1);
-        }
-
-        public static void SetRangeOfWorkWeekByDate(out DateTime workWeekDateStart, out DateTime workWeekDateEnd, DateTime dayOfWeek)
-        {
-            SetRangeOfThisWeekByDate(out workWeekDateStart, out workWeekDateEnd, dayOfWeek);
-
-            workWeekDateEnd = workWeekDateEnd.AddDays(-2);
-        }
-
-        public static void SetRangeOfLastWorkWeekByDate(out DateTime lastWorkWeekStart, out DateTime lastWorkWeekEnd, DateTime dayOfWeek, DayOfWeek startOfWeek = DayOfWeek.Monday)
-        {
-            SetRangeOfLastWeekByDate(out lastWorkWeekStart, out lastWorkWeekEnd, dayOfWeek, startOfWeek);
-
-            lastWorkWeekEnd = lastWorkWeekEnd.AddDays(-2);
-        }
-
-        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(int? dayStaticId, DayOfWeek startOfWeek = DayOfWeek.Monday)
-        {
-            var today = DateTime.Today;
+            var today = DateTime.Today.Date;
+            var yesterday = DateTime.Today.AddDays(-1).Date;
             switch (dayStaticId)
             {
-                case (int) Constants.Constants.DatesStaticIds.Today:
+                case DatesStaticIds.Today:
                     return (today, today);
                         
-                case (int) Constants.Constants.DatesStaticIds.Yesterday:
-                    return (today.AddDays(-1), today.AddDays(-1));
+                case DatesStaticIds.Yesterday:
+                    return (yesterday, yesterday);
                 
-                case (int) Constants.Constants.DatesStaticIds.ThisWeek:
-                    SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, today, startOfWeek);
-                    return (thisWeekStart, thisWeekEnd);
+                case DatesStaticIds.ThisWeek:
+                    return GetRangeOfThisWeek(startOfWeek);
   
-                case (int) Constants.Constants.DatesStaticIds.ThisMonth:
-                    SetRangeOfThisMonthByDate(out var monthDateStart, out var monthDateEnd, today);
-                    return (monthDateStart, monthDateEnd);
+                case DatesStaticIds.ThisMonth:
+                    return GetRangeOfThisMonth();
                 
-                case (int) Constants.Constants.DatesStaticIds.ThisYear:
-                    SetRangeOfThisYearByDate(out var yearDateStart, out var yearDateEnd, today);
-                    return (yearDateStart, yearDateEnd);
+                case DatesStaticIds.ThisYear:
+                    return GetRangeOfThisYear();
                 
-                case (int) Constants.Constants.DatesStaticIds.LastWeek:
-                    SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, today, startOfWeek);
-                    return (lastWeekStart, lastWeekEnd);    
+                case DatesStaticIds.LastWeek:
+                    return GetRangeOfLastWeek(startOfWeek);
                 
-                case (int) Constants.Constants.DatesStaticIds.LastMonth:
-                    SetRangeOfLastMonthByDate(out var lastMonthDateStart, out var lastMonthDateEnd, today);
-                    return (lastMonthDateStart, lastMonthDateEnd);  
+                case DatesStaticIds.LastMonth:
+                    return GetRangeOfLastMonth();  
 
-                case (int) Constants.Constants.DatesStaticIds.LastYear:
-                    SetRangeOfLastYearByDate(out var lastYearDateStart, out var lastYearDateEnd, today);
-                    return (lastYearDateStart, lastYearDateEnd);  
+                case DatesStaticIds.LastYear:
+                    return GetRangeOfLastYear();  
                 
-                    default:
-                        return (today, today);
+                default:
+                    return (today, today);
             }
         }
     }

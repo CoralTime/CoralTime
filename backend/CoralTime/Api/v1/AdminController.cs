@@ -69,12 +69,12 @@ namespace CoralTime.Api.v1
         public ActionResult NotificationsByProjectSettingsMembers() => Ok(_notificationService.GetMembersWithProjectsNotification());
 
         // POST api/v1/Admin/NotificationsByProjectSettings
-        [HttpPost] [Route(NotificationsByProjectSettingsRoute)]
-        public async Task<IActionResult> NotificationsByProjectSettings(string todayDate, [FromBody]List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
-        {
-            await _notificationService.SendToMemberNotificationsByProjectsSettingsAsync(ConvertStringDateToDateTime(todayDate), GetBaseUrl(), memberWithProjectsIds);
-            return Ok();
-        }
+//        [HttpPost] [Route(NotificationsByProjectSettingsRoute)]
+//        public async Task<IActionResult> NotificationsByProjectSettings(string todayDate, [FromBody]List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
+//        {
+//            await _notificationService.SendToMemberNotificationsByProjectsSettingsAsync(ConvertStringDateToDateTime(todayDate), GetBaseUrl(), memberWithProjectsIds);
+//            return Ok();
+//        }
 
         #endregion
 
@@ -85,15 +85,15 @@ namespace CoralTime.Api.v1
         public ActionResult NotificationsWeeklyMembers() => Ok(_memberService.GetMembersWithWeeklyNotifications());
 
         // POST api/v1/Admin/NotificationsWeekly
-        [HttpPost] [Route(NotificationsWeeklyRoute)]
-        public async Task<IActionResult> NotificationsWeekly(string todayDate, [FromBody] int[] memberIds)
-        {
-            await _notificationService.SendWeeklyNotificationsForMembers(GetBaseUrl(), ConvertStringDateToDateTime(todayDate), memberIds);
-            return Ok();
-        }
-
-        private DateTime ConvertStringDateToDateTime(string todayDate) => todayDate == null ? DateTime.Now : DateTime.Parse(todayDate);
+//        [HttpPost] [Route(NotificationsWeeklyRoute)]
+//        public async Task<IActionResult> NotificationsWeekly([FromBody] int[] memberIds)
+//        {
+//            await _notificationService.SendWeeklyNotificationsForMembers(GetBaseUrl(), memberIds);
+//            return Ok();
+//        }
 
         #endregion
+        
+        private static DateTime ConvertStringDateToDateTime(string todayDate) => todayDate == null ? DateTime.Now : DateTime.Parse(todayDate);
     }
 }

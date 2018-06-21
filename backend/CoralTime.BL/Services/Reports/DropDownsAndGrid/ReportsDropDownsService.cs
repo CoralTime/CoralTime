@@ -10,6 +10,7 @@ using CoralTime.DAL.ConvertViewToModel;
 using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 using CoralTime.ViewModels.Reports.Responce.DropDowns;
+using DatesStaticIds = CoralTime.Common.Constants.Constants.DatesStaticIds;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
@@ -235,21 +236,23 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
         {
-            var dateStaticInfo = GetDatesStaticInfo().FirstOrDefault(x => x.Id == dateStaticId);
-            if (dateStaticInfo != null)
+            var datesStaticInfo = GetDatesStaticInfo();
+            var dateStaticPeriod = datesStaticInfo.FirstOrDefault(x => x.Id == dateStaticId);
+            
+            if (dateStaticPeriod == null) 
+                throw new CoralTimeDangerException($"Incorrect DateStaticId = {dateStaticId}");
+            
+            var dateStaticExtend = new ReportDropDownsDateStaticExtendView
             {
-                var dateStaticExtend = new ReportDropDownsDateStaticExtendView
-                {
-                    DateStatic = GetDatesStaticInfo(),
+                DateStatic = datesStaticInfo,
 
-                    DateFrom = dateStaticInfo.DateFrom,
-                    DateTo = dateStaticInfo.DateTo
-                };
+                DateFrom = dateStaticPeriod.DateFrom,
+                DateTo = dateStaticPeriod.DateTo
+            };
 
-                return dateStaticExtend;
-            }
+            return dateStaticExtend;
+            
 
-            throw new CoralTimeDangerException($"Incorrect DateStaticId = { dateStaticId }");
         }
         
         private static DayOfWeek GetDayOfWeek(Constants.WeekStart day) => 
@@ -257,87 +260,80 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         
         private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
         {
-            var today = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).Date;
-            var yesterday = today.AddDays(-1);
-
             var memberDayOfWeekStart = GetDayOfWeek(ReportMemberImpersonated.WeekStart); 
-
-            CommonHelpers.SetRangeOfThisWeekByDate(out var thisWeekStart, out var thisWeekEnd, today, memberDayOfWeekStart);
-
-            CommonHelpers.SetRangeOfThisMonthByDate(out var thisMonthByTodayFirstDate, out var thisMonthByTodayLastDate, today);
-
-            CommonHelpers.SetRangeOfThisYearByDate(out var thisYearByTodayFirstDate, out var thisYearByTodayLastDate, today);
-
-            CommonHelpers.SetRangeOfLastWeekByDate(out var lastWeekStart, out var lastWeekEnd, today, memberDayOfWeekStart);
-
-            CommonHelpers.SetRangeOfLastMonthByDate(out var lastMonthByTodayFirstDate, out var lastMonthByTodayLastDate, today);
-
-            CommonHelpers.SetRangeOfLastYearByDate(out var lastYearByTodayFirstDate, out var lastYearByTodayLastDate, today);
-
+            var today = CommonHelpers.GetPeriod(DatesStaticIds.Today);
+            var yesterday = CommonHelpers.GetPeriod(DatesStaticIds.Yesterday);
+            var thisWeek = CommonHelpers.GetPeriod(DatesStaticIds.ThisWeek, memberDayOfWeekStart);
+            var thisMonth = CommonHelpers.GetPeriod(DatesStaticIds.ThisMonth);
+            var thisYear = CommonHelpers.GetPeriod(DatesStaticIds.ThisYear);
+            var lastWeek = CommonHelpers.GetPeriod(DatesStaticIds.LastWeek, memberDayOfWeekStart);
+            var lastMonth = CommonHelpers.GetPeriod(DatesStaticIds.LastMonth);
+            var lastYear = CommonHelpers.GetPeriod(DatesStaticIds.LastYear);
+            
             ReportDropDownsDateStaticView[] datesStaticInfo =
             {
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.Today,
+                    Id = (int) DatesStaticIds.Today,
                     Description = "Today",
-                    DateFrom = today,
-                    DateTo = today
+                    DateFrom = today.DateFrom,
+                    DateTo = today.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.ThisWeek,
+                    Id = (int) DatesStaticIds.ThisWeek,
                     Description = "This Week",
-                    DateFrom = thisWeekStart.Date,
-                    DateTo = thisWeekEnd.Date
+                    DateFrom = thisWeek.DateFrom,
+                    DateTo = thisWeek.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.ThisMonth,
+                    Id = (int) DatesStaticIds.ThisMonth,
                     Description = "This Month",
-                    DateFrom = thisMonthByTodayFirstDate.Date,
-                    DateTo = thisMonthByTodayLastDate.Date
+                    DateFrom = thisMonth.DateFrom,
+                    DateTo = thisMonth.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.ThisYear,
+                    Id = (int) DatesStaticIds.ThisYear,
                     Description = "This Year",
-                    DateFrom = thisYearByTodayFirstDate.Date,
-                    DateTo = thisYearByTodayLastDate.Date
+                    DateFrom = thisYear.DateFrom,
+                    DateTo = thisYear.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.Yesterday,
+                    Id = (int) DatesStaticIds.Yesterday,
                     Description = "Yesterday",
-                    DateFrom = yesterday,
-                    DateTo = yesterday
+                    DateFrom = yesterday.DateFrom,
+                    DateTo = yesterday.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.LastWeek,
+                    Id = (int) DatesStaticIds.LastWeek,
                     Description = "Last Week",
-                    DateFrom = lastWeekStart.Date,
-                    DateTo = lastWeekEnd.Date
+                    DateFrom = lastWeek.DateFrom,
+                    DateTo = lastWeek.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.LastMonth,
+                    Id = (int) DatesStaticIds.LastMonth,
                     Description = "Last Month",
-                    DateFrom = lastMonthByTodayFirstDate.Date,
-                    DateTo = lastMonthByTodayLastDate.Date
+                    DateFrom = lastMonth.DateFrom,
+                    DateTo = lastMonth.DateTo
                 },
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) Constants.DatesStaticIds.LastYear,
+                    Id = (int) DatesStaticIds.LastYear,
                     Description = "Last Year",
-                    DateFrom = lastYearByTodayFirstDate.Date,
-                    DateTo = lastYearByTodayLastDate.Date
+                    DateFrom = lastYear.DateFrom,
+                    DateTo = lastYear.DateTo
                 }
             };
 

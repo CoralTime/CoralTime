@@ -24,7 +24,7 @@ namespace CoralTime.BL.Services.Notifications
             }
         }
 
-        public async Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
+        private async Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
         {
             var members = GetMembersWithProjectsNotification(memberWithProjectsIds);
 
