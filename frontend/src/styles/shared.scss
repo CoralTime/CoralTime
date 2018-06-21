@@ -353,7 +353,8 @@ h5 {
   background-color: $nav-background !important;
   right: 1px !important;
   width: 4px !important;
-  margin: -2px 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
   z-index: 2 !important;
 }
 
