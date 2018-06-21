@@ -117,7 +117,7 @@
     <div class="ct-form-actions clearfix">
         <button mat-button class="ct-submit mat-button"
                 (click)="submit()"
-                [disabled]="entryTimeForm.invalid || isRequestLoading">Done
+                [disabled]="entryTimeForm.invalid || isRequestLoading || !currentTimeEntry.projectId">Done
         </button>
         <button type="button" class="ct-close" (click)="closeForm()" ctClickClose>Cancel</button>
     </div>

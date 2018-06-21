@@ -13,9 +13,9 @@ namespace CoralTime.Common.Helpers
             {
                 case LockTimePeriod.Week:
                 {
-                    SetRangeOfThisWeekByDate(out var weekByTodayFirstDate, out var weekByTodayLastDate, today);
+                    var thisWeek = GetRangeOfThisWeek();
 
-                    var lockDateLastDate = weekByTodayFirstDate.AddDays(daysAfterLock);
+                    var lockDateLastDate = thisWeek.DateFrom.AddDays(daysAfterLock);
 
                     var isTodayInLockPeriodAtThisWeek = today <= lockDateLastDate;
 
@@ -24,16 +24,16 @@ namespace CoralTime.Common.Helpers
 
                     var editingWeekDay = isTodayInLockPeriodAtThisWeek ? todayDateAtPreviousWeek : todayDateAtThisWeek;
 
-                    SetRangeOfThisWeekByDate(out var editingWeekFirstDate, out var editingWeekLastDate, editingWeekDay);
+                    var editingWeek = GetRangeOfWeekByDate(editingWeekDay);
 
-                    return timeEntryDateEditing <= editingWeekLastDate;
+                    return timeEntryDateEditing <= editingWeek.DateTo;
                 }
 
                 case LockTimePeriod.Month:
                 {
-                    SetRangeOfThisMonthByDate(out var monthByTodayFirstDate, out var monthByTodayLastDate, today);
+                    var thisMonth = GetRangeOfThisMonth();
 
-                    var lockDateLastDate = monthByTodayFirstDate.AddDays(daysAfterLock);
+                    var lockDateLastDate = thisMonth.DateFrom.AddDays(daysAfterLock);
 
                     var isInLockPeriod = today <= lockDateLastDate;
 
@@ -42,9 +42,9 @@ namespace CoralTime.Common.Helpers
 
                     var editingMonthDay = isInLockPeriod ? todayDateAtPreviousMonth : todayDateAtThisMonth;
 
-                    SetRangeOfThisMonthByDate(out var editingMonthFirstDate, out var editingMonthLastDate, editingMonthDay);
+                    var editingMonth = GetRangeOfMonthByDate(editingMonthDay);
 
-                    return timeEntryDateEditing <= editingMonthLastDate;
+                    return timeEntryDateEditing <= editingMonth.DateTo;
                 }
 
                 default:

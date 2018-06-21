@@ -10,7 +10,8 @@
                [(ngModel)]="modelValue"
                (ngModelChange)="updateModel(modelValue)">
         <mat-list class="ct-options-list" [style.maxHeight.px]="maxHeight">
-            <div class="ct-options-wrapper" #slimScroll="slimScroll" slimScroll [style.maxHeight.px]="maxHeight">
+            <div class="ct-options-wrapper" #slimScroll="slimScroll" slimScroll
+                 [ctSlimScrollArrows]="slimScroll" [style.maxHeight.px]="maxHeight">
                 <mat-list-item class="ct-option" role="option" *ngFor="let option of options; let i = index"
                               (click)="selectOption(option)" mat-ripple
                               [ngClass]="{ 'ct-option-selected': isOptionSelected(option), 'ct-option-disabled': option?.disabled }">

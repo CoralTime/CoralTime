@@ -31,7 +31,7 @@
                 </ul>
             </div>
 
-            <div #slimScroll="slimScroll" slimScroll>
+            <div #slimScroll="slimScroll" slimScroll [ctSlimScrollArrows]="slimScroll">
                 <ul class="ui-multiselect-items ui-helper-reset" [style.max-height]="scrollHeight||'auto'">
                     <li *ngFor="let option of options; let index = i" class="ui-multiselect-item" (click)="onItemClick($event,option.value)"
                         [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'selected':isSelected(option.value)}">
@@ -48,7 +48,6 @@
                     </li>
                 </ul>
             </div>
-
 
             <div class="ct-multiselect-panel-footer clearfix" *ngIf="showSubmitButton">
                 <button mat-raised-button (click)="submit($event)" class="ct-blue-button">Apply</button>
