@@ -9,6 +9,8 @@ import { NotificationService } from '../../core/notification.service';
 })
 
 export class AdminComponent {
+	memberId: number;
+	projectIds: number[];
 
 	constructor(private adminService: AdminService,
 	            private loadingService: LoadingMaskService,
@@ -29,20 +31,8 @@ export class AdminComponent {
 	};
 
 	resetCache(): void {
-	this.loadingService.addLoading();
-	this.adminService.resetCache()
-		.finally(() => this.loadingService.removeLoading())
-		.subscribe(() => {
-				this.notificationService.success('Done');
-			},
-			errResponse => {
-				this.notificationService.danger('Error');
-			});
-};
-
-	updateClaims(): void {
 		this.loadingService.addLoading();
-		this.adminService.updateClaims()
+		this.adminService.resetCache()
 			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
 					this.notificationService.success('Done');
@@ -52,9 +42,9 @@ export class AdminComponent {
 				});
 	};
 
-	refreshDataBase(): void {
+	updateClaims(): void {
 		this.loadingService.addLoading();
-		this.adminService.refreshDataBase()
+		this.adminService.updateClaims()
 			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
 					this.notificationService.success('Done');
@@ -76,9 +66,21 @@ export class AdminComponent {
 				});
 	};
 
-	sendWeeklyUpdates(): void {
+	sendNotificationFromProject(): void {
 		this.loadingService.addLoading();
-		this.adminService.sendWeeklyUpdates()
+		this.adminService.sendNotificationFromProject()
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe(() => {
+					this.notificationService.success('Done');
+				},
+				errResponse => {
+					this.notificationService.danger('Error');
+				});
+	};
+
+	sendNotificationsWeekly(): void {
+		this.loadingService.addLoading();
+		this.adminService.sendNotificationsWeekly()
 			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
 					this.notificationService.success('Done');

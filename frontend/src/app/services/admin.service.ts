@@ -24,18 +24,18 @@ export class AdminService {
 		return this.http.get(url);
 	};
 
-	refreshDataBase(): Observable<any> {
-		let url = '/api/v1/Admin/RefreshDataBase/';
-		return this.http.get(url);
-	};
-
 	updateAvatars(): Observable<any> {
 		let url = '/api/v1/Admin/SaveImagesFromDbToStaticFiles/';
 		return this.http.get(url);
 	};
 
-	sendWeeklyUpdates(): Observable<any> {
+	sendNotificationFromProject(): Observable<any> {
 		let url = '/api/v1/Admin/NotificationsByProjectSettings/';
 		return this.http.get(url);
+	};
+
+	sendNotificationsWeekly(): Observable<any> {
+		let url = '/api/v1/Admin/NotificationsByProjectSettings/';
+			return this.http.get(url);
 	};
 }
