@@ -424,7 +424,7 @@ namespace CoralTime.BL.Services
 
         private static void RoundTimeEntryTime(TimeEntryView timeEntryView)
         {
-            var roundActualTime = (timeEntryView.TimeValues.TimeActual < Constants.SecondsInMinute) 
+            var roundActualTime = (timeEntryView.TimeValues.TimeActual < Constants.SecondsInMinute && timeEntryView.TimeValues.TimeActual > 0) 
                     ? Constants.SecondsInMinute 
                     : RoundTime(timeEntryView.TimeValues.TimeActual);
             
