@@ -136,7 +136,11 @@ export class TasksService {
 		task.isActive = !task.isActive;
 
 		return this.odata.Patch({
-			isActive: task.isActive
+			isActive: task.isActive,
+            name: task.name,
+            projectId: task.projectId,
+			color: task.color,
+			description: task.description
 		}, task.id.toString());
 	}
 }
