@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
 import { ReportsComponent } from './reports.component';
 import { UserInfoResolve } from '../../core/auth/user-info-resolve.service';
-import { ReportFiltersResolveService } from './report-filters-resolve.service';
 
 const routes: Routes = [
 	{
@@ -16,7 +15,6 @@ const routes: Routes = [
 			role: 'roleViewProject'
 		},
 		resolve: {
-			reportFilters: ReportFiltersResolveService,
 			user: UserInfoResolve
 		}
 	}
@@ -26,7 +24,6 @@ const routes: Routes = [
 	imports: [RouterModule.forChild(routes)],
 	exports: [RouterModule],
 	providers: [
-		ReportFiltersResolveService,
 		UserInfoResolve
 	]
 })

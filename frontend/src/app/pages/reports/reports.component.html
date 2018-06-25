@@ -6,7 +6,7 @@
         <!--Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}-->
         <!--</div>-->
 
-        <div>
+        <div *ngIf="reportDropdowns">
             <div class="ct-reports-chart-container">
                 <mat-accordion>
                     <mat-expansion-panel [expanded]="expandedPanelStep === 0" (opened)="setexpandedPanelStep(0)" hideToggle="true">
