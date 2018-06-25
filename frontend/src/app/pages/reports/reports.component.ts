@@ -96,11 +96,16 @@ export class ReportsComponent implements OnInit {
 			this.dateFormat = this.userInfo.dateFormat;
 			this.dateFormatId = this.userInfo.dateFormatId;
 			this.firstDayOfWeek = this.userInfo.weekStart;
-			this.rangeDatepickerService.dateStaticList = data.reportFilters.values.dateStatic;
-			this.setReportDropdowns(data.reportFilters);
 		});
 		this.isUsersFilterShown = this.authService.isUserAdminOrManager;
-		this.getReportGrid(!!this.reportFilters.queryId);
+
+		this.loadingService.addLoading();
+		this.reportsService.getReportDropdowns()
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe((reportFilters: ReportDropdowns) => {
+				this.setReportDropdowns(reportFilters);
+				this.getReportGrid(!!this.reportFilters.queryId);
+			})
 	}
 
 	// expanded panel
@@ -113,6 +118,7 @@ export class ReportsComponent implements OnInit {
 
 	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
 		this.reportDropdowns = reportDropdowns;
+		this.rangeDatepickerService.dateStaticList = reportDropdowns.values.dateStatic;
 
 		this.setReportFilters(reportDropdowns.currentQuery);
 		this.setReportsGroupBy(reportDropdowns.values.groupBy);
