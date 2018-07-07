@@ -85,7 +85,7 @@ namespace CoralTime.BL.Services.Reports.Export
                     break;
                 }
 
-                case (int) Constants.FileType.CSV:
+                case (int) Constants.FileType.Csv:
                 {
                     FileName = FileName + ExtensionCSV;
                     //file = CreateFileCSV(reportTotalView);
@@ -94,7 +94,7 @@ namespace CoralTime.BL.Services.Reports.Export
                     break;
                 }
 
-                case (int) Constants.FileType.PDF:
+                case (int) Constants.FileType.Pdf:
                 {
                     FileName = FileName + ExtensionPDF;
                     fileOfBytes = await CreateFilePDFAsync(reportTotalView);
