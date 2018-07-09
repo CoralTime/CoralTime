@@ -73,7 +73,7 @@ namespace CoralTime.DAL.Mapper
             CreateMap<ReportsSettings, ReportsSettings>();
         }
 
-        public class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>
+        private class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>
         {
             public MemberView Convert(Member source, MemberView destination, ResolutionContext context)
             {
@@ -99,7 +99,7 @@ namespace CoralTime.DAL.Mapper
             }
         }
 
-        public class MemberViewToMemberConverter : ITypeConverter<MemberView, Member>
+        private class MemberViewToMemberConverter : ITypeConverter<MemberView, Member>
         {
             public Member Convert(MemberView source, Member destination, ResolutionContext context)
             {
@@ -118,7 +118,7 @@ namespace CoralTime.DAL.Mapper
             }
         }
 
-        public class MemberProjectRoleToMemberProjectRoleViewConverter : ITypeConverter<MemberProjectRole, MemberProjectRoleView>
+        private class MemberProjectRoleToMemberProjectRoleViewConverter : ITypeConverter<MemberProjectRole, MemberProjectRoleView>
         {
             public MemberProjectRoleView Convert(MemberProjectRole source, MemberProjectRoleView destination, ResolutionContext context)
             {

@@ -29,11 +29,11 @@ namespace CoralTime.DAL.Repositories
             _userId = userId;
         }
 
-        private string GenerateCacheKey() => $"{ typeof(TEntity).Name}_CacheKey";
+        private static string GenerateCacheKey() => $"{ typeof(TEntity).Name}_CacheKey";
 
         #region GetQuery.
 
-        public abstract IQueryable<TEntity> GetIncludes(IQueryable<TEntity> query);
+        protected abstract IQueryable<TEntity> GetIncludes(IQueryable<TEntity> query);
 
         // Use asNoTracking = TRUE for POST / PATCH type queries (if you want get entity from db and update their properties)
         public IQueryable<TEntity> GetQuery(bool withIncludes = true, bool asNoTracking = false)
@@ -56,7 +56,7 @@ namespace CoralTime.DAL.Repositories
 
         public virtual TEntity LinkedCacheGetByName(string name) => throw new CoralTimeDangerException("You forget override \"LinkedCacheGetByName\"");
 
-        public virtual TEntity LinkedCacheGetById(int Id) => throw new CoralTimeDangerException("You forget override \"LinkedCacheGetById\"");
+        public virtual TEntity LinkedCacheGetById(int id) => throw new CoralTimeDangerException("You forget override \"LinkedCacheGetById\"");
 
         public virtual List<TEntity> LinkedCacheGetList()
         {

@@ -10,7 +10,7 @@ namespace CoralTime.DAL.Repositories
         public ProjectRoleRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<ProjectRole> GetIncludes(IQueryable<ProjectRole> query) => query;
+        protected override IQueryable<ProjectRole> GetIncludes(IQueryable<ProjectRole> query) => query;
 
         public int GetManagerRoleId() => LinkedCacheGetList().FirstOrDefault(z => z.Name == Constants.ProjectRoleManager).Id;
 

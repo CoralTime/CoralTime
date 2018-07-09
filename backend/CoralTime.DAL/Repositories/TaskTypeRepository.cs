@@ -10,7 +10,7 @@ namespace CoralTime.DAL.Repositories
         public TaskTypeRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<TaskType> GetIncludes(IQueryable<TaskType> query) => query.Include(t => t.Project);
+        protected override IQueryable<TaskType> GetIncludes(IQueryable<TaskType> query) => query.Include(t => t.Project);
 
         public override TaskType LinkedCacheGetByName(string name) => LinkedCacheGetList().FirstOrDefault(p => p.Name == name);
 

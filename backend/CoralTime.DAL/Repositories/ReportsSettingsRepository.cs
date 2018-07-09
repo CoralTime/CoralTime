@@ -11,7 +11,7 @@ namespace CoralTime.DAL.Repositories
         public ReportsSettingsRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<ReportsSettings> GetIncludes(IQueryable<ReportsSettings> query) => query.Include(x => x.Member);
+        protected override IQueryable<ReportsSettings> GetIncludes(IQueryable<ReportsSettings> query) => query.Include(x => x.Member);
 
         public List<ReportsSettings> GetQueryByMemberId(int memberId) => GetQuery().Where(x => x.MemberId == memberId).ToList();
         

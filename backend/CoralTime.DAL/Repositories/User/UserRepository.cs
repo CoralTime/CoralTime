@@ -11,7 +11,7 @@ namespace CoralTime.DAL.Repositories.User
         public UserRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<ApplicationUser> GetIncludes(IQueryable<ApplicationUser> query) => query;
+        protected override IQueryable<ApplicationUser> GetIncludes(IQueryable<ApplicationUser> query) => query;
 
         public override ApplicationUser LinkedCacheGetByName(string userName) => LinkedCacheGetList().FirstOrDefault(p => p.UserName == userName);
 
