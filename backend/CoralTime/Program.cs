@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using NLog.Web;
 
 namespace CoralTime
 {
@@ -70,10 +71,13 @@ namespace CoralTime
                 })
                 .ConfigureLogging((hostingContext, logging) =>
                 {
+                    logging.ClearProviders();
+                    logging.SetMinimumLevel(LogLevel.Trace);
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddConsole();
                     logging.AddDebug();
                 })
+                .UseNLog()
                 .UseIISIntegration()
                 .UseDefaultServiceProvider((context, options) =>
                 {
