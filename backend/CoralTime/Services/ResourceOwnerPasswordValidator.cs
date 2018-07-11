@@ -5,6 +5,7 @@ using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,15 +13,11 @@ namespace CoralTime.Services
 {
     public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
     {
-        //repository to get user from db
         private readonly UserManager<ApplicationUser> _userManager;
 
-        private readonly IConfiguration _configuration;
-
-        public ResourceOwnerPasswordValidator(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public ResourceOwnerPasswordValidator(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _configuration = configuration;
         }
 
         //this is used to validate your user account with provided grant at /connect/token
@@ -28,18 +25,15 @@ namespace CoralTime.Services
         {
             try
             {
-                //get your user model from db (by username - in my case its email)
                 var user = await _userManager.FindByNameAsync(context.UserName);
                 if (user != null)
                 {
                     var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, context.Password);
 
-                    //check if password match - remember to hash password if stored as hash in db
                     if (isPasswordCorrect && user.IsActive)
                     {
-                        //set the result
                         context.Result = new GrantValidationResult(
-                            subject: user.Id.ToString(),
+                            subject: user.Id,
                             authenticationMethod: "custom",
                             claims: GetUserClaims(user));
 
@@ -50,7 +44,6 @@ namespace CoralTime.Services
                     return;
                 }
                 context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "User does not exist");
-                return;
             }
             catch (Exception)
             {
@@ -59,13 +52,12 @@ namespace CoralTime.Services
             }
         }
 
-        //build claims array from user data
-        public static Claim[] GetUserClaims(ApplicationUser user)
+        private static IEnumerable<Claim> GetUserClaims(ApplicationUser user)
         {
-            return new Claim[]
+            return new[]
             {
-            new Claim("user_id", user.Id.ToString() ?? ""),
-            new Claim(JwtClaimTypes.Email, user.Email  ?? "")
+                new Claim(type: "user_id", value: user.Id ?? ""),
+                new Claim(type: JwtClaimTypes.Email, value: user.Email  ?? "")
             };
         }
     }
