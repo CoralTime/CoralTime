@@ -90,7 +90,7 @@ namespace CoralTime.DAL.Mapper
                     FullName = source.FullName,
                     IsWeeklyTimeEntryUpdatesSend = source.IsWeeklyTimeEntryUpdatesSend,
                     DateFormatId = source.DateFormatId,
-                    DateFormat = new GetDateFormat().GetDateFormatById(source.DateFormatId),
+                    DateFormat = DateFormatsStorage.GetDateFormatById(source.DateFormatId),
                     SendEmailDays = ConverterBitMask.DayOfWeekIntToString(source.SendEmailDays),
                     TimeFormat = source.TimeFormat,
                     SendEmailTime = source.SendEmailTime,

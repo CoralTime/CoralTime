@@ -6,9 +6,9 @@ namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static ViewModels.Clients.ClientView GetView(this Client client, IMapper _mapper)
+        public static ViewModels.Clients.ClientView GetView(this Client client, IMapper mapper)
         {
-            var clientView = _mapper.Map<Client, ViewModels.Clients.ClientView>(client);
+            var clientView = mapper.Map<Client, ViewModels.Clients.ClientView>(client);
 
             clientView.ProjectsCount = client.Projects?.Count ?? 0;
 

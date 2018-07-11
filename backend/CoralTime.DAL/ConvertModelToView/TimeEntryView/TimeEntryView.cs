@@ -2,20 +2,21 @@
 using AutoMapper;
 using CoralTime.Common.Constants;
 using CoralTime.DAL.Models;
+using TimeEntryView = CoralTime.ViewModels.TimeEntries.TimeEntryView;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        private static ViewModels.TimeEntries.TimeEntryView GetView(this TimeEntry timeEntry, IMapper _mapper)
+        private static TimeEntryView GetView(this TimeEntry timeEntry, IMapper mapper)
         {
-            var tEntry = _mapper.Map<TimeEntry, ViewModels.TimeEntries.TimeEntryView>(timeEntry);
+            var tEntry = mapper.Map<TimeEntry, TimeEntryView>(timeEntry);
             return tEntry;
         }
 
-        public static ViewModels.TimeEntries.TimeEntryView GetView(this TimeEntry timeEntry, string userName, IMapper _mapper)
+        public static TimeEntryView GetView(this TimeEntry timeEntry, string userName, IMapper mapper)
         {
-            var tEntryView = timeEntry.GetView(_mapper);
+            var tEntryView = timeEntry.GetView(mapper);
 
             if (timeEntry.Project != null)
             {

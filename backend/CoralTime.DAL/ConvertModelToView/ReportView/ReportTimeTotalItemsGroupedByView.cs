@@ -20,7 +20,7 @@ namespace CoralTime.DAL.ConvertModelToView
         {
             if (dateTime != null)
             {
-                var dateFormat = new GetDateFormat().GetDateFormaDotNetById(dateFormatId ?? 0);
+                var dateFormat = DateFormatsStorage.GetDateFormaDotNetById(dateFormatId ?? 0);
                 var valueSingleFromProp = ((DateTime)dateTime).ToString(dateFormat, CultureInfo.InvariantCulture);
 
                 return valueSingleFromProp;

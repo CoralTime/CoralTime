@@ -6,9 +6,9 @@ namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static ProjectRoleView GetView(this ProjectRole projectRole, IMapper _mapper)
+        public static ProjectRoleView GetView(this ProjectRole projectRole, IMapper mapper)
         {
-            var projRoleView = _mapper.Map<ProjectRole, ProjectRoleView>(projectRole);
+            var projRoleView = mapper.Map<ProjectRole, ProjectRoleView>(projectRole);
 
             return projRoleView;
         }
