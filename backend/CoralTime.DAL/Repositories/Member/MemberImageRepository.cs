@@ -10,11 +10,10 @@ namespace CoralTime.DAL.Repositories.Member
         public MemberImageRepository(AppDbContext context, IMemoryCache memoryCache, string userId) 
             : base(context, memoryCache, userId) { }
 
-        protected override IQueryable<MemberImage> GetIncludes(IQueryable<MemberImage> query) => query.Include(x => x.Member)
+        protected override IQueryable<MemberImage> GetIncludes(IQueryable<MemberImage> query) => query
             .Select(x => new MemberImage
             {
                 Id = x.Id,
-                Member = x.Member,
                 MemberId = x.MemberId,
                 CreationDate = x.CreationDate,
                 Creator = x.Creator,
