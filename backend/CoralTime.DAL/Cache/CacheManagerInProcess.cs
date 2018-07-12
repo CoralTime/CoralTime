@@ -18,9 +18,7 @@ namespace CoralTime.DAL.Cache
         {
             _memoryCache = memoryCache;
 
-            // Add Types Cancelation Sources
-            var cancellationTokenSources = CancelationTokenSources.GetCancelationTokenSourcesNames();
-            cancellationTokenSources.ForEach(key => _memoryCache.Set(key, new CancellationTokenSource()));
+            CancelationTokenSources.GetCancelationTokenSourcesNames.ForEach(key => _memoryCache.Set(key, new CancellationTokenSource()));
         }
 
         public List<T> GetList<T>(string cacheKey) where T : class
@@ -119,7 +117,7 @@ namespace CoralTime.DAL.Cache
                 tokens.ForEach(token => cacheEntryOptions.AddExpirationToken(token));
                 
                 // Save data in cache.
-                _memoryCache.Set<T>(cacheKey, entity, cacheEntryOptions);
+                _memoryCache.Set(cacheKey, entity, cacheEntryOptions);
             }
         }
 
@@ -173,7 +171,7 @@ namespace CoralTime.DAL.Cache
                 };
 
                 // Save data in cache.
-                _memoryCache.Set<T>(cacheKey, item, cacheEntryOptions);
+                _memoryCache.Set(cacheKey, item, cacheEntryOptions);
             }
         }
 
