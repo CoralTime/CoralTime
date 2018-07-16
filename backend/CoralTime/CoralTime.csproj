@@ -9,22 +9,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ConfigsNetCore2.0\**" />
-    <Compile Remove="wwwroot\**" />
     <Content Remove="ConfigsNetCore2.0\**" />
-    <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\**" />
-    <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="ConfigsNetCore2.0\**" />
-    <None Remove="wwwroot\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Content\PDF\Site.css" />
-    <None Remove="Content\PDF\PDFMarkUpView.cshtml" />
-    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.001" />
-    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.002" />
-    <None Remove="Content\PDF\SplitFileWkhtmltopdf\wkhtmltopdf.003" />
-    <None Remove="StaticFiles\Avatars\userpic.svg" />
-    <None Remove="StaticFiles\Icons\userpic.svg" />
     <None Remove="tempkey.rsa" />
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +33,7 @@
     <Content Include="StaticFiles\Icons\userpic.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="Content\PDF\PDFMarkUpView.cshtml">
+    <Content Include="coraltime.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -73,9 +60,8 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.2" />
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.2" />
   </ItemGroup>
-  <Target Name="CreateLogsFolder" AfterTargets="AfterPublish">
+  <Target Name="CreateLogsFolder" AfterTargets="Publish">
     <MakeDir Directories="$(PublishDir)Logs" Condition="!Exists('$(PublishDir)Logs')" />
   </Target>
   <ItemGroup>
@@ -84,5 +70,10 @@
     <ProjectReference Include="..\CoralTime.DAL\CoralTime.DAL.csproj" />
     <ProjectReference Include="..\CoralTime.MySqlMigrations\CoralTime.MySqlMigrations.csproj" />
     <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Content\PDF\PDFMarkUpView.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>
