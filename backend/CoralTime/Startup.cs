@@ -137,6 +137,14 @@ namespace CoralTime
                 app.UseDatabaseErrorPage();
             }
 
+            // Disable ApplicationInsights messages if it isn't configured
+            var IsApplicationInsights = Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey") != null;
+            if (!IsApplicationInsights)
+            {
+                var configuration = app.ApplicationServices.GetService<Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration>();
+                configuration.DisableTelemetry = true;
+            }
+
             SetupAngularRouting(app);
 
             app.UseDefaultFiles();
