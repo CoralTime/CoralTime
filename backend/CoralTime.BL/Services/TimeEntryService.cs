@@ -22,7 +22,7 @@ namespace CoralTime.BL.Services
         public IEnumerable<TimeEntryView> GetAllTimeEntries(DateTimeOffset dateStart, DateTimeOffset dateEnd)
         {
             var timeEntriesByMemberIdAndDates = Uow.TimeEntryRepository.GetQuery()
-                .Where(tEntry => tEntry.MemberId == BaseMemberImpersonated.Id && dateStart <= tEntry.Date && tEntry.Date <= dateEnd)
+                .Where(tEntry => tEntry.MemberId == BaseMemberImpersonated.Id && dateStart.DateTime <= tEntry.Date && tEntry.Date <= dateEnd.DateTime)
                 .ToList();
 
             var timeEntryViewList = new List<TimeEntryView>();
