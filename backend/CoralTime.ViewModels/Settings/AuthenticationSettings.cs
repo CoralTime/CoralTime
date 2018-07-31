@@ -5,6 +5,8 @@
         public bool EnableAzure { get; set; }
 
         public AzureSettings AzureSettings { get; set; }
+        
+        public string InstrumentationKey { get; set; }
     }
 
     public class AzureSettings

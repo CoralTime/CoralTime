@@ -20,6 +20,8 @@ import { UsersService } from './services/users.service';
 import { SettingsService } from './services/settings.service';
 import { ImpersonationService } from './services/impersonation.service';
 import { AdminService } from './services/admin.service';
+import { ApplicationInsightsModule, AppInsightsService } from '@markpieszak/ng-application-insights';
+
 
 export function httpFactory(http: HttpClient) {
 	return new TranslateHttpLoader(http, 'assets/translate/i18n', '.json');
@@ -43,7 +45,10 @@ export function httpFactory(http: HttpClient) {
 				useFactory: httpFactory,
 				deps: [HttpClient]
 			}
-		})
+		}),
+        ApplicationInsightsModule.forRoot({
+            instrumentationKeySetlater: true
+        })
 	],
 	bootstrap: [AppComponent],
 	providers: [
@@ -54,8 +59,9 @@ export function httpFactory(http: HttpClient) {
 		AdminService,
 		SettingsService,
 		TasksService,
-		UsersService
-	]
+		UsersService,
+        AppInsightsService
+    ]
 })
 
 export class AppModule {

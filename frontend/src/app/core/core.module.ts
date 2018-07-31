@@ -14,6 +14,8 @@ import { UserPicService } from '../services/user-pic.service';
 import { ApplyTokenInterceptor } from './apply-token.interceptor';
 import { RefreshTokenInterceptor } from './refresh-token.interceptor';
 import { LoadingMaskModule } from '../shared/loading-indicator/loading-mask.module';
+import {AppInsightsInterceptor} from "./appInsights.interceptor";
+
 
 @NgModule({
 	imports: [
@@ -43,6 +45,11 @@ import { LoadingMaskModule } from '../shared/loading-indicator/loading-mask.modu
 			useClass: RefreshTokenInterceptor,
 			multi: true
 		},
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AppInsightsInterceptor,
+            multi: true
+        },
 		AclService,
 		AuthService,
 		AuthGuard,
