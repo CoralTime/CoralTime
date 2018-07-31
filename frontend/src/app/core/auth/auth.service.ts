@@ -86,6 +86,7 @@ export class AuthService {
 		return this.http.post('/connect/token', body, {headers: headers})
 			.map(response => {
 				this.authUser = new AuthUser(response, true);
+                this.setupAppInsights();
                 this.appInsightsService.setAuthenticatedUserContext(this.authUser.id.toString(), this.authUser.nickname);
 				return true;
 			}).catch(() => this.router.navigate(['/error']));
