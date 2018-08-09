@@ -76,11 +76,17 @@ namespace CoralTime.BL.Services.Notifications
                         memberWithProjectsNotificationsForEmail.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
                     }
 
+                    if (memberWithProjectsNotificationsForEmail.ProjectsWithDatesEditing.Count == 0) 
+                        continue;
+                    
                     subjectByProjectSettings = CreateEmailSubjectByProjectSettings();
                     emailTextByProjectSettings = CreateEmailTextForEmailByProjectSettings(baseUrl, memberWithProjectsNotificationsForEmail);
                 }
 
-                await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotificationsForEmail.MemberLight.Email, subjectByProjectSettings);
+                if (emailTextByProjectSettings != string.Empty)
+                {
+                    await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotificationsForEmail.MemberLight.Email, subjectByProjectSettings);
+                }
             }
         }
 
