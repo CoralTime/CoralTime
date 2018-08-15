@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.LogChanges;
 using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.ViewModels.Clients;
 using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.MemberActions;
 using CoralTime.ViewModels.MemberProjectRoles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
@@ -71,6 +73,10 @@ namespace CoralTime.DAL.Mapper
             CreateMap<TaskType, TaskTypeView>();
 
             CreateMap<ReportsSettings, ReportsSettings>();
+            
+            CreateMap<MemberAction, MemberActionView>()
+                .ForMember(x=> x.MemberFullName, x=> x.MapFrom(z=> z.Member.FullName))
+                .ForMember(x=> x.Action, x=> x.MapFrom(z=> z.Action.ToString()));
         }
 
         private class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>

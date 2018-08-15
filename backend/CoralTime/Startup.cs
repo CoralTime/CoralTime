@@ -45,6 +45,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using CoralTime.BL.Services.Notifications;
+using CoralTime.ViewModels.MemberActions;
 using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
 
@@ -223,6 +224,7 @@ namespace CoralTime
             services.AddScoped<CheckSecureHeaderServiceFilter>();
             services.AddScoped<CheckSecureHeaderNotificationFilter>();
             services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IMemberActionService, MemberActionService>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)
@@ -348,6 +350,7 @@ namespace CoralTime
             builder.EntitySet<SettingsView>("Settings");
             builder.EntitySet<ManagerProjectsView>("ManagerProjects");
             builder.EntitySet<ProjectNameView>("ProjectsNames");
+            builder.EntitySet<MemberActionView>("MemberActions");
             builder.EnableLowerCamelCase();
             return builder.GetEdmModel();
         }
