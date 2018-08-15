@@ -1,9 +1,12 @@
-﻿using CoralTime.DAL.Models;
+﻿using System;
+using CoralTime.DAL.Models;
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using CoralTime.Common.Constants;
+using CoralTime.DAL.Models.LogChanges;
 using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Models.ReportsSettings;
 
@@ -37,6 +40,8 @@ namespace CoralTime.DAL
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
         public DbSet<ReportsSettings> ReportsSettings { get; set; }
+        
+        public DbSet<MemberAction> MemberActions { get; set; }
 
         public Task<int> SaveChangesAsync()
         {
@@ -114,6 +119,15 @@ namespace CoralTime.DAL
             builder.Entity<ReportsSettings>()
                 .HasIndex(t => new { ReportsSettingsId = t.MemberId, t.QueryName }).IsUnique();
 
+            builder.Entity<MemberAction>()
+                .HasOne(p => p.Member);
+            
+            builder.Entity<MemberAction>()
+                .Property(e => e.Action)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (Constants.MemberActionTypes)Enum.Parse(typeof(Constants.MemberActionTypes), v));
+            
             base.OnModelCreating(builder);
         }
     }

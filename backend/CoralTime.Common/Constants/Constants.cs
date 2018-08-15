@@ -171,6 +171,14 @@ namespace CoralTime.Common.Constants
             UserIsArchived
         }
 
+        public enum MemberActionTypes
+        {
+            Add,
+            Delete,
+            Change,
+            None
+        }
+
         public static readonly DateConvert[] DateFormats =
         {
             new DateConvert {DateFormatId = 0, DateFormat = "DD/MM/YYYY", DateFormatDotNet = "dd/MM/yyyy", DateFormatDotNetShort = "dd/MM"},
