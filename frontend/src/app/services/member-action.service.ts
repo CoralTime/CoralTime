@@ -13,7 +13,7 @@ export class MemberActionsService {
 
 
     getMemberActions(event, filterStr = ''): Observable<PagedResult<MemberAction>> {
-        let filters = '';
+        let filters = [];
         let query = this.odata
             .Query()
             .Top(event.rows)
@@ -27,13 +27,16 @@ export class MemberActionsService {
 
         if (filterStr) {
             let entityFilter = 'contains(tolower(entity),\'' + filterStr.trim().toLowerCase() + '\')';
-            let memberFilter = 'contains(tolower(memberFullName),\'' + filterStr.trim().toLowerCase() + '\')';
+            //let memberFilter = 'contains(tolower(memberFullName),\'' + filterStr.trim().toLowerCase() + '\')';
             let changesFilter = 'contains(tolower(changedFields),\'' + filterStr.trim().toLowerCase() + '\')';
-            let actionFilter = 'contains(tolower(action),\'' + filterStr.trim().toLowerCase() + '\')';
-            filters = entityFilter + ' or ' + memberFilter + ' or ' + changesFilter + ' or ' + actionFilter;
+            let actionFilter = 'contains(tolower(action),\'' + filterStr.trim().toLowerCase() + '\')';            
+            filters.push(entityFilter);
+            //filters.push(memberFilter);
+            filters.push(changesFilter);
+            filters.push(actionFilter);
         }
+        query.Filter(filters.join(' or '));
 
-        query.Filter(filters);
         
         return query.ExecWithCount().map(res => {
             res.data = res.data.map((x: Object) => new MemberAction(x));

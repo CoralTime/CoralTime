@@ -11,6 +11,7 @@ import { NotificationService } from '../../core/notification.service';
 export class AdminComponent {
 	memberId: number;
 	projectIds: number[];
+    filterStr: string = '';
 
 	constructor(private adminService: AdminService,
 	            private loadingService: LoadingMaskService,

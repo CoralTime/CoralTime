@@ -1,3 +1,8 @@
+<div class="ct-grid-search-filter">
+    <input class="ct-input-element" #gb placeholder="Search actions..." [(ngModel)]="filterStr">
+    <i class="fa fa-search"></i>
+</div>
+
 <div class="ct-data-table-wrapper" (window:resize)="onResize()">
     <p-dataTable class="ct-grid-container ct-table"
                  [value]="pagedResult?.data"
