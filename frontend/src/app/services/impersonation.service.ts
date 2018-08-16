@@ -59,7 +59,7 @@ export class ImpersonationService {
 	}
 
 	checkImpersonationRole(page: string): void {
-		let adminPages = ['clients', 'users', 'tasks'];
+		let adminPages = ['clients', 'users', 'tasks', 'admins'];
 		let managerPages = ['projects'];
 		if ((managerPages.indexOf(page) && this.isNotManager()) && (adminPages.indexOf(page) && this.isNotAdmin())) {
 			this.router.navigate(['/']);

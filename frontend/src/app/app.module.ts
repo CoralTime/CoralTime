@@ -21,6 +21,7 @@ import { SettingsService } from './services/settings.service';
 import { ImpersonationService } from './services/impersonation.service';
 import { AdminService } from './services/admin.service';
 import { ApplicationInsightsModule, AppInsightsService } from '@markpieszak/ng-application-insights';
+import  {MemberActionsService} from "./services/member-action.service";
 
 
 export function httpFactory(http: HttpClient) {
@@ -60,7 +61,8 @@ export function httpFactory(http: HttpClient) {
 		SettingsService,
 		TasksService,
 		UsersService,
-        AppInsightsService
+        AppInsightsService,
+        MemberActionsService
     ]
 })
 

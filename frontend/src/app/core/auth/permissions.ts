@@ -18,4 +18,5 @@ export const Permissions = {
 	roleEditMember: Roles.admin,
 	roleDisableMember: Roles.admin,
 	roleViewAdminPanel: Roles.admin,
+    roleViewMemberActions: Roles.admin,
 };
