@@ -13,8 +13,11 @@
         if (data) {
             this.id = data.id;
             this.date = new Date(data.date);
-            this.changedObject = data.changedObject;
-            this.entity = data.entity;
+            this.changedObject = data.changedObject
+                .replace( /({"|"}|})/g,'')
+                .replace(/(","|,")/g, ',  ')
+                .replace(/(:"|":"|":)/g, ':');
+            this.entity = data.entity
             this.changedFields = JSON.parse(data.changedFields);
             this.action = data.action;
             this.entityId = data.entityId;

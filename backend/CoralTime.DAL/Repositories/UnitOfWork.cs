@@ -169,7 +169,9 @@ namespace CoralTime.DAL.Repositories
             var jsonSettings = new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore,
+                DateFormatString = "yyyy'-'MM'-'dd' 'HH':'mm':'ss"
             };
             var modifiedEntries = AppDbContext.ChangeTracker
                 .Entries()
