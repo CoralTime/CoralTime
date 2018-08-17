@@ -121,13 +121,7 @@ namespace CoralTime.DAL
 
             builder.Entity<MemberAction>()
                 .HasOne(p => p.Member);
-            
-            builder.Entity<MemberAction>()
-                .Property(e => e.Action)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => (Constants.MemberActionTypes)Enum.Parse(typeof(Constants.MemberActionTypes), v));
-            
+
             base.OnModelCreating(builder);
         }
     }

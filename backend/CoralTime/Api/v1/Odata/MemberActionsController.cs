@@ -19,6 +19,6 @@ namespace CoralTime.Api.v1.Odata
 
         // GET: api/v1/odata/MemberActions
         [HttpGet]
-        public IActionResult Get() => new ObjectResult(_service.Get());
+        public IActionResult Get() => Ok(_service.Get());
     }
 }

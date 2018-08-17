@@ -19,7 +19,7 @@ namespace CoralTime.DAL.Models.LogChanges
         
         public string ChangedFields { get; set; }
         
-        public Constants.MemberActionTypes Action { get; set; }
+        public string Action { get; set; }
         
         public string EntityId { get; set; }
         

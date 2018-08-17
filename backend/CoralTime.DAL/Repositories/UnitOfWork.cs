@@ -195,7 +195,7 @@ namespace CoralTime.DAL.Repositories
                     Entity = entry.Entity.GetType().Name,
                     ChangedFields = JsonConvert.SerializeObject(DetailedCompare(newValue: newValue, oldValue: oldValue), jsonSettings),
                     EntityId = GetId(newValue, pkName, actionType),
-                    Action = actionType
+                    Action = actionType.ToString()
                 };
 
                 actions.Add(action);

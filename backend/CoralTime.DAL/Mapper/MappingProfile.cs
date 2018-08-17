@@ -73,10 +73,6 @@ namespace CoralTime.DAL.Mapper
             CreateMap<TaskType, TaskTypeView>();
 
             CreateMap<ReportsSettings, ReportsSettings>();
-            
-            CreateMap<MemberAction, MemberActionView>()
-                .ForMember(x=> x.MemberFullName, x=> x.MapFrom(z=> z.Member.FullName))
-                .ForMember(x=> x.Action, x=> x.MapFrom(z=> z.Action.ToString()));
         }
 
         private class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>

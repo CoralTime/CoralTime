@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using AutoMapper;
 using CoralTime.BL.Interfaces;
-using CoralTime.DAL.ConvertModelToView.MemberActionView;
 using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.MemberActions;
 
@@ -14,9 +12,22 @@ namespace CoralTime.BL.Services
         {
         }
 
-        public IEnumerable<MemberActionView> Get()
+        public IQueryable<MemberActionView> Get()
         {
-            return Uow.MemberActionRepository.GetQuery(asNoTracking: true).Select(x=>x.GetView(Mapper));
+            return Uow.MemberActionRepository.GetQuery(asNoTracking: true).Select(x=> 
+                new MemberActionView
+                {
+                    Action = x.Action,
+                    ChangedFields = x.ChangedFields,
+                    ChangedObject = x.ChangedObject,
+                    Date = x.Date,
+                    Entity = x.Entity,
+                    EntityId = x.EntityId,
+                    Id = x.Id,
+                    MemberFullName = x.Member.FullName,
+                    MemberId = x.MemberId
+                }
+            );
         }
     }
 }
