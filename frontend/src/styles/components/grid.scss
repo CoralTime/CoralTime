@@ -176,10 +176,12 @@ tr:hover .ct-grid-settings {
       margin-top: 20px;
 
       .slimscroll-grid {
+        width: 14px !important;
         right: 0 !important;
       }
 
       .slimscroll-bar {
+        width: 12px !important;
         right: 3px !important;
       }
     }

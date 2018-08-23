@@ -187,7 +187,6 @@ export class ClientProjectAssignmentComponent implements OnInit {
 			.subscribe(() => {
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
-					this.filterStr = '';
 					this.notificationService.success('Project successfully ' + (client ? 'assigned.' : 'unassigned.'));
 				},
 				() => {
