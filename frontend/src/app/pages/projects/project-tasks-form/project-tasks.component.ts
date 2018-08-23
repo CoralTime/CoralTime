@@ -67,7 +67,6 @@ export class ProjectTasksComponent implements OnInit {
 		if (error) {
 			this.notificationService.danger('Error creating adding task.');
 		} else {
-			this.filterStr = '';
 			this.updateTasks(null, true);
 			this.notificationService.success('Task successfully assigned.');
 		}
@@ -77,7 +76,6 @@ export class ProjectTasksComponent implements OnInit {
 		target.classList.add('ct-loading');
 		this.tasksService.toggleActive(task)
 			.subscribe(() => {
-					this.filterStr = '';
 					this.updateTasks(null, true);
 					this.notificationService.success('Task has been successfully removed from projects.');
 				},
