@@ -1,7 +1,7 @@
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AppInsightsService } from '@markpieszak/ng-application-insights';
 import { PagedResult } from './query';
-//import { AppInsightsService } from '@markpieszak/ng-application-insights';
 
 
 export class KeyConfigs {
@@ -18,8 +18,8 @@ export class ODataConfiguration {
 	baseUrl: string = 'http://localhost/odata';
 	keys: KeyConfigs = new KeyConfigs();
 
-    // constructor(private appInsightsService: AppInsightsService) {
-    // }
+    constructor(private appInsightsService: AppInsightsService) {
+    }
 	
 	getEntityUri(entityKey: string, _typeName: string): string {
 		// check if string is a GUID (UUID) type
@@ -35,7 +35,7 @@ export class ODataConfiguration {
 	}
 
 	handleError(err: any, caught: any): void {
-    	//this.appInsightsService.trackException(err);
+    	this.appInsightsService.trackException(err);
 		console.warn('OData error: ', err, caught);
 	};
 
