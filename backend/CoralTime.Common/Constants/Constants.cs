@@ -37,6 +37,7 @@ namespace CoralTime.Common.Constants
             "/settings",
             "/help",
             "/signin-oidc",
+            "/admin",
             UrlSetPassword
         };
 
