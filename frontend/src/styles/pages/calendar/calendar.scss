@@ -9,8 +9,8 @@ $titleDay: rgba(55, 68, 86, 0.74);
 $titleDate: #374456;
 $activeText: #0099cc;
 
-$plannedTime: #cbd1d4;
-$trackedTime: #fafafa;
+$plannedTime: #8994b3;
+$trackedTime: $nav-link-border;
 
 $timestamp: 19px;
 
@@ -254,7 +254,7 @@ $calendarPhoneWidth: 809px;
             position: relative;
             top: -6px;
             color: $titleDay;
-            font-family: $roboto;
+            font-family: $latoFont;
             font-weight: 300;
             font-size: 15px;
           }
@@ -381,7 +381,7 @@ $calendarPhoneWidth: 809px;
           text-overflow: ellipsis;
           white-space: nowrap;
           font-size: 16px;
-          font-family: $roboto;
+          font-family: $latoFont;
           color: $nav-background;
           font-weight: 500;
           cursor: pointer;
@@ -728,69 +728,56 @@ $calendarPhoneWidth: 809px;
 
 .ct-total-tracked-time {
   position: fixed;
-  top: 0;
+  top: 10px;
   left: 0;
   right: 0;
   z-index: 996;
   margin: auto;
-  width: 261px;
-  text-align: center;
-  height: $nav-height;
-  line-height: $nav-height;
-
-  @media (max-width: $calendarPhoneWidth) {
-    width: 130px;
-  }
+  width: 252px;
+  height: 44px;
+  padding-left: 44px;
+  line-height: 44px;
+  border-radius: 32px;
+  box-sizing: border-box;
+  background: url(./assets/icons1/play-circle.svg) no-repeat #f3f4f6;
 
   .ct-hours-tracked,
   .ct-hours-planned {
     position: relative;
-    color: #fff;
-    font-size: 19px;
-    font-family: $baseFontFamily;
-    top: 0;
-    margin-left: 40px;
-
-    @media (max-width: $calendarPhoneWidth) {
-      font-size: 14px;
-      margin-left: 27px;
-    }
+    font-size: 16px;
+    font-weight: 700;
+    margin-left: 44px;
 
     &:before {
       position: absolute;
       content: '';
-      width: 30px;
-      height: 30px;
-      top: -4px;
-      left: -32px;
-
-      @media (max-width: $calendarPhoneWidth) {
-        top: -7px;
-        left: -28px;
-        background-size: 35px !important;
-      }
+      width: 18px;
+      height: 18px;
+      top: 1px;
+      left: -24px;
     }
   }
 
   .ct-hours-tracked {
+    color: $trackedTime;
+
     &:before {
-      background: url(./assets/icons/time.actual2.svg) no-repeat center center;
-      background-size: 45px 45px;
+      background: url(./assets/icons1/time.svg) no-repeat center;
     }
   }
 
   .ct-hours-planned {
     color: $plannedTime;
+    opacity: .6;
 
     &:before {
-      background: url(./assets/icons/time.estimated1.svg) no-repeat center center;
-      background-size: 45px 45px;
+      background: url(./assets/icons1/est-time.svg) no-repeat center;
     }
   }
 }
 
 .ct-impersonation-header + .ct-wrapper .ct-total-tracked-time {
-  top: 50px;
+  top: 60px;
 }
 
 .ui-multiselect-panel.ct-impersonate .ui-multiselect-panel {
