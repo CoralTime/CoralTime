@@ -5,7 +5,7 @@
   > .ct-menu-content {
     position: absolute;
     top: 0;
-    min-width: 230px;
+    min-width: 210px;
     max-width: 100%;
     opacity: 0;
     visibility: hidden;
@@ -18,7 +18,6 @@
     &:before {
       position: absolute;
       top: -18px;
-      right: 10px;
       content: '';
       border: 10px solid transparent;
       border-bottom: 10px solid $nav-background;

@@ -14,9 +14,6 @@ $trackedTime: $nav-link-border;
 
 $timestamp: 19px;
 
-$calendarTabletWidth: 1299px;
-$calendarPhoneWidth: 809px;
-
 .ct-calendar-page {
   background: linear-gradient(#dbdbdb, transparent 1px) 0 -1px;
   background-size: 100% 18px;
@@ -734,7 +731,6 @@ $calendarPhoneWidth: 809px;
   z-index: 996;
   margin: auto;
   width: 252px;
-  height: 44px;
   padding-left: 44px;
   line-height: 44px;
   border-radius: 32px;
@@ -774,10 +770,26 @@ $calendarPhoneWidth: 809px;
       background: url(./assets/icons1/est-time.svg) no-repeat center;
     }
   }
+
+  @media (max-width: $calendarTabletWidth) {
+    width: 200px;
+    top: 13px;
+    background-size: 36px;
+    padding-left: 40px;
+    line-height: 36px;
+
+    .ct-hours-tracked, .ct-hours-planned {
+      margin-left: 30px;
+    }
+  }
 }
 
 .ct-impersonation-header + .ct-wrapper .ct-total-tracked-time {
   top: 60px;
+
+  @media (max-width: $calendarTabletWidth) {
+    top: 63px;
+  }
 }
 
 .ui-multiselect-panel.ct-impersonate .ui-multiselect-panel {

@@ -1,42 +1,45 @@
 .ct-icon {
   position: relative;
+  top: -1px;
   display: inline-block;
   width: 22px;
   height: 22px;
   margin-right: 10px;
   vertical-align: middle;
-  background-size: 22px !important;
-}
-
-.ct-timetracker-icon {
-  top: -3px;
-  background: url(./assets/icons1/clock-copy.svg) no-repeat center;
-  background-size: 20px !important;
-}
-
-.ct-settings-icon {
-  top: -1px;
-  background: url(./assets/icons1/settings.svg) no-repeat center;
-}
-
-.ct-admin-icon {
-  left: 24px;
-  background-image: url(./assets/icons/ct.admin1.svg);
-  background-size: 45% !important;
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
 }
 
+.ct-timetracker-icon {
+  background-image: url(./assets/icons1/clock-copy.svg);
+  background-size: 20px;
+}
+
+.ct-settings-icon {
+  background-image: url(./assets/icons1/settings.svg);
+}
+
+.ct-admin-icon {
+  top: -3px;
+  background-image: url(./assets/icons1/ct.admin1.svg);
+  background-size: 18px;
+}
+
 .ct-reports-icon {
-  top: -1px;
-  background: url(./assets/icons1/pie-chart.svg) no-repeat center;
+  background-image: url(./assets/icons1/pie-chart.svg);
 }
 
 .ct-menu-icon {
-  background: url(./assets/icons1/menu.svg) no-repeat left center;
+  top: 1px;
+  background-image: url(./assets/icons1/menu.svg);
+  background-position: left center;
 }
 
 .ct-menu-blue-icon {
-  background: url(./assets/icons1/menu-blue.svg) no-repeat left center;
+  top: 1px;
+  background-image: url(./assets/icons1/menu-blue.svg);
+  background-position: left center;
 }
 
 .ct-nav-menu li:hover, .ct-menu-item:hover, .active {
@@ -45,7 +48,7 @@
   }
 
   .ct-admin-icon {
-    background-image: url(./assets/icons/ct.admin2.svg);
+    background-image: url(./assets/icons1/ct.admin2.svg);
   }
 
   .ct-settings-icon {
@@ -57,37 +60,44 @@
   }
 
   .ct-projects-icon {
-    background-image: url(./assets/icons/ct.projects2.svg);
+    background-image: url(./assets/icons1/ct.projects2.svg);
   }
 
   .ct-clients-icon {
-    background-image: url(./assets/icons/ct.clients2.svg);
+    background-image: url(./assets/icons1/ct.clients2.svg);
   }
 
   .ct-tasks-icon {
-    background-image: url(./assets/icons/ct.tasks2.svg);
+    background-image: url(./assets/icons1/ct.tasks2.svg);
   }
 
   .ct-users-icon {
-    background-image: url(./assets/icons/ct.users2.svg);
+    background-image: url(./assets/icons1/ct.users2.svg);
   }
-
 }
 
 .ct-projects-icon {
-  background: url(./assets/icons/ct.projects1.svg) no-repeat center center;
+  background: url(./assets/icons1/ct.projects1.svg) no-repeat center;
+  background-size: 40px;
+  top: -3px;
 }
 
 .ct-clients-icon {
-  background: url(./assets/icons/ct.clients1.svg) no-repeat center center;
+  background: url(./assets/icons1/ct.clients1.svg) no-repeat center;
+  background-size: 40px;
+  top: -3px;
 }
 
 .ct-tasks-icon {
-  background: url(./assets/icons/ct.tasks1.svg) no-repeat center center;
+  background: url(./assets/icons1/ct.tasks1.svg) no-repeat center;
+  background-size: 40px;
+  top: -3px;
 }
 
 .ct-users-icon {
-  background: url(./assets/icons/ct.users1.svg) no-repeat center center;
+  background: url(./assets/icons1/ct.users1.svg) no-repeat center;
+  background-size: 40px;
+  top: -3px;
 }
 
 .ct-controls-icon:before {
