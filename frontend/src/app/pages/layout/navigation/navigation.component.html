@@ -34,13 +34,11 @@
                     <a *ngIf="!isMobileView()" class="ct-nav-username" title="View Profile" [routerLink]="['/profile']">
                         {{impersonationUser?.fullName || userInfo?.fullName}}
                     </a>
-                    <i class="ct-icon"
-                       [ngClass]="{
-                           'ct-caret-up': !isMobileView() && profileNavMenu.isOpen,
-                           'ct-caret-down': !isMobileView() && !profileNavMenu.isOpen,
-                           'ct-menu-icon': isMobileView() && !profileNavMenu.isOpen,
-                           'ct-menu-blue-icon': isMobileView() && profileNavMenu.isOpen
-                       }"
+                    <i *ngIf="!isMobileView()"
+                       [ngClass]="profileNavMenu.isOpen ? 'fa fa-angle-up' : 'fa fa-angle-down'"
+                       (click)="profileNavMenu.toggleMenu()"></i>
+                    <i *ngIf="isMobileView()"
+                       [ngClass]="profileNavMenu.isOpen ? 'ct-icon ct-menu-blue-icon' : 'ct-icon ct-menu-icon'"
                        (click)="profileNavMenu.toggleMenu()"></i>
                 </div>
 

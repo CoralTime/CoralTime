@@ -1,7 +1,7 @@
 $fieldHeight: 30px;
 $selectHeight: 35px;
 $baseFont: 16px;
-$smallFont: 12px;
+$smallFont: 13px;
 
 $button-font-size: 17px;
 
@@ -43,9 +43,6 @@ textarea {
 
 select, input, textarea, form {
   font-family: inherit;
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
-  border-radius: 0 !important;
   box-shadow: none !important;
 
   &:focus {
@@ -340,21 +337,16 @@ h5 {
 }
 
 .slimscroll-grid {
-  top: 0 !important;
-  border-radius: 0 !important;
-  margin: 0 2px !important;
-  right: -2px !important;
-  width: 6px !important;
-  background: $border-color !important;
+  width: 8px !important;
+  background: none !important;
   z-index: 1 !important;
 }
 
 .slimscroll-bar {
-  background-color: $nav-background !important;
+  background-color: $gray-border !important;
   right: 1px !important;
-  width: 4px !important;
+  width: 6px !important;
   margin: 0 !important;
-  border-radius: 0 !important;
   z-index: 2 !important;
 }
 

@@ -89,15 +89,16 @@
   font-size: $baseFont;
 }
 
-.ui-shadow {
-  border: 1px solid $form-border !important;
-  box-shadow: none !important;
+div.ui-shadow {
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
 }
 
 .ui-multiselect-panel {
-  [slimScroll] {
-    max-height: 320px !important;
-    padding: 0 !important;
+  .slimscroll-wrapper {
+    margin: 0 -10px !important;
+    width: calc(100% + 24px) !important;
   }
 }
 

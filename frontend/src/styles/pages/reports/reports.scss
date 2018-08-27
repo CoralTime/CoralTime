@@ -147,19 +147,19 @@ $fieldHeight: 30px;
         display: inline-block;
       }
 
-      .ct-prev, .ct-next {
+      .fa-angle-left, .fa-angle-right, .ct-next {
         position: absolute;
       }
 
-      .ct-prev {
+      .fa-angle-left {
         left: 0;
       }
 
-      .ct-next {
+      .fa-angle-right {
         right: 0;
       }
 
-      .ct-prev, .ct-next, .fa-sort-desc:before {
+      .fa-angle-left, .fa-angle-right, .fa-sort-desc:before {
         color: $nav-link-border;
       }
     }

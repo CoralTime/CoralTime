@@ -157,22 +157,15 @@
   background: url(./assets/icons/m.export.svg) no-repeat center;
 }
 
-.ct-prev, .ct-next {
-  &:before {
-    position: absolute;
-    font-size: 30px;
-  }
+.fa-angle-up, .fa-angle-down, .fa-angle-left, .fa-angle-right {
+  font-size: 22px;
+  color: $nav-link;
+}
+
+.fa-angle-left, .fa-angle-right {
   &:hover {
-    color: $nav-link-border;
+    color: $nav-link-hover;
   }
-}
-
-.ct-prev:before {
-  content: '\2039';
-}
-
-.ct-next:before {
-  content: '\203A';
 }
 
 .ct-controls-icon:before {

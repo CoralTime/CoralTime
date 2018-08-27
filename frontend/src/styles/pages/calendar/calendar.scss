@@ -15,8 +15,6 @@ $trackedTime: $nav-link-border;
 $timestamp: 19px;
 
 .ct-calendar-page {
-  background: linear-gradient(#dbdbdb, transparent 1px) 0 -1px;
-  background-size: 100% 18px;
   overflow-x: hidden;
 
   .ct-page-header {
@@ -45,96 +43,68 @@ $timestamp: 19px;
     }
   }
 
-  .ct-day-tab {
-    a {
-      width: 60px;
-    }
+  .ct-day-tab a {
+    width: 60px;
   }
 
-  .ct-week-tab {
-    a {
-      width: 120px;
-    }
+  .ct-week-tab a {
+    width: 90px;
   }
 
   .ct-calendar-periods {
     margin-left: 60px;
 
     a {
-      margin: 0 !important;
+      white-space: nowrap;
       text-align: center;
 
-      &:before {
+      i {
         position: absolute;
-        font-size: 30px;
-        top: -10px;
+        top: 6px;
       }
 
       &:first-child {
-        &:before {
-          left: -15px;
+        padding-left: 35px;
+
+        i {
+          left: 0;
         }
       }
 
-      &:last-child:before {
-        right: -15px;
-      }
-    }
+      &:last-child {
+        padding-right: 35px;
 
-    .ct-active-tab {
-      border-bottom: 2px solid transparent !important;
+        i {
+          right: 0;
+        }
+      }
     }
   }
 
   .ct-calendar-projects {
     float: right;
-    width: 250px;
+    width: 140px;
 
     .ct-multiselect {
-      border: none !important;
       position: relative;
-      padding: 0 10px;
-
-      .ct-select {
-        height: 30px;
-        position: relative;
-        right: 20px;
-        background: none;
-      }
-    }
-
-    .ct-multiselect .mat-select-value-text:after {
-      content: "\f0dd";
-      display: inline-block;
-      font-family: FontAwesome;
-      font-size: 19px;
-      text-rendering: auto;
-      -webkit-font-smoothing: antialiased;
-      position: relative;
-      top: -3px;
-      margin-left: 5px;
-      color: $nav-link-border;
+      vertical-align: top;
     }
 
     .ct-multiselect .mat-select-value-text {
-      line-height: 30px;
-      padding-right: 15px;
+      padding: 0 25px 0 10px;
+      color: $nav-link-hover;
 
-      &:after {
+      .fa {
         position: absolute;
-        right: 0;
+        right: 10px;
+        top: 7px;
       }
-    }
-
-    .ct-multiselect.active .mat-select-value-text:after {
-      top: 5px;
-      content: "\f0de" !important;
     }
 
     .ct-select {
       border: none;
-      box-shadow: none;
-      text-align: right;
+      border-radius: 5px;
+      text-align: center;
 
       .mat-select-trigger {
         font-family: inherit;
@@ -148,10 +118,6 @@ $timestamp: 19px;
       .mat-select-arrow {
         display: none;
       }
-
-      &:after {
-        display: none;
-      }
     }
   }
 
@@ -160,7 +126,7 @@ $timestamp: 19px;
     -moz-user-select: none;
     -ms-user-select: none;
     display: flex;
-    border-top: 10px solid white;
+    margin-top: 81px;
 
     > * {
       display: flex;
@@ -189,7 +155,7 @@ $timestamp: 19px;
       padding-bottom: $timestamp;
       box-sizing: border-box;
 
-        &:first-child {
+      &:first-child {
         margin-left: 0;
       }
 
@@ -637,7 +603,7 @@ $timestamp: 19px;
 
       .ct-calendar-day-title {
         position: fixed;
-        top: 110px;
+        top: 145px;
         z-index: 995;
         width: calc((100% - 84px) / 7);
       }
@@ -735,7 +701,7 @@ $timestamp: 19px;
   line-height: 44px;
   border-radius: 32px;
   box-sizing: border-box;
-  background: url(./assets/icons1/play-circle.svg) no-repeat #f3f4f6;
+  background: url(./assets/icons1/play-circle.svg) no-repeat $gray-page-background;
 
   .ct-hours-tracked,
   .ct-hours-planned {
@@ -799,7 +765,7 @@ $timestamp: 19px;
 .ct-calendar-multiselect.ui-multiselect-panel > div {
   position: fixed;
   z-index: 996 !important;
-  top: 102px !important;
+  top: 127px !important;
   right: 19px;
   left: auto !important;
   font-family: inherit;
