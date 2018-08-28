@@ -36,7 +36,7 @@ html, body {
 .ct-page-header {
   position: relative;
   line-height: 35px;
-  margin: 23px 0;
+  padding: 23px 0;
   font-size: 14px;
   font-weight: 700;
 
@@ -48,7 +48,7 @@ html, body {
       display: inline-block;
       text-transform: capitalize;
       cursor: pointer;
-      color: $nav-link;
+      color: $main-grey;
       padding: 0 20px;
     }
   }

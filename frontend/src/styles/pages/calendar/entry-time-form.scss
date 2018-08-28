@@ -1,7 +1,7 @@
 $calendarWidgetBg: #fff;
 $titleHeight: 35px;
-
 $formPadding: 20px;
+$inactiveText: #333333;
 
 ct-entry-time {
   position: absolute;
@@ -745,7 +745,7 @@ ct-entry-time {
       display: inline-block;
       line-height: 40px;
       margin-right: 30px;
-      color: $nav-link-border;
+      color: $main-blue;
     }
   }
 

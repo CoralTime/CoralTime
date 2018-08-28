@@ -11,14 +11,14 @@ $linkColor: #0099cf;
     background: #fff;
     border: 2px solid $gray-border;
     border-radius: 5px;
-    color: $nav-link;
+    color: $main-grey;
   }
 
   .fa-search {
     position: absolute;
     right: 8px;
     top: 7px;
-    color: $nav-link;
+    color: $main-grey;
     opacity: .6;
   }
 
@@ -27,7 +27,7 @@ $linkColor: #0099cf;
     right: 27px;
     top: 6px;
     font-size: 16px;
-    color: $nav-link;
+    color: $main-grey;
     opacity: .6;
     cursor: pointer;
 
@@ -55,7 +55,7 @@ $linkColor: #0099cf;
   .ui-multiselect-item {
     padding: 7px 5px 7px 10px;
     height: 34px;
-    margin-right: 15px;
+    margin: 0 15px 0 0;
 
     &:not(.ui-state-highlight):hover {
       background: $gray-page-background;
@@ -72,7 +72,7 @@ $linkColor: #0099cf;
       top: 1px;
       font-weight: 700;
       letter-spacing: .2px;
-      color: $nav-link;
+      color: $main-grey;
       cursor: pointer;
 
       &.ct-archived-option {
@@ -107,8 +107,8 @@ $linkColor: #0099cf;
 
     &.fa-check {
       color: #fff;
-      border-color: $nav-link-border;
-      background-color: $nav-link-border;
+      border-color: $main-blue;
+      background-color: $main-blue;
     }
   }
 
@@ -143,7 +143,7 @@ $linkColor: #0099cf;
         }
 
         a {
-          color: $nav-link-border;
+          color: $main-blue;
           cursor: pointer;
           font-family: inherit;
           font-size: $smallFont;

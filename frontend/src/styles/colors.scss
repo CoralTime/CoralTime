@@ -1,20 +1,21 @@
 $gray: #d6d6d6;
-$blue: #45818e;
 $gray-border: #e7e9f1;
 
-$main-blue: #0099cc;
+$blue: #0099cc;
+
+$main-blue: #00a0de;
+$main-grey: #8994b3;
 //TODO: rename var
 
 $nav-background: #fff;
 $nav-link: #8994b3;
 $nav-link-hover: #353a4e;
-$nav-link-border: #00a0de;
 $nav-menu-hover: #4e5d70;
 $primary-btn: #50bce0;
 $primary-btn-hover: #3399c8;
 $primary-btn-text: #ffffff;
 $error-text: #ee5e5e;
-$calendarTaskColor: #fafafa;
+$calendarTaskColor: #fff;
 $gray-text: #979797;
 $gray-button: #aaaeb8;
 $border-color: #f1f1f1;
@@ -30,7 +31,7 @@ $grid-text: rgba(0, 0, 0, .5);
 $black: #374456;
 $green: #27ae61;
 
-$label-background: $main-blue;
+$label-background: $blue;
 
 $gray-page-background: #f3f4f6;
 $blue-grid-header: #e9f8fc;
@@ -54,6 +55,22 @@ $colors: $color0, $color1, $color2, $color3, $color4, $color5, $color6, $color7;
 
 .ct-border-color {
   border-left: 5px solid currentColor;
+}
+
+.ct-project-color {
+  position: relative;
+
+  &:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+    background-color: currentColor;
+    opacity: .2;
+    border-radius: 12px;
+  }
 }
 
 .ct-container-color {

@@ -27,27 +27,27 @@
 
 .mat-checkbox-indeterminate.mat-accent, .mat-checkbox-checked.mat-accent {
   .mat-checkbox-background {
-    background-color: $nav-link-border;
+    background-color: $main-blue;
   }
 }
 
 .mat-checkbox:not(.mat-checkbox-disabled).mat-accent {
   .mat-checkbox-ripple .mat-ripple-element {
-    background-color: rgba($nav-link-border, .26);
+    background-color: rgba($main-blue, .26);
   }
 }
 
 .mat-radio-button.mat-accent {
   &.mat-radio-checked .mat-radio-outer-circle {
-    border-color: $nav-link-border;
+    border-color: $main-blue;
   }
 
   .mat-radio-inner-circle {
-    background-color: $nav-link-border;
+    background-color: $main-blue;
   }
 
   .mat-radio-ripple .mat-ripple-element {
-    background-color: rgba($nav-link-border, 0.26);
+    background-color: rgba($main-blue, 0.26);
   }
 
   .mat-radio-outer-circle {
@@ -57,19 +57,19 @@
 }
 
 .mat-input-underline .mat-input-ripple {
-  background-color: $nav-link-border;
+  background-color: $main-blue;
 }
 
 .mat-select {
   &:focus:not(.mat-select-disabled) {
     .mat-select-arrow, .mat-select-trigger {
-      color: $nav-link-border;
+      color: $main-blue;
     }
   }
 }
 
 .mat-option.mat-selected {
-  color: $nav-link-border;
+  color: $main-blue;
 }
 
 .ui-widget-content a {
@@ -77,7 +77,7 @@
 }
 
 .ui-widget-content a:hover {
-  color: $nav-link-border;
+  color: $main-blue;
 }
 
 .ui-datatable, .ui-cell-data {

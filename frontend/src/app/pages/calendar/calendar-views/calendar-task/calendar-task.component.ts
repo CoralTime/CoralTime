@@ -335,8 +335,10 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				isFromToShow: true,
 				timeTimerStart: -1
 			};
-            let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
-            let roundTicks = (this.ticks <60)? 60: this.roundTime(this.ticks);
+
+			let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
+			let roundTicks = (this.ticks < 60) ? 60 : this.roundTime(this.ticks);
+
 			currentTimeEntry.timeValues = {
 				timeActual: roundTicks,
 				timeEstimated: this.timeEntry.timeValues.timeEstimated,
@@ -358,14 +360,14 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 				});
 	}
 
-    private roundTime (time: number): number {
-        return time - time % 60;
-    }
+	private roundTime(time: number): number {
+		return time - time % 60;
+	}
 
 	// GENERAL
 
 	calculateCalendarTaskHeight(): number {
-		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 95 - 42;
+		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 125 - 96;
 		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - 25 : taskHeight;
 	}
 

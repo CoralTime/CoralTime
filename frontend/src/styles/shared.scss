@@ -13,7 +13,6 @@ body, html {
   min-width: 320px;
   font-size: 14px;
   font-family: $baseFontFamily;
-  color: $nav-background;
 }
 
 ul, li {
@@ -98,7 +97,7 @@ h5 {
 }
 
 .ct-blue-text {
-  color: $nav-link-border;
+  color: $main-blue;
 }
 
 .ct-inactive-title {
@@ -120,13 +119,13 @@ h5 {
 
   &:focus, &:hover {
     outline: none;
-    color: $nav-link-border;
-    border-bottom-color: $nav-link-border;
+    color: $main-blue;
+    border-bottom-color: $main-blue;
   }
 }
 
 .ct-form-label {
-  color: $main-blue;
+  color: $blue;
   display: block;
   margin: 0;
   padding: 12px 0;
@@ -178,7 +177,7 @@ h5 {
 }
 
 .ct-close {
-  color: $nav-link-border;
+  color: $main-blue;
   font-size: 16px;
   font-family: inherit;
   line-height: 16px !important;
@@ -194,7 +193,7 @@ h5 {
 }
 
 .ct-primary-button {
-  background: $nav-link-border;
+  background: $main-blue;
   color: $primary-btn-text !important;
 }
 
@@ -206,7 +205,7 @@ h5 {
 .ct-add-link {
   cursor: pointer;
   a {
-    color: $nav-link-border;
+    color: $main-blue;
     display: inline-block;
     text-decoration: none;
     font-family: inherit;
@@ -223,12 +222,12 @@ h5 {
     position: relative;
     top: 2px;
     font-family: inherit;
-    color: $nav-link-border;
+    color: $main-blue;
   }
 }
 
 .ct-add-link:hover, .ct-add-link:hover a {
-  color: $nav-link-border !important;
+  color: $main-blue !important;
 }
 
 .ct-link {
@@ -367,11 +366,11 @@ h5 {
 }
 
 .ct-button:disabled {
-  background-color: $nav-link-border !important;
+  background-color: $main-blue !important;
 }
 
 .ct-blue-button {
-  background-color: $nav-link-border;
+  background-color: $main-blue;
   border: none;
   height: 40px;
   letter-spacing: 0.5px;

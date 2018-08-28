@@ -87,7 +87,7 @@ ct-navigation {
           font-family: $navFontFamily;
           font-weight: 700;
           font-size: 16px;
-          color: $nav-link;
+          color: $main-grey;
           letter-spacing: .2px;
 
           &:hover {
@@ -112,7 +112,7 @@ ct-navigation {
           left: 0;
           height: 2px;
           width: 100%;
-          background: $nav-link-border;
+          background: $main-blue;
         }
 
         > a {
@@ -136,7 +136,7 @@ ct-navigation {
       text-overflow: ellipsis;
       font-size: 14px;
       font-weight: 700;
-      color: $nav-link;
+      color: $main-grey;
       white-space: nowrap;
       text-align: center;
 
@@ -184,7 +184,7 @@ ct-navigation {
     .fa {
       width: 12px;
       padding-right: 20px;
-      color: $nav-link;
+      color: $main-grey;
     }
 
     .ct-menu-icon {
@@ -238,7 +238,7 @@ ct-navigation {
 
       &:hover, &:active, &.active {
         .mat-icon {
-          color: $nav-link-border;
+          color: $main-blue;
         }
 
         a {
@@ -255,6 +255,6 @@ ct-navigation {
   }
 
   li:hover .ct-icon {
-    color: $nav-link-border;
+    color: $main-blue;
   }
 }

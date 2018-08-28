@@ -77,10 +77,9 @@ $fieldHeight: 30px;
       top: -5px;
     }
 
-
     label {
-         font-size: 14px;
-      color: $main-blue;
+      font-size: 14px;
+      color: $blue;
       text-transform: uppercase;
       font-weight: 700;
       display: inline-block;
@@ -160,7 +159,7 @@ $fieldHeight: 30px;
       }
 
       .fa-angle-left, .fa-angle-right, .fa-sort-desc:before {
-        color: $nav-link-border;
+        color: $main-blue;
       }
     }
   }
@@ -171,7 +170,7 @@ $fieldHeight: 30px;
 
   .ct-query-add-box {
     cursor: pointer;
-    color: $main-blue;
+    color: $blue;
 
     i {
       top: 5px;
@@ -217,7 +216,7 @@ $fieldHeight: 30px;
       white-space: nowrap;
       text-align: center;
       cursor: pointer;
-      background-color: $main-blue;
+      background-color: $blue;
       color: #fff;
       //border-radius: 4px;
       padding: 7px 35px 7px 12px;
@@ -413,7 +412,7 @@ $fieldHeight: 30px;
       font-family: inherit;
       font-size: 12px;
       text-transform: uppercase;
-      color: $main-blue;
+      color: $blue;
       height: 18px;
       display: block;
     }
@@ -523,7 +522,7 @@ $fieldHeight: 30px;
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 400px;
-        color: $nav-link-border;
+        color: $main-blue;
         font-weight: 700;
       }
     }
@@ -661,7 +660,7 @@ $fieldHeight: 30px;
       }
 
       &:hover {
-        color: $nav-link-border;
+        color: $main-blue;
       }
     }
   }
