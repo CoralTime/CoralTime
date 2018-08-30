@@ -25,7 +25,7 @@
     //min-width: 488px;
 
       button {
-        color: $nav-background;
+        color: #374456;
 
       &.dp-calendar-nav-right, &.dp-calendar-nav-left {
         display: inline-block;
@@ -88,7 +88,7 @@
     height: 34px;
     border-radius: 0;
     font-size: 13px;
-    color: $nav-background;
+    color: #374456;
     border: 1px solid transparent;
 
     &:hover:not([disabled]):not(.dp-selected) {
@@ -123,7 +123,7 @@
 
   .dp-calendar-month {
     border-radius: 4px;
-    color: $nav-background;
+    color: #374456;
 
     &:hover {
       background: $primary-btn-hover;

@@ -5,13 +5,40 @@ $titleDayHeight: 145px;
 $plannedTime: #8994b3;
 
 .ct-calendar-page {
-  overflow-x: hidden;
-
   .ct-page-header {
-    position: fixed !important;
-    width: calc(100% - 40px);
-    background: $gray-page-background;
-    z-index: 995;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 7;
+
+    &:before {
+      position: absolute;
+      top: -23px;
+      left: 0;
+      width: 100%;
+      height: 81px;
+      content: '';
+      background: $gray-page-background;
+    }
+  }
+
+  .ct-page-tabs {
+    display: inline-block;
+    position: relative;
+
+    > a {
+      display: inline-block;
+      text-transform: capitalize;
+      cursor: pointer;
+      color: $main-grey;
+      padding: 0 20px;
+
+      &:hover, &.ct-active-tab {
+        color: #353a4e;
+      }
+    }
   }
 
   .ct-day-tab a {
@@ -26,6 +53,7 @@ $plannedTime: #8994b3;
     margin-left: 60px;
 
     a {
+      padding: 0 20px;
       white-space: nowrap;
       text-align: center;
 
@@ -48,6 +76,14 @@ $plannedTime: #8994b3;
         i {
           right: 0;
         }
+      }
+    }
+
+    @media (min-width: 810px) and (max-width: 1380px) {
+      margin-left: 40px;
+
+      a {
+        padding: 0 15px;
       }
     }
   }
@@ -99,21 +135,16 @@ $plannedTime: #8994b3;
   -ms-user-select: none;
   display: flex;
   margin: 81px -5px 0;
+  overflow-x: hidden;
 
   > * {
     display: flex;
     flex: 0 0 auto;
-
-    > * {
-      width: 100%;
-    }
   }
 }
 
 .ct-calendar-day {
-  min-height: calc(100vh - 85px);
   box-sizing: border-box;
-  padding: 0 5px;
 
   &:hover {
     .ct-calendar-add-task > div {
@@ -129,6 +160,7 @@ $plannedTime: #8994b3;
   width: 100%;
   box-sizing: border-box;
   word-wrap: break-word;
+  z-index: 100;
 }
 
 .ct-calendar-task-stop-timer {
@@ -146,7 +178,6 @@ $plannedTime: #8994b3;
 .ct-calendar-date {
   height: 44px;
   line-height: 44px;
-  letter-spacing: 0.2px;
   white-space: nowrap;
 
   .ct-date-number {
@@ -206,16 +237,20 @@ $plannedTime: #8994b3;
   }
 }
 
+.ct-calendar-day-container {
+  min-height: calc(100vh - 150px);
+  width: 100%;
+}
+
 .ct-calendar-task {
   position: relative;
   box-sizing: border-box;
   display: inline-block;
   width: 100%;
   padding: 30px 20px;
-  background: $nav-background;
+  background: $calendarTaskColor;
   box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
   border-radius: 5px;
-  letter-spacing: .2px;
   margin-bottom: 6px;
 }
 
@@ -263,12 +298,6 @@ $plannedTime: #8994b3;
         background: linear-gradient(to top, rgba($nav-background, 1), rgba($nav-background, 0));
       }
     }
-  }
-
-  .slimscroll-wrapper {
-    width: calc(100% - 24px) !important;
-    margin: 10px 0 30px !important;
-    z-index: 0;
   }
 }
 
@@ -400,17 +429,18 @@ $plannedTime: #8994b3;
 
 .ct-menu-open-link {
   position: absolute;
-  right: 2px;
-  top: 0;
-  background-color: #f1f1f1;
+  right: 5px;
+  top: 12px;
   cursor: pointer;
-  opacity: 0;
+  color: #cfd4e0;
+  border-radius: 2px;
   z-index: 1;
 }
 
 .ct-calendar-task:hover .ct-menu-open-link,
 .ct-menu-open-link.ct-menu-opened {
-  opacity: 1;
+  color: $main-grey;
+  background-color: $gray-page-background;
 }
 
 .ct-calendar-add-task {
@@ -439,10 +469,6 @@ $plannedTime: #8994b3;
     }
   }
 
-  &.ct-form-opened > div {
-    opacity: .5;
-  }
-
   > div {
     position: absolute;
     top: 0;
@@ -465,72 +491,67 @@ $plannedTime: #8994b3;
       vertical-align: top;
     }
   }
+
+  .ct-calendar-day-active & > div {
+    opacity: .5;
+  }
+
+  &.ct-form-opened > div, &:hover > div {
+    color: $main-blue;
+    border: 2px solid $main-blue;
+    opacity: 1 !important;
+  }
 }
 
 .ct-calendar-day-tasks {
   position: relative;
   margin-top: $titleDayHeight + 10px;
-  padding-bottom: 5px;
+  padding: 0 5px 5px;
 }
 
 .ct-calendar-weekly-view {
   .ct-calendar {
     position: relative;
 
-    &:before {
+    &:after {
       position: fixed;
+      left: 20px;
       background: $nav-background;
       content: '';
       width: calc(100% - 40px);
       height: $titleDayHeight;
+      box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
     }
   }
 
   .ct-calendar-day {
     width: calc(100% / 7);
+
+    @media (max-width: $calendarTabletWidth) {
+      width: 25%;
+    }
   }
 
   .ct-calendar-day-title {
     position: fixed;
     top: $titleDayHeight;
-    z-index: 995;
     width: calc((100% - 100px) / 7);
     background: $nav-background;
     padding: 15px 20px 30px;
+    margin-left: 5px;
 
     @media (min-width: 1300px) and (max-width: 1380px) {
       padding: 15px 15px 30px;
     }
-  }
 
-  .ct-calendar-day-active .ct-calendar-add-task > div {
-    opacity: .5 !important;
+    @media (max-width: $calendarTabletWidth) {
+      width: calc(25% - 17.5px);
+    }
   }
 
   .ct-calendar-day-active {
     .ct-calendar-day-title {
       background: $gray-page-background;
-    }
-  }
-
-  //.ct-calendar-day-tasks {
-  //  > *:before {
-  //    content: '';
-  //    position: absolute;
-  //    left: -3px;
-  //    top: 0;
-  //    width: calc(100% + 6px);
-  //    height: 100%;
-  //  }
-  //}
-
-  @media (max-width: $calendarTabletWidth) {
-    .ct-calendar-day {
-      width: calc(25% - 4.5px);
-
-      .ct-calendar-day-title {
-        width: calc(25% - 14.5px);
-      }
     }
   }
 
@@ -552,7 +573,6 @@ $plannedTime: #8994b3;
     .ct-calendar-day-title {
       position: fixed;
       width: calc(100% - 40px);
-      z-index: 995;
       margin-top: 30px;
     }
 
@@ -591,7 +611,7 @@ $plannedTime: #8994b3;
 }
 
 .ct-fake-task {
-  background: rgba(241, 241, 241, .8);
+  background: $gray-page-background;
   height: 0;
   transition: height linear .2s;
 }
@@ -605,7 +625,7 @@ $plannedTime: #8994b3;
   top: 10px;
   left: 0;
   right: 0;
-  z-index: 996;
+  z-index: 1001;
   margin: auto;
   width: 252px;
   padding-left: 44px;
@@ -673,13 +693,15 @@ $plannedTime: #8994b3;
   margin-top: 50px;
 }
 
-.ct-calendar-multiselect.ui-multiselect-panel > div {
+.ct-calendar-multiselect.ui-multiselect-panel {
   position: fixed;
-  z-index: 996 !important;
-  top: 127px !important;
-  right: 19px;
-  left: auto !important;
-  font-family: inherit;
+
+  > div {
+    position: fixed;
+    top: 127px !important;
+    right: 19px;
+    font-family: inherit;
+  }
 }
 
 .ct-submenu {
@@ -713,20 +735,11 @@ $plannedTime: #8994b3;
 }
 
 .ng-animating {
-  .ct-calendar-day-tasks {
-    margin-top: -5px !important;
-  }
-
   &.ct-calendar-day {
-    overflow-x: hidden;
-  }
-
-  .ct-calendar-day-title {
-    position: static !important;
-    width: 100% !important;
+    z-index: 1;
   }
 
   .ct-calendar-add-task {
-    opacity: 0 !important;
+    opacity: 0;
   }
 }

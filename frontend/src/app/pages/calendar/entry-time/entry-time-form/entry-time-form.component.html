@@ -4,37 +4,33 @@
     <!--Added to allow form be focused-->
     <input class="ct-input-hidden-control" autofocus>
     <div class="ct-title">
-        <div class="ct-required-field-container">
-            <ct-select *ngIf="projectList?.length > 1" [class.ct-archived]="isArchivedProjectShown()"
-                       [name]="'project'"
-                       [defaultValue]="!isArchivedProjectShown() ? timeEntry.projectName : timeEntry.projectName + ' (archived)'"
-                       [displayName]="'name'" [trackBy]="'id'"
-                       [maxHeight]="formHeight - 101"
-                       [(ngModel)]="projectModel"
-                       (ngModelChange)="projectOnChange(projectModel)"
-                       [required]="!currentTimeEntry.id"
-                       [options]="projectList">
-            </ct-select>
-        </div>
+        <ct-select *ngIf="projectList?.length > 1" [class.ct-archived]="isArchivedProjectShown()"
+                   [name]="'project'"
+                   [defaultValue]="!isArchivedProjectShown() ? timeEntry.projectName : timeEntry.projectName + ' (archived)'"
+                   [displayName]="'name'" [trackBy]="'id'"
+                   [maxHeight]="formHeight - 101"
+                   [(ngModel)]="projectModel"
+                   (ngModelChange)="projectOnChange(projectModel)"
+                   [required]="!currentTimeEntry.id"
+                   [options]="projectList">
+        </ct-select>
         <div *ngIf="projectList?.length <= 1" class="ct-project"
              [title]="currentTimeEntry.projectName">{{currentTimeEntry.projectName}}
         </div>
     </div>
     <div class="ct-task">
         <div class="ct-task-name">
-            <div class="ct-required-field-container">
-                <ct-select [name]="'task'"
-                           [class.ct-archived]="isArchivedTaskShown()"
-                           [class.ct-loading]="isTasksLoading"
-                           [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
-                           [displayName]="'name'" [trackBy]="'id'"
-                           [maxHeight]="formHeight - 149"
-                           [(ngModel)]="taskModel"
-                           (ngModelChange)="taskOnChange(taskModel)"
-                           [required]="!currentTimeEntry.id"
-                           [options]="taskList">
-                </ct-select>
-            </div>
+            <ct-select [name]="'task'"
+                       [class.ct-archived]="isArchivedTaskShown()"
+                       [class.ct-loading]="isTasksLoading"
+                       [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
+                       [displayName]="'name'" [trackBy]="'id'"
+                       [maxHeight]="formHeight - 149"
+                       [(ngModel)]="taskModel"
+                       (ngModelChange)="taskOnChange(taskModel)"
+                       [required]="!currentTimeEntry.id"
+                       [options]="taskList">
+            </ct-select>
         </div>
         <ct-textarea class="ct-description-block"
                      [name]="'description'"

@@ -1,6 +1,6 @@
 .ct-menu {
   position: relative;
-  font-size: $baseFont;
+  font-size: 16px;
 
   > .ct-menu-content {
     position: absolute;
@@ -13,7 +13,7 @@
     background-color: $nav-background;
     box-shadow: 0 4px 50px 0 rgba(37, 38, 94, 0.1);
     border-radius: 5px;
-    z-index: 5;
+    z-index: 1;
 
     &:before {
       position: absolute;

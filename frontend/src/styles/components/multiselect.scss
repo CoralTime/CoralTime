@@ -71,7 +71,6 @@ $linkColor: #0099cf;
       position: relative;
       top: 1px;
       font-weight: 700;
-      letter-spacing: .2px;
       color: $main-grey;
       cursor: pointer;
 
@@ -146,7 +145,7 @@ $linkColor: #0099cf;
           color: $main-blue;
           cursor: pointer;
           font-family: inherit;
-          font-size: $smallFont;
+          font-size: 13px;
 
           &:hover {
             color: #1b81a9;

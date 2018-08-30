@@ -10,7 +10,7 @@
 <a *ngIf="isTimeEntryAvailable && !isTimerShown"
    class="ct-menu-open-link" [class.ct-menu-opened]="menu.isOpen"
    (click)="menu.toggleMenu()">
-    <i class="material-icons">more_horiz</i>
+    <i class="material-icons">more_vert</i>
 </a>
 
 <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu" (closed)="isCalendarShown = false">

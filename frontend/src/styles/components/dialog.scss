@@ -150,7 +150,7 @@
 
   .ct-dialog-title {
     position: relative;
-    color: $nav-background;
+    color: #374456;
     font-family: inherit;
     font-size: 18px;
     border-bottom: 1px solid $form-border;
@@ -303,7 +303,7 @@
       position: relative;
       top: 3px;
       font-size: 22px;
-      color: $nav-background;
+      color: #374456;
       transition-duration: .3s;
 
       &:hover, &:focus {

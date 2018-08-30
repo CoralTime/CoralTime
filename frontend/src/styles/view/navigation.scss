@@ -2,7 +2,7 @@ ct-navigation {
   position: fixed;
   width: 100%;
   height: $nav-height;
-  z-index: 996;
+  z-index: 1000;
 
   header {
     position: absolute;
@@ -88,7 +88,6 @@ ct-navigation {
           font-weight: 700;
           font-size: 16px;
           color: $main-grey;
-          letter-spacing: .2px;
 
           &:hover {
             color: $nav-link-hover;
@@ -196,7 +195,6 @@ ct-navigation {
 .ct-nav-drop-menu {
   .ct-menu-content {
     top: 12px;
-    z-index: 105;
 
     &.ct-menu-before {
       right: 12px;

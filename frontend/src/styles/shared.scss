@@ -1,7 +1,7 @@
 $fieldHeight: 30px;
 $selectHeight: 35px;
-$baseFont: 16px;
-$smallFont: 13px;
+$baseFont: 14px;
+$smallFont: 12px;
 
 $button-font-size: 17px;
 
@@ -13,6 +13,7 @@ body, html {
   min-width: 320px;
   font-size: 14px;
   font-family: $baseFontFamily;
+  letter-spacing: .2px;
 }
 
 ul, li {
@@ -37,7 +38,7 @@ a {
 textarea {
   resize: none;
   font-family: inherit;
-  color: $nav-background;
+  color: #374456;
 }
 
 select, input, textarea, form {
@@ -53,13 +54,13 @@ h1 {
   font-family: inherit;
   font-weight: 700;
   font-size: 38px;
-  color: $nav-background;
+  color: #374456;
 }
 
 h2, h3, h4 {
   font-family: inherit;
   font-weight: 700;
-  color: $nav-background;
+  color: #374456;
 }
 
 h5 {
@@ -89,7 +90,7 @@ h5 {
 .ui-column-title, .ct-input-label {
   font-family: inherit;
   font-size: $baseFont;
-  color: $nav-background;
+  color: #374456;
 }
 
 .ct-input-label {
@@ -108,7 +109,7 @@ h5 {
   background: none;
   padding: 0;
   cursor: pointer;
-  color: $nav-background;
+  color: #374456;
   text-decoration: none;
   border: none;
   border-bottom: 1px dotted;
@@ -188,7 +189,7 @@ h5 {
   top: 25px;
 
   &:hover {
-    color: $nav-background !important;
+    color: #374456 !important;
   }
 }
 
@@ -237,7 +238,7 @@ h5 {
 }
 
 .ct-default-text {
-  color: $nav-background;
+  color: #374456;
 }
 
 .mat-input-underline {
@@ -254,7 +255,7 @@ h5 {
   position: relative;
   top: -59px;
   right: 250px;
-  z-index: 997;
+  z-index: 1001;
   float: right;
 
   box-sizing: border-box;
@@ -305,7 +306,7 @@ h5 {
   text-transform: capitalize;
   font-family: inherit;
   font-size: 14px;
-  color: $nav-background;
+  color: #374456;
 }
 
 .ct-paginator-container {
@@ -526,7 +527,7 @@ h5 {
   transition: .3s;
 
   &:hover {
-    color: $nav-background;
+    color: #374456;
   }
 
   &:focus {

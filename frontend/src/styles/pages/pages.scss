@@ -36,22 +36,9 @@ html, body {
 .ct-page-header {
   position: relative;
   line-height: 35px;
-  padding: 23px 0;
+  margin: 23px 0;
   font-size: 14px;
   font-weight: 700;
-
-  .ct-page-tabs {
-    display: inline-block;
-    position: relative;
-
-    > a {
-      display: inline-block;
-      text-transform: capitalize;
-      cursor: pointer;
-      color: $main-grey;
-      padding: 0 20px;
-    }
-  }
 
   .ct-calendar-view {
     background: #fff;
@@ -66,10 +53,6 @@ html, body {
     > a:hover, .ct-active-tab {
       background: $gray-page-background;
     }
-  }
-
-  .ct-page-tabs > a:hover, a.ct-active-tab {
-    color: #353a4e;
   }
 
   .ct-add-link {

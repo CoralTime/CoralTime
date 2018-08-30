@@ -1,5 +1,5 @@
 $calendarWidgetBg: #fff;
-$titleHeight: 35px;
+$titleHeight: 42px;
 $formPadding: 20px;
 $inactiveText: #333333;
 
@@ -20,8 +20,9 @@ ct-entry-time {
   z-index: 1001;
   transition: opacity .3s;
   font-family: inherit;
-  color: $inactiveText;
+  line-height: initial;
   display: none;
+  box-shadow: 0 4px 50px 0 rgba(37, 38, 94, 0.1);
 
   // Entry Time Form displaying
 
@@ -39,13 +40,6 @@ ct-entry-time {
     right: 105%;
 
     .ct-form-container {
-      &:before {
-        border-right-color: transparent;
-        border-left-color: #dfdfdf;
-        left: auto;
-        right: -32px;
-      }
-
       &:after {
         border-right-color: transparent;
         border-left-color: $calendarTaskColor;
@@ -60,13 +54,6 @@ ct-entry-time {
     top: 105%;
 
     .ct-form-container {
-      &:before {
-        border-right-color: transparent;
-        border-bottom-color: #dfdfdf;
-        left: 16px;
-        top: -32px;
-      }
-
       &:after {
         border-right-color: transparent;
         border-bottom-color: $calendarTaskColor;
@@ -81,11 +68,6 @@ ct-entry-time {
     bottom: 0;
 
     .ct-form-container {
-      &:before {
-        top: auto;
-        bottom: 10px;
-      }
-
       &:after {
         top: auto;
         bottom: 10px;
@@ -98,12 +80,6 @@ ct-entry-time {
     bottom: 105%;
 
     .ct-form-container {
-      &:before {
-        border-bottom-color: transparent;
-        border-top-color: #dfdfdf;
-        bottom: -32px;
-      }
-
       &:after {
         border-bottom-color: transparent;
         border-top-color: $calendarTaskColor;
@@ -114,19 +90,13 @@ ct-entry-time {
 
   // Shared styles
 
-  .ct-title {
-    .ct-select-component {
-      margin-top: -20px;
-    }
+  .mat-input-container, .mat-button {
+    font-family: inherit;
   }
 
   .ct-select {
-    box-shadow: none;
-    border: 1px solid $form-border;
-  }
-
-  .mat-input-container, .mat-button {
-    font-family: inherit;
+    border: 0;
+    border-bottom: 1px solid $form-border;
   }
 
   // General styles
@@ -135,19 +105,9 @@ ct-entry-time {
     margin: auto;
     box-sizing: border-box;
     position: relative;
-    width: 290px;
+    width: 350px;
     padding: 30px $formPadding $formPadding $formPadding;
-    border: 1px solid #dfdfdf;
     background: $calendarTaskColor;
-
-    &:before {
-      position: absolute;
-      content: '';
-      top: 0;
-      left: -33px;
-      border: 16px solid transparent;
-      border-right: 16px solid #dfdfdf;
-    }
 
     &:after {
       position: absolute;
@@ -160,67 +120,15 @@ ct-entry-time {
   }
 
   .ct-title {
-    margin: 0;
-    height: $titleHeight;
-    padding: 0;
-    font-size: 20px;
-
-    > button {
-      float: right;
-      min-width: inherit;
-      padding: 0 10px 0 0;
-      border-radius: 3px;
-      line-height: 30px;
-      right: 7px;
-      top: 0;
-      position: absolute;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      outline: none;
-
-      .material-icons {
-        font-size: 33px;
-        color: $nav-background;
-      }
-    }
-
-    .ct-menu-content {
-      padding: 0;
-      top: -30px;
-    }
-
-    .ct-select-component {
+    .ct-select-selected-options-text {
+      line-height: $titleHeight;
       height: $titleHeight;
-
-      .ct-select {
-        height: $titleHeight;
-      }
-
-      .ct-select-selected-options-text {
-        line-height: $titleHeight;
-      }
-    }
-
-    .mat-button-wrapper {
-      height: $titleHeight;
-      display: inline-block;
-    }
-
-    .material-icons {
-      line-height: 32px;
-      vertical-align: top;
-      font-size: 20px;
-    }
-
-    .ct-menu {
-      top: 30px;
     }
 
     .ct-project {
       height: 33px;
       background: #fff;
-      border: 1px solid #ccc;
+      border-bottom: 1px solid $form-border;
       padding: 0 10px;
       font-size: 14px;
       line-height: 33px;
@@ -330,7 +238,7 @@ ct-entry-time {
       color: inherit;
 
       > * {
-        color: $nav-background !important;
+        color: #374456 !important;
       }
 
       &:focus, &.ct-focus {
@@ -452,7 +360,7 @@ ct-entry-time {
 
       &, input {
         font-family: inherit;
-        color: $nav-background !important;
+        color: #374456 !important;
       }
 
       &.ct-actual-time {
@@ -555,46 +463,25 @@ ct-entry-time {
 .ct-actions-drop-menu {
   background-color: $calendarTaskColor;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 35px;
+  right: 5px;
   width: 100%;
 
-  > .ct-menu:nth-child(1) {
-    > .ct-menu-content:nth-child(1) {
-      border: 1px solid $form-border;
+  .ct-menu .ct-menu-content {
+    width: calc(100% - 10px);
+    font-size: 14px;
+    min-width: 175px;
+
+    &:before {
+      right: 2px;
     }
-  }
-
-  .ct-menu-content {
-    top: 14px;
-    width: calc(100% - 2px);
-  }
-
-  ul {
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-
-  li {
-    padding: 0;
-
-    a {
-      display: block;
-      padding: 0 16px 0 23px;
-    }
-  }
-
-  .mat-menu-content {
-    padding: 0;
-  }
-
-  .mat-menu-item {
-    font-family: inherit;
-    line-height: 36px;
-    height: 36px;
   }
 
   .ct-menu-item {
+    a {
+      padding: 0 20px;
+    }
+
     .ct-menu-hint {
       float: right;
     }
@@ -623,7 +510,6 @@ ct-entry-time {
     padding: 0;
     position: relative;
     top: 0;
-    z-index: 102;
   }
 
   .ct-menu-opened {

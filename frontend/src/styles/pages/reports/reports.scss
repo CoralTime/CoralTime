@@ -8,7 +8,6 @@ $fieldHeight: 30px;
 .ui-multiselect-panel.ct-reports-settings-multiselect {
   z-index: 996 !important;
   position: fixed;
-  //top: 101px !important;
 }
 
 .ct-reports-page {
@@ -106,9 +105,7 @@ $fieldHeight: 30px;
     height: auto;
     border-bottom: 1px solid #e1e6ed;
     min-height: 46px;
-    //position: fixed;
-    z-index: 995;
-    background: $nav-background;
+    background: #374456;
     width: 100%;
   }
 
@@ -118,7 +115,7 @@ $fieldHeight: 30px;
 
   .ct-white-button {
     background: #ffffff;
-    color: $nav-background !important;
+    color: #374456 !important;
     border: 1px solid #dfdfdf;
   }
 
@@ -283,7 +280,7 @@ $fieldHeight: 30px;
 
     span {
       text-decoration: none;
-      color: $nav-background;
+      color: #374456;
       border-bottom: 1px dotted;
     }
 
@@ -336,7 +333,7 @@ $fieldHeight: 30px;
       width: 15px;
       height: 20px;
       text-align: center;
-      color: $nav-background;
+      color: #374456;
     }
 
     .fa-sort-desc {
@@ -345,7 +342,7 @@ $fieldHeight: 30px;
     }
 
     .fa-sort-desc:before {
-      color: $nav-background !important;
+      color: #374456 !important;
     }
   }
 
@@ -480,7 +477,7 @@ $fieldHeight: 30px;
 
   .ct-button.ct-white-button {
     background: white;
-    color: $nav-background;
+    color: #374456;
   }
 
   .ct-reports-grid {
@@ -723,15 +720,13 @@ $fieldHeight: 30px;
 .ct-reports-chart-container {
   width: 300px;
   position: fixed;
-  //position: absolute;
   display: inline-block;
   right: 20px;
-  z-index: 994;
   box-sizing: border-box;
 
   .mat-expansion-panel-header {
     height: 46px !important;
-    background: $nav-background !important;
+    background: #374456 !important;
     border-bottom: 1px solid #e1e6ed;
     color: #ffffff;
   }

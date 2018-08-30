@@ -1,5 +1,5 @@
 .ct-manage-grid-header {
-  margin: -20px -20px 0 -20px;
+  margin: 0 -20px 0 -20px;
   height: 50px;
   background: $grid-manage-bg;
 
@@ -434,7 +434,8 @@ tr:hover .ct-grid-settings {
 
   tr:hover .ct-grid-count,
   tr:hover .ct-grid-ellipse {
-    color: $nav-background !important;
+    color: #374456 !important;
+
     span {
       color: $blue !important;
     }

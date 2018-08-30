@@ -2,6 +2,8 @@
   //Added to allow select be focused
   margin-top: -16px;
   height: $selectHeight;
+  font-size: 14px;
+  font-weight: 700;
 
   .ct-select-options {
     height: $selectHeight;
@@ -22,7 +24,6 @@
     transition-duration: .3s;
     box-shadow: none;
     -webkit-overflow-scrolling: touch;
-    border: 1px solid $form-border;
     box-sizing: border-box;
     overflow: hidden;
 
@@ -56,7 +57,7 @@
       min-height: 35px;
       padding: 10px !important;
       height: auto !important;
-      color: $nav-background;
+      color: $formInputColor;
       font-size: $baseFont;
       font-family: $baseFontFamily;
     }
@@ -80,12 +81,11 @@
     font-size: $baseFont;
     padding: 0 16px 0 9px;
     height: 100%;
-    line-height: 32px;
-    color: $nav-background;
+    line-height: $selectHeight;
+    color: $formInputColor;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    box-shadow: none !important;
 
     &.ct-select-default-text {
       color: $gray-text;
@@ -124,12 +124,10 @@
 .ct-select {
   position: relative;
   height: $selectHeight;
-  font-size: 15px;
-  background-color: $primary-btn-text;
+  font-size: 14px;
+  background-color: #fff;
   border: 1px solid $form-border;
-  box-shadow: none;
   cursor: pointer;
-  font-family: inherit;
   box-sizing: border-box;
 
   &:focus {
