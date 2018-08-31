@@ -6,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { NotificationService } from '../notification.service';
+import { AppInsightsService } from '@markpieszak/ng-application-insights';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +32,8 @@ export class AuthService {
 	            private impersonateService: ImpersonationService,
 	            private matDialog: MatDialog,
 	            private notificationService: NotificationService,
-	            private router: Router) {
+	            private router: Router,
+                private appInsightsService: AppInsightsService) {
 		if (this.isRefreshTokenExpired()) {
 			this.logout();
 		}
@@ -63,6 +65,7 @@ export class AuthService {
 		return this.http.post('/connect/token', body, {headers: headers})
 			.map(response => {
 				this.authUser = new AuthUser(response, false);
+				this.appInsightsService.setAuthenticatedUserContext(this.authUser.id.toString(), this.authUser.nickname);
 				return true;
 			});
 	}
@@ -83,6 +86,8 @@ export class AuthService {
 		return this.http.post('/connect/token', body, {headers: headers})
 			.map(response => {
 				this.authUser = new AuthUser(response, true);
+                this.setupAppInsights();
+                this.appInsightsService.setAuthenticatedUserContext(this.authUser.id.toString(), this.authUser.nickname);
 				return true;
 			}).catch(() => this.router.navigate(['/error']));
 	}
@@ -109,6 +114,7 @@ export class AuthService {
 			.flatMap((response: Object) => {
 				if (response) {
 					this.authUser = new AuthUser(response, this.authUser.isSso);
+					this.setupAppInsights();
 					return Observable.of(response);
 				}
 
@@ -125,7 +131,7 @@ export class AuthService {
 		localStorage.removeItem('APPLICATION_USER');
 		this.onChange.emit(null);
 		this.impersonateService.stopImpersonation(true);
-
+        this.appInsightsService.clearAuthenticatedUserContext();
 		if (!ignoreRedirect) {
 			this.router.navigate(['/login']);
 		}
@@ -148,5 +154,19 @@ export class AuthService {
 
 	private objectToString(params: Object): string {
 		return Object.keys(params).map(key => `${key}=${encodeURIComponent(params[key])}`).join('&');
+	}
+	
+	private setupAppInsights(): void {
+		let key = localStorage.getItem('instrumentationKey');
+		
+		if (this.appInsightsService.config.instrumentationKey == null){
+			if (key !=null && key !=''){
+                this.appInsightsService.config = {
+                    instrumentationKey: key
+                };
+                this.appInsightsService.init();
+                this.appInsightsService.setAuthenticatedUserContext(this.authUser.id.toString(), this.authUser.nickname);
+			}
+		}
 	}
 }

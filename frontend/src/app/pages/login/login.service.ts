@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface LoginSettings {
 	enableAzure: boolean;
 	azureSettings: AzureSettings;
+    instrumentationKey: string;
 }
 
 export interface AzureSettings {

@@ -5,6 +5,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
 import { AzureSettings, LoginSettings } from './login.service';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
+import { AppInsightsService } from '@markpieszak/ng-application-insights';
 
 @Component({
 	templateUrl: 'login.component.html'
@@ -22,13 +23,15 @@ export class LoginComponent implements OnInit {
 	            private auth: AuthGuard,
 	            private loadingService: LoadingMaskService,
 	            private route: ActivatedRoute,
-	            private router: Router) {
+	            private router: Router,
+                private appInsightsService: AppInsightsService) {
 	}
 
 	ngOnInit() {
 		this.route.data.forEach((data: { loginSettings: LoginSettings }) => {
+            this.setupAppInsights(data.loginSettings.instrumentationKey);
 			if (data.loginSettings.enableAzure) {
-				this.enableAzure = true;
+				this.enableAzure = true;                
 				this.createConfig(data.loginSettings.azureSettings);
 			}
 		});
@@ -60,6 +63,15 @@ export class LoginComponent implements OnInit {
 		} else {
 			this.errorMessage = error.status === 400 ? 'Invalid username or password' : 'Server error';
 		}
+
+        this.appInsightsService.trackException(
+        	error, 
+			'login.component', 
+			{
+				'login': this.username,
+				'errorMessage': this.errorMessage,
+				'error_description': error.error.error_description
+            })
 	}
 
 	private createConfig(azureSettings: AzureSettings): void {
@@ -71,5 +83,15 @@ export class LoginComponent implements OnInit {
 		};
 
 		return;
+	}
+	
+	private setupAppInsights(instrumentationKey: string ): void {
+        localStorage.setItem('instrumentationKey', instrumentationKey);
+		if (instrumentationKey!= null && instrumentationKey !='') {
+            this.appInsightsService.config = {
+                instrumentationKey: instrumentationKey
+            };
+            this.appInsightsService.init();
+        }
 	}
 }

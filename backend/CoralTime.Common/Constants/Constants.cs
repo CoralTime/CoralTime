@@ -37,6 +37,7 @@ namespace CoralTime.Common.Constants
             "/settings",
             "/help",
             "/signin-oidc",
+            "/admin",
             UrlSetPassword
         };
 
@@ -136,8 +137,8 @@ namespace CoralTime.Common.Constants
         public enum FileType
         {
             Excel = 0,
-            CSV = 1,
-            PDF = 2
+            Csv = 1,
+            Pdf = 2
         }
 
         public enum LockTimePeriod
@@ -171,7 +172,15 @@ namespace CoralTime.Common.Constants
             UserIsArchived
         }
 
-        public static DateConvert[] DateFormats =
+        public enum MemberActionTypes
+        {
+            Add,
+            Delete,
+            Change,
+            None
+        }
+
+        public static readonly DateConvert[] DateFormats =
         {
             new DateConvert {DateFormatId = 0, DateFormat = "DD/MM/YYYY", DateFormatDotNet = "dd/MM/yyyy", DateFormatDotNetShort = "dd/MM"},
             new DateConvert {DateFormatId = 1, DateFormat = "DD-MM-YYYY", DateFormatDotNet = "dd-MM-yyyy", DateFormatDotNetShort = "dd-MM"},
@@ -251,7 +260,7 @@ namespace CoralTime.Common.Constants
             public DayOfWeek DayOfWeek { get; set; }
         }
 
-        public static readonly DaysOfWeekAdaptive[] daysOfWeekWithBinaryValues =
+        public static readonly DaysOfWeekAdaptive[] DaysOfWeekWithBinaryValues =
         {
             new DaysOfWeekAdaptive { Id = 0, ValueForBinary = (short) DaysOfWeekForBinaryMask.Sunday, DayOfWeek =  DayOfWeek.Sunday},
             new DaysOfWeekAdaptive { Id = 1, ValueForBinary = (short) DaysOfWeekForBinaryMask.Monday, DayOfWeek =  DayOfWeek.Monday},
@@ -278,8 +287,10 @@ namespace CoralTime.Common.Constants
         public const string ImageTypeAvatar = "ImageTypeAvatar";
         public const string ImageTypeIcon = "ImageTypeIcon";
 
-        public const string ImageTypeSizeIcon = "40";
-        public const string ImageTypeSizeAvatar = "200";
+        public const int  ImageTypeSizeIcon = 40;
+        public const int ImageTypeSizeAvatar = 200;
+        public const string GravatarType = "robohash";
+        public const string GravatarUrl = "https://www.gravatar.com/avatar/";
 
         #endregion
 

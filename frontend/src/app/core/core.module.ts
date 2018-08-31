@@ -1,8 +1,8 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, Injector } from '@angular/core';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { LoadingBarService } from '@ngx-loading-bar/core';
 import * as ODataConfig from './odata-config.factory';
-import { ODataServiceFactory, ODataConfiguration } from './../services/odata';
+import { ODataServiceFactory, ODataConfiguration } from '../services/odata';
 import { ConstantService } from './constant.service';
 import { AuthGuard } from './auth/auth-guard.service';
 import { AuthService } from './auth/auth.service';
@@ -14,6 +14,9 @@ import { UserPicService } from '../services/user-pic.service';
 import { ApplyTokenInterceptor } from './apply-token.interceptor';
 import { RefreshTokenInterceptor } from './refresh-token.interceptor';
 import { LoadingMaskModule } from '../shared/loading-indicator/loading-mask.module';
+import { AppInsightsInterceptor } from './app-insights.interceptor';
+import { AppInsightsService } from '@markpieszak/ng-application-insights';
+
 
 @NgModule({
 	imports: [
@@ -27,11 +30,13 @@ import { LoadingMaskModule } from '../shared/loading-indicator/loading-mask.modu
 	providers: [
 		{
 			provide: ErrorHandler,
-			useClass: CustomErrorHandler
+			useClass: CustomErrorHandler,
+			deps: [Injector]
 		},
 		{
 			provide: ODataConfiguration,
-			useFactory: ODataConfig.ODataConfigFactory
+			useFactory: ODataConfig.ODataConfigFactory,
+			deps: [AppInsightsService]
 		},
 		{
 			provide: HTTP_INTERCEPTORS,
@@ -43,6 +48,11 @@ import { LoadingMaskModule } from '../shared/loading-indicator/loading-mask.modu
 			useClass: RefreshTokenInterceptor,
 			multi: true
 		},
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AppInsightsInterceptor,
+            multi: true
+        },
 		AclService,
 		AuthService,
 		AuthGuard,

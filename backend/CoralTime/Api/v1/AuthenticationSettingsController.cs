@@ -23,8 +23,12 @@ namespace CoralTime.Api.v1
         {
             try
             {
-                bool.TryParse(_config["Authentication:EnableAzure"], out bool enableAzure);
-                var settings = new AuthenticationSettings { EnableAzure = enableAzure };
+                bool.TryParse(_config["Authentication:EnableAzure"], out var enableAzure);
+                var settings = new AuthenticationSettings
+                {
+                    EnableAzure = enableAzure,
+                    InstrumentationKey = _config["ApplicationInsights:InstrumentationKey"]
+                };
                 if (enableAzure)
                 {
                     var authSection = _config.GetSection("Authentication:AzureAd");

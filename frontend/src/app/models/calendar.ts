@@ -81,7 +81,7 @@ export class TimeEntry {
 			timeTimerStart: data && data.timeOptions && data.timeOptions.timeTimerStart || 0
 		};
 		this.timeValues = {
-			timeActual: data && data.timeValues && data.timeValues.timeActual || 1,
+			timeActual: data && data.timeValues && data.timeValues.timeActual || 0,
 			timeEstimated: data && data.timeValues && data.timeValues.timeEstimated || 0,
 			timeFrom: data && data.timeValues && data.timeValues.timeFrom,
 			timeTo: data && data.timeValues && data.timeValues.timeTo

@@ -10,12 +10,11 @@ namespace CoralTime.DAL.Repositories
         public ProjectRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        public override IQueryable<Project> GetIncludes(IQueryable<Project> query) => query
+        protected override IQueryable<Project> GetIncludes(IQueryable<Project> query) => query
                 .Include(p => p.Client)
                 .Include(p => p.MemberProjectRoles).ThenInclude(x => x.Member).ThenInclude(x => x.User)
                 .Include(p => p.MemberProjectRoles).ThenInclude(x => x.Role)
-                .Include(p => p.TaskTypes)
-                .Include(m => m.Creator);
+                .Include(p => p.TaskTypes);
 
         #region LinkedCache.
 

@@ -24,7 +24,7 @@ namespace CoralTime.BL.Services.Notifications
             }
         }
 
-        public async Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
+        private async Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null)
         {
             var members = GetMembersWithProjectsNotification(memberWithProjectsIds);
 
@@ -48,7 +48,7 @@ namespace CoralTime.BL.Services.Notifications
                 {
                     var editionPeriodDays = GetRangeNotificationDays(todayDate, project.NotificationDay, out var notificationPeriodFirstDay, out var notificationPeriodLastDay);
 
-                    var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQuery()
+                    var dateTimeEntryByNotificationRange = Uow.TimeEntryRepository.GetQuery(withIncludes: false, asNoTracking: true)
                         .Where(tEntry => tEntry.ProjectId == project.Id && tEntry.MemberId == member.Id)
                         .Where(tEntry => tEntry.Date.Date >= notificationPeriodFirstDay && tEntry.Date.Date <= notificationPeriodLastDay)
                         .Select(tEntry => tEntry.Date)
@@ -76,11 +76,17 @@ namespace CoralTime.BL.Services.Notifications
                         memberWithProjectsNotificationsForEmail.ProjectsWithDatesEditing.Add(projectWithDatesEditing);
                     }
 
-                    subjectByProjectSettings = CreateEmailSubjectByProjectSettings(memberWithProjectsNotificationsForEmail.MemberLight.Email);
+                    if (memberWithProjectsNotificationsForEmail.ProjectsWithDatesEditing.Count == 0) 
+                        continue;
+                    
+                    subjectByProjectSettings = CreateEmailSubjectByProjectSettings();
                     emailTextByProjectSettings = CreateEmailTextForEmailByProjectSettings(baseUrl, memberWithProjectsNotificationsForEmail);
                 }
 
-                await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotificationsForEmail.MemberLight.Email, subjectByProjectSettings);
+                if (emailTextByProjectSettings != string.Empty)
+                {
+                    await CreateAndSendEmailNotificationForUserAsync(emailTextByProjectSettings, memberWithProjectsNotificationsForEmail.MemberLight.Email, subjectByProjectSettings);
+                }
             }
         }
 
@@ -110,9 +116,9 @@ namespace CoralTime.BL.Services.Notifications
             return result;
         }
 
-        private bool IsWorkDay(DateTime date) => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday;
+        private static bool IsWorkDay(DateTime date) => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday;
 
-        private DateTime[] GetRangeNotificationDays(DateTime todayDate, int projectNotificationDayCount, out DateTime notificationPeriodFirstDay, out DateTime notificationPeriodLastDay)
+        private static DateTime[] GetRangeNotificationDays(DateTime todayDate, int projectNotificationDayCount, out DateTime notificationPeriodFirstDay, out DateTime notificationPeriodLastDay)
         {
             if (projectNotificationDayCount <= 0)
             {
@@ -140,20 +146,9 @@ namespace CoralTime.BL.Services.Notifications
             return notificationPeriodDays.OrderBy(x => x.Date).ToArray();
         }
 
-        //private DateTime GetLastDayEditionRange(DateTime todayDate)
-        //{
-        //    var lastDayEditionRange = todayDate.Date.AddMilliseconds(-1);
-        //    do
-        //    {
-        //        lastDayEditionRange = lastDayEditionRange.AddDays(-1);
-        //    } while (!IsWorkDay(lastDayEditionRange));
+        private static string CreateEmailSubjectByProjectSettings() => $"Reminder to fill Time Entries";
 
-        //    return lastDayEditionRange;
-        //}
-
-        private string CreateEmailSubjectByProjectSettings(string emailMember) => $"Reminder to fill time entry {emailMember} by Project Settigs";
-
-        private string CreateEmailTextForEmailByProjectSettings(string baseUrl, MemberWithProjecsNotificationsView memberWithProjecsNotifications)
+        private static string CreateEmailTextForEmailByProjectSettings(string baseUrl, MemberWithProjecsNotificationsView memberWithProjecsNotifications)
         {
             var sbEmailText = new StringBuilder($"<p>Hello, {memberWithProjecsNotifications.MemberLight.FullName}!<br><p>This is a friendly reminder, that you haven’t entered your Time Entries on ");
 
@@ -162,7 +157,7 @@ namespace CoralTime.BL.Services.Notifications
                 sbEmailText.Append("the following projects:<br>");
             }
 
-            var dateFormatShort = new GetDateFormat().GetDateFormatDotNetShortById(memberWithProjecsNotifications.MemberLight.DateFormatId);
+            var dateFormatShort = DateFormatsStorage.GetDateFormatDotNetShortById(memberWithProjecsNotifications.MemberLight.DateFormatId);
 
             var indexCurrentProject = 0;
             foreach (var project in memberWithProjecsNotifications.ProjectsWithDatesEditing)

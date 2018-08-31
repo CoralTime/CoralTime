@@ -18,7 +18,7 @@ namespace CoralTime.Common.Helpers
 
                     foreach (var dayOfWeek in daysOfWeek)
                     {
-                        var dayOfWeekById = daysOfWeekWithBinaryValues.FirstOrDefault(x => x.Id == dayOfWeek);
+                        var dayOfWeekById = DaysOfWeekWithBinaryValues.FirstOrDefault(x => x.Id == dayOfWeek);
 
                         if (dayOfWeekById != null)
                         {
@@ -39,7 +39,7 @@ namespace CoralTime.Common.Helpers
             {
                 var daysOfWeekResult = new List<short>();
 
-                foreach (var dayOfWeek in daysOfWeekWithBinaryValues)
+                foreach (var dayOfWeek in DaysOfWeekWithBinaryValues)
                 {
                     var res = (short) sendEmailDays & dayOfWeek.ValueForBinary;
 
@@ -65,7 +65,7 @@ namespace CoralTime.Common.Helpers
             {
                 var daysOfWeekAdaptive = new List<DaysOfWeekAdaptive>();
 
-                foreach (var dayOfWeek in daysOfWeekWithBinaryValues)
+                foreach (var dayOfWeek in DaysOfWeekWithBinaryValues)
                 {
                     var hasIdDayofWeekInArray = (short)sendEmailDays & dayOfWeek.ValueForBinary;
 

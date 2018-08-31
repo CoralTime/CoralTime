@@ -174,14 +174,16 @@ tr:hover .ct-grid-settings {
     .slimscroll-wrapper {
       height: 100% !important;
       margin-top: 20px;
+    }
 
-      .slimscroll-grid {
-        right: 0 !important;
-      }
+    .slimscroll-grid {
+      width: 14px !important;
+      right: 0 !important;
+    }
 
-      .slimscroll-bar {
-        right: 3px !important;
-      }
+    .slimscroll-bar {
+      width: 12px !important;
+      right: 3px !important;
     }
   }
 
@@ -357,7 +359,7 @@ tr:hover .ct-grid-settings {
     color: white;
     background: $primary-btn-hover;
     height: 35px;
-    padding: 0 15px;
+    padding: 0 12px;
     line-height: 35px;
     cursor: pointer;
     border: none;
@@ -501,11 +503,18 @@ tr:hover .ct-grid-settings {
 }
 
 .ct-dialog {
-  .ct-select-selected-options-text {
-
-  }
   .ct-grid {
     margin: 0 -20px;
+  }
+
+  .ui-datatable-scrollable-wrapper {
+    .slimscroll-grid {
+      width: 6px !important;
+    }
+
+    .slimscroll-bar {
+      width: 4px !important;
+    }
   }
 }
 

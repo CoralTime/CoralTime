@@ -42,6 +42,12 @@ const FULL_MANAGE_ITEMS = [
 		icon: 'ct-users-icon',
 		routerLink: ['/users'],
 		permission: 'roleViewMember'
+	},
+	{
+		label: 'Admin',
+		icon: 'ct-admin-icon',
+		routerLink: ['/admin'],
+		permission: 'roleViewAdminPanel'
 	}
 ];
 

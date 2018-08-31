@@ -14,8 +14,8 @@ namespace CoralTime.BL.Interfaces
 
         List<MemberWithProjectsLightView> GetMembersWithProjectsNotification(List<MemberWithProjectsIdsView> memberWithProjectsIds = null);
 
-        Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null);
-
-        Task SendWeeklyNotificationsForMembers(string baseUrl, DateTime todayDate, int[] membersIds = null);
+//        Task SendToMemberNotificationsByProjectsSettingsAsync(DateTime todayDate, string baseUrl, List<MemberWithProjectsIdsView> memberWithProjectsIds = null);
+//
+//        Task SendWeeklyNotificationsForMembers(string baseUrl, int[] membersIds = null);
     }
 }

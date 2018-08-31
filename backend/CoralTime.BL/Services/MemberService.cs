@@ -178,12 +178,10 @@ namespace CoralTime.BL.Services
 
         public async Task<MemberView> Update(MemberView memberView, string baseUrl)
         {
-            var memberByName = Uow.MemberRepository.GetQueryByMemberId(BaseMemberCurrent.Id);
-            //var memberByName = Uow.MemberRepository.GetQueryByUserName(CurrentUserName);
+            var currentMember = Uow.MemberRepository.GetQueryByMemberId(BaseMemberCurrent.Id);
+            var updatedMember = Uow.MemberRepository.GetQueryByMemberId(memberView.Id);
 
-            var memberId = memberView.Id;
-
-            if (memberByName.Id != memberId && !memberByName.User.IsAdmin)
+            if (currentMember.Id != updatedMember.Id && !currentMember.User.IsAdmin)
             {
                 throw new CoralTimeForbiddenException($"Member with userName {BaseMemberCurrent.User.UserName} can't change other user's data.");
             }
@@ -195,62 +193,63 @@ namespace CoralTime.BL.Services
 
             if (_isDemo)
             {
-                if (memberByName.User.Email != memberView.Email)
+                if (updatedMember.User.Email != memberView.Email)
                 {
                     throw new CoralTimeForbiddenException("Email can't be changed on demo site");
                 }
 
-                if (memberByName.User.UserName != memberView.UserName)
+                if (updatedMember.User.UserName != memberView.UserName)
                 {
                     throw new CoralTimeForbiddenException("Username can't be changed on demo site");
                 }
 
-                if (memberByName.User.IsActive != memberView.IsActive)
+                if (updatedMember.User.IsActive != memberView.IsActive)
                 {
                     throw new CoralTimeForbiddenException("Status can't be changed on demo site");
                 }
 
-                if (memberByName.FullName != memberView.FullName)
+                if (updatedMember.FullName != memberView.FullName)
                 {
                     throw new CoralTimeForbiddenException("Full name can't be changed on demo site");
                 }
             }
 
-            if (memberByName.User.IsAdmin)
+            if (currentMember.User.IsAdmin)
             {
                 var newEmail = memberView.Email;
                 var newUserName = memberView.UserName;
                 var newIsActive = memberView.IsActive;
                 var newIsAdmin = memberView.IsAdmin;
-                
-                if (memberByName.User.Email != newEmail || memberByName.User.UserName != newUserName || memberByName.User.IsActive != newIsActive || memberByName.User.IsAdmin != newIsAdmin)
-                {
-                    memberByName.User.Email = newEmail;
-                    memberByName.User.UserName = newUserName;
 
-                    var updateResult = await _userManager.UpdateAsync(memberByName.User);
+                if (updatedMember.User.Email != newEmail || updatedMember.User.UserName != newUserName ||
+                    updatedMember.User.IsActive != newIsActive || updatedMember.User.IsAdmin != newIsAdmin)
+                {
+                    updatedMember.User.Email = newEmail;
+                    updatedMember.User.UserName = newUserName;
+
+                    var updateResult = await _userManager.UpdateAsync(updatedMember.User);
                     if (updateResult.Succeeded)
                     {
-                        var startRole = memberByName.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
+                        var startRole = updatedMember.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
 
-                        if (memberId != memberByName.Id)
+                        if (currentMember.Id != updatedMember.Id)
                         {
-                            memberByName.User.IsActive = newIsActive;
-                            memberByName.User.IsAdmin = newIsAdmin;
+                            updatedMember.User.IsActive = newIsActive;
+                            updatedMember.User.IsAdmin = newIsAdmin;
                         }
 
-                        var finishRole = memberByName.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
+                        var finishRole = updatedMember.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
 
-                        Uow.MemberRepository.Update(memberByName);
+                        Uow.MemberRepository.Update(updatedMember);
                         Uow.Save();
 
                         if (startRole != finishRole)
                         {
-                            await _userManager.RemoveFromRoleAsync(memberByName.User, startRole);
-                            await _userManager.AddToRoleAsync(memberByName.User, finishRole);
+                            await _userManager.RemoveFromRoleAsync(updatedMember.User, startRole);
+                            await _userManager.AddToRoleAsync(updatedMember.User, finishRole);
                         }
 
-                        UpdateUserClaims(memberByName.Id);
+                        UpdateUserClaims(updatedMember.Id);
 
                         Uow.MemberRepository.LinkedCacheClear();
                     }
@@ -265,7 +264,7 @@ namespace CoralTime.BL.Services
                 }
             }
 
-            var memberById = Uow.MemberRepository.GetQueryByMemberId(memberId);
+            var memberById = Uow.MemberRepository.GetQueryByMemberId(updatedMember.Id);
 
             await ChangeEmailByUserAsync(memberById, memberView.Email);
 
@@ -298,11 +297,11 @@ namespace CoralTime.BL.Services
 
             var memberByIdResult = Uow.MemberRepository.LinkedCacheGetById(memberById.Id);
             var urlIcon = _avatarService.GetUrlIcon(memberByIdResult.Id);
-            var meberView = memberByIdResult.GetView(Mapper, urlIcon);
+            var updatedMemberView = memberByIdResult.GetView(Mapper, urlIcon);
 
-            await SentUpdateAccountEmailAsync(meberView, baseUrl);
+            await SentUpdateAccountEmailAsync(updatedMemberView, baseUrl);
 
-            return meberView;
+            return updatedMemberView;
         }
 
         public List<MemberWeeklyNotificationByDayOfWeekView> GetMembersWithWeeklyNotifications() => Uow.MemberRepository.LinkedCacheGetList()

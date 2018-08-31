@@ -7,13 +7,18 @@ export class LoadingMaskService {
 	private isShown: boolean = false;
 	private waitingCount: number = 0;
 
-	addLoading() {
+	addLoading(): void {
 		this.waitingCount++;
 		this.updateLoadingMask();
 	}
 
-	removeLoading() {
+	removeLoading(): void {
 		this.waitingCount--;
+		this.updateLoadingMask();
+	}
+
+	removeLoadingCompletely(): void {
+		this.waitingCount = 0;
 		this.updateLoadingMask();
 	}
 

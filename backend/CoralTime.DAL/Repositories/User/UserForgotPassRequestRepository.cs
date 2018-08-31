@@ -15,7 +15,7 @@ namespace CoralTime.DAL.Repositories.User
             _context = context;
         }
 
-        public override IQueryable<UserForgotPassRequest> GetIncludes(IQueryable<UserForgotPassRequest> query) => query;
+        protected override IQueryable<UserForgotPassRequest> GetIncludes(IQueryable<UserForgotPassRequest> query) => query;
 
         public UserForgotPassRequest CreateUserForgotPassRequest(string email, int tokenExpirationHours, string token)
         {

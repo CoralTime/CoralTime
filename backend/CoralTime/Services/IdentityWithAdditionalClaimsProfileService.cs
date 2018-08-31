@@ -5,7 +5,6 @@ using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -35,20 +34,13 @@ namespace CoralTime.Services
 
             var principal = await _claimsFactory.CreateAsync(user);
 
-            var claims = principal.Claims.ToList();
-            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).Distinct().ToList();
+            var resultClaims = principal.Claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type))
+                .Select(x=> new Claim(type: x.Type, value: x.Value))
+                .Distinct().ToList();
+            
+            resultClaims.Add(new Claim(type: Constants.JwtIsManagerClaimType, value: user.IsManager.ToString().ToLower()));
+            resultClaims.Add(new Claim(type: Constants.JwtRefreshTokenLifeTimeClaimType, value: _config["SlidingRefreshTokenLifetime"]));
 
-            claims.Add(new Claim(type: Constants.JwtIsManagerClaimType, value: user.IsManager.ToString().ToLower()));
-            claims.Add(new Claim(type: Constants.JwtRefreshTokenLifeTimeClaimType, value: _config["SlidingRefreshTokenLifetime"]));
-
-            var resultClaims = new List<Claim>();
-            foreach (var claim in claims)
-            {
-                if (resultClaims.FirstOrDefault(x => x.Type == claim.Type && x.Value == claim.Value) == null)
-                {
-                    resultClaims.Add(claim);
-                }
-            }
             context.IssuedClaims = resultClaims;
         }
 

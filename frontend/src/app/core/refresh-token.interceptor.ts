@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscriber } from 'rxjs/Subscriber';
 import { AuthService } from './auth/auth.service';
 import { NotificationService } from 'app/core/notification.service';
+import { LoadingMaskService } from '../shared/loading-indicator/loading-mask.service';
 
 interface CallerRequest {
 	failedRequest: HttpRequest<any>;
@@ -18,6 +19,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 	private requests: CallerRequest[] = [];
 
 	constructor(private injector: Injector,
+	            private loadingMaskService: LoadingMaskService,
 	            private notificationService: NotificationService) {
 	}
 
@@ -76,6 +78,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 	private handleUnauthorizedError(subscriber: Subscriber<any>, request: HttpRequest<any>): void {
 		if (!this.authService.isLoggedIn()) {
 			this.requests = [];
+			this.loadingMaskService.removeLoadingCompletely();
 			return;
 		}
 
@@ -90,6 +93,7 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 						this.repeatFailedRequests();
 					},
 					() => {
+						this.loadingMaskService.removeLoadingCompletely();
 						this.authService.logout(false, true);
 					});
 		}

@@ -1,5 +1,4 @@
 ﻿using CoralTime.Common.Constants;
-using CoralTime.DAL.ConvertModelToView;
 using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
@@ -10,6 +9,7 @@ using System.Linq;
 using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
 using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems;
 using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items;
+using ConvertModelToView = CoralTime.DAL.ConvertModelToView.ConvertModelToView;
 
 namespace CoralTime.BL.Services.Reports.Export
 {

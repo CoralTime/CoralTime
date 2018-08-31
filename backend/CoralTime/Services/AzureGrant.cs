@@ -38,13 +38,7 @@ namespace CoralTime.Services
             _memoryCache = memoryCache;
         }
 
-        public string GrantType
-        {
-            get
-            {
-                return "azureAuth";
-            }
-        }
+        public string GrantType => "azureAuth";
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
@@ -67,7 +61,6 @@ namespace CoralTime.Services
 
                 var userName = token.Claims.FirstOrDefault(m => m.Type == "unique_name")?.Value;
 
-                // get user's identity
                 var user = await _userManager.FindByNameAsync(userName);
 
                 if (user != null && ((user?.IsActive) ?? false))
@@ -75,16 +68,13 @@ namespace CoralTime.Services
                     context.Result = new GrantValidationResult(user.Id, "azure");
                     return;
                 }
-                else
-                {
-                    return;
-                }
+
+                context.Result = new GrantValidationResult(TokenErrors.AccessDenied, "User does not exist");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 context.Result = new GrantValidationResult(TokenErrors.InvalidGrant, null);
-                return;
             }
         }
 
@@ -112,7 +102,7 @@ namespace CoralTime.Services
             };
 
                 var jwtHandler = new JwtSecurityTokenHandler();
-                jwtHandler.ValidateToken(jwtToken, tokenValidationParameters, out SecurityToken securityToken);
+                jwtHandler.ValidateToken(jwtToken, tokenValidationParameters, out var securityToken);
                 token = securityToken as JwtSecurityToken;
             }
             catch (Exception ex)

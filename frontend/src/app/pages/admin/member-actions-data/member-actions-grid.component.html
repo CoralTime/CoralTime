@@ -1,0 +1,39 @@
+<div class="ct-grid-search-filter">
+    <input class="ct-input-element" #gb placeholder="Search actions..." [(ngModel)]="filterStr">
+    <i class="fa fa-search"></i>
+</div>
+
+<div class="ct-data-table-wrapper" (window:resize)="onResize()">
+    <p-dataTable class="ct-grid-container ct-table"
+                 [value]="pagedResult?.data"
+                 [resizeObservable]="resizeObservable"
+                 scrollable="true" [sortField]="'date'"
+                 [responsive]="true" [lazy]="true"
+                 [loading]="!isAllActions"
+                 [globalFilter]="gb"
+                 (onLazyLoad)="loadLazy($event)"
+                 (onMoreContent)="loadLazy()"
+                 (onEndScrollEvent)="onEndScroll()">
+        
+        <p-column [style]="{'width':'200px'}" field="date" header="Date" [sortable]="true">        
+            <ng-template let-row="rowData" pTemplate="body">
+                {{row.date | date:'yyyy-MM-dd HH:mm:ss'}}
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="entity" header="Entity" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="action" header="Action" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="entityId" header="EntityId" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'200px'}" field="memberFullName" header="Member" [sortable]="true"></p-column>
+        <p-column field="changedObject" header="Object" [sortable]="true"></p-column>
+        <p-column field="changedFields" header="Changed fields" [sortable]="true">
+            <ng-template let-row="rowData" pTemplate="body">
+                <ul>
+                    <li *ngFor="let field of row.changedFields">
+                        <span style="font-weight:bold">{{ field.field }}</span>: {{field.oldValue}} -> {{field.newValue}}
+                    </li>
+                </ul>
+            </ng-template>
+        </p-column>
+
+    </p-dataTable>
+</div>

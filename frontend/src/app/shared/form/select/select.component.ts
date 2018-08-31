@@ -5,7 +5,7 @@ import {
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
-const LIST_ITEM_HEIGHT = 42;
+export const LIST_ITEM_HEIGHT = 42;
 
 export const SELECT_CONTROL_VALUE_ACCESSOR: any = {
 	provide: NG_VALUE_ACCESSOR,

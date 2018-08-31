@@ -1,32 +1,33 @@
 ﻿using System.Linq;
 using AutoMapper;
 using CoralTime.DAL.Models.Member;
+using MemberView = CoralTime.ViewModels.Member.MemberView;
 
 namespace CoralTime.DAL.ConvertModelToView
 {
     public static partial class ConvertModelToView
     {
-        public static ViewModels.Member.MemberView GetView(this Member member, IMapper _mapper, string urlIcon)
+        public static MemberView GetView(this Member member, IMapper mapper, string urlIcon)
         {
-            var memberView = _mapper.Map<Member, ViewModels.Member.MemberView>(member);
+            var memberView = mapper.Map<Member, MemberView>(member);
 
             memberView.UrlIcon = urlIcon;
             
             return memberView;
         }
 
-        public static ViewModels.Member.MemberView GetViewWithProjectCount(this Member member, IMapper _mapper, string urlIcon)
+        public static MemberView GetViewWithProjectCount(this Member member, IMapper mapper, string urlIcon)
         {
-            var memberView = member.GetView(_mapper, urlIcon);
+            var memberView = member.GetView(mapper, urlIcon);
 
             memberView.ProjectsCount = member.MemberProjectRoles?.Select(x => x.Project).Count();
 
             return memberView;
         }
 
-        public static ViewModels.Member.MemberView GetViewWithGlobalProjectsCount(this Member member, int[] globalActiveProjIds, IMapper _mapper, string urlIcon)
+        public static MemberView GetViewWithGlobalProjectsCount(this Member member, int[] globalActiveProjIds, IMapper mapper, string urlIcon)
         {
-            var memberViewWithGlobalProjectsCount = member.GetView(_mapper, urlIcon);
+            var memberViewWithGlobalProjectsCount = member.GetView(mapper, urlIcon);
 
             var countProjects = globalActiveProjIds.Length;
             var allMemberProjectRole = member.MemberProjectRoles.Where(z => z.Project != null && z.Project.IsActive);

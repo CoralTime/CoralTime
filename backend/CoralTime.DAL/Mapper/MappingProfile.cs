@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.LogChanges;
 using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.ViewModels.Clients;
 using CoralTime.ViewModels.Member;
+using CoralTime.ViewModels.MemberActions;
 using CoralTime.ViewModels.MemberProjectRoles;
 using CoralTime.ViewModels.ProjectRole;
 using CoralTime.ViewModels.Projects;
@@ -73,7 +75,7 @@ namespace CoralTime.DAL.Mapper
             CreateMap<ReportsSettings, ReportsSettings>();
         }
 
-        public class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>
+        private class MemberToMemberViewConverter : ITypeConverter<Member, MemberView>
         {
             public MemberView Convert(Member source, MemberView destination, ResolutionContext context)
             {
@@ -90,7 +92,7 @@ namespace CoralTime.DAL.Mapper
                     FullName = source.FullName,
                     IsWeeklyTimeEntryUpdatesSend = source.IsWeeklyTimeEntryUpdatesSend,
                     DateFormatId = source.DateFormatId,
-                    DateFormat = new GetDateFormat().GetDateFormatById(source.DateFormatId),
+                    DateFormat = DateFormatsStorage.GetDateFormatById(source.DateFormatId),
                     SendEmailDays = ConverterBitMask.DayOfWeekIntToString(source.SendEmailDays),
                     TimeFormat = source.TimeFormat,
                     SendEmailTime = source.SendEmailTime,
@@ -99,7 +101,7 @@ namespace CoralTime.DAL.Mapper
             }
         }
 
-        public class MemberViewToMemberConverter : ITypeConverter<MemberView, Member>
+        private class MemberViewToMemberConverter : ITypeConverter<MemberView, Member>
         {
             public Member Convert(MemberView source, Member destination, ResolutionContext context)
             {
@@ -118,7 +120,7 @@ namespace CoralTime.DAL.Mapper
             }
         }
 
-        public class MemberProjectRoleToMemberProjectRoleViewConverter : ITypeConverter<MemberProjectRole, MemberProjectRoleView>
+        private class MemberProjectRoleToMemberProjectRoleViewConverter : ITypeConverter<MemberProjectRole, MemberProjectRoleView>
         {
             public MemberProjectRoleView Convert(MemberProjectRole source, MemberProjectRoleView destination, ResolutionContext context)
             {

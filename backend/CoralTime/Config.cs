@@ -48,7 +48,7 @@ namespace CoralTime
                     AbsoluteRefreshTokenLifetime = refreshTokenLifetime,
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     SlidingRefreshTokenLifetime = slidingRefreshTokenLifetime,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenUsage = TokenUsage.ReUse,
                     
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId, // For UserInfo endpoint.
@@ -80,7 +80,7 @@ namespace CoralTime
                     AbsoluteRefreshTokenLifetime = refreshTokenLifetime,
                     RefreshTokenExpiration = TokenExpiration.Sliding,
                     SlidingRefreshTokenLifetime = slidingRefreshTokenLifetime,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                    RefreshTokenUsage = TokenUsage.ReUse,
                     
                     AllowOfflineAccess = true
                 }

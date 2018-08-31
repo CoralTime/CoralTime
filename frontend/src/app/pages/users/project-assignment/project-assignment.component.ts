@@ -193,7 +193,6 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.usersService.assignProjectToUser(this.user.id, project.id, this.defaultProjectRole.id)
 			.subscribe(() => {
 					this.notificationService.success('Project successfully assigned.');
-					this.filterStr = '';
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
 				},
@@ -237,7 +236,6 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.usersService.removeFromProject(userProject)
 			.subscribe(() => {
 					this.notificationService.success('User was removed from project.');
-					this.filterStr = '';
 					this.updateAssignedProjects(null, true);
 					this.updateNotAssignedProjects(null, true);
 				},
