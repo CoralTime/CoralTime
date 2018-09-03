@@ -70,7 +70,7 @@ ct-entry-time {
     .ct-form-container {
       &:after {
         top: auto;
-        bottom: 10px;
+        bottom: 18px;
       }
     }
   }
@@ -90,13 +90,28 @@ ct-entry-time {
 
   // Shared styles
 
-  .mat-input-container, .mat-button {
+  .mat-button {
     font-family: inherit;
   }
 
-  .ct-select {
-    border: 0;
-    border-bottom: 1px solid $form-border;
+  .ct-select-component {
+    height: $titleHeight;
+
+    .ct-select {
+      height: $titleHeight;
+      border: 0;
+      border-bottom: 1px solid $gray-page-background;
+    }
+
+    .ct-select-selected-options-text {
+      line-height: $titleHeight;
+      height: $titleHeight;
+      padding-left: 0;
+    }
+
+    [class *= "fa-angle"] {
+      right: 0;
+    }
   }
 
   // General styles
@@ -106,13 +121,14 @@ ct-entry-time {
     box-sizing: border-box;
     position: relative;
     width: 350px;
-    padding: 30px $formPadding $formPadding $formPadding;
+    padding: 5px 30px $formPadding;
     background: $calendarTaskColor;
+    border-radius: 5px;
 
     &:after {
       position: absolute;
       content: '';
-      top: 0;
+      top: 22px;
       left: -32px;
       border: 16px solid transparent;
       border-right: 16px solid $calendarTaskColor;
@@ -120,11 +136,6 @@ ct-entry-time {
   }
 
   .ct-title {
-    .ct-select-selected-options-text {
-      line-height: $titleHeight;
-      height: $titleHeight;
-    }
-
     .ct-project {
       height: 33px;
       background: #fff;
@@ -138,36 +149,14 @@ ct-entry-time {
     }
   }
 
-  .ct-task {
-    padding: 0;
-
-    .ct-textarea-component {
-      background: #ffffff;
-    }
-
-    .ct-select-component {
-      .ct-select-selected-options-text {
-        line-height: 35px;
-        font-size: $baseFont;
-      }
-    }
+  .ct-textarea-component {
+    padding: 4px 0;
+    border: 0;
+    border-bottom: 1px solid $gray-page-background;
   }
 
   .ct-task-name {
-    margin-bottom: 18px;
-    height: 30px;
-    width: 100%;
-    padding-top: 15px;
-
-    .ct-select-selected-options-text {
-      padding: 0 20px 0 10px !important;
-      line-height: 29.5px;
-    }
-
-    .ct-select-component {
-      margin-top: -15px;
-      padding-left: 0;
-    }
+    margin: 15px 0;
   }
 
   .ct-task-description {
@@ -221,8 +210,10 @@ ct-entry-time {
   }
 
   .ct-time-actions {
-    padding: 14px 0 12px;
+    margin: 20px -30px;
+    padding: 20px 30px;
     font-size: 0;
+    background: $main-blue;
 
     .ct-timer, .ct-time-path {
       display: inline-block;
@@ -260,22 +251,6 @@ ct-entry-time {
       &.ct-no-clickable, &[disabled] {
         position: relative;
         cursor: not-allowed;
-      }
-    }
-
-    .ct-timer {
-      float: left;
-
-      .ct-actions-icon {
-        background: url(./assets/icons/runtimer.svg) no-repeat center;
-      }
-    }
-
-    .ct-time-path {
-      float: right;
-
-      .ct-actions-icon {
-        background: url(./assets/icons/fromto.svg) no-repeat center;
       }
     }
 
@@ -346,83 +321,155 @@ ct-entry-time {
   }
 
   .ct-time-period {
-    border-top: 3px solid;
-    border-bottom: 3px solid;
-    padding: 7px 0;
+    margin: 20px -30px;
+    padding: 20px 30px;
+    background: $main-blue;
 
     > div {
       width: 50%;
       box-sizing: border-box;
-      font-size: 0;
-      position: relative;
-      text-align: center;
+      font-size: 18px;
+      color: #fff;
       display: inline-block;
 
-      &, input {
-        font-family: inherit;
-        color: #374456 !important;
-      }
-
       &.ct-actual-time {
-        .ct-period-icon {
-          background-image: url(./assets/icons/tasktile.time.actual.svg);
+        position: relative;
+
+        &:after {
+          position: absolute;
+          right: 0;
+          top: -2px;
+          content: '';
+          width: 2px;
+          height: 30px;
+          background: #3fb7e6;
         }
       }
 
-      &.ct-planned-time {
+      &.ct-estimated-time {
         float: right;
-        padding-right: 25px;
         text-align: right;
+      }
+    }
 
-        .ct-period-icon {
-          background-image: url(./assets/icons/tasktile.time.estimated.svg);
+    .ct-icon {
+      margin-right: 2px;
+    }
+
+    .ct-show-input {
+      border-radius: 13px;
+      border: solid 2px rgba(127, 207, 238, .5);
+      background: none;
+      color: #fff;
+      font-size: 11px;
+      padding: 5px 14px;
+      cursor: pointer;
+
+      &:hover {
+        border-color: rgba(127, 207, 238, 1);
+      }
+
+      &.ct-from-to-form-button {
+        &:before, &:after {
+          display: block;
+          float: left;
+          font: normal normal normal 10px FontAwesome;
+          text-rendering: auto;
+        }
+
+        &:before {
+          content: "\f0d9";
+        }
+        &:after {
+          margin: 0 5px 0 3px;
+          content: "\f0da";
+        }
+      }
+
+      &.ct-estimated-time-button {
+        float: right;
+
+        &:before {
+          display: inline-block;
+          margin: 0 8px -1px 0;
+          content: '';
+          width: 10px;
+          height: 10px;
+          background: url(./assets/icons1/estimate-icon.svg) no-repeat center;
         }
       }
     }
 
     input {
-      margin-top: 2px;
-      width: 55px;
-      border: none;
+      width: 22px;
       outline: none;
-      background: $calendarTaskColor;
-      font-size: 20px;
+      background: none;
+      font-size: 18px;
       text-align: center;
-      vertical-align: middle;
+      letter-spacing: .3px;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, .5);
+      color: currentColor;
     }
 
-    .ct-period-icon {
-      display: inline-block;
-      margin-right: 3px;
-      background-repeat: no-repeat;
-      background-size: 100%;
-      width: 27px;
-      height: 27px;
-      vertical-align: middle;
+    [class*="ct-from-to-form"] {
+      display: block;
+      margin-bottom: 18px;
     }
 
-    .ct-disabled-form {
+    .ct-from-to-form {
       position: relative;
+      width: 100%;
+      height: 26px;
+      line-height: 26px;
+      font-size: 12px;
 
-      &:before {
+      > div {
+        display: inline-block;
+
+        &:last-child {
+          margin-left: 10px;
+        }
+      }
+
+      .ct-label {
+        margin-right: 5px;
+      }
+
+      .ct-times-icon {
         position: absolute;
-        content: '';
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background-color: rgba(250, 250, 250, 0.4);
-        z-index: 1;
-        cursor: not-allowed;
+        right: 0;
+        top: 9px;
+        opacity: .8;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      input {
+        width: 18px;
+        font-size: 14px;
+
+        &:first-child {
+          margin-left: 5px;
+        }
       }
     }
   }
 
   .ct-form-actions {
-    padding: $formPadding 0 0;
+    overflow: hidden;
+
+    .ct-submit {
+      background: $main-blue;
+      font-size: 14px;
+      border-radius: 5px;
+    }
 
     .mat-button-wrapper {
-      color: $inactiveText;
+      color: #fff;
     }
 
     .ct-close {
@@ -443,16 +490,6 @@ ct-entry-time {
   div.mat-button-focus-overlay {
     background-color: rgba(0, 0, 0, .03);
     transition: opacity .3s;
-  }
-
-  &.ct-open {
-    .ct-form-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
   }
 }
 
@@ -478,6 +515,8 @@ ct-entry-time {
   }
 
   .ct-menu-item {
+    height: 36px;
+
     a {
       padding: 0 20px;
     }
@@ -489,7 +528,6 @@ ct-entry-time {
 }
 
 #datepicker {
-  border: 1px solid $form-border;
   > div {
     &:first-child {
       display: none;
@@ -498,11 +536,6 @@ ct-entry-time {
       position: static !important;
     }
   }
-
-  .dp-popup {
-    box-shadow: none;
-    border: none;
-  }
 }
 
 .ct-datepicker-menu {
@@ -510,6 +543,13 @@ ct-entry-time {
     padding: 0;
     position: relative;
     top: 0;
+    width: auto !important;
+  }
+
+  #datepicker {
+    .dp-popup {
+      box-shadow: 0 4px 50px 0 rgba(37, 38, 94, 0.1);
+    }
   }
 
   .ct-menu-opened {
@@ -519,13 +559,13 @@ ct-entry-time {
       display: none;
     }
 
-    #datepicker:before, #datepicker:after {
+    #datepicker:after {
       position: absolute;
       content: '';
       top: 24px;
       border: 16px solid transparent;
-      border-left: 16px solid #fff;
-      z-index: 1;
+      border-left: 16px solid $calendarTaskColor;
+      z-index: 9999;
     }
   }
 
@@ -536,38 +576,26 @@ ct-entry-time {
     }
 
     #datepicker {
-      &:before {
-        left: -31px;
-        border: 16px solid transparent;
-        border-right: 16px solid #ccc;
-      }
-
       &:after {
         left: -30px;
         right: auto;
         border: 16px solid transparent;
-        border-right: 16px solid #fff;
+        border-right: 16px solid $calendarTaskColor;
       }
     }
   }
 
   &.ct-open-left {
     .ct-menu-opened {
-      right: 285px;
+      right: 247px;
       left: auto;
     }
 
     #datepicker {
-      &:before {
-        left: auto;
-        right: -31px;
-        border-left: 16px solid #ccc;
-      }
-
       &:after {
         left: auto;
         right: -30px;
-        border-left: 16px solid #fff;
+        border-left: 16px solid $calendarTaskColor;
       }
     }
   }
@@ -580,35 +608,24 @@ ct-entry-time {
     }
 
     #datepicker {
-      &:before, &:after {
+      &:after {
         left: 14px;
         right: auto;
         border: 16px solid transparent;
       }
 
-      &:before {
-        top: -31px;
-        border-bottom: 16px solid #ccc;
-      }
-
       &:after {
         top: -30px;
-        border-bottom: 16px solid #fff;
+        border-bottom: 16px solid $calendarTaskColor;
       }
     }
   }
 
   .ct-datepicker {
-    &:before {
-      right: -30px;
-      border: 16px solid transparent;
-      border-left: 16px solid #fff;
-    }
-
     &:after {
       right: -30px;
       border: 16px solid transparent;
-      border-left: 16px solid #fff;
+      border-left: 16px solid $calendarTaskColor;
     }
   }
 }
@@ -629,9 +646,8 @@ ct-entry-time {
 
     .ct-close {
       display: inline-block;
-      line-height: 40px;
+      top: 13px;
       margin-right: 30px;
-      color: $main-blue;
     }
   }
 

@@ -18,99 +18,107 @@
              [title]="currentTimeEntry.projectName">{{currentTimeEntry.projectName}}
         </div>
     </div>
-    <div class="ct-task">
-        <div class="ct-task-name">
-            <ct-select [name]="'task'"
-                       [class.ct-archived]="isArchivedTaskShown()"
-                       [class.ct-loading]="isTasksLoading"
-                       [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
-                       [displayName]="'name'" [trackBy]="'id'"
-                       [maxHeight]="formHeight - 149"
-                       [(ngModel)]="taskModel"
-                       (ngModelChange)="taskOnChange(taskModel)"
-                       [required]="!currentTimeEntry.id"
-                       [options]="taskList">
-            </ct-select>
-        </div>
-        <ct-textarea class="ct-description-block"
-                     [name]="'description'"
-                     [placeholder]="'Add task details'"
-                     [maxlength]="1000"
-                     [canResize]="true"
-                     [(ngModel)]="currentTimeEntry.description"
-                     (ngModelChange)="descriptionOnChange()"></ct-textarea>
+    <div class="ct-task-name">
+        <ct-select [name]="'task'"
+                   [class.ct-archived]="isArchivedTaskShown()"
+                   [class.ct-loading]="isTasksLoading"
+                   [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
+                   [displayName]="'name'" [trackBy]="'id'"
+                   [maxHeight]="formHeight - 149"
+                   [(ngModel)]="taskModel"
+                   (ngModelChange)="taskOnChange(taskModel)"
+                   [required]="!currentTimeEntry.id"
+                   [options]="taskList">
+        </ct-select>
     </div>
-    <div class="ct-time-actions clearfix">
-        <button class="ct-timer" type="button" mat-button
-                [disabled]="!canActivateTimer()"
-                (click)="toggleTimer()"
-                [class.ct-timer-started]="isTimerShown">
-            <div *ngIf="!isTimerShown">
-                <span class="ct-actions-icon"></span>
-                Run Timer
-            </div>
-            <div *ngIf="isTimerShown">
-                <span class="ct-actions-icon"></span>
-                <div class="ct-timer-container">
-                    <span>{{timerValue?.hours}}</span>
-                    <span class="ct-divider">:</span>
-                    <span>{{timerValue?.minutes}}</span>
-                    <span class="ct-divider">:</span>
-                    <span>{{timerValue?.seconds}}</span>
-                </div>
-                Stop Timer
-            </div>
-        </button>
+    <ct-textarea class="ct-description-block"
+                 [name]="'description'"
+                 [placeholder]="'Add task details'"
+                 [maxlength]="1000"
+                 [canResize]="true"
+                 [(ngModel)]="currentTimeEntry.description"
+                 (ngModelChange)="descriptionOnChange()"></ct-textarea>
+    <!--<div class="ct-time-actions clearfix">-->
+    <!--<button class="ct-timer" type="button" mat-button-->
+    <!--[disabled]="!canActivateTimer()"-->
+    <!--(click)="toggleTimer()"-->
+    <!--[class.ct-timer-started]="isTimerShown">-->
+    <!--<div *ngIf="!isTimerShown">-->
+    <!--<span class="ct-actions-icon"></span>-->
+    <!--Run Timer-->
+    <!--</div>-->
+    <!--<div *ngIf="isTimerShown">-->
+    <!--<span class="ct-actions-icon"></span>-->
+    <!--<div class="ct-timer-container">-->
+    <!--<span>{{timerValue?.hours}}</span>-->
+    <!--<span class="ct-divider">:</span>-->
+    <!--<span>{{timerValue?.minutes}}</span>-->
+    <!--<span class="ct-divider">:</span>-->
+    <!--<span>{{timerValue?.seconds}}</span>-->
+    <!--</div>-->
+    <!--Stop Timer-->
+    <!--</div>-->
+    <!--</button>-->
+    <!--</div>-->
+    <div class="ct-time-period">
         <button type="button" *ngIf="!currentTimeEntry.timeOptions.isFromToShow"
-                class="ct-time-path"
+                class="ct-show-input ct-from-to-form-button"
                 [disabled]="isTimerShown"
-                (click)="openFromToForm()">
-            <div>
-                <span class="ct-actions-icon"></span>
-                From... To...
-            </div>
+                (click)="openFromToForm()">From & To
         </button>
-        <div *ngIf="currentTimeEntry.timeOptions.isFromToShow" class="ct-time-path"
-             [class.ct-focus]="isFromToFormFocus">
-            <div class="ct-from-to-form">
-                <div class="ct-from-time">
-                    <label for="timeFrom" class="ct-label">From:</label>
-                    <input id="timeFrom" name="timeFrom" autocomplete="off" time
-                           [(ngModel)]="timeFrom"
-                           [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                           (focus)="isFromToFormFocus = true"
-                           (timeChanged)="validateFromToForm($event, timeTo)">
-                </div>
-                <span class="ct-actions-icon"></span>
-                <div class="ct-to-time">
-                    <label for="timeTo" class="ct-label">To:</label>
-                    <input id="timeTo" name="timeTo" autocomplete="off" time
-                           [(ngModel)]="timeTo"
-                           [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                           (focus)="isFromToFormFocus = true"
-                           (timeChanged)="validateFromToForm(timeFrom, $event)">
-                </div>
+        <div *ngIf="currentTimeEntry.timeOptions.isFromToShow" class="ct-from-to-form">
+            <i class="ct-icon ct-times-icon" (click)="closeFromToForm()"></i>
+            <div class="ct-from-time">
+                <label class="ct-label">From</label>
+                <input name="timeFromHours" autocomplete="off" [time]="24"
+                       [(ngModel)]="timeFrom.hours"
+                       [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
+                       (blur)="validateFromToForm()">:
+                <input name="timeFromMinutes" autocomplete="off" [time]="60"
+                       [(ngModel)]="timeFrom.minutes"
+                       [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
+                       (blur)="validateFromToForm()">
+            </div>
+            <div class="ct-to-time">
+                <label class="ct-label">To</label>
+                <input name="timeToHours" autocomplete="off" [time]="24"
+                       [(ngModel)]="timeTo.hours"
+                       [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
+                       (blur)="validateFromToForm()">:
+                <input name="timeToMinutes" autocomplete="off" [time]="60"
+                       [(ngModel)]="timeTo.minutes"
+                       [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
+                       (blur)="validateFromToForm()">
             </div>
         </div>
-    </div>
-    <div class="ct-time-period clearfix">
-        <div class="ct-actual-time" [class.ct-disabled-form]="isTimerShown">
-            <label for="timeActual" class="ct-period-icon" title="Tracked time"></label>
-            <input id="timeActual" name="timeActual" autocomplete="off" time
-                   [(ngModel)]="timeActual"
+        <div class="ct-actual-time">
+            <i class="ct-icon ct-timeactual-icon" title="Tracked time"></i>
+            <input name="timeActualHours" autocomplete="off" [time]="24"
+                   [(ngModel)]="timeActual.hours"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="timeActualOnChange()"
-                   [disabled]="isTimerShown">
-        </div>
-        <div class="ct-planned-time">
-            <label for="timeEstimated" class="ct-period-icon" title="Planned time"></label>
-            <input id="timeEstimated" name="timeEstimated" autocomplete="off" time
-                   [(ngModel)]="timeEstimated"
+                   (ngModelChange)="timeActualOnChange()">h
+            <input name="timeActualMinutes" autocomplete="off" [time]="60"
+                   [(ngModel)]="timeActual.minutes"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="timeEstimatedOnChange()">
+                   (ngModelChange)="timeActualOnChange()">m
+        </div>
+        <button type="button" *ngIf="!isEstimatedTimeShown"
+                class="ct-show-input ct-estimated-time-button"
+                (click)="isEstimatedTimeShown = !isEstimatedTimeShown">Estimate
+        </button>
+        <div *ngIf="isEstimatedTimeShown" class="ct-estimated-time">
+            <i class="ct-icon ct-timeestimated-icon" title="Planned time"></i>
+            <input name="timeEstimatedHours" autocomplete="off" [time]="24"
+                   [(ngModel)]="timeEstimated.hours"
+                   [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
+                   (ngModelChange)="timeEstimatedOnChange()">h
+            <input name="timeEstimatedMinutes" autocomplete="off" [time]="60"
+                   [(ngModel)]="timeEstimated.minutes"
+                   [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
+                   (ngModelChange)="timeEstimatedOnChange()">m
         </div>
     </div>
-    <div class="ct-form-actions clearfix">
+    <div class="ct-form-actions">
         <button mat-button class="ct-submit mat-button"
                 (click)="submit()"
                 [disabled]="entryTimeForm.invalid || isRequestLoading || !currentTimeEntry.projectId">Done

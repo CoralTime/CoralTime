@@ -628,14 +628,9 @@ $fieldHeight: 30px;
     opacity: 0;
     z-index: 1;
     transition: opacity .3s;
-    //padding: 0 10px;
 
     &.ct-datepicker-opened {
       opacity: 1;
-    }
-
-    #datepicker {
-      border: 1px solid transparent !important;
     }
   }
 

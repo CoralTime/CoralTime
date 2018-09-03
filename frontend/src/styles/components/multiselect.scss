@@ -58,7 +58,7 @@ $linkColor: #0099cf;
     margin: 0 15px 0 0;
 
     &:not(.ui-state-highlight):hover {
-      background: $gray-page-background;
+      background: $selectItemBgHover;
       color: inherit;
       border-radius: 2px;
     }

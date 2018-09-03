@@ -13,7 +13,22 @@
 
 .ct-timetracker-icon {
   background-image: url(./assets/icons1/clock-copy.svg);
+}
+
+.ct-timeactual-icon {
+  background-image: url(./assets/icons1/time-white.svg);
   background-size: 20px;
+}
+
+.ct-timeestimated-icon {
+  background-image: url(./assets/icons1/est-time-white.svg);
+  background-size: 20px;
+}
+
+.ct-times-icon {
+  background-image: url(./assets/icons1/x-circle.svg);
+  width: 9px;
+  height: 8px;
 }
 
 .ct-settings-icon {

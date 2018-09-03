@@ -1,5 +1,6 @@
 $fieldHeight: 30px;
 $selectHeight: 35px;
+$selectItemBgHover: $gray-page-background;
 $baseFont: 14px;
 $smallFont: 12px;
 
@@ -38,7 +39,7 @@ a {
 textarea {
   resize: none;
   font-family: inherit;
-  color: #374456;
+  color: #728096;
 }
 
 select, input, textarea, form {
@@ -165,12 +166,12 @@ h5 {
 .ct-submit {
   height: 40px;
   letter-spacing: .5px;
-  width: 115px;
-  font-size: $button-font-size !important;
+  width: 100px;
+  font-size: $button-font-size;
   float: right;
   font-family: inherit;
   box-shadow: none;
-  border-radius: 0 !important;
+  border-radius: 0;
 }
 
 .ct-submit[disabled] {
@@ -179,7 +180,7 @@ h5 {
 
 .ct-close {
   color: $main-blue;
-  font-size: 16px;
+  font-size: 14px;
   font-family: inherit;
   line-height: 16px !important;
   cursor: pointer;
@@ -189,7 +190,7 @@ h5 {
   top: 25px;
 
   &:hover {
-    color: #374456 !important;
+    color: #374456;
   }
 }
 
@@ -338,6 +339,7 @@ h5 {
 
 .slimscroll-grid {
   width: 8px !important;
+  margin: 0 !important;
   background: none !important;
   z-index: 1 !important;
 }
@@ -382,7 +384,7 @@ h5 {
 
   span {
     color: $primary-btn-text;
-    font-size: 16px;
+    font-size: 14px;
     font-family: inherit;
   }
 }
@@ -520,7 +522,7 @@ h5 {
   background: none;
   border: none;
   border-bottom: 1px dotted $gray-text;
-  font-size: 17px;
+  font-size: 14px;
   font-family: inherit;
   color: $gray-text;
   cursor: pointer;

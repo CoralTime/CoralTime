@@ -5,24 +5,19 @@
   font-size: 14px;
   font-weight: 700;
 
-  .ct-select-options {
-    height: $selectHeight;
-    cursor: pointer;
-  }
-
   .ct-select-options-list {
     position: relative;
     width: 100%;
     top: 1px;
-    max-height: 168px;
     background: #fff;
-    padding: 0;
+    padding: 15px 0;
     visibility: hidden;
     display: none;
     opacity: 0;
     z-index: 101;
     transition-duration: .3s;
-    box-shadow: none;
+    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+    border-radius: 5px;
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;
     overflow: hidden;
@@ -44,6 +39,16 @@
     .ct-select-option {
       position: relative;
 
+      &:before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 15px;
+        right: 30px;
+        content: '';
+        border-radius: 2px;
+      }
+
       &.ct-select-option-disabled {
         background: #f0f0f0;
 
@@ -55,25 +60,21 @@
 
     .mat-list-item-content {
       min-height: 35px;
-      padding: 10px !important;
-      height: auto !important;
+      padding: 10px 45px 10px 30px !important;
       color: $formInputColor;
-      font-size: $baseFont;
-      font-family: $baseFontFamily;
+      cursor: pointer;
     }
 
     .ct-select-option:hover, .ct-select-option-selected {
-      background-color: $blue-grid-header;
+      &:before {
+        background: $selectItemBgHover;
+      }
     }
 
     .ct-label-item {
       word-break: break-all;
       font-family: $baseFontFamily;
       font-size: $baseFont;
-    }
-
-    .ct-select-option-selected .ct-label-item {
-      color: #2f8bca !important;
     }
   }
 
@@ -82,7 +83,7 @@
     padding: 0 16px 0 9px;
     height: 100%;
     line-height: $selectHeight;
-    color: $formInputColor;
+    color: #728096;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -92,16 +93,18 @@
     }
   }
 
+  [class *= "fa-angle"] {
+    position: absolute;
+    right: 5px;
+    top: calc(50% - 11px);
+  }
+
   &.ct-select-opened {
     .ct-select-options-list {
       height: auto;
       opacity: 1;
       visibility: visible;
       display: block;
-    }
-
-    .ct-select-options {
-      height: auto;
     }
 
     .ct-select-options-wrapper {
@@ -114,6 +117,14 @@
       opacity: 1;
       height: auto;
     }
+  }
+
+  .slimscroll-grid {
+    margin-right: 9px !important;
+  }
+
+  .slimscroll-bar {
+    margin-right: 10px !important;
   }
 }
 
@@ -130,9 +141,9 @@
   cursor: pointer;
   box-sizing: border-box;
 
-  &:focus {
+  .ct-select-opened & {
     outline: none;
-    border: 1px solid $main-blue;
+    border-color: $main-blue !important;
   }
 
   &.ct-disabled {
@@ -150,7 +161,7 @@
 
   &:focus::-ms-value {
     background-color: #fff;
-    color: #555;
+    color: #728096;
   }
 }
 

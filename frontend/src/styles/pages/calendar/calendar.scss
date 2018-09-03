@@ -451,15 +451,6 @@ $plannedTime: #8994b3;
   width: 100%;
   transition: opacity ease .3s;
 
-  .ct-open-right {
-    .ct-form-container {
-      &:before,
-      &:after {
-        top: 12px;
-      }
-    }
-  }
-
   .ct-direction-top.ct-open-right {
     .ct-form-container {
       &:before,
