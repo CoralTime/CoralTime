@@ -2,27 +2,23 @@
   //Added to allow select be focused
   margin-top: -16px;
   height: $selectHeight;
-
-  .ct-select-options {
-    height: $selectHeight;
-    cursor: pointer;
-  }
+  font-size: 14px;
+  font-weight: 700;
 
   .ct-select-options-list {
     position: relative;
     width: 100%;
     top: 1px;
-    max-height: 168px;
     background: #fff;
-    padding: 0;
+    padding: 15px 0;
     visibility: hidden;
     display: none;
     opacity: 0;
     z-index: 101;
     transition-duration: .3s;
-    box-shadow: none;
+    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+    border-radius: 5px;
     -webkit-overflow-scrolling: touch;
-    border: 1px solid $form-border;
     box-sizing: border-box;
     overflow: hidden;
 
@@ -43,6 +39,16 @@
     .ct-select-option {
       position: relative;
 
+      &:before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 15px;
+        right: 30px;
+        content: '';
+        border-radius: 2px;
+      }
+
       &.ct-select-option-disabled {
         background: #f0f0f0;
 
@@ -54,15 +60,15 @@
 
     .mat-list-item-content {
       min-height: 35px;
-      padding: 10px !important;
-      height: auto !important;
-      color: $nav-background;
-      font-size: $baseFont;
-      font-family: $baseFontFamily;
+      padding: 10px 45px 10px 30px !important;
+      color: $formInputColor;
+      cursor: pointer;
     }
 
     .ct-select-option:hover, .ct-select-option-selected {
-      background-color: $blue-grid-header;
+      &:before {
+        background: $selectItemBgHover;
+      }
     }
 
     .ct-label-item {
@@ -70,26 +76,27 @@
       font-family: $baseFontFamily;
       font-size: $baseFont;
     }
-
-    .ct-select-option-selected .ct-label-item {
-      color: #2f8bca !important;
-    }
   }
 
   .ct-select-selected-options-text {
     font-size: $baseFont;
     padding: 0 16px 0 9px;
     height: 100%;
-    line-height: 32px;
-    color: $nav-background;
+    line-height: $selectHeight;
+    color: #728096;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    box-shadow: none !important;
 
     &.ct-select-default-text {
       color: $gray-text;
     }
+  }
+
+  [class *= "fa-angle"] {
+    position: absolute;
+    right: 5px;
+    top: calc(50% - 11px);
   }
 
   &.ct-select-opened {
@@ -98,10 +105,6 @@
       opacity: 1;
       visibility: visible;
       display: block;
-    }
-
-    .ct-select-options {
-      height: auto;
     }
 
     .ct-select-options-wrapper {
@@ -115,6 +118,14 @@
       height: auto;
     }
   }
+
+  .slimscroll-grid {
+    margin-right: 9px !important;
+  }
+
+  .slimscroll-bar {
+    margin-right: 10px !important;
+  }
 }
 
 .ct-archived .ct-select-selected-options-text {
@@ -124,37 +135,21 @@
 .ct-select {
   position: relative;
   height: $selectHeight;
-  font-size: 15px;
-  background-color: $primary-btn-text;
+  font-size: 14px;
+  background-color: #fff;
   border: 1px solid $form-border;
-  box-shadow: none;
   cursor: pointer;
-  font-family: inherit;
   box-sizing: border-box;
 
-  &:focus {
+  .ct-select-opened & {
     outline: none;
-    border: 1px solid $nav-link-border;
+    border-color: $main-blue !important;
   }
 
   &.ct-disabled {
     background-color: #ececec;
     cursor: default;
     opacity: 0.6;
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 14px;
-    color: $nav-link-border;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid;
-    margin: 0 7px;
   }
 }
 
@@ -166,7 +161,7 @@
 
   &:focus::-ms-value {
     background-color: #fff;
-    color: #555;
+    color: #728096;
   }
 }
 

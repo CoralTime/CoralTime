@@ -1,5 +1,5 @@
 .ct-manage-grid-header {
-  margin: -20px -20px 0 -20px;
+  margin: 0 -20px 0 -20px;
   height: 50px;
   background: $grid-manage-bg;
 
@@ -64,7 +64,7 @@
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    border: 2px solid $main-blue;
+    border: 2px solid $blue;
     left: 7px;
     top: 3px;
   }
@@ -109,7 +109,7 @@
     top: 4px;
     width: 1px;
     height: 17px;
-    background: $main-blue;
+    background: $blue;
   }
 
   &:after {
@@ -323,10 +323,10 @@ tr:hover .ct-grid-settings {
   }
 
   .ct-grid-link:hover {
-    color: $main-blue !important;
+    color: $blue !important;
 
     .ct-link-text, .ct-status-gray {
-      color: $main-blue !important;
+      color: $blue !important;
     }
   }
 
@@ -425,7 +425,7 @@ tr:hover .ct-grid-settings {
     .ct-select-ellipse {
       .ct-users-project-edit-role,
       .ct-select-selected-options-text {
-        color: $main-blue
+        color: $blue
       }
     }
   }
@@ -436,9 +436,10 @@ tr:hover .ct-grid-settings {
 
   tr:hover .ct-grid-count,
   tr:hover .ct-grid-ellipse {
-    color: $nav-background !important;
+    color: #374456 !important;
+
     span {
-      color: $main-blue !important;
+      color: $blue !important;
     }
   }
 

@@ -1,37 +1,36 @@
-$gray: #d6d6d6;
-$blue: #45818e;
+$main-blue: #00a0de;
+$main-grey: #8994b3;
 
-$main-blue: #0099cc;
+$calendarTaskColor: #fff;
+$gray-border: #e7e9f1;
+$impers-header: #ea5b5b;
+$gray-page-background: #f3f4f6;
+$nav-background: #fff;
+$nav-link-hover: #353a4e;
+$gray-text: #aab2c0;
+$formInputColor: #8994b3;
+
 //TODO: rename var
 
-$nav-background: #374456;
-$nav-link: #cbd1d4;
-$nav-link-hover: #ffffff;
-$nav-link-border: #099cce;
+$gray: #d6d6d6;
+$blue: #0099cc;
 $nav-menu-hover: #4e5d70;
 $primary-btn: #50bce0;
 $primary-btn-hover: #3399c8;
-$primary-btn-text: #ffffff;
+$primary-btn-text: #fff;
 $error-text: #ee5e5e;
-$calendarTaskColor: #fafafa;
-$gray-text: #979797;
 $gray-button: #aaaeb8;
-$border-сolor: #f1f1f1;
+$border-color: #f1f1f1;
 $gray-icons: #f1f1f1;
 $form-border: #cccccc;
-$title: #67696f;
-$impers-header: #ea5b5b;
 
 $grid-manage-bg: #f0f8fc;
 $grid-manage-text: #4f4f4f;
-
 $grid-text: rgba(0, 0, 0, .5);
 $black: #374456;
 $green: #27ae61;
 
-$label-background: $main-blue;
-
-$gray-page-background: #f2f2f2;
+$label-background: $blue;
 $blue-grid-header: #e9f8fc;
 
 // Calendar colors
@@ -55,6 +54,22 @@ $colors: $color0, $color1, $color2, $color3, $color4, $color5, $color6, $color7;
   border-left: 5px solid currentColor;
 }
 
+.ct-project-color {
+  position: relative;
+
+  &:before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+    background-color: currentColor;
+    opacity: .2;
+    border-radius: 12px;
+  }
+}
+
 .ct-container-color {
   .ct-time-period {
     border-top-color: currentColor;
@@ -64,13 +79,5 @@ $colors: $color0, $color1, $color2, $color3, $color4, $color5, $color6, $color7;
   .ct-time-path, .ct-timer {
     background-color: currentColor;
     border-radius: 0;
-  }
-
-  .slimscroll-grid {
-    background-color: currentColor !important;
-  }
-
-  .ct-submit {
-    background-color: currentColor;
   }
 }

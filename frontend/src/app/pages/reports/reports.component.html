@@ -51,14 +51,14 @@
                             <div class="ct-reports-settings">
                                 <div class="ct-reports-actions-block">
                                     <div class="ct-reports-time-period ct-button ct-white-button mat-raised-button">
-                                        <a class="ct-prev" (click)="getNewPeriod(false)"></a>
+                                        <a class="fa fa-angle-left" (click)="getNewPeriod(false)"></a>
                                         <div>
                                             <i class="fa fa-calendar"></i>
                                             <span (click)="toggleRangeDatepicker()">{{dateString}}</span>
                                             <i *ngIf="isDatepickerShown" class="fa fa-times" (click)="cancelUpdatingReportGrid()"></i>
                                             <i *ngIf="!isDatepickerShown" class="fa fa-sort-desc" (click)="toggleRangeDatepicker()"></i>
                                         </div>
-                                        <a class="ct-next" (click)="getNewPeriod()"></a>
+                                        <a class="fa fa-angle-right" (click)="getNewPeriod()"></a>
                                     </div>
                                     <ct-range-datepicker *ngIf="isDatepickerShown"
                                                          [class.ct-datepicker-opened]="isDatepickerAnimating"

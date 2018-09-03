@@ -34,9 +34,9 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
 	isActualTimeChanged: boolean;
+	isEstimatedTimeShown: boolean;
 	isEstimatedTimeChanged: boolean;
 	isFromToFormChanged: boolean;
-	isFromToFormFocus: boolean;
 	isRequestLoading: boolean;
 	isTasksLoading: boolean;
 	isTimerShown: boolean;
@@ -45,11 +45,11 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	taskList: Task[];
 	taskModel: Task;
 	ticks: number;
-	timeActual: string;
-	timeEstimated: string;
-	timeFrom: string = '00:00';
-	timeTo: string = '00:00';
-	timeMask = [/\d/, /\d/, ':', /\d/, /\d/];
+	timeActual: Time;
+	timeEstimated: Time;
+	timeFrom: Time = new Time('00', '00');
+	timeTo: Time = new Time('00', '00');
+	timeMask = [/\d/, /\d/];
 	timerSubscription: Subscription;
 	timerValue: Time;
 	userInfo: User;
@@ -76,8 +76,8 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		});
 
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
-		this.timeActual = this.convertTimeToString(this.timeEntry.timeValues.timeActual);
-		this.timeEstimated = this.convertTimeToString(this.timeEntry.timeValues.timeEstimated);
+		this.timeActual = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
+		this.timeEstimated = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeEstimated);
 
 		if (this.currentTimeEntry.timeOptions.isFromToShow) {
 			this.fillFromToForm();
@@ -208,14 +208,14 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				timeTimerStart: -1
 			};
 			let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
-			let roundTicks = (this.ticks <60)? 60: this.roundTime(this.ticks);
+			let roundTicks = (this.ticks < 60) ? 60 : this.roundTime(this.ticks);
 			this.currentTimeEntry.timeValues = {
 				timeActual: roundTicks,
 				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
 				timeFrom: Math.max(secondsFromStartDay - roundTicks, 0),
 				timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
 			};
-			this.timeActual = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
+			this.timeActual = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeActual);
 		}
 
 		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
@@ -243,53 +243,52 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	closeFromToForm(): void {
 		this.currentTimeEntry.timeOptions.isFromToShow = false;
-		this.timeFrom = '00:00';
-		this.timeTo = '00:00';
+		this.timeFrom = new Time('00', '00');
+		this.timeTo = new Time('00', '00');
 	}
 
-	validateFromToForm(timeFrom: string, timeTo: string): void {
+	validateFromToForm(): void {
 		this.isFromToFormChanged = true;
-		this.isFromToFormFocus = false;
-
-		this.timeTo = this.getMax(timeFrom, timeTo);
+		this.timeTo = this.getMax(this.timeFrom, this.timeTo);
 		this.setTimeActual();
-		this.timeActual = this.convertTimeToString(this.currentTimeEntry.timeValues.timeActual);
+		this.timeActual = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeActual);
 	}
 
 	private isFromToFormValueValid(): boolean {
-		return this.convertFormValueToSeconds(this.timeTo) > this.convertFormValueToSeconds(this.timeFrom);
+		return this.convertTimeFormatToSeconds(this.timeTo) > this.convertTimeFormatToSeconds(this.timeFrom);
 	}
 
 	private fillFromToForm(): void {
 		this.currentTimeEntry.timeOptions.isFromToShow = true;
-		this.timeFrom = this.convertTimeToString(this.currentTimeEntry.timeValues.timeFrom);
-		this.timeTo = this.convertTimeToString(this.currentTimeEntry.timeValues.timeTo);
+		this.timeFrom = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeFrom);
+		this.timeTo = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeTo);
 	}
 
-	private getMax(timeFrom: string, timeTo: string): string {
-		if (this.convertFormValueToSeconds(timeFrom) > this.convertFormValueToSeconds(timeTo)) {
-			return timeFrom;
+	private getMax(timeFrom: Time, timeTo: Time): Time {
+		if (this.convertTimeFormatToSeconds(timeFrom) > this.convertTimeFormatToSeconds(timeTo)) {
+			return new Time(timeFrom.hours, timeFrom.minutes);
 		}
 
-		return timeTo;
+		return new Time(timeTo.hours, timeTo.minutes);
 	}
-	
-	private roundTime (time: number): number {
+
+	private roundTime(time: number): number {
 		return time - time % 60;
 	}
+
 	// TRACKING TIME
 
 	timeActualOnChange(): void {
 		this.closeFromToForm();
 		this.isActualTimeChanged = true;
-		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeActual);
+		this.currentTimeEntry.timeValues.timeActual = this.convertTimeFormatToSeconds(this.timeActual);
 		this.currentTimeEntry.timeValues.timeFrom = null;
 		this.currentTimeEntry.timeValues.timeTo = null;
 	}
 
 	timeEstimatedOnChange(): void {
 		this.isEstimatedTimeChanged = true;
-		this.currentTimeEntry.timeValues.timeEstimated = this.convertFormValueToSeconds(this.timeEstimated);
+		this.currentTimeEntry.timeValues.timeEstimated = this.convertTimeFormatToSeconds(this.timeEstimated);
 	}
 
 	// SUBMIT TIMEENTRY
@@ -486,23 +485,14 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	}
 
 	private setTimeActual(): void {
-		this.currentTimeEntry.timeValues.timeFrom = this.convertFormValueToSeconds(this.timeFrom);
-		this.currentTimeEntry.timeValues.timeTo = this.convertFormValueToSeconds(this.timeTo);
-		this.currentTimeEntry.timeValues.timeActual = this.convertFormValueToSeconds(this.timeTo) -
-			this.convertFormValueToSeconds(this.timeFrom);
+		this.currentTimeEntry.timeValues.timeFrom = this.convertTimeFormatToSeconds(this.timeFrom);
+		this.currentTimeEntry.timeValues.timeTo = this.convertTimeFormatToSeconds(this.timeTo);
+		this.currentTimeEntry.timeValues.timeActual = this.convertTimeFormatToSeconds(this.timeTo) -
+			this.convertTimeFormatToSeconds(this.timeFrom);
 	}
 
-	private convertFormValueToSeconds(time: string): number {
-		let arr = time.split(':');
-		return (+arr[0] || 0) * 3600 + (+arr[1] || 0) * 60;
-	}
-
-	private convertTimeToString(time: number): string {
-		let m = Math.floor(time / 60);
-		let h = Math.floor(m / 60);
-		m = m - h * 60;
-
-		return ('00' + h).slice(-2) + ':' + ('00' + m).slice(-2);
+	private convertTimeFormatToSeconds(time: Time): number {
+		return +time.hours * 3600 + +time.minutes * 60 + (+time.seconds || 0);
 	}
 
 	private convertSecondsToTimeFormat(time: number): Time {

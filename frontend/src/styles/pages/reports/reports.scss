@@ -8,7 +8,6 @@ $fieldHeight: 30px;
 .ui-multiselect-panel.ct-reports-settings-multiselect {
   z-index: 996 !important;
   position: fixed;
-  //top: 101px !important;
 }
 
 .ct-reports-page {
@@ -77,10 +76,9 @@ $fieldHeight: 30px;
       top: -5px;
     }
 
-
     label {
-         font-size: 14px;
-      color: $main-blue;
+      font-size: 14px;
+      color: $blue;
       text-transform: uppercase;
       font-weight: 700;
       display: inline-block;
@@ -107,9 +105,7 @@ $fieldHeight: 30px;
     height: auto;
     border-bottom: 1px solid #e1e6ed;
     min-height: 46px;
-    //position: fixed;
-    z-index: 995;
-    background: $nav-background;
+    background: #374456;
     width: 100%;
   }
 
@@ -119,7 +115,7 @@ $fieldHeight: 30px;
 
   .ct-white-button {
     background: #ffffff;
-    color: $nav-background !important;
+    color: #374456 !important;
     border: 1px solid #dfdfdf;
   }
 
@@ -147,20 +143,20 @@ $fieldHeight: 30px;
         display: inline-block;
       }
 
-      .ct-prev, .ct-next {
+      .fa-angle-left, .fa-angle-right, .ct-next {
         position: absolute;
       }
 
-      .ct-prev {
+      .fa-angle-left {
         left: 0;
       }
 
-      .ct-next {
+      .fa-angle-right {
         right: 0;
       }
 
-      .ct-prev, .ct-next, .fa-sort-desc:before {
-        color: $nav-link-border;
+      .fa-angle-left, .fa-angle-right, .fa-sort-desc:before {
+        color: $main-blue;
       }
     }
   }
@@ -171,7 +167,7 @@ $fieldHeight: 30px;
 
   .ct-query-add-box {
     cursor: pointer;
-    color: $main-blue;
+    color: $blue;
 
     i {
       top: 5px;
@@ -217,7 +213,7 @@ $fieldHeight: 30px;
       white-space: nowrap;
       text-align: center;
       cursor: pointer;
-      background-color: $main-blue;
+      background-color: $blue;
       color: #fff;
       //border-radius: 4px;
       padding: 7px 35px 7px 12px;
@@ -284,7 +280,7 @@ $fieldHeight: 30px;
 
     span {
       text-decoration: none;
-      color: $nav-background;
+      color: #374456;
       border-bottom: 1px dotted;
     }
 
@@ -337,7 +333,7 @@ $fieldHeight: 30px;
       width: 15px;
       height: 20px;
       text-align: center;
-      color: $nav-background;
+      color: #374456;
     }
 
     .fa-sort-desc {
@@ -346,7 +342,7 @@ $fieldHeight: 30px;
     }
 
     .fa-sort-desc:before {
-      color: $nav-background !important;
+      color: #374456 !important;
     }
   }
 
@@ -413,7 +409,7 @@ $fieldHeight: 30px;
       font-family: inherit;
       font-size: 12px;
       text-transform: uppercase;
-      color: $main-blue;
+      color: $blue;
       height: 18px;
       display: block;
     }
@@ -481,7 +477,7 @@ $fieldHeight: 30px;
 
   .ct-button.ct-white-button {
     background: white;
-    color: $nav-background;
+    color: #374456;
   }
 
   .ct-reports-grid {
@@ -523,7 +519,7 @@ $fieldHeight: 30px;
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 400px;
-        color: $nav-link-border;
+        color: $main-blue;
         font-weight: 700;
       }
     }
@@ -577,7 +573,7 @@ $fieldHeight: 30px;
 
       thead {
         border-top: 0;
-        border-bottom: 2px solid $border-сolor;
+        border-bottom: 2px solid $border-color;
 
         th {
           padding: 10px 8px;
@@ -632,14 +628,9 @@ $fieldHeight: 30px;
     opacity: 0;
     z-index: 1;
     transition: opacity .3s;
-    //padding: 0 10px;
 
     &.ct-datepicker-opened {
       opacity: 1;
-    }
-
-    #datepicker {
-      border: 1px solid transparent !important;
     }
   }
 
@@ -661,7 +652,7 @@ $fieldHeight: 30px;
       }
 
       &:hover {
-        color: $nav-link-border;
+        color: $main-blue;
       }
     }
   }
@@ -724,15 +715,13 @@ $fieldHeight: 30px;
 .ct-reports-chart-container {
   width: 300px;
   position: fixed;
-  //position: absolute;
   display: inline-block;
   right: 20px;
-  z-index: 994;
   box-sizing: border-box;
 
   .mat-expansion-panel-header {
     height: 46px !important;
-    background: $nav-background !important;
+    background: #374456 !important;
     border-bottom: 1px solid #e1e6ed;
     color: #ffffff;
   }

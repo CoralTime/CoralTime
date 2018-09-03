@@ -106,7 +106,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	}
 
 	isMobileView(): boolean {
-		return this.windowWidth <= 700;
+		return this.windowWidth < 810;
 	}
 
 	getUserInfo(): void {

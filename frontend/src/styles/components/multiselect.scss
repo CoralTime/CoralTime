@@ -9,14 +9,16 @@ $linkColor: #0099cf;
     width: 100%;
     padding: 0 50px 0 10px;
     background: #fff;
-    border: 1px solid $form-border;
+    border: 2px solid $gray-border;
+    border-radius: 5px;
+    color: $main-grey;
   }
 
   .fa-search {
     position: absolute;
     right: 8px;
     top: 7px;
-    color: $gray-text;
+    color: $main-grey;
     opacity: .6;
   }
 
@@ -25,7 +27,7 @@ $linkColor: #0099cf;
     right: 27px;
     top: 6px;
     font-size: 16px;
-    color: $gray-button;
+    color: $main-grey;
     opacity: .6;
     cursor: pointer;
 
@@ -36,45 +38,50 @@ $linkColor: #0099cf;
 }
 
 .ui-multiselect-panel {
-  width: 380px;
-  border: 0;
-  padding: 0;
+  width: 236px;
 
   .ui-multiselect-panel {
-    padding: 30px 35px;
+    padding: 25px;
   }
 
   .ui-multiselect-filter-container {
     input {
       border: none;
       width: 100%;
-      background-color: $border-сolor;
+      background-color: $border-color;
     }
   }
 
   .ui-multiselect-item {
-    height: 32px;
-    padding: 0 0 10px 0;
-    cursor: pointer;
+    padding: 7px 5px 7px 10px;
+    height: 34px;
+    margin: 0 15px 0 0;
 
     &:not(.ui-state-highlight):hover {
-      background: none;
+      background: $selectItemBgHover;
       color: inherit;
+      border-radius: 2px;
     }
 
     label {
       display: inline-block;
-      max-width: 275px;
+      max-width: calc(100% - 35px);
       overflow: hidden;
       text-overflow: ellipsis;
       position: relative;
       top: 1px;
+      font-weight: 700;
+      color: $main-grey;
       cursor: pointer;
 
       &.ct-archived-option {
-        color: $gray-text;
+        opacity: .5;
       }
     }
+  }
+
+  .ui-chkbox {
+    margin: -4px 10px 0 0;
   }
 
   .ui-chkbox-box {
@@ -92,19 +99,15 @@ $linkColor: #0099cf;
     height: 18px;
     display: inline-block;
     vertical-align: top;
-    margin-right: 5px;
     background: #fff;
-    border: 1px solid $form-border;
-    font-size: 16px;
+    border: 2px solid $gray-border;
+    border-radius: 2px;
+    font-size: 14px;
 
     &.fa-check {
-      color: $linkColor;
-      border-color: $linkColor;
-
-      &:before {
-        display: block;
-        margin-top: -1px;
-      }
+      color: #fff;
+      border-color: $main-blue;
+      background-color: $main-blue;
     }
   }
 
@@ -139,14 +142,13 @@ $linkColor: #0099cf;
         }
 
         a {
-          color: $linkColor;
+          color: $main-blue;
           cursor: pointer;
           font-family: inherit;
-          font-size: $smallFont;
-          text-transform: uppercase;
+          font-size: 13px;
 
           &:hover {
-            color: $primary-btn-hover;
+            color: #1b81a9;
           }
         }
       }
@@ -174,8 +176,4 @@ $linkColor: #0099cf;
 .ui-multiselect:not(.ui-state-disabled):hover {
   color: inherit;
   background: none;
-}
-
-.ui-widget-content.ui-multiselect-panel {
-  background: $calendarTaskColor;
 }

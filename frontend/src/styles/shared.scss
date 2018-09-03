@@ -1,19 +1,20 @@
 $fieldHeight: 30px;
 $selectHeight: 35px;
+$selectItemBgHover: $gray-page-background;
 $baseFont: 14px;
 $smallFont: 12px;
 
 $button-font-size: 17px;
 
-$baseFontFamily: $muliFont;
-$navFontFamily: $muliFont;
+$baseFontFamily: $latoFont;
+$navFontFamily: $latoFont;
 
 body, html {
   margin: 0;
   min-width: 320px;
   font-size: 14px;
   font-family: $baseFontFamily;
-  color: $nav-background;
+  letter-spacing: .2px;
 }
 
 ul, li {
@@ -38,14 +39,11 @@ a {
 textarea {
   resize: none;
   font-family: inherit;
-  color: $nav-background;
+  color: #728096;
 }
 
 select, input, textarea, form {
   font-family: inherit;
-  -webkit-border-radius: 0 !important;
-  -moz-border-radius: 0 !important;
-  border-radius: 0 !important;
   box-shadow: none !important;
 
   &:focus {
@@ -57,13 +55,13 @@ h1 {
   font-family: inherit;
   font-weight: 700;
   font-size: 38px;
-  color: $nav-background;
+  color: #374456;
 }
 
 h2, h3, h4 {
   font-family: inherit;
   font-weight: 700;
-  color: $nav-background;
+  color: #374456;
 }
 
 h5 {
@@ -93,7 +91,7 @@ h5 {
 .ui-column-title, .ct-input-label {
   font-family: inherit;
   font-size: $baseFont;
-  color: $nav-background;
+  color: #374456;
 }
 
 .ct-input-label {
@@ -101,7 +99,7 @@ h5 {
 }
 
 .ct-blue-text {
-  color: $nav-link-border;
+  color: $main-blue;
 }
 
 .ct-inactive-title {
@@ -112,7 +110,7 @@ h5 {
   background: none;
   padding: 0;
   cursor: pointer;
-  color: $nav-background;
+  color: #374456;
   text-decoration: none;
   border: none;
   border-bottom: 1px dotted;
@@ -123,13 +121,13 @@ h5 {
 
   &:focus, &:hover {
     outline: none;
-    color: $nav-link-border;
-    border-bottom-color: $nav-link-border;
+    color: $main-blue;
+    border-bottom-color: $main-blue;
   }
 }
 
 .ct-form-label {
-  color: $main-blue;
+  color: $blue;
   display: block;
   margin: 0;
   padding: 12px 0;
@@ -150,9 +148,9 @@ h5 {
 }
 
 .ct-nav-logo {
-  height: 40px;
-  width: 40px;
-  background: url(./assets/icons/ct.logo.svg) no-repeat center center;
+  height: 36px;
+  width: 36px;
+  background: url(./assets/icons1/logo.svg) no-repeat center center;
   display: inline-block;
   background-size: 100%;
 }
@@ -168,12 +166,12 @@ h5 {
 .ct-submit {
   height: 40px;
   letter-spacing: .5px;
-  width: 115px;
-  font-size: $button-font-size !important;
+  width: 100px;
+  font-size: $button-font-size;
   float: right;
   font-family: inherit;
   box-shadow: none;
-  border-radius: 0 !important;
+  border-radius: 0;
 }
 
 .ct-submit[disabled] {
@@ -181,8 +179,8 @@ h5 {
 }
 
 .ct-close {
-  color: $nav-link-border;
-  font-size: 16px;
+  color: $main-blue;
+  font-size: 14px;
   font-family: inherit;
   line-height: 16px !important;
   cursor: pointer;
@@ -192,12 +190,12 @@ h5 {
   top: 25px;
 
   &:hover {
-    color: $nav-background !important;
+    color: #374456;
   }
 }
 
 .ct-primary-button {
-  background: $nav-link-border;
+  background: $main-blue;
   color: $primary-btn-text !important;
 }
 
@@ -209,7 +207,7 @@ h5 {
 .ct-add-link {
   cursor: pointer;
   a {
-    color: $nav-link-border;
+    color: $main-blue;
     display: inline-block;
     text-decoration: none;
     font-family: inherit;
@@ -226,12 +224,12 @@ h5 {
     position: relative;
     top: 2px;
     font-family: inherit;
-    color: $nav-link-border;
+    color: $main-blue;
   }
 }
 
 .ct-add-link:hover, .ct-add-link:hover a {
-  color: $nav-link-border !important;
+  color: $main-blue !important;
 }
 
 .ct-link {
@@ -241,7 +239,7 @@ h5 {
 }
 
 .ct-default-text {
-  color: $nav-background;
+  color: #374456;
 }
 
 .mat-input-underline {
@@ -258,7 +256,7 @@ h5 {
   position: relative;
   top: -59px;
   right: 250px;
-  z-index: 997;
+  z-index: 1001;
   float: right;
 
   box-sizing: border-box;
@@ -280,7 +278,7 @@ h5 {
     width: 100%;
     height: 28px;
     padding: 0 10px 0 30px;
-    font-family: $roboto;
+    font-family: $latoFont;
     font-weight: 300;
     background: none;
     border: 0;
@@ -309,7 +307,7 @@ h5 {
   text-transform: capitalize;
   font-family: inherit;
   font-size: 14px;
-  color: $nav-background;
+  color: #374456;
 }
 
 .ct-paginator-container {
@@ -319,7 +317,7 @@ h5 {
   right: 20px;
   left: 20px;
   width: calc(100% - 40px);
-  border-top: 1px solid $border-сolor;
+  border-top: 1px solid $border-color;
   padding-top: 17px;
 
   .ct-paginator-label {
@@ -340,21 +338,17 @@ h5 {
 }
 
 .slimscroll-grid {
-  top: 0 !important;
-  border-radius: 0 !important;
-  margin: 0 2px !important;
-  right: -2px !important;
-  width: 6px !important;
-  background: $border-сolor !important;
+  width: 8px !important;
+  margin: 0 !important;
+  background: none !important;
   z-index: 1 !important;
 }
 
 .slimscroll-bar {
-  background-color: $nav-background !important;
+  background-color: $gray-border !important;
   right: 1px !important;
-  width: 4px !important;
+  width: 6px !important;
   margin: 0 !important;
-  border-radius: 0 !important;
   z-index: 2 !important;
 }
 
@@ -375,11 +369,11 @@ h5 {
 }
 
 .ct-button:disabled {
-  background-color: $nav-link-border !important;
+  background-color: $main-blue !important;
 }
 
 .ct-blue-button {
-  background-color: $nav-link-border;
+  background-color: $main-blue;
   border: none;
   height: 40px;
   letter-spacing: 0.5px;
@@ -390,7 +384,7 @@ h5 {
 
   span {
     color: $primary-btn-text;
-    font-size: 16px;
+    font-size: 14px;
     font-family: inherit;
   }
 }
@@ -528,14 +522,14 @@ h5 {
   background: none;
   border: none;
   border-bottom: 1px dotted $gray-text;
-  font-size: 17px;
+  font-size: 14px;
   font-family: inherit;
   color: $gray-text;
   cursor: pointer;
   transition: .3s;
 
   &:hover {
-    color: $nav-background;
+    color: #374456;
   }
 
   &:focus {

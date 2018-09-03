@@ -165,7 +165,7 @@ export class CalendarDayComponent implements OnInit {
 	}
 
 	getDateString(date: string): string {
-		return moment(date).format('dddd') + (this.isToday(date) ? ' (Today)' : '');
+		return moment(date).format('dddd');
 	}
 
 	isAltPressed(): boolean {

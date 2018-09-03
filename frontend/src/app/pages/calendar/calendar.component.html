@@ -1,14 +1,20 @@
 <div class="ct-calendar-page" (window:resize)="onResize($event)">
     <div class="ct-page-container">
         <div class="ct-page-header">
-            <div *ngIf="availablePeriod > 1" class="ct-page-tabs">
+            <div *ngIf="availablePeriod > 1" class="ct-page-tabs ct-calendar-view">
                 <a (click)="toggleView(false)" [class.ct-active-tab]="activePeriod == 1">day</a>
                 <a (click)="toggleView(true)" [class.ct-active-tab]="activePeriod > 1">week</a>
             </div>
             <div class="ct-page-tabs ct-calendar-periods" [class.ct-day-tab]="activePeriod == 1" [class.ct-week-tab]="activePeriod > 1">
-                <a class="ct-prev" (click)="toggleTimePeriod(-1)">{{getDatesPeriod(-1)}}</a>
+                <a (click)="toggleTimePeriod(-1)">
+                    <i class="fa fa-angle-left"></i>
+                    {{getDatesPeriod(-1)}}
+                </a>
                 <a class="ct-active-tab">{{getDatesPeriod(0)}}</a>
-                <a class="ct-next" (click)="toggleTimePeriod(1)">{{getDatesPeriod(1)}}</a>
+                <a (click)="toggleTimePeriod(1)">
+                    <i class="fa fa-angle-right"></i>
+                    {{getDatesPeriod(1)}}
+                </a>
             </div>
 
             <div class="ct-calendar-projects">
