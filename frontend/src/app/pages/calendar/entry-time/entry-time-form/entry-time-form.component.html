@@ -8,7 +8,7 @@
                    [name]="'project'"
                    [defaultValue]="!isArchivedProjectShown() ? timeEntry.projectName : timeEntry.projectName + ' (archived)'"
                    [displayName]="'name'" [trackBy]="'id'"
-                   [maxHeight]="formHeight - 101"
+                   [maxHeight]="formHeight - 114"
                    [(ngModel)]="projectModel"
                    (ngModelChange)="projectOnChange(projectModel)"
                    [required]="!currentTimeEntry.id"
@@ -24,7 +24,7 @@
                    [class.ct-loading]="isTasksLoading"
                    [defaultValue]="!isArchivedTaskShown() ? timeEntry.taskName : timeEntry.taskName + ' (archived)'"
                    [displayName]="'name'" [trackBy]="'id'"
-                   [maxHeight]="formHeight - 149"
+                   [maxHeight]="formHeight - 172"
                    [(ngModel)]="taskModel"
                    (ngModelChange)="taskOnChange(taskModel)"
                    [required]="!currentTimeEntry.id"
@@ -67,40 +67,40 @@
                 (click)="openFromToForm()">From & To
         </button>
         <div *ngIf="currentTimeEntry.timeOptions.isFromToShow" class="ct-from-to-form">
-            <i class="ct-icon ct-times-icon" (click)="closeFromToForm()"></i>
             <div class="ct-from-time">
                 <label class="ct-label">From</label>
-                <input name="timeFromHours" autocomplete="off" [time]="24"
+                <input name="timeFromHours" autocomplete="off" [time]="24" [ctFocus]="timeFromMinutes"
                        [(ngModel)]="timeFrom.hours"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                       (blur)="validateFromToForm()">:
-                <input name="timeFromMinutes" autocomplete="off" [time]="60"
+                       (timeChanged)="validateFromToForm()">:
+                <input name="timeFromMinutes" autocomplete="off" [time]="60" #timeFromMinutes
                        [(ngModel)]="timeFrom.minutes"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                       (blur)="validateFromToForm()">
+                       (timeChanged)="validateFromToForm()">
             </div>
             <div class="ct-to-time">
                 <label class="ct-label">To</label>
-                <input name="timeToHours" autocomplete="off" [time]="24"
+                <input name="timeToHours" autocomplete="off" [time]="24" [ctFocus]="timeToMinutes"
                        [(ngModel)]="timeTo.hours"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                       (blur)="validateFromToForm()">:
-                <input name="timeToMinutes" autocomplete="off" [time]="60"
+                       (timeChanged)="validateFromToForm()">:
+                <input name="timeToMinutes" autocomplete="off" [time]="60" #timeToMinutes
                        [(ngModel)]="timeTo.minutes"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                       (blur)="validateFromToForm()">
+                       (timeChanged)="validateFromToForm()">
             </div>
+            <button type="button" class="ct-icon ct-times-icon" (click)="closeFromToForm()"></button>
         </div>
         <div class="ct-actual-time">
             <i class="ct-icon ct-timeactual-icon" title="Tracked time"></i>
-            <input name="timeActualHours" autocomplete="off" [time]="24"
+            <input name="timeActualHours" autocomplete="off" [time]="24" [ctFocus]="timeActualMinutes"
                    [(ngModel)]="timeActual.hours"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="timeActualOnChange()">h
-            <input name="timeActualMinutes" autocomplete="off" [time]="60"
+                   (timeChanged)="timeActualOnChange()">h
+            <input name="timeActualMinutes" autocomplete="off" [time]="60" #timeActualMinutes
                    [(ngModel)]="timeActual.minutes"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
-                   (ngModelChange)="timeActualOnChange()">m
+                   (timeChanged)="timeActualOnChange()">m
         </div>
         <button type="button" *ngIf="!isEstimatedTimeShown"
                 class="ct-show-input ct-estimated-time-button"

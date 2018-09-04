@@ -1,8 +1,5 @@
 $titleDay: #aab2c0;
-$titleDate: #374456;
 $titleDayHeight: 145px;
-
-$plannedTime: #8994b3;
 
 .ct-calendar-page {
   .ct-page-header {
@@ -651,7 +648,7 @@ $plannedTime: #8994b3;
   }
 
   .ct-hours-planned {
-    color: $plannedTime;
+    color: #8994b3;
     opacity: .6;
 
     &:before {
