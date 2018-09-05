@@ -1,6 +1,5 @@
-$calendarWidgetBg: #fff;
-$titleHeight: 42px;
 $formPadding: 20px;
+$selectHeight: 42px;
 $inactiveText: #333333;
 
 ct-entry-time {
@@ -95,17 +94,17 @@ ct-entry-time {
   }
 
   .ct-select-component {
-    height: $titleHeight;
+    height: $selectHeight;
 
     .ct-select {
-      height: $titleHeight;
+      height: $selectHeight;
       border: 0;
       border-bottom: 1px solid $gray-page-background;
     }
 
     .ct-select-selected-options-text {
-      line-height: $titleHeight;
-      height: $titleHeight;
+      line-height: $selectHeight;
+      height: $selectHeight;
       padding-left: 0;
     }
 
@@ -163,161 +162,6 @@ ct-entry-time {
     min-height: 40px;
     max-height: 115px;
     padding-right: 10px;
-
-    label {
-      left: 8px !important;
-      top: 4px !important;
-      font-family: $baseFontFamily;
-      font-size: $baseFont;
-      position: absolute;
-    }
-
-    .mat-input-container {
-      width: 100%;
-    }
-
-    .mat-input-element {
-      width: 100%;
-      font-family: $latoFont;
-      font-size: $baseFont;
-      line-height: 1.25;
-      overflow: hidden;
-      box-sizing: border-box;
-    }
-
-    .mat-input-wrapper {
-      margin: 0;
-      padding: 0;
-    }
-
-    .mat-input-placeholder-wrapper {
-      padding-top: 17px;
-      top: -19px !important;
-      left: -8px !important;
-      height: 30px;
-    }
-
-    .mat-input-placeholder {
-      color: $inactiveText;
-    }
-
-    .mat-input-placeholder:not(.mat-empty),
-    .mat-focused .mat-input-placeholder,
-    .mat-input-subscript-wrapper,
-    .mat-input-underline {
-      display: none;
-    }
-  }
-
-  .ct-time-actions {
-    margin: 20px -30px;
-    padding: 20px 30px;
-    font-size: 0;
-    background: $main-blue;
-
-    .ct-timer, .ct-time-path {
-      display: inline-block;
-      box-sizing: border-box;
-      border: 0;
-      width: 120px;
-      height: 120px;
-      margin-bottom: 5px;
-      padding: 15px 16px 0;
-      line-height: 36px;
-      font-size: 15px;
-      cursor: pointer;
-      color: inherit;
-
-      > * {
-        color: #374456 !important;
-      }
-
-      &:focus, &.ct-focus {
-        outline: 1px solid rgba(9, 156, 206, .3);
-      }
-
-      &.ct-no-clickable, &[disabled] {
-        &:after {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          content: '';
-          background-color: rgba(255, 255, 255, 0.3);
-        }
-      }
-
-      &.ct-no-clickable, &[disabled] {
-        position: relative;
-        cursor: not-allowed;
-      }
-    }
-
-    .ct-actions-icon {
-      display: block;
-      height: 53px;
-    }
-
-    .ct-from-to-form {
-      position: relative;
-
-      label {
-        margin-right: 3px;
-      }
-
-      input {
-        background: none;
-        border: none;
-        width: 45px;
-        font-family: inherit;
-        text-align: center;
-        color: inherit;
-      }
-
-      .ct-from-time, .ct-to-time {
-        margin-left: -10px;
-        line-height: 1.3;
-        font-size: 0;
-        text-align: right;
-
-        > * {
-          font-size: 16px;
-        }
-      }
-
-      .ct-actions-icon {
-        height: 48px;
-      }
-    }
-
-    .ct-timer-container {
-      font-size: 0;
-      height: 28px;
-      line-height: 28px;
-      margin-bottom: 3px;
-
-      span {
-        font-family: inherit;
-        font-size: 24px;
-
-        &:not(.ct-divider) {
-          display: inline-block;
-          width: 30px;
-          text-align: center;
-        }
-      }
-    }
-
-    .ct-timer-started {
-      padding: 10px 0;
-
-      .ct-actions-icon {
-        height: 23px;
-        background-size: 23px !important;
-        margin-bottom: 10px;
-      }
-    }
   }
 
   .ct-time-period {
@@ -365,7 +209,7 @@ ct-entry-time {
       padding: 5px 14px;
       cursor: pointer;
 
-      &:hover {
+      &:hover, &:focus {
         border-color: rgba(127, 207, 238, 1);
       }
 
@@ -427,8 +271,8 @@ ct-entry-time {
       > div {
         display: inline-block;
 
-        &:last-child {
-          margin-left: 10px;
+        &:first-child {
+          margin-right: 10px;
         }
       }
 
@@ -441,9 +285,11 @@ ct-entry-time {
         right: 0;
         top: 9px;
         opacity: .8;
+        border: none;
+        background-color: transparent;
         cursor: pointer;
 
-        &:hover {
+        &:hover, &:focus {
           opacity: 1;
         }
       }
@@ -662,7 +508,7 @@ ct-entry-time {
 
   .ct-datepicker-container {
     width: 50%;
-    background: $calendarWidgetBg;
+    background: #fff;
     text-align: center;
   }
 
