@@ -38,14 +38,6 @@ $titleDayHeight: 145px;
     }
   }
 
-  .ct-day-tab a {
-    width: 60px;
-  }
-
-  .ct-week-tab a {
-    width: 90px;
-  }
-
   .ct-calendar-periods {
     margin-left: 60px;
 
@@ -53,6 +45,10 @@ $titleDayHeight: 145px;
       padding: 0 20px;
       white-space: nowrap;
       text-align: center;
+
+      @media (min-width: $calendarPhoneWidth) {
+        width: 90px;
+      }
 
       i {
         position: absolute;
@@ -76,12 +72,52 @@ $titleDayHeight: 145px;
       }
     }
 
-    @media (min-width: 810px) and (max-width: 1380px) {
+    @media (min-width: $calendarPhoneWidth) and (max-width: 1380px) {
       margin-left: 40px;
 
       a {
         padding: 0 15px;
       }
+    }
+  }
+
+  .ct-calendar-periods-mobile {
+    display: block;
+    margin: 0 -10px;
+
+    > a {
+      padding: 0 15px;
+      vertical-align: top;
+      text-align: center;
+
+      &:last-child {
+        float: right;
+      }
+    }
+
+    .ct-day-name {
+      display: block;
+      margin-top: -8px;
+      color: $titleDay;
+      font-size: 12px;
+      line-height: 20px;
+    }
+
+    .ct-day-number {
+      display: block;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 32px;
+      color: $main-grey;
+      border-radius: 50%;
+    }
+
+    .ct-active-tab .ct-day-number {
+      background-color: $main-blue;
+      color: #fff;
+      box-shadow: 0 2px 5px 0 rgba(46, 102, 231, 0.35);
     }
   }
 }
@@ -127,6 +163,7 @@ $titleDayHeight: 145px;
 }
 
 .ct-calendar {
+  position: relative;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -137,6 +174,16 @@ $titleDayHeight: 145px;
   > * {
     display: flex;
     flex: 0 0 auto;
+  }
+
+  &:after {
+    position: fixed;
+    left: 20px;
+    background: $nav-background;
+    content: '';
+    width: calc(100% - 40px);
+    height: $titleDayHeight;
+    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
   }
 }
 
@@ -155,9 +202,20 @@ $titleDayHeight: 145px;
   background-color: $calendarTaskColor;
   display: block;
   width: 100%;
+  padding: 15px 20px 30px;
   box-sizing: border-box;
   word-wrap: break-word;
   z-index: 100;
+
+  @media (min-width: 1300px) and (max-width: 1380px) {
+    padding: 15px 15px 30px;
+  }
+
+  .ct-calendar-day-active {
+    .ct-calendar-day-title {
+      background: $gray-page-background;
+    }
+  }
 }
 
 .ct-calendar-task-stop-timer {
@@ -468,8 +526,12 @@ $titleDayHeight: 145px;
     color: $main-grey;
     letter-spacing: .2px;
     text-align: center;
-    opacity: 0;
     cursor: pointer;
+    opacity: .5;
+
+    @media (min-width: 810px) {
+      opacity: 0;
+    }
 
     &:before {
       display: inline-block;
@@ -489,6 +551,23 @@ $titleDayHeight: 145px;
     border: 2px solid $main-blue;
     opacity: 1 !important;
   }
+
+  @media (max-width: $calendarPhoneWidth) {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 78px;
+    line-height: 48px;
+    background: $nav-background;
+
+    > div {
+      top: 10px;
+      bottom: 20px;
+      left: 15px;
+      right: 15px;
+    }
+  }
 }
 
 .ct-calendar-day-tasks {
@@ -498,20 +577,6 @@ $titleDayHeight: 145px;
 }
 
 .ct-calendar-weekly-view {
-  .ct-calendar {
-    position: relative;
-
-    &:after {
-      position: fixed;
-      left: 20px;
-      background: $nav-background;
-      content: '';
-      width: calc(100% - 40px);
-      height: $titleDayHeight;
-      box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
-    }
-  }
-
   .ct-calendar-day {
     width: calc(100% / 7);
 
@@ -524,22 +589,12 @@ $titleDayHeight: 145px;
     position: fixed;
     top: $titleDayHeight;
     width: calc((100% - 100px) / 7);
-    background: $nav-background;
-    padding: 15px 20px 30px;
     margin-left: 5px;
-
-    @media (min-width: 1300px) and (max-width: 1380px) {
-      padding: 15px 15px 30px;
-    }
-
-    @media (max-width: $calendarTabletWidth) {
-      width: calc(25% - 17.5px);
-    }
   }
 
-  .ct-calendar-day-active {
+  @media (max-width: $calendarTabletWidth) {
     .ct-calendar-day-title {
-      background: $gray-page-background;
+      width: calc(25% - 17.5px);
     }
   }
 
@@ -559,15 +614,13 @@ $titleDayHeight: 145px;
     width: 100%;
 
     .ct-calendar-day-title {
-      position: fixed;
-      width: calc(100% - 40px);
-      margin-top: 30px;
+      width: 100%;
     }
 
     .ct-calendar-day-tasks {
       display: inline-block;
       width: calc(100% + 6px);
-      margin: 10px + $titleDayHeight -3px 0;
+      margin: 0;
       padding-bottom: 50px;
     }
 
@@ -586,10 +639,21 @@ $titleDayHeight: 145px;
     }
 
     .ct-calendar-add-task {
-      position: absolute;
-      bottom: -12px;
-      left: 3px;
-      width: calc(100% - 6px);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 78px;
+      line-height: 48px;
+      background: $nav-background;
+
+      > div {
+        top: 10px;
+        bottom: 20px;
+        left: 15px;
+        right: 15px;
+        opacity: .5;
+      }
     }
 
     .ct-fake-task {

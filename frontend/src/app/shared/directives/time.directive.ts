@@ -1,11 +1,11 @@
 import { Directive, ElementRef, HostListener, Output, EventEmitter, Input } from '@angular/core';
 
 @Directive({
-	selector: '[time]'
+	selector: '[ctTime]'
 })
 
 export class TimeDirective {
-	@Input() time: number;
+	@Input() ctTime: number;
 	@Output() ngModelChange: EventEmitter<any> = new EventEmitter();
 	@Output() timeChanged: EventEmitter<any> = new EventEmitter();
 
@@ -17,7 +17,7 @@ export class TimeDirective {
 	@HostListener('keydown', ['$event'])
 	onKeyDown(event: KeyboardEvent) {
 		let current: string = this.el.nativeElement.value;
-		let index = this.time === 24 ? 1 : 5;
+		let index = this.ctTime === 24 ? 1 : 5;
 
 		switch (event.key) {
 			case 'ArrowDown' :
@@ -26,7 +26,7 @@ export class TimeDirective {
 				break;
 			case 'ArrowUp' :
 				current = current || this.oldValue;
-				current = +current + index < this.time ? String(+current + index) : current;
+				current = +current + index < this.ctTime ? String(+current + index) : current;
 				break;
 		}
 
@@ -67,8 +67,8 @@ export class TimeDirective {
 		if (+time < 0) {
 			time = '0';
 		}
-		if (+time >= this.time) {
-			time = this.time - 1 + '';
+		if (+time >= this.ctTime) {
+			time = this.ctTime - 1 + '';
 		}
 
 		return time;

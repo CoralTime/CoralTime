@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, Params } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { DateUtils } from '../../models/calendar';
@@ -12,6 +12,12 @@ import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.comp
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+interface WeekDay {
+	date: string;
+	dayName: string;
+	dayNumber: number;
+}
+
 @Component({
 	selector: 'ct-calendar',
 	templateUrl: 'calendar.component.html'
@@ -20,6 +26,7 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 export class CalendarComponent implements OnInit, OnDestroy {
 	activePeriod: number = 7;
 	availablePeriod: number;
+	calendarDays: WeekDay[];
 	date: string;
 	isWeekViewActive: boolean = true;
 	firstDayOfWeek: number;
@@ -43,7 +50,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
 			this.firstDayOfWeek = user.weekStart;
 		});
 		this.setAvailablePeriod(window.innerWidth);
-		this.setActivePeriod();
 		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
 				let route = this.route.snapshot.children[0];
@@ -62,8 +68,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		this.route.queryParams.subscribe((params) => {
-			this.date = params['date'] ? DateUtils.reformatDate(params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
+		this.route.params.subscribe(() => {
+			let route = this.route.snapshot.children[0];
+			this.date = route.params['date'] ? DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
+			this.setActivePeriod();
 		});
 
 		this.loadProjects(this.showOnlyActive);
@@ -85,6 +93,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
 			this.activePeriod = 1;
 		} else {
 			this.activePeriod = this.availablePeriod;
+		}
+
+		if (this.activePeriod === 1) {
+			this.setEmptyWeek()
 		}
 	}
 
@@ -129,16 +141,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		this.router.navigate(['calendar', (this.activePeriod === 1) ? 'day' : 'week', params]);
 	}
 
-	toggleTimePeriod(period: number): void {
+	toggleTimePeriod(period: number, date?: string): void {
 		let params = {};
+		this.date = date || this.date;
 		if (this.activePeriod === 7) {
 			this.date = this.getWeekBeginning(this.date);
 		}
+
 		this.date = this.moveDate(this.date, period * this.activePeriod);
 		params['date'] = this.formatDateToUrlString(this.date);
+
 		if (this.projectIds && this.projectIds.length) {
 			params['projectIds'] = this.projectIds.join(',');
 		}
+
 		this.router.navigate(['calendar', (this.activePeriod === 1) ? 'day' : 'week', params]);
 	}
 
@@ -193,6 +209,22 @@ export class CalendarComponent implements OnInit, OnDestroy {
 				};
 			});
 		});
+	}
+
+	private setEmptyWeek(): void {
+		this.calendarDays = [];
+		let newDay: WeekDay;
+
+		for (let i = 0; i < 7; i++) {
+			let date = this.moveDate(this.getWeekBeginning(this.date), i);
+			newDay = {
+				date,
+				dayName: moment(date).format('dd'),
+				dayNumber: moment(date).toDate().getDate()
+			};
+
+			this.calendarDays.push(newDay);
+		}
 	}
 
 	private moveDate(date: string, dif: number): string {

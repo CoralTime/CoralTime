@@ -69,22 +69,22 @@
         <div *ngIf="currentTimeEntry.timeOptions.isFromToShow" class="ct-from-to-form">
             <div class="ct-from-time">
                 <label class="ct-label">From</label>
-                <input name="timeFromHours" autocomplete="off" [time]="24" [ctFocus]="timeFromMinutes"
+                <input name="timeFromHours" autocomplete="off" [ctTime]="24" [ctFocus]="timeFromMinutes"
                        [(ngModel)]="timeFrom.hours"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                        (timeChanged)="validateFromToForm()">:
-                <input name="timeFromMinutes" autocomplete="off" [time]="60" #timeFromMinutes
+                <input name="timeFromMinutes" autocomplete="off" [ctTime]="60" #timeFromMinutes
                        [(ngModel)]="timeFrom.minutes"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                        (timeChanged)="validateFromToForm()">
             </div>
             <div class="ct-to-time">
                 <label class="ct-label">To</label>
-                <input name="timeToHours" autocomplete="off" [time]="24" [ctFocus]="timeToMinutes"
+                <input name="timeToHours" autocomplete="off" [ctTime]="24" [ctFocus]="timeToMinutes"
                        [(ngModel)]="timeTo.hours"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                        (timeChanged)="validateFromToForm()">:
-                <input name="timeToMinutes" autocomplete="off" [time]="60" #timeToMinutes
+                <input name="timeToMinutes" autocomplete="off" [ctTime]="60" #timeToMinutes
                        [(ngModel)]="timeTo.minutes"
                        [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                        (timeChanged)="validateFromToForm()">
@@ -93,11 +93,11 @@
         </div>
         <div class="ct-actual-time">
             <i class="ct-icon ct-timeactual-icon" title="Tracked time"></i>
-            <input name="timeActualHours" autocomplete="off" [time]="24" [ctFocus]="timeActualMinutes"
+            <input name="timeActualHours" autocomplete="off" [ctTime]="24" [ctFocus]="timeActualMinutes"
                    [(ngModel)]="timeActual.hours"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (timeChanged)="timeActualOnChange()">h
-            <input name="timeActualMinutes" autocomplete="off" [time]="60" #timeActualMinutes
+            <input name="timeActualMinutes" autocomplete="off" [ctTime]="60" #timeActualMinutes
                    [(ngModel)]="timeActual.minutes"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (timeChanged)="timeActualOnChange()">m
@@ -108,11 +108,11 @@
         </button>
         <div *ngIf="isEstimatedTimeShown" class="ct-estimated-time">
             <i class="ct-icon ct-timeestimated-icon" title="Planned time"></i>
-            <input name="timeEstimatedHours" autocomplete="off" [time]="24"
+            <input name="timeEstimatedHours" autocomplete="off" [ctTime]="24"
                    [(ngModel)]="timeEstimated.hours"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (ngModelChange)="timeEstimatedOnChange()">h
-            <input name="timeEstimatedMinutes" autocomplete="off" [time]="60"
+            <input name="timeEstimatedMinutes" autocomplete="off" [ctTime]="60"
                    [(ngModel)]="timeEstimated.minutes"
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (ngModelChange)="timeEstimatedOnChange()">m
