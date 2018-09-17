@@ -115,11 +115,11 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 		}
 
 		if (!this.isDirectionTop && !this.isOpenMobile) {
-			this.calendarTaskContainer.style.paddingBottom = 535 - this.calendarTask.clientHeight + 'px';
+			this.calendarTaskContainer.style.paddingBottom = 485 - this.calendarTask.clientHeight + 'px';
 		}
 
 		if (!this.isDirectionTop && this.isOpenMobile) {
-			this.calendarTaskContainer.style.paddingBottom = '560px';
+			this.calendarTaskContainer.style.paddingBottom = '510px';
 		}
 	}
 
@@ -136,7 +136,7 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 	}
 
 	private isTopClear(el: HTMLElement): boolean {
-		return el.getBoundingClientRect().bottom > 560;
+		return el.getBoundingClientRect().bottom > 800;
 	}
 
 	private changeCloseParameter(): void {
@@ -150,10 +150,10 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 
 	private scrollWindow(el: HTMLElement): void {
 		let elTop: number = el.getBoundingClientRect().top;
-		if (!this.isDirectionTop && elTop < 195) {
+		if (!this.isDirectionTop && elTop < 295) {
 			window.scrollTo({
 				left: 0,
-				top: elTop + window.scrollY - 195,
+				top: elTop + window.scrollY - 295,
 				behavior: 'smooth'
 			});
 		}
@@ -162,7 +162,7 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 		if (this.isDirectionTop && elBottom > window.innerHeight) {
 			window.scrollTo({
 				left: 0,
-				top: elBottom - window.innerHeight + window.scrollY + 5,
+				top: elBottom - window.innerHeight + window.scrollY + 10,
 				behavior: 'smooth'
 			});
 		}
