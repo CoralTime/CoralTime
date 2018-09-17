@@ -16,7 +16,7 @@
     opacity: 0;
     z-index: 101;
     transition-duration: .3s;
-    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+    box-shadow: $box-shadow;
     border-radius: 5px;
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box;

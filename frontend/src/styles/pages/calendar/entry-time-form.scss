@@ -14,6 +14,7 @@ ct-entry-time {
 .ct-entry-time-form {
   position: absolute;
   top: 0;
+  width: 350px;
   visibility: hidden;
   opacity: 0;
   z-index: 1001;
@@ -50,13 +51,17 @@ ct-entry-time {
 
   &.ct-open-mobile {
     left: 0;
-    top: 105%;
+    right: 0;
+    top: calc(100% + 10px);
+    margin: auto;
 
     .ct-form-container {
       &:after {
         border-right-color: transparent;
         border-bottom-color: $calendarTaskColor;
-        left: 16px;
+        left: 0;
+        right: 0;
+        margin: auto;
         top: -30px;
       }
     }
@@ -76,7 +81,7 @@ ct-entry-time {
 
   &.ct-direction-top.ct-open-mobile {
     top: auto;
-    bottom: 105%;
+    bottom: calc(100% + 10px);
 
     .ct-form-container {
       &:after {
@@ -119,13 +124,13 @@ ct-entry-time {
     margin: auto;
     box-sizing: border-box;
     position: relative;
-    width: 350px;
     padding: 5px 30px $formPadding;
     background: $calendarTaskColor;
     border-radius: 5px;
 
     &:after {
       position: absolute;
+      width: 0;
       content: '';
       top: 22px;
       left: -32px;

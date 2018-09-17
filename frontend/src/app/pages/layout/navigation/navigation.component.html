@@ -10,22 +10,13 @@
                             <span>{{item.label}}</span>
                         </a>
                     </li>
-
-                    <!--<li class="ct-nav-manage-item"-->
-                    <!--[ngClass]="{'ct-nav-manage-item-show': showManageMenu, active: manageMenu.isOpen || manageLinkActive.isActive}"-->
-                    <!--(click)="manageMenu.toggleMenu()">-->
-                    <!--<a>-->
-                    <!--<mat-icon><i class="ct-nav-icon ct-manage-icon" aria-hidden="true"></i></mat-icon>-->
-                    <!--<span>Manage</span>-->
-                    <!--</a>-->
-                    <!--</li>-->
                 </ul>
             </div>
         </div>
         <div class="ct-nav-col">
             <div class="ct-profile-block">
                 <div class="ct-nav-droplink">
-                    <i *ngIf="showManageMenu" class="ct-icon ct-settings-icon" aria-hidden="true"
+                    <i *ngIf="showManageMenu && !isMobileView()" class="ct-icon ct-settings-icon" aria-hidden="true"
                        [ngClass]="{active: manageMenu.isOpen || manageLinkActive.isActive}"
                        (click)="manageMenu.toggleMenu()"></i>
                     <a *ngIf="!isMobileView()" class="ct-userpic" title="View Profile" [routerLink]="['/profile']">
@@ -73,20 +64,11 @@
                         </ct-menu-item>
                     </ng-template>
                     <ct-menu-item routerLinkActive="active">
-                        <a [routerLink]="['/profile/settings']" title="Profile Settings">
+                        <a [routerLink]="['/profile/settings']" title="Preferences">
                             <i class="ct-icon ct-settings-icon" aria-hidden="true"></i>
-                            <span>Settings</span>
+                            <span>Preferences</span>
                         </a>
                     </ct-menu-item>
-                    <!--<ng-template ngFor let-item [ngForOf]="manageItems">-->
-                        <!--<ct-menu-item *ctIsGranted="item.permission" routerLinkActive="active"-->
-                            <!--(click)="manageMenu.closeMenu()">-->
-                            <!--<a [routerLink]="item.routerLink">-->
-                                <!--<i class="ct-icon {{item.icon}}" aria-hidden="true"></i>-->
-                                <!--<span>{{item.label}}</span>-->
-                            <!--</a>-->
-                        <!--</ct-menu-item>-->
-                    <!--</ng-template>-->
                     <!--<ct-menu-item class="ct-menu-item">-->
                     <!--<a>-->
                     <!--<mat-icon>help</mat-icon>-->
