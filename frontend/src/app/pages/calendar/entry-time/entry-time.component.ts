@@ -124,7 +124,7 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 	}
 
 	private isRightSideClear(el: HTMLElement): boolean {
-		return window.innerWidth > el.getBoundingClientRect().right + 300;
+		return window.innerWidth > el.getBoundingClientRect().right + 365;
 	}
 
 	private isLeftSideClear(el: HTMLElement): boolean {

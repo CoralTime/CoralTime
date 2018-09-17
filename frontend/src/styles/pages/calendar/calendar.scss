@@ -84,14 +84,21 @@ $titleDayHeight: 145px;
   .ct-calendar-periods-mobile {
     display: block;
     margin: 0 -10px;
+    font-size: 0;
 
     > a {
-      padding: 0 15px;
+      padding: 0;
+      width: calc((100% - 1px) / 9);
+      max-width: 62px;
       vertical-align: top;
       text-align: center;
 
       &:last-child {
         float: right;
+      }
+
+      .fa {
+        vertical-align: middle;
       }
     }
 
@@ -107,6 +114,7 @@ $titleDayHeight: 145px;
       display: block;
       width: 32px;
       height: 32px;
+      margin: auto;
       font-size: 16px;
       font-weight: 700;
       line-height: 32px;
@@ -184,7 +192,7 @@ $titleDayHeight: 145px;
     width: calc(100% - 40px);
     height: $titleDayHeight;
     border-radius: 5px;
-    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+    box-shadow: $box-shadow;
 
     @media (max-width: $calendarPhoneWidth) {
       position: absolute;
@@ -234,16 +242,14 @@ $titleDayHeight: 145px;
     background: $gray-page-background;
   }
 
-  .ct-calendar-day & {
-    &:first-child {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-    }
+  .ct-calendar-day:first-child & {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
 
-    &:last-child {
-      border-top-right-radius: 5px;
-      border-bottom-right-radius: 5px;
-    }
+  .ct-calendar-day:last-child & {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
   }
 }
 
@@ -333,7 +339,7 @@ $titleDayHeight: 145px;
   width: 100%;
   padding: 15px 20px;
   background: $calendarTaskColor;
-  box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+  box-shadow: $box-shadow;
   border-radius: 5px;
   margin-bottom: 6px;
 }
@@ -519,12 +525,16 @@ $titleDayHeight: 145px;
   color: #cfd4e0;
   border-radius: 2px;
   z-index: 1;
+
+  .ct-calendar-task:hover &,
+  &.ct-menu-opened {
+    color: $main-grey;
+    background-color: $gray-page-background;
+  }
 }
 
-.ct-calendar-task:hover .ct-menu-open-link,
+.ct-menu-open-link:hover,
 .ct-menu-open-link.ct-menu-opened {
-  color: $main-grey;
-  background-color: $gray-page-background;
 }
 
 .ct-calendar-add-task {
@@ -589,7 +599,7 @@ $titleDayHeight: 145px;
     height: 78px;
     line-height: 48px;
     background: $nav-background;
-    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+    box-shadow: $box-shadow;
 
     > div {
       top: 10px;
@@ -694,7 +704,7 @@ $titleDayHeight: 145px;
     height: 78px;
     line-height: 48px;
     background: $nav-background;
-    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+    box-shadow: 0 4px 8px 4px rgba(37, 38, 94, 0.08);
 
     > div {
       top: 10px;

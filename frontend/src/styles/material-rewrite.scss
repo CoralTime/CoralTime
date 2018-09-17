@@ -92,7 +92,7 @@
 div.ui-shadow {
   border: none;
   border-radius: 5px;
-  box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.08);
+  box-shadow: $box-shadow;
 }
 
 .ui-multiselect-panel {

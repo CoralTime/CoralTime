@@ -33,17 +33,10 @@ ct-navigation {
 
   .ct-nav-logo {
     cursor: pointer;
-
-    @media (min-width: 401px) {
-      margin: 14px 15px 0 15px;
-    }
+    margin: 14px 15px 0 15px;
 
     @media (min-width: 1000px) {
       margin-right: 65px;
-    }
-
-    @media (max-width: 400px) {
-      margin: 5px;
     }
   }
 
@@ -187,7 +180,7 @@ ct-navigation {
     }
 
     .ct-menu-icon {
-        width: 22px;
+      width: 22px;
     }
   }
 }
