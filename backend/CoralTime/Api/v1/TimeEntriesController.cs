@@ -15,19 +15,19 @@ namespace CoralTime.Api.v1
         public TimeEntriesController(ITimeEntryService service, ILogger<TimeEntriesController> logger)
             : base(logger, service) { }
 
-        // GET: api/v1/odata/TimeEntries
+        // GET: api/v1/TimeEntries
         [HttpGet]
         public IActionResult Get(DateTimeOffset dateBegin, DateTimeOffset dateEnd) => new JsonResult(_service.GetAllTimeEntries(dateBegin, dateEnd));
 
-        // GET api/v1/odata/TimeEntries(2)
+        // GET api/v1/TimeEntries/2
         [HttpGet(Constants.Routes.IdRoute)]
         public IActionResult GetById(int id) => new JsonResult(_service.GetById(id));
 
-        // POST api/v1/odata/TimeEntries
+        // POST api/v1/TimeEntries
         [HttpPost]
         public IActionResult Create([FromBody] TimeEntryView timeEntryView) => new JsonResult(_service.Create(timeEntryView));
 
-        // PUT api/v1/odata/TimeEntries(2)
+        // PUT api/v1/TimeEntries/2
         [HttpPut(Constants.Routes.IdRoute)]
         public IActionResult Update(int id, [FromBody]TimeEntryView timeEntryView)
         {
@@ -35,12 +35,16 @@ namespace CoralTime.Api.v1
             return new JsonResult(_service.Update(timeEntryView));
         }
 
-        // DELETE api/v1/odata/TimeEntries(1)
+        // DELETE api/v1/TimeEntries/1
         [HttpDelete(Constants.Routes.IdRoute)]
         public IActionResult Delete(int id)
         {
             _service.Delete(id);
             return Ok();
         }
+        
+        // GET: api/v1/TimeEntries/TimeEntryTimer
+        [HttpGet(Constants.Routes.TimeEntryTimer)]
+        public IActionResult Get() => new JsonResult(_service.GetTimeEntryTimer());
     }
 }
