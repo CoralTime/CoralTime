@@ -49,5 +49,7 @@ namespace CoralTime.ViewModels.Member
         public bool IsWeeklyTimeEntryUpdatesSend { get; set; }
 
         public string SendEmailDays { get; set; }
+        
+        public int WorkingHoursPerDay { get; set; }
     }
 }

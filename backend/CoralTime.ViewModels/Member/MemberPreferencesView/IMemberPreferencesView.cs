@@ -17,5 +17,7 @@
         int WeekStart { get; set; }
 
         bool IsWeeklyTimeEntryUpdatesSend { get; set; }
+        
+        int WorkingHoursPerDay { get; set; }
     }
 }

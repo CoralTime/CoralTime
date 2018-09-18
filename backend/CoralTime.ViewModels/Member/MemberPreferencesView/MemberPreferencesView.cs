@@ -20,5 +20,7 @@ namespace CoralTime.ViewModels.Member.MemberPreferencesView
         public int WeekStart { get; set; }
 
         public bool IsWeeklyTimeEntryUpdatesSend { get; set; }
+        
+        public int WorkingHoursPerDay { get; set; }
     }
 }

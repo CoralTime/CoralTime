@@ -277,6 +277,7 @@ namespace CoralTime.BL.Services
             memberById.TimeFormat = memberView.TimeFormat;
             memberById.SendEmailTime = memberView.SendEmailTime;
             memberById.SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(memberView.SendEmailDays);
+            memberById.WorkingHoursPerDay = memberView.WorkingHoursPerDay;
 
             try
             {
