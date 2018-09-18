@@ -132,6 +132,10 @@ ct-navigation {
       white-space: nowrap;
       text-align: center;
 
+      @media (max-width: $calendarTabletWidth) {
+        max-width: 130px;
+      }
+
       @media (max-width: 500px) {
         display: none;
       }
@@ -204,6 +208,12 @@ ct-navigation {
     .ct-userpic .ct-menu-item {
       line-height: 70px;
       border-bottom: 1px solid $gray-page-background;
+
+      a {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
 
       ct-user-pic {
         top: -3px;

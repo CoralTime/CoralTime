@@ -4,6 +4,7 @@ $titleDayHeight: 145px;
 .ct-calendar-page {
   .ct-page-header {
     position: fixed;
+    top: 63px;
     left: 0;
     width: 100%;
     padding: 0 20px;
@@ -177,7 +178,6 @@ $titleDayHeight: 145px;
   -ms-user-select: none;
   display: flex;
   margin: 81px -5px 0;
-  overflow-x: hidden;
 
   > * {
     display: flex;
@@ -611,7 +611,6 @@ $titleDayHeight: 145px;
 }
 
 .ct-calendar-day-tasks {
-  position: relative;
   margin-top: $titleDayHeight + 10px;
   padding: 0 5px 5px;
 }
@@ -747,16 +746,19 @@ $titleDayHeight: 145px;
   .ct-hours-tracked,
   .ct-hours-planned {
     position: relative;
+    display: inline-block;
+    width: 42px;
+    margin-left: 44px;
     font-size: 16px;
     font-weight: 700;
-    margin-left: 44px;
+    vertical-align: middle;
 
     &:before {
       position: absolute;
       content: '';
       width: 18px;
       height: 18px;
-      top: 1px;
+      top: 13px;
       left: -24px;
     }
   }
@@ -787,6 +789,11 @@ $titleDayHeight: 145px;
 
     .ct-hours-tracked, .ct-hours-planned {
       margin-left: 30px;
+
+      &:before {
+        top: 9px;
+        left: -22px;
+      }
     }
   }
 }

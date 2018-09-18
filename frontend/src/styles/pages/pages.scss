@@ -20,6 +20,7 @@ html, body {
 .ct-content {
   padding: $nav-height 20px 0;
   background: $gray-page-background;
+  overflow-x: hidden;
 }
 
 .ct-page-container {
