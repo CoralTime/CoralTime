@@ -15,5 +15,7 @@ namespace CoralTime.BL.Interfaces
         TimeEntryView Update(TimeEntryView timeEntryData);
 
         void Delete(int timeEntryId);
+
+        TimeEntryView GetTimeEntryTimer();
     }
 }

@@ -1,17 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Migrations\20180213100954_Set unique %27Name%27 for Clients, ProjectRoles.cs" />
     <Compile Remove="Migrations\20180321155042_ Rename TimeEnties Time2.cs" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="IdentityModel" Version="3.8.0" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.1" />
@@ -24,4 +29,5 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <ProjectReference Include="..\CoralTime.Common\CoralTime.Common.csproj" />
   </ItemGroup>
+
 </Project>

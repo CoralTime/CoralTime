@@ -96,7 +96,8 @@ namespace CoralTime.DAL.Mapper
                     SendEmailDays = ConverterBitMask.DayOfWeekIntToString(source.SendEmailDays),
                     TimeFormat = source.TimeFormat,
                     SendEmailTime = source.SendEmailTime,
-                    WeekStart =  (int)source.WeekStart
+                    WeekStart =  (int)source.WeekStart,
+                    WorkingHoursPerDay = source.WorkingHoursPerDay
                 };
             }
         }
@@ -116,6 +117,7 @@ namespace CoralTime.DAL.Mapper
                     SendEmailDays = ConverterBitMask.DayOfWeekStringToInt(source.SendEmailDays),
                     SendEmailTime = source.SendEmailTime,
                     TimeFormat = source.TimeFormat,
+                    WorkingHoursPerDay = source.WorkingHoursPerDay
                 };
             }
         }
