@@ -17,6 +17,7 @@ export class User {
 	urlIcon: string;
 	userName: string;
 	weekStart: number;
+	workingHoursPerDay: number;
 
 	constructor(data = null) {
 		if (data) {
@@ -38,6 +39,7 @@ export class User {
 			this.urlIcon = data.urlIcon;
 			this.userName = data.userName;
 			this.weekStart = data.weekStart;
+			this.workingHoursPerDay = data.workingHoursPerDay || 8;
 		}
 	}
 

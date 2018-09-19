@@ -7,6 +7,12 @@
             <span class="ct-date-value">{{getDateString(dayInfo.date)}}</span>
         </div>
 
+        <div class="ct-working-hours-block">
+            <div class="ct-working-hours-bar"
+                 [class.ct-over]="isWorkingHoursOver()"
+                 [style.width]="calcWorkingHours() + '%'"></div>
+        </div>
+
         <div class="ct-calendar-day-hours">
             <div class="ct-calendar-hours-tracked" title="Tracked time">{{calcTime('timeActual')}}</div>
             <div class="ct-calendar-hours-planned" title="Planned time">{{calcTime('timeEstimated')}}</div>

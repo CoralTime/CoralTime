@@ -141,12 +141,12 @@ ct-entry-time {
 
   .ct-title {
     .ct-project {
-      height: 33px;
-      background: #fff;
-      border-bottom: 1px solid $form-border;
-      padding: 0 10px;
+      height: 42px;
+      border-bottom: 1px solid $gray-page-background;
       font-size: 14px;
-      line-height: 33px;
+      font-weight: 700;
+      color: #728096;
+      line-height: 42px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router, ActivatedRoute, NavigationEnd, Params } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import * as moment from 'moment';
 import { DateUtils } from '../../models/calendar';
@@ -52,26 +52,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
 		this.setAvailablePeriod(window.innerWidth);
 		this.router.events.subscribe(event => {
 			if (event instanceof NavigationEnd) {
-				let route = this.route.snapshot.children[0];
-				this.date = route.params['date'] ? DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
-				this.projectIds = route.params['projectIds'] ? route.params['projectIds'].split(',') : [];
-				this.projectIds.forEach((id, index) => { this.projectIds[index] = +id; });
-				this.projectsService.filteredProjects = this.projectIds;
-
-				if (route.url.length) {
-					this.isWeekViewActive = route.url[0].path !== 'day';
-				} else {
-					this.isWeekViewActive = true;
-				}
-
-				this.setActivePeriod();
+				this.getRouteData();
 			}
 		});
 
 		this.route.params.subscribe(() => {
-			let route = this.route.snapshot.children[0];
-			this.date = route.params['date'] ? DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
-			this.setActivePeriod();
+			this.getRouteData();
 		});
 
 		this.loadProjects(this.showOnlyActive);
@@ -80,6 +66,22 @@ export class CalendarComponent implements OnInit, OnDestroy {
 				this.loadProjects(this.showOnlyActive);
 			}
 		});
+	}
+
+	getRouteData(): void {
+		let route = this.route.snapshot.children[0];
+		this.date = route.params['date'] ? DateUtils.reformatDate(route.params['date'], 'MM-DD-YYYY') : DateUtils.formatDateToString(new Date());
+		this.projectIds = route.params['projectIds'] ? route.params['projectIds'].split(',') : [];
+		this.projectIds.forEach((id, index) => { this.projectIds[index] = +id; });
+		this.projectsService.filteredProjects = this.projectIds;
+
+		if (route.url.length) {
+			this.isWeekViewActive = route.url[0].path !== 'day';
+		} else {
+			this.isWeekViewActive = true;
+		}
+
+		this.setActivePeriod();
 	}
 
 	onResize(event): void {

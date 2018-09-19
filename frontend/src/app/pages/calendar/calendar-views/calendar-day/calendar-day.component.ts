@@ -1,8 +1,11 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { CalendarDay, DateUtils, TimeEntry } from '../../../../models/calendar';
+import { User } from '../../../../models/user';
 import { NotificationService } from '../../../../core/notification.service';
 import { CalendarService } from '../../../../services/calendar.service';
+import { ImpersonationService } from '../../../../services/impersonation.service';
 import { EntryTimeComponent } from '../../entry-time/entry-time.component';
 import { MAX_TIMER_VALUE } from '../calendar-task/calendar-task.component';
 import * as moment from 'moment';
@@ -27,14 +30,21 @@ export class CalendarDayComponent implements OnInit {
 	isDragEnter: boolean;
 	fakeCalendarTaskHeight: number;
 	newTimeEntry: TimeEntry;
+	user: User;
 
 	@ViewChild('calendarTask', {read: ElementRef}) calendarTask: ElementRef;
 
 	constructor(private calendarService: CalendarService,
-	            private notificationService: NotificationService) {
+	            private impersonationService: ImpersonationService,
+	            private notificationService: NotificationService,
+	            private route: ActivatedRoute) {
 	}
 
 	ngOnInit() {
+		this.route.data.forEach((data: { user: User }) => {
+			this.user = this.impersonationService.impersonationUser || data.user;
+		});
+
 		if (this.isToday(this.dayInfo.date)) {
 			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
 				timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
@@ -56,6 +66,19 @@ export class CalendarDayComponent implements OnInit {
 	}
 
 	calcTime(type: string): string {
+		return this.setTimeString(this.getGeneralTime(type));
+	}
+
+	calcWorkingHours(): number {
+		let time = this.getGeneralTime('timeActual');
+		return Math.min(time / 3600, this.user.workingHoursPerDay) / this.user.workingHoursPerDay * 100;
+	}
+
+	isWorkingHoursOver(): boolean {
+		return this.getGeneralTime('timeActual') / 3600 > this.user.workingHoursPerDay
+	}
+
+	private getGeneralTime(type: string): number {
 		let timeEnries: TimeEntry[] = this.dayInfo.timeEntries;
 		let time: number = 0;
 		if (timeEnries) {
@@ -64,7 +87,7 @@ export class CalendarDayComponent implements OnInit {
 			}
 		}
 
-		return this.setTimeString(time);
+		return time;
 	}
 
 	private setTimeString(s: number): string {
