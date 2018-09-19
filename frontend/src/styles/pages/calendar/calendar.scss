@@ -292,8 +292,35 @@ $titleDayHeight: 145px;
   }
 }
 
+.ct-working-hours-block {
+  position: relative;
+  height: 5px;
+  margin: 10px 0 20px;
+  background-color: $gray-border;
+  border-radius: 5px;
+
+  .ct-calendar-day-active & {
+    background-color: $calendarTaskColor;
+  }
+
+  .ct-working-hours-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: $main-blue;
+    border-radius: 2px;
+    box-shadow: 1px 2px 17px 0 rgba(0, 0, 0, 0.05);
+    transition: width ease .3s;
+
+    &.ct-over {
+      background: $error-text;
+    }
+  }
+}
+
 .ct-calendar-day-hours {
-  margin-top: 38px;
   max-width: 160px;
 }
 
@@ -346,8 +373,8 @@ $titleDayHeight: 145px;
 
 .ct-lock-icon {
   position: absolute;
-  right: 3px;
-  top: 3px;
+  right: 5px;
+  top: 5px;
   color: $titleDay;
   z-index: 1;
   cursor: pointer;
