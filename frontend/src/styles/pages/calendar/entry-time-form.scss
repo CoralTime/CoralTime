@@ -206,12 +206,13 @@ ct-entry-time {
     }
 
     .ct-show-input {
+      height: 26px;
       border-radius: 13px;
       border: solid 2px rgba(127, 207, 238, .5);
       background: none;
       color: #fff;
       font-size: 11px;
-      padding: 5px 14px;
+      padding: 0 14px;
       cursor: pointer;
 
       &:hover, &:focus {
@@ -221,6 +222,7 @@ ct-entry-time {
       &.ct-from-to-form-button {
         &:before, &:after {
           display: block;
+          margin-top: 1px;
           float: left;
           font: normal normal normal 10px FontAwesome;
           text-rendering: auto;
@@ -230,7 +232,7 @@ ct-entry-time {
           content: "\f0d9";
         }
         &:after {
-          margin: 0 5px 0 3px;
+          margin: 1px 5px 0 3px;
           content: "\f0da";
         }
       }
@@ -240,7 +242,7 @@ ct-entry-time {
 
         &:before {
           display: inline-block;
-          margin: 0 8px -1px 0;
+          margin: 1px 8px -1px 0;
           content: '';
           width: 10px;
           height: 10px;

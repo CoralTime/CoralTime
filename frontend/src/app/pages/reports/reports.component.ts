@@ -108,14 +108,6 @@ export class ReportsComponent implements OnInit {
 			})
 	}
 
-	// expanded panel
-
-	expandedPanelStep = 0;
-
-	setexpandedPanelStep(index: number) {
-		this.expandedPanelStep = index;
-	}
-
 	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
 		this.reportDropdowns = reportDropdowns;
 		this.rangeDatepickerService.dateStaticList = reportDropdowns.values.dateStatic;

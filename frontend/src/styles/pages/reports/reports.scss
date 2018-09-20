@@ -1,9 +1,4 @@
-$fieldHeight: 30px;
-
-.ui-multiselect-panel.ct-reports-multiselect > div {
-  z-index: 996 !important;
-  position: fixed;
-}
+$fieldHeight: 42px;
 
 .ui-multiselect-panel.ct-reports-settings-multiselect {
   z-index: 996 !important;
@@ -11,7 +6,6 @@ $fieldHeight: 30px;
 }
 
 .ct-reports-page {
-
   .ct-screen-mode {
     line-height: 16px;
   }
@@ -110,243 +104,9 @@ $fieldHeight: 30px;
     top: 0;
   }
 
-  .ct-white-button {
-    background: #ffffff;
-    color: #374456 !important;
-    border: 1px solid #dfdfdf;
-  }
-
   .ct-gray-button {
     background: #dfdfdf;
     border: 1px solid #dfdfdf;
-  }
-
-  .ct-reports-settings {
-    position: relative;
-    height: 30px;
-    line-height: 30px;
-    display: block;
-
-    .ct-datepicker-container {
-      margin-top: 15px;
-    }
-
-    .ct-reports-actions-block {
-      position: relative;
-      height: 30px;
-      line-height: 30px;
-
-      > * {
-        display: inline-block;
-      }
-
-      .fa-angle-left, .fa-angle-right, .ct-next {
-        position: absolute;
-      }
-
-      .fa-angle-left {
-        left: 0;
-      }
-
-      .fa-angle-right {
-        right: 0;
-      }
-
-      .fa-angle-left, .fa-angle-right, .fa-sort-desc:before {
-        color: $main-blue;
-      }
-    }
-  }
-
-  .ct-query-add-box, .ct-reports-reset-link {
-    display: inline-block;
-  }
-
-  .ct-query-add-box {
-    cursor: pointer;
-    color: $blue;
-
-    i {
-      top: 5px;
-      left: -6px;
-      position: relative;
-      font-size: 20px;
-    }
-
-    span {
-      border-bottom: 1px dotted;
-      position: relative;
-      left: -7px;
-    }
-  }
-
-  .ct-query-block {
-    position: relative;
-    display: inline-block;
-    //margin-bottom: 20px;
-    width: 100%;
-
-    > * {
-      vertical-align: middle;
-    }
-
-    .ct-select {
-      display: none;
-    }
-
-    .ct-select-component {
-      margin: 0;
-      position: absolute;
-      left: 0;
-      top: 35px;
-      right: 0;
-    }
-
-    .ct-query-text {
-      box-sizing: border-box;
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      text-align: center;
-      cursor: pointer;
-      background-color: $blue;
-      color: #fff;
-      //border-radius: 4px;
-      padding: 7px 35px 7px 12px;
-      width: 100%;
-      position: relative;
-
-      i {
-        position: absolute;
-        right: 7px;
-        top: 5px;
-      }
-    }
-
-    .ct-select-open-button {
-      background: none;
-      border: none;
-      padding: 0;
-      outline: none;
-      cursor: pointer;
-
-      i {
-        vertical-align: middle;
-        font-size: 29px;
-        position: absolute;
-        right: -35px;
-        top: -3px;
-      }
-
-      &:hover i {
-        background-color: #ddd;
-      }
-
-      &.ct-disabled {
-        opacity: 0.5;
-      }
-    }
-
-    .ct-clear-icon {
-      margin-left: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 24px !important;
-      line-height: 0 !important;
-      color: #ffffff;
-      right: 5px;
-      position: absolute;
-      top: 17px;
-    }
-  }
-
-  .ct-collapsed-menu-footer {
-    margin-bottom: 18px;
-  }
-
-  .ct-reports-reset-link {
-    position: absolute;
-    right: 20px;
-    height: 30px;
-    display: inline-block;
-    cursor: pointer;
-    padding: 0;
-    text-align: right;
-    margin: 3px 0 0 0;
-
-    span {
-      text-decoration: none;
-      color: #374456;
-      border-bottom: 1px dotted;
-    }
-
-    i {
-      top: 4px;
-      position: relative;
-      font-size: 17px;
-      right: 2px;
-    }
-  }
-
-  .ct-reports-time-period {
-    position: relative;
-    height: 35px;
-    line-height: 35px;
-    width: 100%;
-    padding: 0;
-
-    > div {
-      cursor: pointer;
-
-      > span {
-        font-weight: 400;
-      }
-    }
-
-    > a {
-      display: inline-block;
-      position: relative;
-      //margin-top: -5px;
-      width: 25px;
-      height: 30px;
-      vertical-align: middle;
-      text-align: center;
-      cursor: pointer;
-
-      &:before {
-        top: -2.5px;
-        left: 0;
-        right: 0;
-      }
-    }
-
-    > div {
-      display: inline-block;
-      padding: 0 13px 0 11px;
-    }
-
-    .fa {
-      width: 15px;
-      height: 20px;
-      text-align: center;
-      color: #374456;
-    }
-
-    .fa-sort-desc {
-      position: relative;
-      top: -3px;
-    }
-
-    .fa-sort-desc:before {
-      color: #374456 !important;
-    }
-  }
-
-  .ct-reports-chart-title {
-    background: #ffffff;
-    padding: 20px;
-    font-size: 22px;
   }
 
   .ct-btn-block {
@@ -397,78 +157,6 @@ $fieldHeight: 30px;
         top: 16px;
         background: #fff;
       }
-    }
-  }
-
-  .ct-report-filters-block {
-    .ct-filter-label {
-      margin-left: 0;
-      font-family: inherit;
-      font-size: 12px;
-      text-transform: uppercase;
-      color: $blue;
-      height: 18px;
-      display: block;
-    }
-  }
-
-  .ct-report-filters {
-    > .ct-btn-block:nth-child(2) {
-      text-align: right;
-    }
-
-    .ct-report-filters-block {
-      &:first-child {
-        margin: 0;
-      }
-
-      .ct-multiselect {
-        background: none;
-
-        .ct-select {
-          margin-bottom: 2px;
-        }
-      }
-    }
-
-    .ui-multiselect {
-      vertical-align: middle;
-      width: 170px !important;
-      margin-right: 8px;
-      border: none;
-
-      .ct-select {
-        padding: 0 15px 0 10px;
-      }
-    }
-
-    .ct-select {
-      width: 170px;
-      height: $fieldHeight;
-      border-color: transparent;
-      line-height: $fieldHeight;
-
-      .ct-select-selected-options-text {
-        font-size: $baseFont;
-      }
-    }
-
-    .ct-select-component {
-      display: inline-block;
-      margin: -2px 8px 0 -3px;
-      vertical-align: middle;
-      height: $fieldHeight;
-      line-height: $fieldHeight;
-
-      .mat-list-item-content {
-        font-size: $baseFont;
-      }
-    }
-
-    .ct-close {
-      float: right;
-      line-height: 50px;
-      margin-right: 20px;
     }
   }
 
@@ -611,17 +299,15 @@ $fieldHeight: 30px;
 
   ct-range-datepicker {
     position: absolute;
-    top: 31px;
-    right: 0;
-    left: 0;
-    width: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
+    top: 36px;
+    right: -10px;
+    left: -10px;
     box-sizing: border-box;
+    padding: 5px 0 20px;
     text-align: center;
     background: #fff;
-    box-shadow: none;
-    border: 1px solid $form-border;
+    border-radius: 5px;
+    box-shadow: $box-shadow;
     opacity: 0;
     z-index: 1;
     transition: opacity .3s;
@@ -660,6 +346,271 @@ $fieldHeight: 30px;
   }
 }
 
+.ct-report-filters-block {
+  margin-top: 20px;
+
+  label {
+    display: block;
+  }
+
+  > div {
+    margin-bottom: 15px;
+  }
+
+  .mat-select-value-text {
+    line-height: $fieldHeight;
+    font-weight: 700;
+    color: #8994b3;
+
+    .fa {
+      position: absolute;
+      right: 0;
+      top: 8px;
+    }
+  }
+
+  .ct-select-selected-options-text, .ct-select-component {
+    height: $fieldHeight;
+  }
+
+  .ct-select {
+    height: $fieldHeight;
+    border: none;
+    border-bottom: 2px solid $gray-page-background;
+  }
+
+  .ct-filter-label {
+    position: relative;
+    bottom: -5px;
+    display: block;
+    height: 15px;
+    font-size: 12px;
+    color: #728096;
+    z-index: 1;
+  }
+
+  .ct-select-selected-options-text {
+    padding-left: 0;
+    line-height: $fieldHeight;
+    color: $formInputColor;
+  }
+}
+
+.ct-reports-time-period-block {
+  position: relative;
+}
+
+.ct-reports-time-period {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 35px;
+  font-weight: 700;
+  color: #8994b3;
+  line-height: 35px;
+
+  > div {
+    box-sizing: border-box;
+    position: relative;
+    width: 170px;
+    padding: 0 20px;
+    background-color: $gray-page-background;
+    border-radius: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+
+    span {
+      display: block;
+    }
+  }
+
+  > a {
+    position: relative;
+    width: 25px;
+    text-align: center;
+    cursor: pointer;
+
+    &:before {
+      top: -2.5px;
+      left: 0;
+      right: 0;
+    }
+  }
+
+  .fa {
+    width: 15px;
+  }
+
+  .fa-angle-down, .fa-times {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    line-height: 35px;
+  }
+}
+
+.ct-reports-chart-container {
+  position: fixed;
+  top: $nav-height;
+  left: 0;
+  margin-top: 2px;
+  width: 300px;
+  height: calc(100% - 66px);
+  padding: 25px 30px;
+  background-color: $nav-background;
+  box-sizing: border-box;
+  box-shadow: $box-shadow;
+  z-index: 1;
+
+  .ct-reports-panel-header {
+    margin-bottom: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    color: $dark-blue;
+  }
+}
+
+.ct-reports-multiselect {
+  .ui-multiselect-panel {
+    position: fixed;
+    margin-left: -11px;
+    width: 260px;
+  }
+
+  &.ct-clients .ui-multiselect-panel {
+    top: 234px;
+  }
+
+  &.ct-projects .ui-multiselect-panel {
+    top: 293px;
+  }
+
+  &.ct-users .ui-multiselect-panel {
+    top: 352px;
+  }
+}
+
+.ct-report-query-links {
+  margin: 30px 0 20px;
+
+  button {
+    height: 26px;
+    line-height: 22px;
+    padding: 0 10px;
+    background: none;
+    border-radius: 13px;
+    border: solid 2px #f3f4f6;
+    font-size: 11px;
+    color: $main-grey;
+
+    i {
+      position: relative;
+      top: 2px;
+      font-size: 13px;
+      margin-right: 2px;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      color: $main-blue;
+    }
+  }
+
+  .ct-query-add-box {
+    float: right;
+  }
+}
+
+.ct-query-block {
+  position: relative;
+
+  .ct-select {
+    background-color: $gray-page-background;
+    border-color: $gray-page-background !important;
+    border-radius: 5px;
+
+    .ct-select-default-text {
+      color: $main-grey;
+    }
+  }
+
+  .ct-delete-icon {
+    position: absolute;
+    bottom: 6px;
+    right: 3px;
+    background-color: $gray-page-background;
+    font-size: 20px;
+    color: $main-grey;
+    cursor: pointer;
+  }
+}
+
+.ct-report-filters {
+  > .ct-btn-block:nth-child(2) {
+    text-align: right;
+  }
+
+  .ct-report-filters-block {
+    &:first-child {
+      margin: 0;
+    }
+
+    .ct-multiselect {
+      background: none;
+
+      .ct-select {
+        margin-bottom: 2px;
+      }
+    }
+  }
+
+  .ui-multiselect {
+    vertical-align: middle;
+    width: 170px !important;
+    margin-right: 8px;
+    border: none;
+
+    .ct-select {
+      padding: 0 15px 0 10px;
+    }
+  }
+
+  .ct-select {
+    width: 170px;
+    height: $fieldHeight;
+    border-color: transparent;
+    line-height: $fieldHeight;
+
+    .ct-select-selected-options-text {
+      font-size: $baseFont;
+    }
+  }
+
+  .ct-select-component {
+    display: inline-block;
+    margin: -2px 8px 0 -3px;
+    vertical-align: middle;
+    height: $fieldHeight;
+    line-height: $fieldHeight;
+
+    .mat-list-item-content {
+      font-size: $baseFont;
+    }
+  }
+
+  .ct-close {
+    float: right;
+    line-height: 50px;
+    margin-right: 20px;
+  }
+}
+
 .ct-send-reports-dialog {
   .ct-link-text {
     margin: 10px 5px 0 0;
@@ -686,64 +637,10 @@ $fieldHeight: 30px;
   }
 }
 
-.ct-report-query-links {
-  margin-top: 10px;
-}
-
-.ct-report-filters-block {
-  margin-bottom: 0;
-
-  label {
-    display: block;
-  }
-  > div {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .ct-select {
-    line-height: 35px;
-    padding-left: 5px;
-  }
-
-}
-
-.ct-reports-chart-container {
-  width: 300px;
-  position: fixed;
-  display: inline-block;
-  right: 20px;
-  box-sizing: border-box;
-
-  .mat-expansion-panel-header {
-    height: 46px !important;
-    background: #374456 !important;
-    border-bottom: 1px solid #e1e6ed;
-    color: #ffffff;
-  }
-
-  .mat-expansion-panel-body {
-    margin-top: 20px;
-
-    > .ct-report-filters-block:nth-child(1) {
-      > label {
-        position: relative;
-        top: -4px;
-      }
-    }
-  }
-
-  img {
-    max-width: 100%;
-    width: 100%;
-    margin: 20px 0;
-  }
-}
-
 .ct-reports-grid-container {
   display: inline-block;
   width: calc(100% - 325px);
+  margin-left: 325px;
   margin-bottom: 20px;
   background: #fff;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
