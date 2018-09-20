@@ -79,9 +79,11 @@
   }
 
   .ct-select-selected-options-text {
+    box-sizing: border-box;
     font-size: $baseFont;
     padding: 0 16px 0 9px;
     height: 100%;
+    width: 100%;
     line-height: $selectHeight;
     color: #728096;
     white-space: nowrap;
