@@ -150,7 +150,7 @@ h5 {
 .ct-nav-logo {
   height: 36px;
   width: 36px;
-  background: url(./assets/icons1/logo.svg) no-repeat center center;
+  background: url(./assets/icons/logo.svg) no-repeat center center;
   display: inline-block;
   background-size: 100%;
 }
@@ -352,16 +352,10 @@ h5 {
   z-index: 2 !important;
 }
 
-.ct-button {
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
 .ct-button, .mat-raised-button {
   font-family: inherit !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
   box-shadow: none !important;
-  border-radius: 0 !important;
 
   .mat-button-wrapper {
     font-family: inherit;
@@ -376,16 +370,21 @@ h5 {
   background-color: $main-blue;
   border: none;
   height: 40px;
-  letter-spacing: 0.5px;
+  font-size: 14px;
   color: $primary-btn-text;
   cursor: pointer;
   outline: none;
+  border-radius: 5px !important;
   transition-duration: .3s;
 
   span {
     color: $primary-btn-text;
     font-size: 14px;
     font-family: inherit;
+  }
+
+  &[disabled] {
+    opacity: .7;
   }
 }
 

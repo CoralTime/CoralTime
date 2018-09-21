@@ -470,7 +470,7 @@ tr:hover .ct-grid-settings {
 .ct-table {
   table tbody {
     > tr:hover, .ui-datatable-odd:hover {
-      background-color: #f7f5f5 !important;
+      background-color: $gray-page-background !important;
     }
   }
 }

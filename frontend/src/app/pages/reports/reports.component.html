@@ -6,7 +6,7 @@
 
         <div *ngIf="reportDropdowns">
             <div class="ct-reports-chart-container">
-                <h3 class="ct-reports-panel-header">
+                <h3 class="ct-header">
                     Filters
                 </h3>
 
@@ -116,38 +116,35 @@
 
             <div class="ct-reports-grid-container">
                 <div class="ct-page-header">
-                    <div class="ct-report-filters">
-                        <div class="ct-btn-settings-block ct-btn-block">
-                            <ct-multiselect class="ct-columns-multiselect ct-columns-button" title="Columns settings"
-                                            [styleClass]="'ct-reports-settings-multiselect'"
-                                            [(ngModel)]="reportFilters.showColumnIds"
-                                            (onSubmitAction)="submitSettings(reportFilters.showColumnIds)"
-                                            [showSubmitButton]="true"
-                                            [showActionsPanel]="false"
-                                            [showFilterSearch]="false"
-                                            [appendTo]="'body'"
-                                            [options]="showColumnItems">
-                            </ct-multiselect>
-                        </div>
-                        <div class="ct-btn-block">
-                            <div class="ct-export-as">
-                                <span class="ct-export-button" (click)="menu.toggleMenu()" title="Export reports"></span>
-                                <ct-menu #menu [xPosition]="'before'" class="ct-actions-drop-menu">
-                                    <ct-menu-item>
-                                        <a mat-ripple (click)="exportAs(0)">Export as Excel</a>
-                                    </ct-menu-item>
-                                    <!--<ct-menu-item>-->
-                                    <!--<a mat-ripple (click)="exportAs(1)">Export as CSV</a>-->
-                                    <!--</ct-menu-item>-->
-                                    <ct-menu-item>
-                                        <a mat-ripple (click)="exportAs(2)">Export as PDF</a>
-                                    </ct-menu-item>
-                                </ct-menu>
-                            </div>
-                            <span class="ct-print-button" (click)="checkDataAndPrintPage()" title="Print page"></span>
-                            <span class="ct-send-button" (click)="openSendReportsDialog()" title="Send reports"></span>
-                        </div>
-
+                    <h3 class="ct-header">Details</h3>
+                    <ct-multiselect class="ct-columns-multiselect ct-icon ct-settings-icon" title="Columns settings"
+                                    [styleClass]="'ct-reports-settings-multiselect'"
+                                    [(ngModel)]="reportFilters.showColumnIds"
+                                    (onSubmitAction)="submitSettings(reportFilters.showColumnIds)"
+                                    [showSubmitButton]="true"
+                                    [showActionsPanel]="false"
+                                    [showFilterSearch]="false"
+                                    [appendTo]="'body'"
+                                    [options]="showColumnItems">
+                    </ct-multiselect>
+                    <div class="ct-btn-block">
+                        <i class="ct-icon ct-export-icon" title="Export reports" area-hidden="true"
+                           (click)="menu.toggleMenu()"></i>
+                        <ct-menu #menu [xPosition]="'after'" class="ct-actions-drop-menu">
+                            <ct-menu-item>
+                                <a mat-ripple (click)="exportAs(0)">Export as Excel</a>
+                            </ct-menu-item>
+                            <!--<ct-menu-item>-->
+                            <!--<a mat-ripple (click)="exportAs(1)">Export as CSV</a>-->
+                            <!--</ct-menu-item>-->
+                            <ct-menu-item>
+                                <a mat-ripple (click)="exportAs(2)">Export as PDF</a>
+                            </ct-menu-item>
+                        </ct-menu>
+                        <i class="ct-icon ct-printer-icon" title="Print page" area-hidden="true"
+                           (click)="checkDataAndPrintPage()"></i>
+                        <i class="ct-icon ct-mail-icon" title="Send reports" area-hidden="true"
+                           (click)="openSendReportsDialog()"></i>
                     </div>
                 </div>
 
@@ -164,12 +161,16 @@
                     </div>
                 </div>
 
-                <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">
+                <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-total-footer">
                     <label>Total Hours</label>
 
-                    <div class="ct-total-hours-tracked">
-                        <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-estimated-label">&nbsp;&nbsp;Estimated: {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
-                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-actual-label">Actual: {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
+                    <div class="ct-total-time-container">
+                        <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-calendar-hours-planned" title="Total estimated hours">
+                            {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}
+                        </span>
+                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-calendar-hours-tracked"  title="Total actual hours">
+                            {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}
+                        </span>
                     </div>
                 </div>
             </div>
