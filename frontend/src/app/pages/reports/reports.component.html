@@ -161,12 +161,16 @@
                     </div>
                 </div>
 
-                <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">
+                <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-total-footer">
                     <label>Total Hours</label>
 
-                    <div class="ct-total-hours-tracked">
-                        <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-estimated-label">&nbsp;&nbsp;Estimated: {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
-                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-actual-label">Actual: {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
+                    <div class="ct-total-time-container">
+                        <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-calendar-hours-planned" title="Total estimated hours">
+                            {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}
+                        </span>
+                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-calendar-hours-tracked"  title="Total actual hours">
+                            {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}
+                        </span>
                     </div>
                 </div>
             </div>

@@ -267,199 +267,116 @@ $fieldHeight: 42px;
     right: -12px;
   }
 
-  .ct-actual-label {
-    background: $label-background;
-  }
-
-  .ct-estimated-label {
-    background: $form-border;
-  }
-
-  .ct-actual-label, .ct-estimated-label {
-    color: #ffffff;
-    padding: 4px;
-    border-radius: 5px;
-    display: inline-block;
-    margin-bottom: 5px;
-  }
-
-  .ct-total-footer {
-    border: none !important;
-    background: #e9f8fc;
-
-    label {
-      font-weight: 700;
-    }
-    .ct-total-hours-tracked {
-      padding-left: 24px;
-    }
-  }
-
-  .ct-grid-container.ct-total-time-container {
-    position: relative;
-    border-top: 2px solid #f1f1f1;
-    border-bottom: 2px solid #f1f1f1;
-    margin-top: 0;
-    padding: 20px;
-
-    .ct-actual-label, .ct-estimated-label {
-      position: relative;
-      top: -5px;
-    }
-
-    label {
-      font-size: 14px;
-      color: $blue;
-      text-transform: uppercase;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    div {
-      display: inline-block;
-      float: right;
-    }
-  }
-
   .ct-reports-grid {
+    display: inline-block;
+    background-color: #fff;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+
     .ui-datatable-tablewrapper table {
       margin-bottom: 0 !important;
-    }
-
-    .ui-cell-data {
-      line-height: 15px !important;
-      font-size: 13px !important;
-    }
-  }
-
-  .ct-grid-container .ui-cell-data {
-    top: 0;
-  }
-
-  .ct-gray-button {
-    background: #dfdfdf;
-    border: 1px solid #dfdfdf;
-  }
-
-  .ct-button.ct-white-button {
-    background: white;
-    color: #374456;
-  }
-
-  .ct-reports-grid {
-    display: inline-block;
-    background-color: #ffffff;
-
-    .ui-datatable-thead:after {
-      width: 100%;
-      left: 0;
-      bottom: 0;
-      height: 2px;
-    }
-
-    .ui-datatable-thead {
-      display: none;
     }
   }
 
   .ct-grid-header {
-    padding: 0 20px;
-    height: 42px;
-    line-height: 42px;
-    font-size: 15px;
-    text-transform: uppercase;
-    background: #e9f8fc !important;
-    border-bottom: 1px solid #e1e6ed;
+    padding: 0 25px;
+    height: 100px;
+    line-height: 100px;
+    font-weight: 700;
 
     > div {
       display: inline-block;
 
-      &:not(.ct-report-header-right) {
-        float: left;
-      }
-
-      span {
-        display: inline-block;
+      label {
+        font-size: 24px;
+        color: $dark-blue;
         overflow: hidden;
-        vertical-align: bottom;
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 400px;
-        color: $main-blue;
-        font-weight: 700;
       }
     }
 
-    .ct-report-header-right {
+    .ct-total-time-container {
       float: right;
-
-      > div {
-        display: inline-block;
-      }
+      color: $main-grey;
     }
 
     .ct-total-hours-tracked {
-      position: relative;
-      margin-left: 63px;
-
-      &:before {
-        position: absolute;
-        content: '';
-        width: 30px;
-        height: 30px;
-        top: -8px;
-        left: -30px;
-      }
+      margin-left: 10px;
+      font-size: 24px;
+      color: $main-blue;
     }
   }
 
   .ct-grid-container {
     margin-top: 40px;
+
+    .ui-datatable-thead {
+      display: none;
+    }
+
+    .ui-datatable-even {
+      background-color: #f7f9fc;
+    }
+
     h3 {
-      font-weight: 400;
-      margin-bottom: 3px;
-      line-height: 18px;
+      margin-bottom: 5px;
+      color: $nav-link-hover;
     }
 
-    .ui-datatable-tablewrapper table {
-
-      thead {
-        border-top: 0;
-        border-bottom: 2px solid $border-color;
-
-        th {
-          padding: 10px 8px;
-        }
-      }
-
-      td:last-child {
-        text-align: right;
-      }
+    .ui-cell-data {
+      color: #728096;
     }
 
-    .ct-cell-date {
-      width: 110px;
+    .ct-calendar-hours-tracked, .ct-calendar-hours-planned {
+      float: none;
+      margin-left: 15px;
+      font-weight: 700;
     }
-    .ct-cell-client {
-      width: 150px;
+
+    .ct-cell-project {
+      width: 200px;
     }
+
     .ct-cell-user {
       width: 150px;
+      font-weight: 700;
 
-      .ui-cell-data {
-        color: $black;
+      ct-user-pic {
+        margin-right: 10px;
+        vertical-align: middle;
       }
     }
-    .ct-cell-task {
-      width: 360px;
+
+    .ct-cell-time {
+      width: 300px;
+      text-align: right;
+
+      div {
+        margin-top: 7px;
+        font-size: 12px;
+      }
     }
-    .ct-cell-start {
-      width: 170px;
+  }
+
+  .ct-total-footer {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 25px;
+    font-weight: 700;
+
+    label {
+      font-size: 24px;
+      color: #2d3e50;
     }
 
-    .ct-cell-actual {
-      .ct-total-hours-tracked {
-        padding-left: 10px;
+    .ct-total-time-container {
+      float: right;
+
+      span {
+        margin-left: 15px;
       }
     }
   }
