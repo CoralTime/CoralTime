@@ -246,7 +246,7 @@ ct-entry-time {
           content: '';
           width: 10px;
           height: 10px;
-          background: url(./assets/icons1/estimate-icon.svg) no-repeat center;
+          background: url(./assets/icons/estimate-icon.svg) no-repeat center;
         }
       }
     }
@@ -315,14 +315,8 @@ ct-entry-time {
   .ct-form-actions {
     overflow: hidden;
 
-    .ct-submit {
-      background: $main-blue;
-      font-size: 14px;
-      border-radius: 5px;
-    }
-
-    .mat-button-wrapper {
-      color: #fff;
+    .ct-blue-button {
+      float: right;
     }
 
     .ct-close {
@@ -357,12 +351,12 @@ ct-entry-time {
   right: 5px;
   width: 100%;
 
-  .ct-menu .ct-menu-content {
+  .ct-menu-content {
     width: calc(100% - 10px);
     font-size: 14px;
     min-width: 175px;
 
-    &:before {
+    .ct-calendar-task &:before {
       right: 2px;
     }
   }
@@ -373,10 +367,10 @@ ct-entry-time {
     a {
       padding: 0 20px;
     }
+  }
 
-    .ct-menu-hint {
-      float: right;
-    }
+  .ct-menu-hint {
+    float: right;
   }
 }
 

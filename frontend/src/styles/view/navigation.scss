@@ -145,10 +145,6 @@ ct-navigation {
       line-height: initial;
       vertical-align: middle;
 
-      .ct-userpic-icon:before {
-        background: url(./assets/icons/userpic-nav.svg) no-repeat 50%;
-      }
-
       .mat-icon {
         vertical-align: middle;
       }
@@ -166,7 +162,7 @@ ct-navigation {
         margin-right: 25px;
 
         &:hover, &.active {
-          background-image: url(./assets/icons1/settings-blue.svg);
+          background-image: url(./assets/icons/settings-blue.svg);
         }
       }
 
