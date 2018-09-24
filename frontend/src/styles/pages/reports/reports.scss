@@ -279,6 +279,16 @@ $fieldHeight: 42px;
     }
   }
 
+  .ct-reports-grid-header {
+    max-width: 400px;
+    font-size: 24px;
+    font-weight: 700;
+    color: $dark-blue;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .ct-grid-header {
     padding: 0 25px;
     height: 100px;
@@ -287,15 +297,6 @@ $fieldHeight: 42px;
 
     > div {
       display: inline-block;
-
-      label {
-        font-size: 24px;
-        color: $dark-blue;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 400px;
-      }
     }
 
     .ct-total-time-container {
@@ -330,12 +331,6 @@ $fieldHeight: 42px;
       color: #728096;
     }
 
-    .ct-calendar-hours-tracked, .ct-calendar-hours-planned {
-      float: none;
-      margin-left: 15px;
-      font-weight: 700;
-    }
-
     .ct-cell-project {
       width: 200px;
     }
@@ -345,7 +340,7 @@ $fieldHeight: 42px;
       font-weight: 700;
 
       ct-user-pic {
-        margin-right: 10px;
+        margin: 0 5px 5px 0;
         vertical-align: middle;
       }
     }
@@ -361,23 +356,19 @@ $fieldHeight: 42px;
     }
   }
 
+  .ct-calendar-hours-tracked, .ct-calendar-hours-planned {
+    float: none;
+    margin-left: 15px;
+    font-weight: 700;
+  }
+
   .ct-total-footer {
     background-color: #fff;
     border-radius: 5px;
     padding: 25px;
-    font-weight: 700;
-
-    label {
-      font-size: 24px;
-      color: #2d3e50;
-    }
 
     .ct-total-time-container {
       float: right;
-
-      span {
-        margin-left: 15px;
-      }
     }
   }
 
