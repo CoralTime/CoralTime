@@ -46,15 +46,17 @@ namespace CoralTime.BL.Services
         {
             var imageFileName = Uow.MemberImageRepository.LinkedCacheGetByMemberId(memberId)?.FileNameImage;
 
-            string imagePath;
-            
+            string imagePath = null;
 
             if (imageFileName == null)
             {
-                var memberEmail = Uow.MemberRepository.LinkedCacheGetById(memberId).User?.Email;
-
-                var imageSize = GetValueImageByType(imageType, Constants.ImageTypeSizeAvatar.ToString(), Constants.ImageTypeSizeIcon.ToString());
-                imagePath = $"{Constants.GravatarUrl}{GetMd5(memberEmail)}?d={Constants.GravatarType}&s={imageSize}";
+                var memberEmail = Uow.MemberRepository.LinkedCacheGetById(memberId)?.User?.Email;
+                if (memberEmail != null)
+                {
+                    var imageSize = GetValueImageByType(imageType, Constants.ImageTypeSizeAvatar.ToString(),
+                        Constants.ImageTypeSizeIcon.ToString());
+                    imagePath = $"{Constants.GravatarUrl}{GetMd5(memberEmail)}?d={Constants.GravatarType}&s={imageSize}";
+                }
             }
             else
             {

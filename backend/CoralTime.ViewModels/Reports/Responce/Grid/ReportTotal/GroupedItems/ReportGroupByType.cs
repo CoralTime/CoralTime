@@ -28,6 +28,8 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems
 
         [JsonIgnore] public int MemberId { get; set; }
         public string MemberName { get; set; }
+        
+        public string MemberUrlIcon { get; set; }
 
         public DateTime? Date { get; set; }
 
