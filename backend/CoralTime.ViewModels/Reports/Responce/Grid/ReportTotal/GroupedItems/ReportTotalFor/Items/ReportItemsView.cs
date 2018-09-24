@@ -27,7 +27,9 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.Re
         
         [JsonIgnore] public int MemberId { get; set; }
         public string MemberName { get; set; }
-
+        
+        public string MemberUrlIcon { get; set; }
+        
         [JsonIgnore] public int TaskId { get; set; }
         public string TaskName { get; set; }
 
