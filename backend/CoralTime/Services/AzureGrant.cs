@@ -66,7 +66,10 @@ namespace CoralTime.Services
                 if (user != null && ((user?.IsActive) ?? false))
                 {
                     context.Result = new GrantValidationResult(user.Id, "azure");
+                    return;
                 }
+
+                context.Result = new GrantValidationResult(TokenErrors.AccessDenied, "User does not exist");
             }
             catch (Exception ex)
             {

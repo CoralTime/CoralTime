@@ -37,6 +37,7 @@ namespace CoralTime.Common.Constants
             "/settings",
             "/help",
             "/signin-oidc",
+            "/admin",
             UrlSetPassword
         };
 
@@ -77,6 +78,7 @@ namespace CoralTime.Common.Constants
             public const string UnauthorizeRoute = "unauthorize";
             public const string PingRoute = "ping";
             public const string PingdatabaseRoute = "pingdatabase";
+            public const string TimeEntryTimer = "TimeEntryTimer";
             
             private const string WithMembers = "/members";
             private const string WithProjects = "/projects";

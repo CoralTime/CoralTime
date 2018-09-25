@@ -53,6 +53,14 @@ namespace CoralTime.BL.Services
             return timeEntryById.GetView(BaseMemberImpersonated.User.UserName, Mapper);
         }
 
+        public TimeEntryView GetTimeEntryTimer()
+        {
+            var timeEntryTimer = Uow.TimeEntryRepository.GetQuery()
+                .FirstOrDefault(tEntry => tEntry.MemberId == BaseMemberImpersonated.Id && tEntry.TimeTimerStart > 0);
+
+            return timeEntryTimer.GetView(BaseMemberImpersonated.User.UserName, Mapper);
+        }
+        
         public TimeEntryView Create(TimeEntryView timeEntryView)
         {
             var timeEntry = new TimeEntry();

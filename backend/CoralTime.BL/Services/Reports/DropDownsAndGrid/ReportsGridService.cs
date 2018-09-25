@@ -24,7 +24,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
 
             var reportTotalView = InitializeReportTotalView(reportsGridView);
-
             var filteredTimeEntries = GetFilteredTimeEntries(reportsGridView);
             if (filteredTimeEntries.Any())
             {
@@ -37,7 +36,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key.Name)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
-                        return reportTotalView.GetView(timeEntriesGroupByProjects);
+                        reportTotalView = reportTotalView.GetView(timeEntriesGroupByProjects);
+                        break;
                     }
 
                     case (int) ReportsGroupByIds.User:
@@ -47,7 +47,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key.FullName)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
-                        return reportTotalView.GetView(timeEntriesGroupByMembers);
+                        reportTotalView =  reportTotalView.GetView(timeEntriesGroupByMembers);
+                        break;
                     }
 
                     case (int) ReportsGroupByIds.Date:
@@ -57,7 +58,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key)
                             .ToDictionary(key => key.Key, key => key.OrderBy(x => x.Date).ToList());
 
-                        return reportTotalView.GetView(timeEntriesGroupByDate);
+                        reportTotalView =  reportTotalView.GetView(timeEntriesGroupByDate);
+                        break;
                     }
 
                     case (int) ReportsGroupByIds.Client:
@@ -67,12 +69,49 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                             .OrderBy(x => x.Key.Name)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
-                        return reportTotalView.GetView(timeEntriesGroupByClients);
+                        reportTotalView =  reportTotalView.GetView(timeEntriesGroupByClients);
+                        break;
                     }
                 }
             }
 
+            AddMemberIcons(reportTotalView); 
             return reportTotalView;
+        }
+
+        private void AddMemberIcons(ReportTotalView report)
+        {
+            var iconUrl = _imageService.GetUrlIcon(report.MemberId);
+            report.MemberUrlIcon = iconUrl;
+            
+            var iconUrls = new Dictionary<int, string>();
+            iconUrls.Add(report.MemberId, iconUrl);
+            foreach (var item in report.Items)
+            {
+                if (!iconUrls.ContainsKey(item.MemberId))
+                {
+                    iconUrls.Add(item.MemberId, _imageService.GetUrlIcon(item.MemberId));
+                }
+                item.MemberUrlIcon = iconUrls.GetValueOrDefault(item.MemberId);
+            }
+            
+            foreach (var item in report.GroupedItems)
+            {
+                if (!iconUrls.ContainsKey(item.MemberId))
+                {
+                    iconUrls.Add(item.MemberId, _imageService.GetUrlIcon(item.MemberId));
+                }
+                item.MemberUrlIcon = iconUrls.GetValueOrDefault(item.MemberId);
+
+                foreach (var entryItem in item.Items)
+                {
+                    if (!iconUrls.ContainsKey(entryItem.MemberId))
+                    {
+                        iconUrls.Add(entryItem.MemberId, _imageService.GetUrlIcon(entryItem.MemberId));
+                    }
+                    entryItem.MemberUrlIcon = iconUrls.GetValueOrDefault(entryItem.MemberId);
+                }
+            }
         }
 
         public ReportTotalView InitializeReportTotalView(ReportsGridView reportsGridView)

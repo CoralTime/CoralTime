@@ -14,7 +14,7 @@ namespace CoralTime.MySqlMigrations.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CoralTime.DAL.Models.ApplicationUser", b =>
@@ -115,8 +115,7 @@ namespace CoralTime.MySqlMigrations.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Action")
-                        .IsRequired();
+                    b.Property<string>("Action");
 
                     b.Property<string>("ChangedFields");
 
@@ -171,6 +170,8 @@ namespace CoralTime.MySqlMigrations.Migrations
                     b.Property<string>("UserId");
 
                     b.Property<int>("WeekStart");
+
+                    b.Property<int>("WorkingHoursPerDay");
 
                     b.HasKey("Id");
 

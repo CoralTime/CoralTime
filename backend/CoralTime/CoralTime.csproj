@@ -12,9 +12,13 @@
     <Content Remove="ConfigsNetCore2.0\**" />
     <EmbeddedResource Remove="ConfigsNetCore2.0\**" />
     <None Remove="ConfigsNetCore2.0\**" />
+    <Content Remove="Content\PDF\PDFMarkUpView.cshtml" />
     <None Remove="tempkey.rsa" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Content\PDF\PDFMarkUpView.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Content\PDF\Site.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -71,10 +75,5 @@
     <ProjectReference Include="..\CoralTime.DAL\CoralTime.DAL.csproj" />
     <ProjectReference Include="..\CoralTime.MySqlMigrations\CoralTime.MySqlMigrations.csproj" />
     <ProjectReference Include="..\CoralTime.ViewModels\CoralTime.ViewModels.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Content\PDF\PDFMarkUpView.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 </Project>
