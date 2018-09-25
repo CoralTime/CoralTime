@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Hello World</title>
+		<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+		<script type="text/javascript" src="node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js"></script>
+		<script type="text/javascript" src="node_modules/jszip/dist/jszip.min.js"></script>
+		<script type="text/javascript" src="node_modules/devextreme/dist/js/dx.web.js"></script>
+		<link rel="stylesheet" type="text/css" href="node_modules/devextreme/dist/css/dx.common.css" />
+		<link rel="stylesheet" type="text/css" href="node_modules/devextreme/dist/css/dx.light.css" />
+	</head>
+	<style>
+	
+		.content {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.formContent {
+			display: flex;
+			flex-direction: column;
+			width: 270px;
+			height: 220px;
+			justify-content: space-between;
+		}
+
+		.rowWrap {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.rowLabel {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+			width: 100px;
+		}
+
+		.rowControl {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+		}
+
+	</style>
+	<body>
+		<script>
+
+		// Initialize
+		VSS.init({
+			usePlatformScripts: true, 
+			usePlatformStyles: true
+		});
+
+		// Register callback to get called when initial handshake completed
+		VSS.ready(function() {
+			var webContext = VSS.getWebContext();
+			var extensionContext = VSS.getExtensionContext();
+
+			/*$("#recordStartTimer").dxButton({
+				text: "Start Timer",
+				type: "success",
+				onClick: function(e) {
+					DevExpress.ui.notify("The Start Timer button was clicked");
+				}
+			});
+			
+			VSS.getAccessToken().then(function(token){
+				debugger;
+			});
+			
+			VSS.getAppToken().then(function(token){
+				debugger;
+			});*/
+			VSS.register("StartTimer", function (context) {
+				return {
+					execute: function (context) {
+						/*var statusName = context.status.context.genre + "/" + context.status.context.name;
+						var prId = context.pullRequest.pullRequestId;
+						alert("Execute custom action for status " + statusName + " on pull request " + prId);*/
+						DevExpress.ui.notify("The Start Timer button was clicked");
+					}
+				};
+			});
+
+			debugger;
+			VSS.notifyLoadSucceeded();
+		});
+
+		</script>
+
+		<div class="content">
+		  <div id="recordStartTimer"></div>
+		</div>
+		
+	</body>
+</html>

@@ -32,7 +32,7 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		DatepickerModule,
 		DataTableModule,
 		MenuModule,
-		SharedFormModule
+		SharedFormModule,
 	],
 	declarations: [
 		ReadMoreComponent,
