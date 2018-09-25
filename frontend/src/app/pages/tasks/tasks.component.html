@@ -4,7 +4,7 @@
 </div>
 
 <div #pageContainer class="ct-page-container ct-tasks-page">
-    <div class="ct-manage-grid-header">
+    <div class="ct-page-header">
         <div class="ct-page-tabs">
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Tasks</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Tasks</a>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="ct-data-table-wrapper" (window:resize)="onResize()">
-        <p-dataTable class="ct-grid-container ct-table"
+        <p-dataTable class="ct-grid-container ct-grid-row-border ct-table"
                      [value]="pagedResult?.data"
                      [resizeObservable]="resizeObservable"
                      scrollable="true" [sortField]="'name'"
@@ -25,7 +25,7 @@
                      (onLazyLoad)="loadLazy($event)"
                      (onMoreContent)="loadLazy()"
                      (onEndScrollEvent)="onEndScroll()">
-            <p-column [style]="{'width':'450px'}" field="name" header="Task" [sortable]="true">
+            <p-column [style]="{'width':'450px'}" field="name" header="Task" [sortable]="true" styleClass="ct-info-col">
                 <ng-template let-col let-task="rowData" pTemplate="body">
                     <span (click)="openTaskDialog(task)" class="ct-grid-link-text" title="{{task.name}}">{{task.name}}</span>
                 </ng-template>

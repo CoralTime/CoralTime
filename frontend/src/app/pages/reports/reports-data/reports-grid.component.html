@@ -39,7 +39,7 @@
 
     <p-column *ngIf="groupById != 2" styleClass="ct-cell-user" field="memberName" header="User" [sortable]="true">
         <ng-template let-item="rowData" pTemplate="body">
-            <ct-user-pic [urlIcon]="item.urlIcon"></ct-user-pic>
+            <ct-user-pic [urlIcon]="item.memberUrlIcon"></ct-user-pic>
             <span>{{item.memberName}}</span>
         </ng-template>
     </p-column>

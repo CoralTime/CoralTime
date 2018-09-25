@@ -50,7 +50,7 @@ $fieldHeight: 42px;
     display: block;
     height: 15px;
     font-size: 12px;
-    color: #728096;
+    color: $grid-text;
   }
 
   .ct-select-selected-options-text {
@@ -322,13 +322,13 @@ $fieldHeight: 42px;
       background-color: #f7f9fc;
     }
 
+    tr:hover {
+      background: $gray-page-background !important;
+    }
+
     h3 {
       margin-bottom: 5px;
       color: $nav-link-hover;
-    }
-
-    .ui-cell-data {
-      color: #728096;
     }
 
     .ct-cell-project {

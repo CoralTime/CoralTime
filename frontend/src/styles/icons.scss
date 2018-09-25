@@ -145,17 +145,30 @@
   }
 }
 
-.ct-edit-timesheet-icon:before {
+.ct-edit-timesheet-icon, .ct-grid-settings-icon {
   display: inline-block;
-  position: relative;
+  vertical-align: middle;
+  height: 40px;
+  width: 25px;
   cursor: pointer;
-  content: '';
-  height: 18px;
-  width: 18px;
-  top: 2px;
-  background: url(./assets/icons/users.svg) no-repeat center center;
 }
 
-.ct-edit-timesheet-icon:hover:before {
-  background: url(./assets/icons/users.hover.svg) no-repeat center center;
+.ct-grid-settings-icon {
+  background: url(./assets/icons/grid-settings.svg) no-repeat center;
+  background-size: 16px;
+}
+
+.ct-edit-timesheet-icon {
+  background: url(./assets/icons/users.svg) no-repeat center;
+  background-size: 16px;
+}
+
+tr:hover {
+  .ct-grid-settings-icon {
+    background-image: url(./assets/icons/grid-settings-blue.svg);
+  }
+
+  .ct-edit-timesheet-icon {
+    background-image: url(./assets/icons/users.hover.svg);
+  }
 }

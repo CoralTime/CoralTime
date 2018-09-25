@@ -85,7 +85,7 @@
     height: 100%;
     width: 100%;
     line-height: $selectHeight;
-    color: #728096;
+    color: $grid-text;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -163,7 +163,7 @@
 
   &:focus::-ms-value {
     background-color: #fff;
-    color: #728096;
+    color: $grid-text;
   }
 }
 
