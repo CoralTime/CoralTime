@@ -1,21 +1,21 @@
-<div *ngIf="gridData?.items.length" class="ct-grid-header">
+<div *ngIf="gridData?.items.length > 0" class="ct-grid-header">
     <div *ngIf="groupById == 1 && gridData.items.length">
         <label>{{gridData?.groupByType.projectName}}</label>
     </div>
-    <div *ngIf="groupById == 2 && gridData?.items.length">
-        <label>
+    <div *ngIf="groupById == 2">
+        <label class="ct-reports-grid-header">
             <ct-user-pic [urlIcon]="gridData?.groupByType.urlIcon"></ct-user-pic>
             {{gridData?.groupByType.memberName}}
         </label>
     </div>
-    <div *ngIf="groupById == 3 && gridData?.items.length">
-        <label>{{formatDate(gridData?.groupByType.date)}}</label>
+    <div *ngIf="groupById == 3">
+        <label class="ct-reports-grid-header">{{formatDate(gridData?.groupByType.date)}}</label>
     </div>
-    <div *ngIf="groupById == 4 && gridData?.items.length">
-        <label>{{gridData?.groupByType.clientName}}</label>
+    <div *ngIf="groupById == 4">
+        <label class="ct-reports-grid-header">{{gridData?.groupByType.clientName}}</label>
     </div>
 
-    <div *ngIf="gridData?.items.length > 0" class="ct-total-time-container">
+    <div *ngIf="gridData?.items.length" class="ct-total-time-container">
         Total actual hours:
         <span class="ct-total-hours-tracked" *ngIf="gridData.timeTotalFor">
             {{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}
@@ -24,6 +24,7 @@
 </div>
 
 <p-dataTable class="ct-grid-container ct-table"
+             [emptyMessage]="'Sorry, you don\'t have any reports at this time period.'"
              [value]="gridDataRows"
              [responsive]="true"
              [lazy]="true" (onLazyLoad)="loadLazy($event)">
@@ -38,7 +39,7 @@
 
     <p-column *ngIf="groupById != 2" styleClass="ct-cell-user" field="memberName" header="User" [sortable]="true">
         <ng-template let-item="rowData" pTemplate="body">
-            <ct-user-pic [urlIcon]="item.urlIcon"></ct-user-pic>
+            <ct-user-pic [urlIcon]="item.memberUrlIcon"></ct-user-pic>
             <span>{{item.memberName}}</span>
         </ng-template>
     </p-column>
@@ -57,16 +58,17 @@
     <p-column styleClass="ct-cell-time" field="hours" header="Hours">
         <ng-template let-item="rowData" pTemplate="body">
             <span *ngIf="showColumnIds.indexOf(2) > -1">{{formatDate(item.date)}}</span>&nbsp;&nbsp;
-            <span *ngIf="item.timeValues.timeEstimated > 0" class="ct-calendar-hours-planned" title="Estimated hours">
+            <span *ngIf="item.timeValues.timeEstimated > 59" class="ct-calendar-hours-planned" title="Estimated hours">
                 {{getTimeString(item.timeValues.timeEstimated)}}
             </span>
-            <span *ngIf="item.timeValues.timeActual > 0" class="ct-calendar-hours-tracked" title="Actual hours">
+            <span *ngIf="item.timeValues.timeActual > 59" class="ct-calendar-hours-tracked" title="Actual hours">
                 {{getTimeString(item.timeValues.timeActual)}}
             </span>
-            <div *ngIf="showColumnIds.indexOf(4)> -1">
-                <span *ngIf="getTimeString(item.timeValues.timeFrom)">from {{getTimeString(item.timeValues.timeFrom, false, user.timeFormat === 12)}}</span>
-                <!--<span *ngIf="item.timeValues.timeFrom == 0 && item.timeValues.timeTo">from 00:00</span>-->
-                <span *ngIf="getTimeString(item.timeValues.timeTo)"> to {{getTimeString(item.timeValues.timeTo, false, user.timeFormat === 12)}}</span>
+            <div *ngIf="showColumnIds.indexOf(4)> -1 &&
+                    getTimeString(item.timeValues.timeFrom, true, user.timeFormat === 12) !==
+                    getTimeString(item.timeValues.timeTo, true, user.timeFormat === 12)">
+                <span>from {{getTimeString(item.timeValues.timeFrom, true, user.timeFormat === 12)}}</span>
+                <span> to {{getTimeString(item.timeValues.timeTo, true, user.timeFormat === 12)}}</span>
             </div>
         </ng-template>
     </p-column>

@@ -155,14 +155,10 @@
                                      [groupById]="groupModel?.id"
                                      [rowsNumber]="grid.rows"
                                      [showColumnIds]="showColumnIds"></ct-reports-grid>
-
-                    <div *ngIf="reportsGridData?.groupedItems.length == 0" class="ct-nodata">
-                        Sorry, you don't have any reports at this time period.
-                    </div>
                 </div>
 
                 <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-total-footer">
-                    <label>Total Hours</label>
+                    <label class="ct-reports-grid-header">Total hours</label>
 
                     <div class="ct-total-time-container">
                         <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-calendar-hours-planned" title="Total estimated hours">

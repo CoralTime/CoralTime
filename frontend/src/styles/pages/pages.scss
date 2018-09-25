@@ -26,12 +26,6 @@ html, body {
 .ct-page-container {
   position: relative;
   min-height: 100%;
-
-  .ct-data-table-wrapper {
-    margin-top: 5px;
-    margin-left: -20px;
-    margin-right: -20px;
-  }
 }
 
 .ct-page-header {
@@ -41,28 +35,71 @@ html, body {
   font-size: 14px;
   font-weight: 700;
 
-  .ct-calendar-view {
+  .ct-add-link {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 200px;
     background: #fff;
-    border: 2px solid #fff;
     border-radius: 5px;
-    line-height: 31px;
+    text-align: center;
+    cursor: pointer;
+  }
+}
 
-    > a:last-child {
+.ct-page-tabs {
+  display: inline-block;
+  position: relative;
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  line-height: 31px;
+
+  > a {
+    display: inline-block;
+    padding: 0 20px;
+    font-weight: 700;
+    color: $main-grey;
+    text-transform: capitalize;
+    cursor: pointer;
+
+    &:last-child {
       margin-left: -1px;
     }
 
-    > a:hover, .ct-active-tab {
+    &:hover, &.ct-active-tab {
+      color: #353a4e;
       background: $gray-page-background;
     }
   }
+}
 
-  .ct-add-link {
+.ct-manage-add {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  color: #353a4e;
+  cursor: pointer;
+
+  &:before, &:after {
     position: absolute;
-    font-family: inherit;
-    right: 0;
-    top: 3px;
-    width: 200px;
-    text-align: right;
+    content: '';
+    left: 7px;
+    top: 10px;
+    width: 2px;
+    height: 16px;
+    background: $main-blue;
+  }
+
+  &:after {
+    height: 2px;
+    width: 16px;
+    left: 0;
+    top: 17px;
+  }
+
+  :hover > & {
+    color: $main-blue;
   }
 }
 
@@ -112,6 +149,5 @@ html, body {
 }
 
 .ct-admin-page button {
-  margin-right: 15px;
-  margin-bottom: 15px;
+  margin: 20px 15px 20px 0;
 }

@@ -22,24 +22,9 @@ $titleDayHeight: 145px;
     }
   }
 
-  .ct-page-tabs {
-    display: inline-block;
-    position: relative;
-
-    > a {
-      display: inline-block;
-      text-transform: capitalize;
-      cursor: pointer;
-      color: $main-grey;
-      padding: 0 20px;
-
-      &:hover, &.ct-active-tab {
-        color: #353a4e;
-      }
-    }
-  }
-
   .ct-calendar-periods {
+    background: none;
+    border: none;
     margin-left: 60px;
 
     a {
@@ -53,7 +38,7 @@ $titleDayHeight: 145px;
 
       i {
         position: absolute;
-        top: 6px;
+        top: 5px;
       }
 
       &:first-child {
@@ -84,6 +69,8 @@ $titleDayHeight: 145px;
 
   .ct-calendar-periods-mobile {
     display: block;
+    background: none;
+    border: none;
     margin: 0 -10px;
     font-size: 0;
 
@@ -449,14 +436,14 @@ $titleDayHeight: 145px;
   white-space: pre-line;
   font-size: 14px;
   line-height: 17px;
-  color: #728096;
+  color: $grid-text;
 }
 
 .ct-calendar-time-entry-period {
   margin-bottom: 10px;
   line-height: 15px;
   font-size: 12px;
-  color: #728096;
+  color: $grid-text;
   overflow: hidden;
 }
 

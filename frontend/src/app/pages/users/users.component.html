@@ -4,7 +4,7 @@
 </div>
 
 <div #pageContainer class="ct-page-container ct-users-page">
-    <div class="ct-manage-grid-header">
+    <div class="ct-page-header">
         <div class="ct-page-tabs">
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Users</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Inactive Users</a>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="ct-data-table-wrapper" (window:resize)="onResize()">
-        <p-dataTable class="ct-grid-container ct-table"
+        <p-dataTable class="ct-grid-container ct-grid-row-border ct-table"
                      [value]="pagedResult?.data"
                      [resizeObservable]="resizeObservable"
                      scrollable="true" [sortField]="'fullName'"
@@ -25,7 +25,7 @@
                      (onLazyLoad)="loadLazy($event)"
                      (onMoreContent)="loadLazy()"
                      (onEndScrollEvent)="onEndScroll()">
-            <p-column field="fullName" header="Full Name" [sortable]="true">
+            <p-column field="fullName" header="Full Name" [sortable]="true" styleClass="ct-info-col">
                 <ng-template let-col let-user="rowData" pTemplate="body">
                     <span (click)="openUserDialog(user)" class="ct-grid-userpic">
                     <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>
@@ -38,31 +38,32 @@
 
             <p-column field="email" header="Email" [sortable]="true"></p-column>
 
-            <p-column field="userName" header="Username" [sortable]="true">
+            <p-column field="userName" header="Username" [sortable]="true" styleClass="ct-info-col">
                 <ng-template let-col let-user="rowData" pTemplate="body">
                     <span title="{{user.userName}}">{{user.userName}}</span>
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'150px'}" header="Role" [sortable]="false">
+            <p-column [style]="{'width':'150px'}" header="Role" [sortable]="false" styleClass="ct-info-col">
                 <ng-template let-col let-user="rowData" pTemplate="body">
                     <span class="ct-lowercase">{{user.getRole()}}</span>
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'110px'}" header="Projects">
+            <p-column [style]="{'width':'110px'}" header="Projects" styleClass="ct-info-col">
                 <ng-template let-col let-user="rowData" pTemplate="body">
-                    <a *ctIsGranted="'roleEditMember'" (click)="openProjectAssignmentDialog(user)" class="ct-grid-link ct-grid-count">
+                    <a *ctIsGranted="'roleEditMember'" class="ct-grid-link ct-grid-count"
+                       (click)="openProjectAssignmentDialog(user)">
                         {{user.projectsCount}}
                         <span class="ct-manage-text">Manage</span>
                     </a>
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'60px'}">
+            <p-column [style]="{'width':'70px'}">
                 <ng-template let-col let-user="rowData" pTemplate="body">
-                    <a *ngIf="user.id !== currentUserId && user.id !== impersonateUserId" class="ct-grid-link" (click)="impersonateMember(user)">
-                        <i class="ct-edit-timesheet-icon"></i>
+                    <a *ngIf="user.id !== currentUserId && user.id !== impersonateUserId" class="ct-edit-timesheet-icon"
+                       (click)="impersonateMember(user)">
                     </a>
                 </ng-template>
             </p-column>

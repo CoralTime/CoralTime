@@ -39,7 +39,7 @@ a {
 textarea {
   resize: none;
   font-family: inherit;
-  color: #728096;
+  color: $grid-text;
 }
 
 select, input, textarea, form {
@@ -88,13 +88,8 @@ h5 {
   font-weight: 700;
 }
 
-.ui-column-title, .ct-input-label {
-  font-family: inherit;
-  font-size: $baseFont;
-  color: #374456;
-}
-
 .ct-input-label {
+  font-size: $baseFont;
   color: $gray-text;
 }
 
@@ -202,34 +197,6 @@ h5 {
 .ct-primary-button:hover, .ct-primary-button:active, .ct-primary-button.active {
   background: $primary-btn-hover !important;
   color: $primary-btn-text;
-}
-
-.ct-add-link {
-  cursor: pointer;
-  a {
-    color: $main-blue;
-    display: inline-block;
-    text-decoration: none;
-    font-family: inherit;
-    text-transform: capitalize;
-  }
-
-  i {
-    width: 23px;
-    height: 14px;
-    text-align: center;
-    padding: 2px 0 0 0;
-    margin-right: 5px;
-    font-size: 20px;
-    position: relative;
-    top: 2px;
-    font-family: inherit;
-    color: $main-blue;
-  }
-}
-
-.ct-add-link:hover, .ct-add-link:hover a {
-  color: $main-blue !important;
 }
 
 .ct-link {
