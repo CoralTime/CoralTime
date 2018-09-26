@@ -1,8 +1,8 @@
 <div class="ct-reports-page">
     <div class="ct-page-container">
-        <!--<div *ngIf="datePeriod.dateFrom && datePeriod.dateTo" class="ct-period-for-print ct-print-mode">-->
-        <!--Period: {{formatDate(datePeriod.dateFrom)}} - {{formatDate(datePeriod.dateTo)}}-->
-        <!--</div>-->
+        <div *ngIf="dateResponse?.datePeriod.dateFrom && dateResponse?.datePeriod.dateTo" class="ct-period-for-print ct-print-mode">
+            Period: {{formatDate(dateResponse.datePeriod.dateFrom)}} - {{formatDate(dateResponse.datePeriod.dateTo)}}
+        </div>
 
         <div *ngIf="reportDropdowns">
             <div class="ct-reports-chart-container">
@@ -33,7 +33,7 @@
                 <div class="ct-report-filters-block">
                     <div>
                         <ct-multiselect
-                                [panelStyleClass]="'ct-reports-multiselect ct-clients'"
+                                [panelStyleClass]="'ct-reports-multiselect ct-clients' + (impersonationService.impersonationUser ? ' ct-impersonate' : '')"
                                 [(ngModel)]="reportFilters.clientIds"
                                 (onSubmitAction)="toggleClient(reportFilters.clientIds)"
                                 [showSubmitButton]="true"
@@ -48,7 +48,7 @@
                     </div>
                     <div>
                         <ct-multiselect
-                                [panelStyleClass]="'ct-reports-multiselect ct-projects'"
+                                [panelStyleClass]="'ct-reports-multiselect ct-projects' + (impersonationService.impersonationUser ? ' ct-impersonate' : '')"
                                 [(ngModel)]="reportFilters.projectIds"
                                 (onSubmitAction)="toggleProject(reportFilters.projectIds)"
                                 [showSubmitButton]="true"
@@ -64,7 +64,7 @@
                     <div>
                         <ct-multiselect
                                 *ngIf="isUsersFilterShown"
-                                [panelStyleClass]="'ct-reports-multiselect ct-users'"
+                                [panelStyleClass]="'ct-reports-multiselect ct-users' + (impersonationService.impersonationUser ? ' ct-impersonate' : '')"
                                 [(ngModel)]="reportFilters.memberIds"
                                 (onSubmitAction)="toggleUser()"
                                 [showSubmitButton]="true"
@@ -164,7 +164,7 @@
                         <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-calendar-hours-planned" title="Total estimated hours">
                             {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}
                         </span>
-                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-calendar-hours-tracked"  title="Total actual hours">
+                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-calendar-hours-tracked" title="Total actual hours">
                             {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}
                         </span>
                     </div>
