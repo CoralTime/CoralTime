@@ -17,7 +17,7 @@
 
     <div class="ct-grid" #grid>
         <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
-            <p-dataTable class="ct-grid-container ct-table"
+            <p-dataTable class="ct-grid-container"
                          [value]="tasksPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"

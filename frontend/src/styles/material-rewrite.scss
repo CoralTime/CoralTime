@@ -9,10 +9,9 @@
 
 .mat-dialog-container {
   position: relative;
-  border-radius: 0 !important;
+  border-radius: 5px !important;
   background-color: $calendarTaskColor;
-  padding: 20px !important;
-  max-height: calc(100vh - 40px);
+  padding: 30px !important;
 }
 
 .mat-select-underline {

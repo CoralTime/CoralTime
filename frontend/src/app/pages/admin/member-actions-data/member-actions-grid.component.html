@@ -4,7 +4,7 @@
 </div>
 
 <div class="ct-data-table-wrapper" (window:resize)="onResize()">
-    <p-dataTable class="ct-grid-container ct-grid-row-border ct-table"
+    <p-dataTable class="ct-grid-container ct-grid-row-border"
                  [value]="pagedResult?.data"
                  [resizeObservable]="resizeObservable"
                  scrollable="true" [sortField]="'date'"

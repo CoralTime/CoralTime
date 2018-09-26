@@ -7,13 +7,13 @@
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
             <input class="ct-input-element" #gb placeholder="Search to add or remove teammates" [(ngModel)]="filterStr">
-            <i class="fa fa-search"></i>
+            <i class="ct-search-icon"></i>
         </div>
     </div>
 
     <div class="ct-grid" #grid>
         <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
-            <p-dataTable class="ct-grid-container ct-table" #tableWrapper
+            <p-dataTable class="ct-grid-container ct-grid-row-border ct-grid-blue" #tableWrapper
                          [value]="assignedUsersPagedResult?.data"
                          scrollable="true" [sortField]="'fullName'"
                          [responsive]="true" [lazy]="true"
@@ -25,7 +25,7 @@
                          (onEndScrollEvent)="onAssignedUsersEndScroll()">
 
                 <p-column field="fullName" header="{{assignedUsersPagedResult?.count}} team members"
-                          [sortable]="true" [style]="{'width':'330px'}">
+                          [sortable]="true" [style]="{'width':'330px'}" styleClass="ct-info-col">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <span class="ct-grid-userpic">
                             <ct-user-pic [urlIcon]="userProject.urlIcon"></ct-user-pic>
@@ -44,7 +44,6 @@
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [name]="'role'"
                                    [displayName]="'name'" [trackBy]="'id'"
-                                   [icon]="'chevron-down'"
                                    [container]="tableWrapper.el.nativeElement"
                                    [(ngModel)]="userProject.role"
                                    (change)="changeRole(userProject, select1.el.nativeElement)"
@@ -53,7 +52,6 @@
                         <ct-select *ngIf="authUser.role == 1 && !userProject.id" [name]="'role'"
                                    class="ct-users-project-edit-role ct-select-ellipse" #select2
                                    [displayName]="'name'" [trackBy]="'id'"
-                                   [icon]="'chevron-down'"
                                    [(ngModel)]="userProject.role"
                                    (change)="assignToPublic(userProject, select2.el.nativeElement)"
                                    [options]="projectRoles">
@@ -63,14 +61,14 @@
                     </ng-template>
                 </p-column>
 
-                <p-column header="Actions" styleClass="ct-user-actions-col">
+                <p-column header="Actions">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <a *ngIf="userProject.memberName != authUser.nickname
                                 && userProject.id
                                 && (authUser.role == 1
                                 || authUser.role == 4
                                 && userProject.roleName != 'manager')"
-                           class="ct-grid-link ct-grid-ellipse ct-grid-delete" #removeBtn
+                           class="ct-grid-link ct-grid-delete" #removeBtn
                            (click)="removeFromProject(userProject, removeBtn)">
                             <i class="material-icons" aria-hidden="true">clear</i>
                         </a>
@@ -79,7 +77,7 @@
                 </p-column>
             </p-dataTable>
 
-            <p-dataTable class="ct-grid-container ct-table" *ngIf="project.isPrivate"
+            <p-dataTable class="ct-grid-container ct-grid-row-border" *ngIf="project.isPrivate"
                          [value]="notAssignedUsersPagedResult?.data"
                          scrollable="true" [sortField]="'fullName'"
                          [responsive]="true" [lazy]="true"
@@ -91,7 +89,7 @@
                          (onEndScrollEvent)="onNotAssignedUsersEndScroll()">
 
                 <p-column field="fullName" header="{{notAssignedUsersPagedResult?.count}} Unassigned" [sortable]="true"
-                          styleClass="ct-user-info-col" [style]="{'width':'330px'}">
+                          styleClass="ct-info-col" [style]="{'width':'330px'}">
                     <ng-template let-col let-user="rowData" pTemplate="body">
                          <span class="ct-grid-userpic">
                             <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>

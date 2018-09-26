@@ -34,7 +34,6 @@ export class SelectComponent implements ControlValueAccessor {
 	@Input('trackBy') trackBy: string;
 	@Input('options') options: any[];
 	@Input('defaultValue') defaultValue: string;
-	@Input('icon') icon: string;
 	@Input('canClickOverlay') canClickOverlay: boolean = false;
 	@Input('maxHeight') maxHeight: number = 168;
 	@Input('container') container: HTMLDivElement;
