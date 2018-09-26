@@ -314,6 +314,10 @@ $fieldHeight: 42px;
   .ct-grid-container {
     margin-top: 40px;
 
+    .ui-datatable {
+      padding-bottom: 0;
+    }
+
     .ui-datatable-thead {
       display: none;
     }

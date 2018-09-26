@@ -9,7 +9,6 @@
                 {{getSelectedOptionsText()}}
             </div>
             <i [ngClass]="isOpen ? 'fa fa-angle-up' : 'fa fa-angle-down'"></i>
-            <i *ngIf="icon" class="fa ct-users-project-edit-role fa-{{icon}}"></i>
         </div>
         <mat-list class="ct-select-options-list" #matList>
             <div class="ct-select-options-wrapper" #slimScroll="slimScroll" slimScroll

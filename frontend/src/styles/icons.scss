@@ -172,3 +172,22 @@ tr:hover {
     background-image: url(./assets/icons/users.hover.svg);
   }
 }
+
+.ct-search-icon {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid $formInputColor;
+  border-radius: 50%;
+
+  &:after {
+    position: absolute;
+    right: -1px;
+    bottom: -5px;
+    content: '';
+    width: 2px;
+    height: 6px;
+    background: $formInputColor;
+    transform: rotate(-45deg);
+  }
+}

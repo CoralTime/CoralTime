@@ -34,6 +34,11 @@
 }
 
 .ct-grid-container {
+  .ui-datatable {
+    background: #fff;
+    padding-bottom: 20px;
+  }
+
   tr {
     vertical-align: top;
 
@@ -71,7 +76,7 @@
 
   .ui-datatable-scrollable-body {
     padding-right: 0;
-    max-height: calc(100vh - 218px);
+    max-height: calc(100vh - 254px);
   }
 
   .ui-datatable-scrollable-wrapper {
@@ -95,6 +100,7 @@
 
   .ui-widget-content {
     border: none;
+    background: none;
   }
 
   td:first-child, th:first-child {
@@ -118,7 +124,7 @@
   .ui-datatable-tablewrapper table, .ui-datatable-scrollable-wrapper table {
     thead {
       tr, td, th {
-        background: #fff !important;
+        background: none !important;
         color: $grid-text;
         font-size: $baseFont;
         font-family: inherit;
@@ -191,10 +197,10 @@
   }
 
   .ct-grid-link:hover {
-    color: $blue !important;
+    color: $main-blue;
 
-    .ct-link-text, .ct-status-gray {
-      color: $blue !important;
+    .ct-link-text {
+      color: $main-blue !important;
     }
   }
 
@@ -219,16 +225,15 @@
     position: relative;
     margin: -5px 0;
     color: white;
-    background: $primary-btn-hover;
+    background: $main-blue;
     height: 35px;
-    padding: 0 12px;
+    padding: 0 20px;
     line-height: 35px;
-    cursor: pointer;
+    white-space: nowrap;
     border: none;
+    border-radius: 5px;
     outline: none;
-    top: 0;
-    right: 1px;
-    font-size: 14px;
+    cursor: pointer;
   }
 
   .ct-grid-button-search {
@@ -236,6 +241,8 @@
   }
 
   .ct-grid-delete {
+    display: inline-block;
+    height: 25px;
     vertical-align: middle;
   }
 
@@ -243,77 +250,23 @@
     color: $black;
   }
 
-  $selectHeight: 25px;
-
-  .ct-select-ellipse {
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 15px;
-
-    .ct-select-component, .ct-select-options, .ct-select {
-      height: $selectHeight;
-    }
-
-    .ct-select {
-      background-color: inherit;
-      border: none;
-
-      &:after {
-        display: none;
-      }
-    }
-
-    .ct-select-selected-options-text {
-      padding: 0 45px 0 9px;
-      line-height: $selectHeight;
-      background: white;
-      border-radius: 12.5px;
-    }
-  }
-
-  .ct-span-ellipse {
-    display: inline-block;
-    background: white;
-    border-radius: 12.5px;
-    padding: 0 0 0 9px;
-    width: 140px;
-    height: $selectHeight;
-    vertical-align: middle;
-    line-height: $selectHeight;
-    color: $black;
-  }
-
   tr:hover {
-    .ct-select-ellipse {
-      .ct-users-project-edit-role,
-      .ct-select-selected-options-text {
-        color: $main-blue
-      }
-    }
-
     .ct-grid-link-text {
       color: $main-blue;
       text-decoration: underline;
     }
 
-    .ct-grid-ellipse, .ct-grid-count {
+    .ct-grid-count {
       color: #374456 !important;
 
       span {
-        color: $main-blue !important;
+        color: $main-blue;
       }
     }
   }
 
   .ct-manage-text {
     padding-left: 6px;
-  }
-
-  .ct-status-gray {
-    color: #a4a4a4;
-    top: 3px;
-    position: relative;
-    font-size: 18px;
   }
 
   .ui-paginator-bottom {
@@ -335,12 +288,24 @@
 
 .ct-grid-row-border {
   tbody {
-    td:first-child {
-      position: relative;
+    tr:not(.ct-loading-block) {
+      td:first-child {
+        position: relative;
 
-      &:after {
+        &:after {
+          position: absolute;
+          top: 0;
+          left: 30px;
+          content: '';
+          width: calc(100vw - 100px);
+          height: 2px;
+          background: $gray-page-background;
+        }
+      }
+
+      &:last-child td:first-child:before {
         position: absolute;
-        top: 0;
+        bottom: 1px;
         left: 30px;
         content: '';
         width: calc(100vw - 100px);
@@ -352,11 +317,11 @@
 
   tr:hover {
     td:first-child:after {
-      background-color: #f7f9fc;
+      background-color: #f7f9fc !important;
     }
 
     & + tr td:first-child:after {
-      background-color: #fff;
+      background-color: transparent;
     }
   }
 }
@@ -391,15 +356,6 @@
         top: 0 !important;
       }
     }
-  }
-}
-
-.ct-dialog {
-  .ct-select-selected-options-text {
-
-  }
-  .ct-grid {
-    margin: 0 -20px;
   }
 }
 
