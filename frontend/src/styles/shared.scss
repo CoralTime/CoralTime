@@ -404,17 +404,6 @@ h5 {
   }
 }
 
-.ct-select-ellipse.ct-loading i:before {
-  position: absolute;
-  top: -1px;
-  right: -1px;
-  width: 18px;
-  height: 18px;
-  content: '';
-  background: url(./assets/rolling-blue.gif) no-repeat center center;
-  background-size: contain;
-}
-
 .ct-loading .ct-select .fa:before {
   display: block;
   content: '';
@@ -422,8 +411,23 @@ h5 {
   right: -4px;
   width: 18px;
   height: 18px;
-  background: url(./assets/rolling-blue.gif) no-repeat center center;
+  background: url(./assets/rolling-blue.gif) no-repeat center;
   background-size: contain;
+}
+
+.ct-select-ellipse.ct-loading .fa:before {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 18px;
+  height: 18px;
+  content: '';
+  background: url(./assets/rolling-white.gif) no-repeat center;
+  background-size: contain;
+
+  tr:hover & {
+    background-image: url(./assets/rolling-blue.gif);
+  }
 }
 
 .ct-blue-button:hover {

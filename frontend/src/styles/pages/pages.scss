@@ -129,22 +129,30 @@ html, body {
   padding-top: 50px;
   height: calc(100% - 50px);
 
-  .ct-calendar-weekly-view .ct-calendar {
-    .ct-calendar-day-title {
-      top: 160px;
+  .ct-calendar-page {
+    .ct-page-header {
+      top: 113px;
     }
 
-    .ct-calendar-day {
-      min-height: calc(100vh - 160px);
+    .ct-calendar-day-title {
+      top: 195px;
     }
+
+    .ct-calendar-day-container {
+      min-height: calc(100vh - 200px);
+    }
+  }
+
+  .ct-reports-chart-container {
+    top: 114px;
   }
 
   .ct-grid-container .ui-datatable-scrollable-body {
-    max-height: calc(100vh - 196px);
+    max-height: calc(100vh - 304px);
   }
 
   .ct-profile .ct-user-settings {
-    min-height: calc(100vh - 190px);
+    min-height: calc(100vh - 215px);
   }
 }
 
