@@ -57,11 +57,12 @@
   width: 600px;
 
   .ct-popup-table-wrapper .ct-grid-container:only-child .ui-datatable-scrollable-body {
-    max-height: calc(90vh - 175px);
+    max-height: calc(90vh - 185px);
   }
 }
 
 .ct-projects-tasks-form.ct-form {
+  position: relative;
   display: inline-block;
   width: 100%;
   margin: 15px 0 -10px;
@@ -74,17 +75,12 @@
     }
   }
 
-  .ct-required-field-container {
-    width: calc(100% - 160px);
-  }
-
   .ct-input {
     height: 30px;
-    width: 100%;
-    background: #f7f5f5;
+    width: calc(100% - 160px);
     font-size: inherit;
-    color: #222;
     border: none;
+    border-bottom: 2px solid $gray-page-background;
   }
 
   .ct-buttons-block {

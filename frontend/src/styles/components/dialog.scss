@@ -388,7 +388,7 @@
     width: 600px;
 
     &:before {
-      width: 640px;
+      width: 660px;
     }
 
     .ct-grid-row-border tbody td:first-child:after {
@@ -475,6 +475,17 @@
     color: $black;
   }
 
+  .ct-grid-delete {
+    display: inline-block;
+    height: 25px;
+    vertical-align: middle;
+    color: $grid-text;
+  }
+
+  tr:hover .ct-grid-delete {
+    color: $main-blue;
+  }
+
   .ct-grid-blue {
     .ui-datatable {
       background: $main-blue;
@@ -496,13 +507,13 @@
       }
     }
 
-    td:first-child {
+    tr:not(.ct-loading-block) td:first-child {
       &:before, &:after {
-        background: $gray-page-background;
+        background-color: $gray-page-background;
       }
     }
 
-    td {
+    td, .ct-grid-delete {
       color: #fff;
     }
 
@@ -520,7 +531,7 @@
         color: $main-blue
       }
 
-      [class*="fa-angle"], .ct-grid-link {
+      [class*="fa-angle"], .ct-grid-link, .ct-grid-delete {
         color: $main-blue;
       }
     }

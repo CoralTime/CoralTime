@@ -5,6 +5,7 @@
 
 <div #pageContainer class="ct-page-container ct-projects-page">
     <div class="ct-page-header">
+        <h3 class="ct-header">Projects</h3>
         <div class="ct-page-tabs">
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Projects</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Projects</a>
@@ -65,7 +66,7 @@
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'80px'}" header="Settings">
+            <p-column [style]="{'width':'90px'}" header="Settings">
                 <ng-template let-col let-project="rowData" pTemplate="body">
                     <a (click)="openProjectSettingsDialog(project)" class="ct-grid-settings-icon"></a>
                 </ng-template>
