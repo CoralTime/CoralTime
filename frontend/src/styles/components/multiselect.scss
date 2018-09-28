@@ -177,3 +177,11 @@ $linkColor: #0099cf;
   color: inherit;
   background: none;
 }
+
+.ui-widget,
+.ui-widget button,
+.ui-widget input,
+.ui-widget select,
+.ui-widget textarea {
+  font-family: inherit;
+}

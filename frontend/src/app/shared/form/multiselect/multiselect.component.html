@@ -4,7 +4,8 @@
         <input #input readonly="readonly" [attr.id]="inputId"
                [disabled]="disabled" [attr.tabindex]="tabindex"
                (focus)="onInputFocus($event)"
-               (blur)="onInputBlur($event)">
+               (blur)="onInputBlur($event)"
+               (keydown)="onInputKeydown($event)">
     </div>
 
     <div class="ct-select" [title]="toString(valuesAsString)">

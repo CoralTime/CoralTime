@@ -230,7 +230,7 @@ $fieldHeight: 42px;
 .ct-reports-chart-title {
   margin-bottom: 5px;
   font-weight: 700;
-  color: $nav-link-hover;
+  color: $black;
 }
 
 .ct-reports-chart-value {
@@ -301,7 +301,7 @@ $fieldHeight: 42px;
   .ct-reports-grid {
     display: inline-block;
     background-color: #fff;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
     border-radius: 5px;
     overflow: hidden;
 
@@ -318,6 +318,11 @@ $fieldHeight: 42px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    vertical-align: top;
+
+    ct-user-pic {
+      vertical-align: middle;
+    }
   }
 
   .ct-grid-header {
@@ -363,7 +368,7 @@ $fieldHeight: 42px;
 
     h3 {
       margin-bottom: 5px;
-      color: $nav-link-hover;
+      color: $black;
     }
 
     .ct-cell-project {
@@ -371,17 +376,26 @@ $fieldHeight: 42px;
     }
 
     .ct-cell-user {
-      width: 150px;
+      width: 200px;
       font-weight: 700;
+      vertical-align: middle;
 
       ct-user-pic {
-        margin: 0 5px 5px 0;
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+
+      span {
         vertical-align: middle;
       }
     }
 
+    .ct-cell-date {
+      width: 100px;
+    }
+
     .ct-cell-time {
-      width: 300px;
+      width: 220px;
       text-align: right;
 
       div {

@@ -129,7 +129,7 @@ $titleDayHeight: 145px;
 
   .ct-multiselect .mat-select-value-text {
     padding: 0 25px 0 10px;
-    color: $nav-link-hover;
+    color: $black;
 
     .fa {
       position: absolute;
@@ -403,7 +403,7 @@ $titleDayHeight: 145px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 18px;
+  font-size: 17px;
   color: $dark-blue;
   font-weight: 700;
 }
@@ -418,6 +418,7 @@ $titleDayHeight: 145px;
   font-size: 14px;
   line-height: 17px;
   color: $grid-text;
+  text-align: justify;
 }
 
 .ct-calendar-time-entry-period {
