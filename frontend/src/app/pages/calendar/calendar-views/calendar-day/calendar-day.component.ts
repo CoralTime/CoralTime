@@ -69,16 +69,7 @@ export class CalendarDayComponent implements OnInit {
 		return this.setTimeString(this.getGeneralTime(type));
 	}
 
-	calcWorkingHours(): number {
-		let time = this.getGeneralTime('timeActual');
-		return Math.min(time / 3600, this.user.workingHoursPerDay) / this.user.workingHoursPerDay * 100;
-	}
-
-	isWorkingHoursOver(): boolean {
-		return this.getGeneralTime('timeActual') / 3600 > this.user.workingHoursPerDay
-	}
-
-	private getGeneralTime(type: string): number {
+	getGeneralTime(type: string): number {
 		let timeEnries: TimeEntry[] = this.dayInfo.timeEntries;
 		let time: number = 0;
 		if (timeEnries) {

@@ -76,6 +76,8 @@ export class ReportsComponent implements OnInit {
 
 	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
 
+	private chartWidthParam: number;
+	private numberOfWorkingDays: number;
 	private reportsConfirmationRef: MatDialogRef<ConfirmationComponent>;
 	private reportsQueryRef: MatDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MatDialogRef<ReportsSendComponent>;
@@ -169,6 +171,7 @@ export class ReportsComponent implements OnInit {
 			.subscribe((res: ReportGrid) => {
 					this.reportsGridData = res;
 					this.gridData = this.getNextGridDataPage(this.reportsGridData.groupedItems, []);
+					this.displayChart(this.reportFilters.groupById === 2);
 				},
 				() => {
 					this.notificationService.danger('Error loading reports grid.');
@@ -490,7 +493,12 @@ export class ReportsComponent implements OnInit {
 	}
 
 	formatDate(utcDate: Moment): string {
-		return this.dateFormat ? utcDate.format(this.dateFormat) : utcDate.toDate().toLocaleDateString();
+		if (!utcDate) {
+			return;
+		}
+
+		const date = moment(utcDate);
+		return this.dateFormat ? date.format(this.dateFormat) : date.toDate().toLocaleDateString();
 	}
 
 	resetFilters(): void {
@@ -509,6 +517,67 @@ export class ReportsComponent implements OnInit {
 	submitSettings(showColumnIds: number[]): void {
 		this.showColumnIds = showColumnIds;
 		this.getReportGrid();
+	}
+
+	// DISPLAY CHART
+
+	calcTotalActualTime(hoursPerDay: number): number {
+		return this.numberOfWorkingDays * (hoursPerDay || 8) * 3600;
+	}
+
+	calcTrackedHours(time: number): number {
+		return +(time / 3600).toFixed(0);
+	}
+
+	getChartWidth(value: number): string {
+		return value * this.chartWidthParam + 'px';
+	}
+
+	private calcMaxTotalValue(isGroupByUser: boolean): number {
+		let arr: number[];
+
+		if (isGroupByUser) {
+			arr = this.reportsGridData.groupedItems.map(x => x.groupByType.memberHoursPerDay || 8);
+		} else {
+			arr = this.reportsGridData.groupedItems.map(x => x.timeTotalFor.timeActualTotalFor)
+		}
+
+		return Math.max.apply(Math, arr);
+	}
+
+	private calcNumberWidth(maxTotalTrackedTime: number, isGroupByUser: boolean) {
+		if (isGroupByUser) {
+			const totalTrackedTimeArr = this.reportsGridData.groupedItems
+				.filter(x => (x.groupByType.memberHoursPerDay || 8) === maxTotalTrackedTime)
+				.map(x => x.timeTotalFor.timeActualTotalFor);
+
+			maxTotalTrackedTime = Math.max.apply(Math, totalTrackedTimeArr);
+		}
+
+		return (this.calcTrackedHours(maxTotalTrackedTime) + 'h').length * 8.5;
+	}
+
+	private getNumberOfWorkingDays(period: DatePeriod): number {
+		let day = period.dateFrom.clone();
+		let result = 0;
+
+		while (DateUtils.convertMomentToUTC(day) <= DateUtils.convertMomentToUTC(period.dateTo)) {
+			if (day.day() !== 0 && day.day() !== 6) {
+				result++;
+			}
+			day.add(1, 'days');
+		}
+
+		return result;
+	}
+
+	private displayChart(isGroupByUser: boolean): void {
+		const maxTotalValue = this.calcMaxTotalValue(isGroupByUser);
+		const chartNumberWidth = this.calcNumberWidth(maxTotalValue, isGroupByUser);
+		const maxChartWidth = 240 - 61 - chartNumberWidth;
+		this.chartWidthParam = maxChartWidth / maxTotalValue;
+
+		this.numberOfWorkingDays = this.getNumberOfWorkingDays(this.dateResponse.datePeriod);
 	}
 
 	// FILTERS

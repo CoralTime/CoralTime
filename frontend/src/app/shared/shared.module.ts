@@ -18,6 +18,7 @@ import { SharedFormModule } from './form/shared-form.module';
 import { UserPicComponent } from './user-pic/user-pic.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.component';
+import { ChartComponent } from './chart/chart.component';
 
 @NgModule({
 	imports: [
@@ -38,7 +39,8 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		ReadMoreComponent,
 		ConfirmationComponent,
 		ExpansionPanelComponent,
-		UserPicComponent
+		UserPicComponent,
+		ChartComponent
 	],
 	exports: [
 		CommonModule,
@@ -58,7 +60,8 @@ import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.compo
 		SharedFormModule,
 		UserPicComponent,
 		ConfirmationComponent,
-		ExpansionPanelComponent
+		ExpansionPanelComponent,
+		ChartComponent
 	]
 })
 

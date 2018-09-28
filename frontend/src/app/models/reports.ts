@@ -97,6 +97,7 @@ export interface GroupByType {
 	date: string;
 	memberId: number;
 	memberName: string;
+	memberHoursPerDay: number;
 	projectId: number;
 	projectName: string;
 }

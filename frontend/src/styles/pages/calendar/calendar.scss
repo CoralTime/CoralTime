@@ -238,6 +238,10 @@ $titleDayHeight: 145px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
   }
+
+  .ct-chart {
+    margin: 10px 0 20px;
+  }
 }
 
 .ct-calendar-task-stop-timer {
@@ -276,34 +280,6 @@ $titleDayHeight: 145px;
   .ct-date-value {
     font-size: 16px;
     color: #aab2c0;
-  }
-}
-
-.ct-working-hours-block {
-  position: relative;
-  height: 5px;
-  margin: 10px 0 20px;
-  background-color: $gray-border;
-  border-radius: 5px;
-
-  .ct-calendar-day-active & {
-    background-color: $calendarTaskColor;
-  }
-
-  .ct-working-hours-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 0;
-    background-color: $main-blue;
-    border-radius: 2px;
-    box-shadow: 1px 2px 17px 0 rgba(0, 0, 0, 0.05);
-    transition: width ease .3s;
-
-    &.ct-over {
-      background: $error-text;
-    }
   }
 }
 
