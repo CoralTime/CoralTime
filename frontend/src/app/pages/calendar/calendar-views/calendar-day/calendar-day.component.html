@@ -1,17 +1,14 @@
 <div pDroppable="calendarTask" (onDrop)="drop()" (dragover)="onDragOver()" (onDragLeave)="onDragLeave()"
      class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
-    <div class="ct-calendar-day-title" >
+    <div class="ct-calendar-day-title">
         <div class="ct-calendar-date">
             <span class="ct-date-number">{{getDateNumber(dayInfo.date)}}</span>
             <span *ngIf="isToday(dayInfo.date)" class="ct-today">Today</span>
             <span class="ct-date-value">{{getDateString(dayInfo.date)}}</span>
         </div>
 
-        <div class="ct-working-hours-block">
-            <div class="ct-working-hours-bar"
-                 [class.ct-over]="isWorkingHoursOver()"
-                 [style.width]="calcWorkingHours() + '%'"></div>
-        </div>
+        <ct-chart [totalValue]="user.workingHoursPerDay"
+                  [value]="getGeneralTime('timeActual')/3600"></ct-chart>
 
         <div class="ct-calendar-day-hours">
             <div class="ct-calendar-hours-tracked" title="Tracked time">{{calcTime('timeActual')}}</div>
@@ -26,7 +23,7 @@
                           class="ct-calendar-task" #calendarTask
                           pDraggable="calendarTask"
                           [timeEntry]="timeEntry"
-                          [draggable]="!isTimeEntryFormOpened()"  [dragEffect]="dragEffect()"
+                          [draggable]="!isTimeEntryFormOpened()" [dragEffect]="dragEffect()"
                           (onDragStart)="dragStart(timeEntry, $event.target)"
                           (onDragEnd)="dragEnd($event.target)"
                           (timeEntryDeleted)="deleteTimeEntry(i)">

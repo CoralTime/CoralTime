@@ -1,0 +1,31 @@
+.ct-chart {
+  display: inline-block;
+  width: 100%;
+}
+
+.ct-chart-block {
+  position: relative;
+  height: 5px;
+  background-color: $gray-border;
+  border-radius: 5px;
+
+  .ct-calendar-day-active & {
+    background-color: $calendarTaskColor;
+  }
+
+  .ct-chart-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: $main-blue;
+    border-radius: 2px;
+    box-shadow: 1px 2px 17px 0 rgba(0, 0, 0, 0.05);
+    transition: width ease .3s;
+
+    &.ct-chart-over {
+      background: $error-text;
+    }
+  }
+}
