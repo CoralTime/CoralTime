@@ -332,6 +332,11 @@ $titleDayHeight: 145px;
   box-shadow: $box-shadow;
   border-radius: 5px;
   margin-bottom: 6px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.15);
+  }
 }
 
 .ct-lock-icon {
@@ -511,20 +516,13 @@ $titleDayHeight: 145px;
   position: absolute;
   right: 5px;
   top: 12px;
-  cursor: pointer;
   color: #cfd4e0;
-  border-radius: 2px;
   z-index: 1;
 
   .ct-calendar-task:hover &,
   &.ct-menu-opened {
     color: $main-grey;
-    background-color: $gray-page-background;
   }
-}
-
-.ct-menu-open-link:hover,
-.ct-menu-open-link.ct-menu-opened {
 }
 
 .ct-calendar-add-task {

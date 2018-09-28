@@ -554,7 +554,7 @@ export class ReportsComponent implements OnInit {
 			maxTotalTrackedTime = Math.max.apply(Math, totalTrackedTimeArr);
 		}
 
-		return (this.calcTrackedHours(maxTotalTrackedTime) + 'h').length * 8.5;
+		return (this.calcTrackedHours(maxTotalTrackedTime) + 'h').length * 7.5;
 	}
 
 	private getNumberOfWorkingDays(period: DatePeriod): number {

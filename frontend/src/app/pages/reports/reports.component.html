@@ -112,7 +112,7 @@
                               (click)="deleteQuery(queryModel)">clear</span>
                     </div>
                 </div>
-                <div class="ct-sidebar-block">
+                <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-sidebar-block">
                     <h3 class="ct-header">Stats</h3>
 
                     <ul class="ct-reports-chart-block">
