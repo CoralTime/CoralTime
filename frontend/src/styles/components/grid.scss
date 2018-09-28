@@ -16,7 +16,7 @@
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    border: 2px solid $blue;
+    border: 2px solid $main-blue;
     left: 7px;
     top: 3px;
   }
@@ -153,7 +153,7 @@
 
   .ct-info-col {
     font-weight: 700;
-    color: $nav-link-hover;
+    color: $black;
   }
 
   .ct-grid-label {

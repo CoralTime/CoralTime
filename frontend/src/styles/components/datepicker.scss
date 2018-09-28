@@ -91,7 +91,7 @@
     height: 34px;
     border-radius: 0;
     font-size: 13px;
-    color: $nav-link-hover;
+    color: $black;
     border: 1px solid transparent;
 
     &:hover:not([disabled]):not(.dp-selected) {
@@ -126,7 +126,7 @@
 
   .dp-calendar-month {
     border-radius: 4px;
-    color: $nav-link-hover;
+    color: $black;
 
     &:hover {
       background: $main-blue;
