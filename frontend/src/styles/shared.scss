@@ -351,6 +351,7 @@ h5 {
   }
 
   &[disabled] {
+    background-color: $grid-text;
     opacity: .7;
   }
 }
@@ -428,10 +429,6 @@ h5 {
   tr:hover & {
     background-image: url(./assets/rolling-blue.gif);
   }
-}
-
-.ct-blue-button:hover {
-  background-color: $primary-btn-hover;
 }
 
 .ct-color-empty {

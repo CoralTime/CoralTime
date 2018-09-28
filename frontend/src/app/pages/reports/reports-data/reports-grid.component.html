@@ -55,9 +55,15 @@
         </ng-template>
     </p-column>
 
+    <p-column *ngIf="groupById != 3 && showColumnIds.indexOf(2) > -1" styleClass="ct-cell-date" header="Date" [sortable]="true">
+        <ng-template let-item="rowData" pTemplate="body">
+            <span>{{formatDate(item.date)}}</span>
+        </ng-template>
+    </p-column>
+
     <p-column styleClass="ct-cell-time" field="hours" header="Hours">
         <ng-template let-item="rowData" pTemplate="body">
-            <span *ngIf="showColumnIds.indexOf(2) > -1">{{formatDate(item.date)}}</span>&nbsp;&nbsp;
+            <!--<span *ngIf="showColumnIds.indexOf(2) > -1">{{formatDate(item.date)}}</span>&nbsp;&nbsp;-->
             <span *ngIf="item.timeValues.timeEstimated > 59" class="ct-calendar-hours-planned" title="Estimated hours">
                 {{getTimeString(item.timeValues.timeEstimated)}}
             </span>
