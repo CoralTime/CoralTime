@@ -260,7 +260,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         
         private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
         {
-            var memberDayOfWeekStart = GetDayOfWeek(ReportMemberImpersonated.WeekStart); 
+            var companyReportStartOfWeek = (Constants.WeekStart) int.Parse(_config["CompanyReportStartOfWeek"]); 
+            var memberDayOfWeekStart = GetDayOfWeek(companyReportStartOfWeek); 
             var today = CommonHelpers.GetPeriod(DatesStaticIds.Today);
             var yesterday = CommonHelpers.GetPeriod(DatesStaticIds.Yesterday);
             var thisWeek = CommonHelpers.GetPeriod(DatesStaticIds.ThisWeek, memberDayOfWeekStart);

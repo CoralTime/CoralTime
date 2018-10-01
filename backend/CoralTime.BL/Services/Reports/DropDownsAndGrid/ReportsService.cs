@@ -3,13 +3,15 @@ using CoralTime.BL.Interfaces;
 using CoralTime.BL.Interfaces.Reports;
 using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Repositories;
+using Microsoft.Extensions.Configuration;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 {
     public partial class ReportsService : BaseService, IReportsService
     {
-        private IReportsSettingsService _reportsSettingsService;
-        private IImageService _imageService;
+        private readonly IReportsSettingsService _reportsSettingsService;
+        private readonly IImageService _imageService;
+        private readonly IConfiguration _config;
         public string SingleFilteredProjectName { get; private set; } = null;
 
         public Member ReportMemberCurrent { get; private set; }
@@ -19,11 +21,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             UnitOfWork uow, 
             IMapper mapper, 
             IReportsSettingsService reportsSettingsService,
-            IImageService imageService)
+            IImageService imageService,
+            IConfiguration config)
             : base(uow, mapper)
         {
             _reportsSettingsService = reportsSettingsService;
             _imageService = imageService;
+            _config = config;
             UpdateReportMembers(BaseMemberImpersonated);
         }
 
