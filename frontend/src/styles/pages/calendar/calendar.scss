@@ -129,7 +129,7 @@ $titleDayHeight: 145px;
 
   .ct-multiselect .mat-select-value-text {
     padding: 0 25px 0 10px;
-    color: $nav-link-hover;
+    color: $black;
 
     .fa {
       position: absolute;
@@ -238,6 +238,10 @@ $titleDayHeight: 145px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
   }
+
+  .ct-chart {
+    margin: 10px 0 20px;
+  }
 }
 
 .ct-calendar-task-stop-timer {
@@ -276,34 +280,6 @@ $titleDayHeight: 145px;
   .ct-date-value {
     font-size: 16px;
     color: #aab2c0;
-  }
-}
-
-.ct-working-hours-block {
-  position: relative;
-  height: 5px;
-  margin: 10px 0 20px;
-  background-color: $gray-border;
-  border-radius: 5px;
-
-  .ct-calendar-day-active & {
-    background-color: $calendarTaskColor;
-  }
-
-  .ct-working-hours-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 0;
-    background-color: $main-blue;
-    border-radius: 2px;
-    box-shadow: 1px 2px 17px 0 rgba(0, 0, 0, 0.05);
-    transition: width ease .3s;
-
-    &.ct-over {
-      background: $error-text;
-    }
   }
 }
 
@@ -356,6 +332,11 @@ $titleDayHeight: 145px;
   box-shadow: $box-shadow;
   border-radius: 5px;
   margin-bottom: 6px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 24px 0 rgba(37, 38, 94, 0.15);
+  }
 }
 
 .ct-lock-icon {
@@ -422,7 +403,7 @@ $titleDayHeight: 145px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 18px;
+  font-size: 17px;
   color: $dark-blue;
   font-weight: 700;
 }
@@ -437,6 +418,7 @@ $titleDayHeight: 145px;
   font-size: 14px;
   line-height: 17px;
   color: $grid-text;
+  text-align: justify;
 }
 
 .ct-calendar-time-entry-period {
@@ -535,20 +517,13 @@ $titleDayHeight: 145px;
   position: absolute;
   right: 5px;
   top: 12px;
-  cursor: pointer;
   color: #cfd4e0;
-  border-radius: 2px;
   z-index: 1;
 
   .ct-calendar-task:hover &,
   &.ct-menu-opened {
     color: $main-grey;
-    background-color: $gray-page-background;
   }
-}
-
-.ct-menu-open-link:hover,
-.ct-menu-open-link.ct-menu-opened {
 }
 
 .ct-calendar-add-task {
@@ -824,15 +799,11 @@ $titleDayHeight: 145px;
   margin-top: 50px;
 }
 
-.ct-calendar-multiselect.ui-multiselect-panel {
+.ct-calendar-multiselect.ui-multiselect-panel > div {
   position: fixed;
-
-  > div {
-    position: fixed;
-    top: 127px !important;
-    right: 19px;
-    font-family: inherit;
-  }
+  top: 127px !important;
+  right: 19px;
+  font-family: inherit;
 }
 
 .ct-submenu {

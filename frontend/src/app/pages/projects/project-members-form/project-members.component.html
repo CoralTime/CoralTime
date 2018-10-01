@@ -56,8 +56,7 @@
                                    (change)="assignToPublic(userProject, select2.el.nativeElement)"
                                    [options]="projectRoles">
                         </ct-select>
-                        <span *ngIf="authUser.role > 1"
-                              class="ct-span-ellipse">{{userProject.role.name}}</span>
+                        <span *ngIf="authUser.role > 1">{{userProject.role.name}}</span>
                     </ng-template>
                 </p-column>
 

@@ -83,7 +83,7 @@ ct-navigation {
           color: $main-grey;
 
           &:hover {
-            color: $nav-link-hover;
+            color: $black;
             cursor: pointer;
           }
 
@@ -108,7 +108,7 @@ ct-navigation {
         }
 
         > a {
-          color: $nav-link-hover;
+          color: $black;
         }
       }
     }
@@ -239,7 +239,7 @@ ct-navigation {
         }
 
         a {
-          color: $nav-link-hover;
+          color: $black;
         }
       }
     }
