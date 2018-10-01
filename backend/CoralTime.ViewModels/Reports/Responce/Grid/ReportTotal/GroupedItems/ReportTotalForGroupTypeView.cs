@@ -14,6 +14,8 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems
             DateFormatId = dateFormatId;
         }
 
-        public ReportGroupByType GroupByType { get; }
+        public ReportGroupByType GroupByType { get; set; }
+
+        public int? WorkingHoursPerDay { get; set; }
     }
 }
