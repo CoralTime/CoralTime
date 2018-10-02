@@ -13,7 +13,6 @@ export class CalendarService {
 	fakeCalendarTaskHeight: number;
 	firstDayOfWeek: number;
 	isAltPressed: boolean = false;
-	isTimerActivated: boolean;
 	isTimeEntryFormOpened: boolean = false;
 	timeEntriesUpdated: EventEmitter<void> = new EventEmitter<void>();
 
@@ -35,7 +34,7 @@ export class CalendarService {
 		return this.http.get(this.constantService.timeEntriesApi, {params: params})
 			.map((res: TimeEntry[]) => {
 				let timeEntries = this.sortTimeEntries(res);
-				return timeEntries.map((x: any) => new TimeEntry(x));
+				return timeEntries.map((x: any) => new TimeEntry(x)).filter((x) => x.timeOptions.timeTimerStart <= 0)
 			});
 	}
 
@@ -57,6 +56,11 @@ export class CalendarService {
 		return this.calendar.find((day: CalendarDay) => {
 			return moment(day.date).toDate().getDate() === moment(timeEntryDate).toDate().getDate();
 		});
+	}
+
+	getTimer(): Observable<TimeEntry> {
+		return this.http.get(this.constantService.timeEntriesApi + 'TimeEntryTimer')
+			.map((res: Object) =>  res && new TimeEntry(res));
 	}
 
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {

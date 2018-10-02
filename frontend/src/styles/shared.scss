@@ -466,10 +466,10 @@ h5 {
   border-bottom: 1px dotted;
   line-height: 16px;
   margin-top: 10px;
-}
 
-.ct-see-more:hover {
-  color: $nav-menu-hover !important;
+  &:hover {
+    color: $nav-menu-hover;
+  }
 }
 
 .ct-top {

@@ -118,14 +118,14 @@
                     <ul class="ct-reports-chart-block">
                         <li *ngFor="let grid of reportsGridData?.groupedItems">
                             <ng-template [ngIf]="reportFilters.groupById === 2">
-                                <ct-user-pic [urlIcon]="grid.groupByType?.memberUrlIcon"></ct-user-pic>
+                                <ct-user-pic [urlIcon]="grid.groupByType.memberUrlIcon"></ct-user-pic>
                                 <div class="ct-reports-chart-title">{{grid.groupByType.memberName}}</div>
 
                                 <div class="ct-reports-chart-value">
-                                    <ct-chart [style.width]="getChartWidth(grid.groupByType.memberHoursPerDay || 8)"
-                                              [totalValue]="calcTotalActualTime(grid.groupByType?.memberHoursPerDay)"
+                                    <ct-chart [style.width]="getChartWidth(grid.groupByType.workingHoursPerDay)"
+                                              [totalValue]="calcTotalActualTime(grid.groupByType.workingHoursPerDay)"
                                               [value]="grid.timeTotalFor.timeActualTotalFor"></ct-chart>
-                                    <div class="ct-reports-chart-number" #w>
+                                    <div class="ct-reports-chart-number">
                                         {{calcTrackedHours(grid.timeTotalFor.timeActualTotalFor)}}h
                                     </div>
                                 </div>

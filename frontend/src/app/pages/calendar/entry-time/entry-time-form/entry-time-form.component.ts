@@ -1,10 +1,10 @@
 import {
-	Component, Input, OnInit, HostBinding, EventEmitter, Output, OnDestroy, ElementRef
+	Component, Input, OnInit, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Roles } from '../../../../core/auth/permissions';
-import { TimeEntry, DateUtils, CalendarDay, Time } from '../../../../models/calendar';
+import { TimeEntry, CalendarDay, Time } from '../../../../models/calendar';
 import { Project } from '../../../../models/project';
 import { Task } from '../../../../models/task';
 import { User } from '../../../../models/user';
@@ -23,7 +23,7 @@ import { numberToHex } from '../../../../shared/form/color-picker/color-picker.c
 	templateUrl: 'entry-time-form.component.html'
 })
 
-export class EntryTimeFormComponent implements OnInit, OnDestroy {
+export class EntryTimeFormComponent implements OnInit {
 	@HostBinding('class.ct-entry-time-form') addClass: boolean = true;
 
 	@Input() timeEntry: TimeEntry;
@@ -39,19 +39,15 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 	isFromToFormChanged: boolean;
 	isRequestLoading: boolean;
 	isTasksLoading: boolean;
-	isTimerShown: boolean;
 	projectList: Project[];
 	projectModel: Project;
 	taskList: Task[];
 	taskModel: Task;
-	ticks: number;
 	timeActual: Time;
 	timeEstimated: Time;
 	timeFrom: Time = new Time('00', '00');
 	timeTo: Time = new Time('00', '00');
 	timeMask = [/\d/, /\d/];
-	timerSubscription: Subscription;
-	timerValue: Time;
 	userInfo: User;
 
 	private isTasksLoaded: boolean = false;
@@ -84,11 +80,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 
 		this.loadProjects();
-
-		if (this.timeEntry.timeOptions.timeTimerStart && this.timeEntry.timeOptions.timeTimerStart !== -1) {
-			this.startTimer();
-		}
-
 		this.getFormHeight();
 	}
 
@@ -127,114 +118,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		this.getFormHeight();
 	}
 
-	// TIMER
-
-	canActivateTimer(): boolean {
-		return this.isTimerShown
-			|| (!this.calendarService.isTimerActivated
-				&& this.isToday()
-				&& !!this.currentTimeEntry.projectId
-				&& !!this.currentTimeEntry.taskTypesId);
-	}
-
-	isToday(): boolean {
-		return DateUtils.isToday(this.timeEntry.date);
-	}
-
-	startTimer(): void {
-		this.isTimerShown = true;
-
-		let timer = Observable.timer(0, 1000);
-		this.timerSubscription = timer.subscribe(() => {
-			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.currentTimeEntry.timeOptions.timeTimerStart
-				+ this.currentTimeEntry.timeValues.timeActual;
-			this.timerValue = this.convertSecondsToTimeFormat(this.ticks);
-		});
-	}
-
-	stopTimer(): void {
-		this.timerSubscription.unsubscribe();
-		this.isTimerShown = false;
-	}
-
-	toggleTimer(): void {
-		if (!this.isToday() || !this.isTimerValid()) {
-			return;
-		}
-		this.calendarService.isTimerActivated = true;
-		if (!this.currentTimeEntry.id) {
-			this.currentTimeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
-			this.currentTimeEntry.timeOptions.isFromToShow = false;
-			this.submit();
-			return;
-		}
-		this.saveTimerStatus().then((err: any) => {
-			if (err) {
-				return;
-			}
-			this.timerUpdated.emit();
-			if (this.isTimerShown) {
-				this.stopTimer();
-			} else {
-				this.closeFromToForm();
-				this.startTimer();
-			}
-			this.calendarService.isTimerActivated = this.isTimerShown;
-			this.projectsService.setDefaultProject(this.projectModel);
-			this.closeEntryTimeForm.emit();
-		});
-	}
-
-	private isTimerValid(): boolean {
-		if (!this.isCurrentTrackedTimeValid(true)) {
-			this.notificationService.danger('Total actual time should be less than 24 hours.');
-			return false;
-		}
-
-		return true;
-	}
-
-	private saveTimerStatus(): Promise<any> {
-		if (!this.isTimerShown) {
-			this.currentTimeEntry.timeOptions = {
-				isFromToShow: false,
-				timeTimerStart: DateUtils.getSecondsFromStartDay(true)
-			};
-			this.currentTimeEntry.timeValues.timeFrom = null;
-			this.currentTimeEntry.timeValues.timeTo = null;
-		} else {
-			this.currentTimeEntry.timeOptions = {
-				isFromToShow: true,
-				timeTimerStart: -1
-			};
-			let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
-			let roundTicks = (this.ticks < 60) ? 60 : this.roundTime(this.ticks);
-			this.currentTimeEntry.timeValues = {
-				timeActual: roundTicks,
-				timeEstimated: this.currentTimeEntry.timeValues.timeEstimated,
-				timeFrom: Math.max(secondsFromStartDay - roundTicks, 0),
-				timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
-			};
-			this.timeActual = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeActual);
-		}
-
-		return this.calendarService.Put(this.currentTimeEntry, this.currentTimeEntry.id.toString())
-			.toPromise().then(
-				() => {
-					this.saveTimeEntry(this.currentTimeEntry);
-					if (this.isTimerShown) {
-						this.notificationService.success('Timer has stopped.');
-					} else {
-						this.notificationService.success('Timer has been successfully created.');
-					}
-					return null;
-				},
-				error => {
-					this.notificationService.danger('Error changing Timer status.');
-					return error;
-				});
-	}
-
 	// FROM-TO FORM
 
 	openFromToForm(): void {
@@ -270,10 +153,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 
 		return new Time(timeTo.hours, timeTo.minutes);
-	}
-
-	private roundTime(time: number): number {
-		return time - time % 60;
 	}
 
 	// TRACKING TIME
@@ -321,7 +200,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			() => {
 				this.isRequestLoading = false;
 				this.saveTimeEntry(this.currentTimeEntry);
-				this.calendarService.isTimerActivated = this.isTimerShown;
 				this.projectsService.setDefaultProject(this.projectModel);
 
 				if (!this.currentTimeEntry.id) {
@@ -397,12 +275,6 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		}
 
 		return true;
-	}
-
-	ngOnDestroy() {
-		if (this.timerSubscription) {
-			this.timerSubscription.unsubscribe();
-		}
 	}
 
 	private getFormHeight(): void {
