@@ -109,7 +109,12 @@ namespace CoralTime
                 {
                     inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
                 }
+            })
+            .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.Converters.Insert(0, new TrimmingStringConverter());
             });
+
             SetupIdentity(services);
             services.AddSwaggerGen(c =>
             {
