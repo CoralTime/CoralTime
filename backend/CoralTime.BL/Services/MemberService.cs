@@ -409,7 +409,7 @@ namespace CoralTime.BL.Services
                     .ToList();
 
                 tokenToDeleteIds.ForEach(id => Uow.UserForgotPassRequestRepository.Delete(id));
-                Uow.Save();
+                Uow.Save(isAnonymousRequest: true);
 
                 return new ChangePasswordResultView { IsChangedPassword = true, Message = (int)Constants.Errors.None };
             }
