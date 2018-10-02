@@ -129,13 +129,13 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 
 	// TIMER
 
-	canActivateTimer(): boolean {
-		return this.isTimerShown
-			|| (!this.calendarService.isTimerActivated
-				&& this.isToday()
-				&& !!this.currentTimeEntry.projectId
-				&& !!this.currentTimeEntry.taskTypesId);
-	}
+	// canActivateTimer(): boolean {
+	// 	return this.isTimerShown
+	// 		|| (!this.calendarService.isTimerActivated
+	// 			&& this.isToday()
+	// 			&& !!this.currentTimeEntry.projectId
+	// 			&& !!this.currentTimeEntry.taskTypesId);
+	// }
 
 	isToday(): boolean {
 		return DateUtils.isToday(this.timeEntry.date);
@@ -161,7 +161,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 		if (!this.isToday() || !this.isTimerValid()) {
 			return;
 		}
-		this.calendarService.isTimerActivated = true;
+		// this.calendarService.isTimerActivated = true;
 		if (!this.currentTimeEntry.id) {
 			this.currentTimeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 			this.currentTimeEntry.timeOptions.isFromToShow = false;
@@ -179,7 +179,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 				this.closeFromToForm();
 				this.startTimer();
 			}
-			this.calendarService.isTimerActivated = this.isTimerShown;
+			// this.calendarService.isTimerActivated = this.isTimerShown;
 			this.projectsService.setDefaultProject(this.projectModel);
 			this.closeEntryTimeForm.emit();
 		});
@@ -321,7 +321,7 @@ export class EntryTimeFormComponent implements OnInit, OnDestroy {
 			() => {
 				this.isRequestLoading = false;
 				this.saveTimeEntry(this.currentTimeEntry);
-				this.calendarService.isTimerActivated = this.isTimerShown;
+				// this.calendarService.isTimerActivated = this.isTimerShown;
 				this.projectsService.setDefaultProject(this.projectModel);
 
 				if (!this.currentTimeEntry.id) {

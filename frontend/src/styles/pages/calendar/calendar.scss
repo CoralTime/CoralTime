@@ -730,7 +730,7 @@ $titleDayHeight: 145px;
   line-height: 44px;
   border-radius: 32px;
   box-sizing: border-box;
-  background: url(./assets/icons/play-circle.svg) no-repeat $gray-page-background;
+  background-color: $gray-page-background;
 
   .ct-hours-tracked,
   .ct-hours-planned {
@@ -758,6 +758,25 @@ $titleDayHeight: 145px;
     &:before {
       background: url(./assets/icons/time.svg) no-repeat center;
     }
+
+    &.ct-timer-activated {
+      .ct-divider {
+        animation: blink 1s infinite;
+      }
+
+      &:before {
+        background-image: url(./assets/icons/time-blue.svg);
+      }
+    }
+  }
+
+  @keyframes blink {
+    60%, 80% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 0;
+    }
   }
 
   .ct-hours-planned {
@@ -767,6 +786,18 @@ $titleDayHeight: 145px;
     &:before {
       background: url(./assets/icons/est-time.svg) no-repeat center;
     }
+  }
+
+  .ct-timer-play-icon, .ct-timer-pause-icon, .ct-timer-stop-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+  }
+
+  .ct-timer-stop-icon {
+    top: 5px;
+    left: -50px;
   }
 
   @media (max-width: $calendarTabletWidth) {

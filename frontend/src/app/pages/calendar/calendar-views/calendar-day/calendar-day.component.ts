@@ -46,8 +46,8 @@ export class CalendarDayComponent implements OnInit {
 		});
 
 		if (this.isToday(this.dayInfo.date)) {
-			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
-				timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
+			// this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
+			// 	timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
 		}
 		this.triggerAnimation();
 	}

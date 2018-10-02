@@ -282,7 +282,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	}
 
 	stopTimer(): void {
-		this.calendarService.isTimerActivated = false;
+		// this.calendarService.isTimerActivated = false;
 		this.saveTimerStatus().then((err: any) => {
 			if (err) {
 				return;
@@ -291,7 +291,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 			this.isTimerShown = false;
 			this.timerUpdated.emit();
 			this.timerSubscription.unsubscribe();
-			this.calendarService.isTimerActivated = this.isTimerShown;
+			// this.calendarService.isTimerActivated = this.isTimerShown;
 		});
 	}
 
@@ -299,7 +299,7 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.calendarService.Put(timeEntry, this.timeEntry.id.toString())
 			.toPromise().then(
 			() => {
-				this.calendarService.isTimerActivated = false;
+				// this.calendarService.isTimerActivated = false;
 				this.timeEntry.timeValues = timeEntry.timeValues;
 				this.timeEntry.timeOptions = timeEntry.timeOptions;
 				this.form.closeTimeEntryForm();
