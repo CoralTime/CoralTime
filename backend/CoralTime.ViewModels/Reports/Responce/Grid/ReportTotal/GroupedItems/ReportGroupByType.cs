@@ -35,5 +35,7 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems
 
         [JsonIgnore] public int ClientId { get; set; }
         public string ClientName { get; set; }
+
+        public int? WorkingHoursPerDay { get; set; }
     }
 }

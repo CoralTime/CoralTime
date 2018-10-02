@@ -87,8 +87,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 foreach (var item in report.GroupedItems)
                 {
-                    item.WorkingHoursPerDay = ReportMemberImpersonated.WorkingHoursPerDay;
-                    item.MemberUrlIcon = _imageService.GetUrlIcon(ReportMemberImpersonated.Id);
+                    item.GroupByType.WorkingHoursPerDay = ReportMemberImpersonated.WorkingHoursPerDay;
+                    item.GroupByType.MemberUrlIcon = _imageService.GetUrlIcon(ReportMemberImpersonated.Id);
                 }
             }
             else
