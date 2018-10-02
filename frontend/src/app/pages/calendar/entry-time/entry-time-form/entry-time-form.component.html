@@ -38,28 +38,6 @@
                  [canResize]="true"
                  [(ngModel)]="currentTimeEntry.description"
                  (ngModelChange)="descriptionOnChange()"></ct-textarea>
-    <!--<div class="ct-time-actions clearfix">-->
-    <!--<button class="ct-timer" type="button" mat-button-->
-    <!--[disabled]="!canActivateTimer()"-->
-    <!--(click)="toggleTimer()"-->
-    <!--[class.ct-timer-started]="isTimerShown">-->
-    <!--<div *ngIf="!isTimerShown">-->
-    <!--<span class="ct-actions-icon"></span>-->
-    <!--Run Timer-->
-    <!--</div>-->
-    <!--<div *ngIf="isTimerShown">-->
-    <!--<span class="ct-actions-icon"></span>-->
-    <!--<div class="ct-timer-container">-->
-    <!--<span>{{timerValue?.hours}}</span>-->
-    <!--<span class="ct-divider">:</span>-->
-    <!--<span>{{timerValue?.minutes}}</span>-->
-    <!--<span class="ct-divider">:</span>-->
-    <!--<span>{{timerValue?.seconds}}</span>-->
-    <!--</div>-->
-    <!--Stop Timer-->
-    <!--</div>-->
-    <!--</button>-->
-    <!--</div>-->
     <div class="ct-time-period">
         <button type="button" *ngIf="!currentTimeEntry.timeOptions.isFromToShow"
                 class="ct-show-input ct-from-to-form-button"

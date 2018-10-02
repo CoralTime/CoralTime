@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CalendarDay, DateUtils, Time, TimeEntry } from '../../../models/calendar';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CalendarService } from '../../../services/calendar.service';
@@ -20,7 +20,7 @@ import { Task } from '../../../models/task';
 	templateUrl: 'timer.component.html'
 })
 
-export class TimerComponent implements OnInit {
+export class TimerComponent implements OnInit, OnDestroy {
 	@Input() calendar: CalendarDay[];
 
 	defaultProject: Project;
@@ -51,12 +51,10 @@ export class TimerComponent implements OnInit {
 				memberId: this.impersonationService.impersonationId || this.authService.authUser.id
 			});
 
+			this.checkTimer();
 			if (this.isTimerActivated()) {
-				let timer = Observable.timer(0, 1000);
-				this.timerSubscription = timer.subscribe(() => {
-					this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
-						+ this.timeEntry.timeValues.timeActual;
-				})
+				console.log(1, this.timeEntry);
+				this.startTimerFront();
 			}
 
 			this.loadProjects();
@@ -64,12 +62,16 @@ export class TimerComponent implements OnInit {
 	}
 
 	isTimerActivated(): boolean {
-		return !!this.timeEntry && this.timeEntry.timeOptions.timeTimerStart > 0
+		return !!this.timeEntry
+			&& this.timeEntry.timeOptions.timeTimerStart !== 0
+			&& this.timeEntry.timeOptions.timeTimerStart !== -1
 			&& this.timeEntry.timeValues.timeActual === 0;
 	}
 
 	isTimerExist(): boolean {
-		return !!this.timeEntry && this.timeEntry.timeOptions.timeTimerStart > 0;
+		return !!this.timeEntry
+			&& this.timeEntry.timeOptions.timeTimerStart !== 0
+			&& this.timeEntry.timeOptions.timeTimerStart !== -1;
 	}
 
 	getTotalTime(timeField: string): Time {
@@ -100,6 +102,10 @@ export class TimerComponent implements OnInit {
 	// TIMER COMMANDS
 
 	startTimer(): void {
+		if (!this.isTimerValid()) {
+			return;
+		}
+
 		let promise: Promise<any>;
 		if (!this.timeEntry.id) {
 			promise = this.createTimer()
@@ -112,12 +118,17 @@ export class TimerComponent implements OnInit {
 				return;
 			}
 
-			let timer = Observable.timer(0, 1000);
-			this.timerSubscription = timer.subscribe(() => {
-				this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
-					+ this.timeEntry.timeValues.timeActual;
-			});
+			this.startTimerFront();
 		})
+	}
+
+	startTimerFront(): void {
+		let timer = Observable.timer(0, 1000);
+		this.timerSubscription = timer.subscribe(() => {
+			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
+				+ this.timeEntry.timeValues.timeActual;
+			this.checkTimer();
+		});
 	}
 
 	stopTimer(completely?: boolean): void {
@@ -133,9 +144,13 @@ export class TimerComponent implements OnInit {
 				return;
 			}
 
-			this.ticks = 0;
-			this.timerSubscription.unsubscribe();
+			this.stopTimerFront();
 		})
+	}
+
+	stopTimerFront(): void {
+		this.ticks = 0;
+		this.timerSubscription.unsubscribe();
 	}
 
 	// canActivateTimer(): boolean {
@@ -146,10 +161,6 @@ export class TimerComponent implements OnInit {
 	// }
 
 	toggleTimer(): void {
-		// if (!this.isTimerValid()) {
-		// 	return;
-		// }
-
 		if (!this.isTimerActivated()) {
 			this.startTimer();
 		} else {
@@ -158,19 +169,23 @@ export class TimerComponent implements OnInit {
 	}
 
 	private isTimerValid(): boolean {
-		// if (!this.isCurrentTrackedTimeValid(true)) {
-		// 	this.notificationService.danger('Total actual time should be less than 24 hours.');
-		// 	return false;
-		// }
+		if (!this.defaultProject) {
+			this.notificationService.danger('Default project doesn\'t exist.');
+			return false;
+		}
+		if (!this.defaultTask) {
+			this.notificationService.danger('Default task doesn\'t exist.');
+			return false;
+		}
+		if (!this.isCurrentTrackedTimeValid()) {
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
+			return false;
+		}
 
 		return true;
 	}
 
 	createTimer(): Promise<void> {
-		// if (!this.isSubmitDataValid()) {
-		// 	return;
-		// }
-
 		let timeEntry = this.createDefaultTimeEntry();
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 
@@ -253,16 +268,88 @@ export class TimerComponent implements OnInit {
 				});
 	}
 
-	// private isCurrentTrackedTimeValid(isStrongValidation?: boolean): boolean {
-	// 	this.setDayInfo();
-	// 	if (isStrongValidation) {
-	// 		return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
-	// 			+ this.currentTimeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
-	// 	} else {
-	// 		return this.totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
-	// 			+ this.currentTimeEntry.timeValues.timeActual <= MAX_TIMER_VALUE;
-	// 	}
-	// }
+	// CHECK TIMER
+
+	checkTimer(): void {
+		let errorMessage: string;
+
+		let isTimeEntryAvailable: boolean;
+		if (this.userInfo.isAdmin || this.timeEntry.isUserManagerOnProject) {
+			isTimeEntryAvailable = true;
+		} else {
+			isTimeEntryAvailable = !this.timeEntry.isLocked
+				&& this.timeEntry.isProjectActive && this.timeEntry.isTaskTypeActive;
+		}
+
+		if (!DateUtils.isToday(this.timeEntry.date)) {
+			errorMessage = 'Selected time period should be within one day. Timer has stopped.'
+		}
+		if (!errorMessage && !isTimeEntryAvailable) {
+			errorMessage = 'Timer has stopped, because Time Entry is locked.';
+		}
+		if (!errorMessage && !this.isTrackedTimeValid()) {
+			errorMessage = 'Total actual time should be less than 24 hours. Timer has stopped.';
+		}
+
+		if (errorMessage) {
+			this.autoStopTimer(errorMessage);
+			// this.changeTimerStatus(currentTimeEntry, errorMessage);
+		}
+	}
+
+	autoStopTimer(errorMessage: string): void {
+		let timeEntry = new TimeEntry(this.timeEntry);
+		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
+		let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
+		let timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
+			- new Date().getTimezoneOffset() * 60); // locale format
+
+		timeEntry.timeOptions = {
+			isFromToShow: true,
+			timeTimerStart: -1
+		};
+		timeEntry.timeValues = {
+			timeActual: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue),
+			timeEstimated: this.timeEntry.timeValues.timeEstimated,
+			timeFrom: timeTimerStart,
+			timeTo: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue) + timeTimerStart
+		};
+
+		this.calendarService.Put(timeEntry, timeEntry.id.toString())
+			.subscribe(() => {
+					this.notificationService.danger(errorMessage);
+					this.timeEntry = this.createDefaultTimeEntry();
+					this.calendarService.timeEntriesUpdated.emit();
+					this.stopTimerFront();
+					return null;
+				},
+				error => {
+					this.notificationService.danger('Error changing Timer status.');
+					return error;
+				});
+	}
+
+	private getDayInfo(): CalendarDay {
+		return this.calendarService.getDayInfoByDate(this.timeEntry.date);
+	}
+
+	private isTrackedTimeValid(): boolean {
+		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
+		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+	}
+
+	private limitTimerValue(time: number): number {
+		return Math.min(Math.max(time, 0), MAX_TIMER_VALUE);
+	}
+
+	ngOnDestroy() {
+		console.log(111);
+		if (this.timerSubscription) {
+			this.timerSubscription.unsubscribe();
+		}
+	}
+
+	// GENERAL
 
 	private createDefaultTimeEntry(): TimeEntry {
 		return new TimeEntry({
@@ -274,6 +361,14 @@ export class TimerComponent implements OnInit {
 			taskTypesId: this.defaultTask.id,
 			taskName: this.defaultTask.name
 		});
+	}
+
+	private isCurrentTrackedTimeValid(): boolean {
+		let dayInfo = this.calendarService.getDayInfoByDate(this.timeEntry.date);
+		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
+
+		return totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
+			+ this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
 	}
 
 	private loadProjects(): void {

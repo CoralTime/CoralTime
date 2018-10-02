@@ -244,18 +244,6 @@ $titleDayHeight: 145px;
   }
 }
 
-.ct-calendar-task-stop-timer {
-  bottom: 10px;
-  width: 88px;
-  height: 36px;
-  background: transparent;
-  z-index: 2;
-  position: absolute;
-  overflow: hidden;
-  border-radius: 18px;
-  left: 15px;
-}
-
 .ct-calendar-date {
   height: 44px;
   line-height: 44px;
@@ -434,82 +422,6 @@ $titleDayHeight: 145px;
 
   > div {
     font-size: 14px;
-  }
-}
-
-.ct-clock {
-  top: 7px;
-  left: 9px;
-  position: absolute;
-  display: block;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #fff;
-  border-radius: 30px;
-
-  &:before {
-    content: "";
-    margin-left: 9px;
-    margin-top: -5px;
-    width: 2px;
-    height: 5px;
-    display: block;
-    background: #fff;
-  }
-
-  &:after {
-    transform: rotate(30deg);
-    content: "";
-    margin-left: 14px;
-    margin-top: -3px;
-    width: 2px;
-    height: 3px;
-    display: block;
-    background: #fff;
-  }
-
-  @keyframes ClockRotate {
-    0% {
-      transform: rotate(0deg)
-    }
-    to {
-      transform: rotate(359deg)
-    }
-  }
-
-  i {
-    position: absolute;
-    background: url(./assets/icons/tick.png) no-repeat;
-    background-size: 4px 13px;
-    display: block;
-    width: 4px;
-    height: 13px;
-    top: 0;
-    left: 7px;
-    -webkit-transform-origin: 2px 9px;
-    transform-origin: 2px 9px;
-    animation: ClockRotate 10s linear;
-    animation-iteration-count: infinite;
-  }
-}
-
-.ct-timer-block {
-  position: relative;
-  display: inline-block;
-  padding: 8px 8px 8px 33px;
-  background-color: $main-blue;
-  border-radius: 20px;
-  line-height: 19px;
-
-  span {
-    display: inline-block;
-    width: 47px;
-    text-align: center;
-    font-size: 16px;
-    font-family: inherit;
-    color: #fff;
-    position: relative;
-    top: 1px;
   }
 }
 

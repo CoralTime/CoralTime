@@ -530,14 +530,14 @@ export class ReportsComponent implements OnInit {
 	}
 
 	getChartWidth(value: number): string {
-		return value * this.chartWidthParam + 'px';
+		return (value || 8) * this.chartWidthParam + 'px';
 	}
 
 	private calcMaxTotalValue(isGroupByUser: boolean): number {
 		let arr: number[];
 
 		if (isGroupByUser) {
-			arr = this.reportsGridData.groupedItems.map(x => x.groupByType.memberHoursPerDay || 8);
+			arr = this.reportsGridData.groupedItems.map(x => x.groupByType.workingHoursPerDay || 8);
 		} else {
 			arr = this.reportsGridData.groupedItems.map(x => x.timeTotalFor.timeActualTotalFor)
 		}
@@ -548,7 +548,7 @@ export class ReportsComponent implements OnInit {
 	private calcNumberWidth(maxTotalTrackedTime: number, isGroupByUser: boolean) {
 		if (isGroupByUser) {
 			const totalTrackedTimeArr = this.reportsGridData.groupedItems
-				.filter(x => (x.groupByType.memberHoursPerDay || 8) === maxTotalTrackedTime)
+				.filter(x => (x.groupByType.workingHoursPerDay || 8) === maxTotalTrackedTime)
 				.map(x => x.timeTotalFor.timeActualTotalFor);
 
 			maxTotalTrackedTime = Math.max.apply(Math, totalTrackedTimeArr);

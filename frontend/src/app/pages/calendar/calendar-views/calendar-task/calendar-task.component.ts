@@ -70,9 +70,9 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		this.selectedDate = this.timeEntry.date;
 		this.isUserManagerOnProject = this.timeEntry.isUserManagerOnProject;
 
-		if (this.timeEntry.timeOptions.timeTimerStart && this.timeEntry.timeOptions.timeTimerStart !== -1) {
-			this.startTimer();
-		}
+		// if (this.timeEntry.timeOptions.timeTimerStart && this.timeEntry.timeOptions.timeTimerStart !== -1) {
+		// 	this.startTimer();
+		// }
 
 		this.checkTimeEntryStatus();
 		this.getDayInfo();
