@@ -230,8 +230,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private List<ReportsSettingsView> GetCustomQueries()
         {
             var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(ReportMemberImpersonated.Id).Where(x => x.QueryName != null);
-
-            return customQueries.Select(x => x.GetView(GetDayOfWeek(ReportMemberImpersonated.WeekStart))).ToList();
+            var companyReportStartOfWeek = (Constants.WeekStart)int.Parse(_config["CompanyReportStartOfWeek"]);
+            var cq = customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek))).ToList();
+            return customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek))).ToList();
         }
 
         private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
@@ -260,14 +261,13 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         
         private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
         {
-            var companyReportStartOfWeek = (Constants.WeekStart) int.Parse(_config["CompanyReportStartOfWeek"]); 
-            var memberDayOfWeekStart = GetDayOfWeek(companyReportStartOfWeek); 
+            var companyReportStratOfWeek = GetCompanyReportStartOfWeek();
             var today = CommonHelpers.GetPeriod(DatesStaticIds.Today);
             var yesterday = CommonHelpers.GetPeriod(DatesStaticIds.Yesterday);
-            var thisWeek = CommonHelpers.GetPeriod(DatesStaticIds.ThisWeek, memberDayOfWeekStart);
+            var thisWeek = CommonHelpers.GetPeriod(DatesStaticIds.ThisWeek, companyReportStratOfWeek);
             var thisMonth = CommonHelpers.GetPeriod(DatesStaticIds.ThisMonth);
             var thisYear = CommonHelpers.GetPeriod(DatesStaticIds.ThisYear);
-            var lastWeek = CommonHelpers.GetPeriod(DatesStaticIds.LastWeek, memberDayOfWeekStart);
+            var lastWeek = CommonHelpers.GetPeriod(DatesStaticIds.LastWeek, companyReportStratOfWeek);
             var lastMonth = CommonHelpers.GetPeriod(DatesStaticIds.LastMonth);
             var lastYear = CommonHelpers.GetPeriod(DatesStaticIds.LastYear);
             
@@ -345,7 +345,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var reportsSettings = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(ReportMemberImpersonated.Id).FirstOrDefault(x => x.IsCurrentQuery);
 
-            return reportsSettings?.GetView(GetDayOfWeek(ReportMemberImpersonated.WeekStart));
+            return reportsSettings?.GetView(GetCompanyReportStartOfWeek());
         }
 
         private ReportsSettingsView CreateQueryWithDefaultValues()
@@ -362,9 +362,15 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             Uow.Save();
             Uow.ReportsSettingsRepository.LinkedCacheClear();
 
-            reportsSettingsView = reportsSettings.GetView(GetDayOfWeek(ReportMemberImpersonated.WeekStart));
+            reportsSettingsView = reportsSettings.GetView(GetCompanyReportStartOfWeek());
 
             return reportsSettingsView;
+        }
+
+        private DayOfWeek GetCompanyReportStartOfWeek()
+        {
+            var companyReportStartOfWeek = (Constants.WeekStart)int.Parse(_config["CompanyReportStartOfWeek"]);
+            return GetDayOfWeek(companyReportStartOfWeek);
         }
     }
 }

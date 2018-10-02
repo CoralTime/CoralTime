@@ -15,7 +15,5 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems
         }
 
         public ReportGroupByType GroupByType { get; set; }
-
-        public int? WorkingHoursPerDay { get; set; }
     }
 }
