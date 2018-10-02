@@ -137,13 +137,23 @@ namespace CoralTime.DAL.Repositories
 
         #endregion
 
-        public int Save()
+        public int Save(bool isAnonymousRequest = false)
         {
             try
             {
-                var actions = CreateMemberActions();
+                var actions = new List<MemberAction>();
+                if (!isAnonymousRequest)
+                {
+                    actions = CreateMemberActions();
+                }
+                
                 var changesCount = AppDbContext.SaveChanges();
-                SaveMemberActions(actions);
+
+                if (actions.Count>0)
+                {
+                    SaveMemberActions(actions);
+                }
+
                 return changesCount;
             }
             catch (DbUpdateConcurrencyException e)
@@ -164,7 +174,7 @@ namespace CoralTime.DAL.Repositories
 
         #region Save MemberActions
 
-        private IEnumerable<MemberAction> CreateMemberActions()
+        private List<MemberAction> CreateMemberActions()
         {
             var jsonSettings = new JsonSerializerSettings()
             {
