@@ -1,19 +1,20 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { CalendarDay, DateUtils, Time, TimeEntry } from '../../../models/calendar';
-import { AuthService } from '../../../core/auth/auth.service';
-import { CalendarService } from '../../../services/calendar.service';
-import { ImpersonationService } from '../../../services/impersonation.service';
-import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { NotificationService } from '../../../core/notification.service';
-import { MAX_TIMER_VALUE } from '../calendar-views/calendar-task/calendar-task.component';
-import { User } from '../../../models/user';
-import { ArrayUtils } from '../../../core/object-utils';
-import { CalendarProjectsService } from '../calendar-projects.service';
-import { TasksService } from '../../../services/tasks.service';
+import { CalendarDay, DateUtils, Time, TimeEntry } from '../../../models/calendar';
 import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
+import { User } from '../../../models/user';
+import { AuthService } from '../../../core/auth/auth.service';
+import { CalendarService } from '../../../services/calendar.service';
+import { CalendarProjectsService } from '../calendar-projects.service';
+import { ImpersonationService } from '../../../services/impersonation.service';
+import { NotificationService } from '../../../core/notification.service';
+import { TasksService } from '../../../services/tasks.service';
+import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
+import { ArrayUtils } from '../../../core/object-utils';
+
+export const MAX_TIMER_VALUE = 86399;
 
 @Component({
 	selector: 'ct-timer',
@@ -28,6 +29,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	timeEntry: TimeEntry;
 	ticks: number = 0;
 	timerSubscription: Subscription;
+	timerValue: Time;
 	userInfo: User;
 
 	constructor(private authService: AuthService,
@@ -52,8 +54,10 @@ export class TimerComponent implements OnInit, OnDestroy {
 			});
 
 			this.checkTimer();
+			if (this.isTimerExist()) {
+				this.timerValue = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
+			}
 			if (this.isTimerActivated()) {
-				console.log(1, this.timeEntry);
 				this.startTimerFront();
 			}
 
@@ -74,18 +78,32 @@ export class TimerComponent implements OnInit, OnDestroy {
 			&& this.timeEntry.timeOptions.timeTimerStart !== -1;
 	}
 
-	getTotalTime(timeField: string): Time {
+	getButtonTitle(): string {
+		if (!this.isTimerExist()) {
+			return 'Start timer with default project and default task'
+		}
+		if (this.isTimerActivated()) {
+			return 'Pause timer'
+		}
+		if (!this.isTimerActivated()) {
+			return 'Resume timer'
+		}
+	}
+
+	getTotalTime(timeField: string): string {
 		let time = 0;
 
 		this.calendar.forEach((day: CalendarDay) => {
 			time += this.calendarService.getTotalTimeForDay(day, timeField);
 		});
 
-		if (this.timeEntry && timeField === 'timeActual') {
-			time += this.timeEntry.timeValues.timeActual + this.ticks;
-		}
+		return this.convertSecondsToStringFormat(time);
+	}
 
-		return this.convertSecondsToTimeFormat(time);
+	private convertSecondsToStringFormat(time: number): string {
+		let h = Math.floor(time / 3600 >> 0);
+		let m = Math.floor(time / 60 >> 0) - h * 60;
+		return ('00' + h).slice(-2) + ':' + ('00' + m).slice(-2);
 	}
 
 	private convertSecondsToTimeFormat(time: number): Time {
@@ -127,6 +145,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 		this.timerSubscription = timer.subscribe(() => {
 			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
 				+ this.timeEntry.timeValues.timeActual;
+			this.timerValue = this.convertSecondsToTimeFormat(this.ticks);
 			this.checkTimer();
 		});
 	}
@@ -144,21 +163,15 @@ export class TimerComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			this.stopTimerFront();
+			this.stopTimerFront(completely);
 		})
 	}
 
-	stopTimerFront(): void {
+	stopTimerFront(completely?: boolean): void {
 		this.ticks = 0;
 		this.timerSubscription.unsubscribe();
+		this.timerValue = this.convertSecondsToTimeFormat(completely ? 0 : this.timeEntry.timeValues.timeActual);
 	}
-
-	// canActivateTimer(): boolean {
-	// 	return this.isTimerShown
-	// 		|| (!this.calendarService.isTimerActivated
-	// 			&& !!this.currentTimeEntry.projectId
-	// 			&& !!this.currentTimeEntry.taskTypesId);
-	// }
 
 	toggleTimer(): void {
 		if (!this.isTimerActivated()) {
@@ -166,23 +179,6 @@ export class TimerComponent implements OnInit, OnDestroy {
 		} else {
 			this.stopTimer();
 		}
-	}
-
-	private isTimerValid(): boolean {
-		if (!this.defaultProject) {
-			this.notificationService.danger('Default project doesn\'t exist.');
-			return false;
-		}
-		if (!this.defaultTask) {
-			this.notificationService.danger('Default task doesn\'t exist.');
-			return false;
-		}
-		if (!this.isCurrentTrackedTimeValid()) {
-			this.notificationService.danger('Total actual time should be less than 24 hours.');
-			return false;
-		}
-
-		return true;
 	}
 
 	createTimer(): Promise<void> {
@@ -243,7 +239,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 		timeEntry.timeOptions = {
 			isFromToShow: true,
-			timeTimerStart: -1
+			timeTimerStart: 0
 		};
 		let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
 		let roundTicks = (this.ticks < 60) ? 60 : this.roundTime(this.ticks);
@@ -293,24 +289,23 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 		if (errorMessage) {
 			this.autoStopTimer(errorMessage);
-			// this.changeTimerStatus(currentTimeEntry, errorMessage);
 		}
 	}
 
 	autoStopTimer(errorMessage: string): void {
 		let timeEntry = new TimeEntry(this.timeEntry);
 		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
-		let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
+		let finalTimerValue = this.limitTimerValue(MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual));
 		let timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
 			- new Date().getTimezoneOffset() * 60); // locale format
 
 		timeEntry.timeOptions = {
 			isFromToShow: true,
-			timeTimerStart: -1
+			timeTimerStart: 0
 		};
 		timeEntry.timeValues = {
 			timeActual: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue),
-			timeEstimated: this.timeEntry.timeValues.timeEstimated,
+			timeEstimated: 0,
 			timeFrom: timeTimerStart,
 			timeTo: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue) + timeTimerStart
 		};
@@ -333,6 +328,23 @@ export class TimerComponent implements OnInit, OnDestroy {
 		return this.calendarService.getDayInfoByDate(this.timeEntry.date);
 	}
 
+	private isTimerValid(): boolean {
+		if (!this.defaultProject) {
+			this.notificationService.danger('Default project doesn\'t exist.');
+			return false;
+		}
+		if (!this.defaultTask) {
+			this.notificationService.danger('Default task doesn\'t exist.');
+			return false;
+		}
+		if (!this.isCurrentTrackedTimeValid()) {
+			this.notificationService.danger('Total actual time should be less than 24 hours.');
+			return false;
+		}
+
+		return true;
+	}
+
 	private isTrackedTimeValid(): boolean {
 		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
 		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
@@ -343,7 +355,6 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		console.log(111);
 		if (this.timerSubscription) {
 			this.timerSubscription.unsubscribe();
 		}
@@ -367,8 +378,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 		let dayInfo = this.calendarService.getDayInfoByDate(this.timeEntry.date);
 		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
 
-		return totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual
-			+ this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
+		return totalTrackedTimeForDay + (this.ticks || this.timeEntry.timeValues.timeActual) < MAX_TIMER_VALUE;
 	}
 
 	private loadProjects(): void {

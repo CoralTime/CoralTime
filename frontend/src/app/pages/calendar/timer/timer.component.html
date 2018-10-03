@@ -1,12 +1,15 @@
 <div class="ct-total-tracked-time">
     <span [class.ct-timer-play-icon]="!isTimerActivated()"
           [class.ct-timer-pause-icon]="isTimerActivated()"
+          [title]="getButtonTitle()"
           (click)="toggleTimer()"></span>
-    <span *ngIf="isTimerExist()" class="ct-timer-stop-icon"
+    <span *ngIf="isTimerExist()" class="ct-timer-stop-icon" title="Stop timer"
           (click)="stopTimer(true)"></span>
-    <span class="ct-hours-tracked"
+    <span *ngIf="isTimerExist()" class="ct-hours-tracked ct-timer-exist"
+          title="Timer value"
           [class.ct-timer-activated]="isTimerActivated()">
-        {{getTotalTime('timeActual')?.hours}}<i class="ct-divider">:</i>{{getTotalTime('timeActual')?.minutes}}
+        {{timerValue?.hours}}<i class="ct-divider">:</i>{{timerValue?.minutes}}
     </span>
-    <span class="ct-hours-planned">{{getTotalTime('timeEstimated').hours}}:{{getTotalTime('timeEstimated').minutes}}</span>
+    <span *ngIf="!isTimerExist()" class="ct-hours-tracked" title="Total tracked time">{{getTotalTime('timeActual')}}</span>
+    <span class="ct-hours-planned" title="Total planned time">{{getTotalTime('timeEstimated')}}</span>
 </div>
