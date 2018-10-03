@@ -210,6 +210,19 @@ tr:hover {
     border-bottom: 8px solid transparent;
     border-radius: 2px;
   }
+  
+  @media (max-width: $calendarTabletWidth) {
+    width: 36px;
+    height: 36px;
+
+    &:before {
+      left: 15px;
+      top: 11px;
+      border-left-width: 10px;
+      border-top-width: 7px;
+      border-bottom-width: 7px;
+    }
+  }
 }
 
 .ct-timer-pause-icon {
@@ -222,6 +235,7 @@ tr:hover {
 
   &:before, &:after {
     position: absolute;
+    top: 14px;
     content: '';
     width: 5px;
     height: 16px;
@@ -231,12 +245,25 @@ tr:hover {
 
   &:before {
     left: 15px;
-    top: 14px;
   }
 
   &:after {
     right: 15px;
-    top: 14px;
+  }
+
+  @media (max-width: $calendarTabletWidth) {
+    width: 36px;
+    height: 36px;
+
+    &:before {
+      left: 11px;
+      top: 10px;
+    }
+
+    &:after {
+      right: 11px;
+      top: 10px;
+    }
   }
 }
 

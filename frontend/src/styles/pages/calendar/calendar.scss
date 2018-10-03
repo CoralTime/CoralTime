@@ -671,13 +671,15 @@ $titleDayHeight: 145px;
       background: url(./assets/icons/time.svg) no-repeat center;
     }
 
+    &.ct-timer-exist {
+      &:before {
+        background-image: url(./assets/icons/time-blue.svg);
+      }
+    }
+
     &.ct-timer-activated {
       .ct-divider {
         animation: blink 1s infinite;
-      }
-
-      &:before {
-        background-image: url(./assets/icons/time-blue.svg);
       }
     }
   }
@@ -726,6 +728,18 @@ $titleDayHeight: 145px;
         top: 9px;
         left: -22px;
       }
+    }
+
+    .ct-timer-stop-icon {
+      top: 1px;
+      left: -42px;
+    }
+  }
+
+  @media (min-width: $calendarPhoneWidth) and (max-width: $calendarTabletWidth) {
+    .ct-timer-stop-icon {
+      left: auto;
+      right: -42px;
     }
   }
 }

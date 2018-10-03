@@ -15,8 +15,8 @@ import { CalendarService } from '../../../../services/calendar.service';
 import { ImpersonationService } from '../../../../services/impersonation.service';
 import { TasksService } from '../../../../services/tasks.service';
 import { CalendarProjectsService } from '../../calendar-projects.service';
-import { MAX_TIMER_VALUE } from '../../calendar-views/calendar-task/calendar-task.component';
 import { numberToHex } from '../../../../shared/form/color-picker/color-picker.component';
+import { MAX_TIMER_VALUE } from '../../timer/timer.component';
 
 @Component({
 	selector: 'ct-entry-time-form',
@@ -29,7 +29,6 @@ export class EntryTimeFormComponent implements OnInit {
 	@Input() timeEntry: TimeEntry;
 	@Output() closeEntryTimeForm: EventEmitter<void> = new EventEmitter<void>();
 	@Output() deleted: EventEmitter<void> = new EventEmitter<void>();
-	@Output() timerUpdated: EventEmitter<void> = new EventEmitter<void>();
 
 	currentTimeEntry: TimeEntry;
 	formHeight: number;

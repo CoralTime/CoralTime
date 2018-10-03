@@ -41,7 +41,6 @@
     <div class="ct-time-period">
         <button type="button" *ngIf="!currentTimeEntry.timeOptions.isFromToShow"
                 class="ct-show-input ct-from-to-form-button"
-                [disabled]="isTimerShown"
                 (click)="openFromToForm()">From & To
         </button>
         <div *ngIf="currentTimeEntry.timeOptions.isFromToShow" class="ct-from-to-form">

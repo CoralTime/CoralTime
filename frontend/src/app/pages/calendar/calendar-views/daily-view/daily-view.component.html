@@ -1,8 +1,5 @@
-<div class="ct-total-tracked-time">
-    <span class="ct-hours-tracked">{{getTotalTime(projectTimeEntries)}}</span>
-    <span class="ct-hours-planned">{{getTotalEstimatedTime(projectTimeEntries)}}</span>
-</div>
-<div class="ct-calendar clearfix">
+<ct-timer [calendar]="[dayInfo]"></ct-timer>
+<div class="ct-calendar">
     <ct-calendar-day class="ct-calendar-day" #calendarDay
                      [class.ct-calendar-day-active]="false"
                      [@slideCalendar]="animationState"
