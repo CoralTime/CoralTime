@@ -1,26 +1,26 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { ReportsService, } from '../../services/reposts.service';
-import {
-	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn, DateStatic
-} from '../../models/reports';
-import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
-import { ArrayUtils } from '../../core/object-utils';
-import { AuthService } from '../../core/auth/auth.service';
-import { DateUtils } from '../../models/calendar';
-import { DatePeriod, DateResponse, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
-import { User } from '../../models/user';
-import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
-import { NotificationService } from '../../core/notification.service';
-import { ImpersonationService } from '../../services/impersonation.service';
-import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
-import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
-import { ReportGridData } from './reports-data/reports-grid.component';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { ReportsService, } from '../../services/reposts.service';
+import { DateUtils } from '../../models/calendar';
+import {
+	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
+	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn
+} from '../../models/reports';
+import { User } from '../../models/user';
+import { AuthService } from '../../core/auth/auth.service';
+import { ImpersonationService } from '../../services/impersonation.service';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
+import { NotificationService } from '../../core/notification.service';
+import { DatePeriod, DateResponse, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
+import { ArrayUtils } from '../../core/object-utils';
+import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
+import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
+import { ReportGridData } from './reports-data/reports-grid.component';
+import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
+import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 
 const ROWS_TOTAL_NUMBER = 50;
 
@@ -75,6 +75,7 @@ export class ReportsComponent implements OnInit {
 	userInfo: User;
 
 	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
+	@ViewChild('slimScroll') slimScroll: any;
 
 	private chartWidthParam: number;
 	private numberOfWorkingDays: number;
@@ -107,7 +108,14 @@ export class ReportsComponent implements OnInit {
 			.subscribe((reportFilters: ReportDropdowns) => {
 				this.setReportDropdowns(reportFilters);
 				this.getReportGrid(!!this.reportFilters.queryId);
-			})
+				this.onResize();
+			});
+	}
+
+	onResize(): void {
+		setTimeout(() => {
+			this.slimScroll.getBarHeight();
+		}, 0);
 	}
 
 	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
