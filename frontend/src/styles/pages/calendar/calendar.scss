@@ -702,11 +702,17 @@ $titleDayHeight: 145px;
     }
   }
 
-  .ct-timer-play-icon, .ct-timer-pause-icon, .ct-timer-stop-icon {
+  .ct-round-button {
     position: absolute;
     left: 0;
     top: 0;
     cursor: pointer;
+    border: none;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 1px 1px $main-blue;
+    }
   }
 
   .ct-timer-stop-icon {
