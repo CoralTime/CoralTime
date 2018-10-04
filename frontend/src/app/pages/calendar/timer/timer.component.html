@@ -1,10 +1,14 @@
 <div class="ct-total-tracked-time">
-    <span [class.ct-timer-play-icon]="!isTimerActivated()"
-          [class.ct-timer-pause-icon]="isTimerActivated()"
-          [title]="getButtonTitle()"
-          (click)="toggleTimer()"></span>
-    <span *ngIf="isTimerExist()" class="ct-timer-stop-icon" title="Stop timer"
-          (click)="stopTimer(true)"></span>
+    <button class="ct-round-button"
+            [class.ct-timer-play-icon]="!isTimerActivated()"
+            [class.ct-timer-pause-icon]="isTimerActivated()"
+            [class.ct-loading]="isTimerLoading"
+            [title]="getButtonTitle()"
+            (click)="toggleTimer()"></button>
+    <button *ngIf="isTimerExist()" title="Stop timer"
+            class="ct-round-button ct-timer-stop-icon"
+            [class.ct-loading]="isTimerLoading2"
+            (click)="stopTimer(true)"></button>
     <span *ngIf="isTimerExist()" class="ct-hours-tracked ct-timer-exist"
           title="Timer value"
           [class.ct-timer-activated]="isTimerActivated()">

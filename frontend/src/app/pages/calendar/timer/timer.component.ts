@@ -26,6 +26,8 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 	defaultProject: Project;
 	defaultTask: Task;
+	isTimerLoading: boolean;
+	isTimerLoading2: boolean;
 	timeEntry: TimeEntry;
 	ticks: number = 0;
 	timerSubscription: Subscription;
@@ -185,14 +187,19 @@ export class TimerComponent implements OnInit, OnDestroy {
 		let timeEntry = this.createDefaultTimeEntry();
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 
+		this.isTimerLoading = true;
 		return this.calendarService.Post(timeEntry)
 			.toPromise().then(
 				(timeEntry) => {
+					this.isTimerLoading = false;
 					this.timeEntry = new TimeEntry(timeEntry);
 					this.notificationService.success('Timer has been successfully created.');
+					return null;
 				},
-				() => {
+				error => {
+					this.isTimerLoading = false;
 					this.notificationService.danger('Error creating Timer.');
+					return error;
 				});
 	}
 
@@ -202,9 +209,11 @@ export class TimerComponent implements OnInit, OnDestroy {
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeValues.timeActual;
 		timeEntry.timeValues.timeActual = 0;
 
+		this.isTimerLoading = true;
 		return this.calendarService.Put(timeEntry, timeEntry.id.toString())
 			.toPromise().then(
 				() => {
+					this.isTimerLoading = false;
 					this.notificationService.success('Timer has been resumed.');
 					this.saveTimeEntry(timeEntry);
 					return null;
@@ -221,14 +230,17 @@ export class TimerComponent implements OnInit, OnDestroy {
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 		timeEntry.timeValues.timeActual = this.ticks;
 
+		this.isTimerLoading = true;
 		return this.calendarService.Put(timeEntry, timeEntry.id.toString())
 			.toPromise().then(
 				() => {
+					this.isTimerLoading = false;
 					this.notificationService.success('Timer has paused.');
 					this.saveTimeEntry(timeEntry);
 					return null;
 				},
 				error => {
+					this.isTimerLoading = false;
 					this.notificationService.danger('Error changing Timer status.');
 					return error;
 				});
@@ -250,15 +262,18 @@ export class TimerComponent implements OnInit, OnDestroy {
 			timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
 		};
 
+		this.isTimerLoading2 = true;
 		return this.calendarService.Put(timeEntry, timeEntry.id.toString())
 			.toPromise().then(
 				() => {
+					this.isTimerLoading2 = false;
 					this.notificationService.success('Timer has stopped.');
 					this.timeEntry = this.createDefaultTimeEntry();
 					this.calendarService.timeEntriesUpdated.emit();
 					return null;
 				},
 				error => {
+					this.isTimerLoading2 = false;
 					this.notificationService.danger('Error changing Timer status.');
 					return error;
 				});

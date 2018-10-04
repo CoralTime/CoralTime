@@ -1,10 +1,10 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 import { TimeEntry, CalendarDay, DateUtils } from '../models/calendar';
 import { ArrayUtils } from '../core/object-utils';
 import { ConstantService } from '../core/constant.service';
-import * as moment from 'moment';
 
 @Injectable()
 export class CalendarService {
@@ -44,12 +44,12 @@ export class CalendarService {
 
 	Post(obj: TimeEntry): Observable<TimeEntry> {
 		return this.http.post(this.constantService.timeEntriesApi, obj)
-			.map((res: Object) =>  new TimeEntry(res));
+			.map((res: Object) => new TimeEntry(res));
 	}
 
 	Put(obj: TimeEntry, id: string): Observable<TimeEntry> {
 		return this.http.put(this.constantService.timeEntriesApi + id, obj)
-			.map((res: Object) =>  new TimeEntry(res));
+			.map((res: Object) => new TimeEntry(res));
 	}
 
 	getDayInfoByDate(timeEntryDate: string): CalendarDay {
@@ -60,7 +60,7 @@ export class CalendarService {
 
 	getTimer(): Observable<TimeEntry> {
 		return this.http.get(this.constantService.timeEntriesApi + 'TimeEntryTimer')
-			.map((res: Object) =>  res && new TimeEntry(res));
+			.map((res: Object) => res && new TimeEntry(res));
 	}
 
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {
@@ -79,6 +79,11 @@ export class CalendarService {
 		return DateUtils.formatDateToString(new Date(dayCorrection));
 	}
 
+	private moveDate(date: string, dif: number): string {
+		let newDate = moment(date).toDate();
+		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
+	}
+
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {
 		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === true);
 		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === false);
@@ -87,10 +92,5 @@ export class CalendarService {
 		ArrayUtils.sortByField(otherTimeEntries, 'id');
 
 		return [...arrayWithFromToPeriod, ...otherTimeEntries];
-	}
-
-	private moveDate(date: string, dif: number): string {
-		let newDate = moment(date).toDate();
-		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
 	}
 }
