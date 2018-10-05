@@ -30,9 +30,11 @@ export class TimerComponent implements OnInit, OnDestroy {
 	isTimerLoading2: boolean;
 	timeEntry: TimeEntry;
 	ticks: number = 0;
-	timerSubscription: Subscription;
 	timerValue: Time;
 	userInfo: User;
+
+	private subscriptionImpersonation: Subscription;
+	private timerSubscription: Subscription;
 
 	constructor(private authService: AuthService,
 	            private calendarService: CalendarService,
@@ -49,22 +51,31 @@ export class TimerComponent implements OnInit, OnDestroy {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
 
-		this.calendarService.getTimer().subscribe((res) => {
-			this.timeEntry = res || new TimeEntry({
-				date: DateUtils.formatDateToString(new Date()),
-				memberId: this.impersonationService.impersonationId || this.authService.authUser.id
-			});
-
-			this.checkTimer();
-			if (this.isTimerExist()) {
-				this.timerValue = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
+		this.initTimer();
+		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
+			if (this.authService.isLoggedIn()) {
+				this.initTimer();
 			}
-			if (this.isTimerActivated()) {
-				this.startTimerFront();
-			}
-
-			this.loadProjects();
 		});
+	}
+
+	initTimer(): void {
+		this.calendarService.getTimer().subscribe((res) => {
+				this.timeEntry = res || new TimeEntry({
+					date: DateUtils.formatDateToString(new Date()),
+					memberId: this.impersonationService.impersonationId || this.authService.authUser.id
+				});
+
+				if (this.isTimerExist()) {
+					this.timerValue = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
+				}
+				if (this.isTimerActivated()) {
+					this.startTimerFront();
+				}
+
+				this.checkTimer();
+				this.loadProjects();
+			});
 	}
 
 	isTimerActivated(): boolean {
@@ -371,6 +382,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		if (this.timerSubscription) {
+			this.subscriptionImpersonation.unsubscribe();
 			this.timerSubscription.unsubscribe();
 		}
 	}

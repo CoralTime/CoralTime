@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { LoadingMaskService } from './loading-mask.service';
+import { ImpersonationService } from '../../services/impersonation.service';
 
 @Component({
 	selector: 'ct-loading-mask',
@@ -10,7 +11,8 @@ import { LoadingMaskService } from './loading-mask.service';
 export class LoadingMaskComponent implements OnInit {
 	showMask: boolean;
 
-	constructor(private ref: ChangeDetectorRef,
+	constructor(public impersonationService: ImpersonationService,
+	            private ref: ChangeDetectorRef,
 	            private service: LoadingMaskService) {
 	}
 
