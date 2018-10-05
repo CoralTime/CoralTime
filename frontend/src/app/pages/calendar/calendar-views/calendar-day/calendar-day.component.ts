@@ -1,15 +1,15 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { Observable } from 'rxjs/Observable';
 import { CalendarDay, DateUtils, TimeEntry } from '../../../../models/calendar';
 import { User } from '../../../../models/user';
 import { NotificationService } from '../../../../core/notification.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { ImpersonationService } from '../../../../services/impersonation.service';
-import { EntryTimeComponent } from '../../entry-time/entry-time.component';
-import { MAX_TIMER_VALUE } from '../calendar-task/calendar-task.component';
-import * as moment from 'moment';
 import { ctCalendarDayAnimation } from '../../calendar.animation';
+import { EntryTimeComponent } from '../../entry-time/entry-time.component';
+import { MAX_TIMER_VALUE } from '../../timer/timer.component';
 
 @Component({
 	selector: 'ct-calendar-day',
@@ -45,10 +45,6 @@ export class CalendarDayComponent implements OnInit {
 			this.user = this.impersonationService.impersonationUser || data.user;
 		});
 
-		if (this.isToday(this.dayInfo.date)) {
-			this.calendarService.isTimerActivated = !!this.dayInfo.timeEntries.find((timeEntry) =>
-				timeEntry.timeOptions.timeTimerStart && timeEntry.timeOptions.timeTimerStart !== -1);
-		}
 		this.triggerAnimation();
 	}
 

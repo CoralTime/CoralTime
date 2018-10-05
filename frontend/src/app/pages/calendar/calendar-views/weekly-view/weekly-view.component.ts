@@ -74,16 +74,6 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	getTotalTime(timeField: string): string {
-		let time = 0;
-
-		this.calendar.forEach((day: CalendarDay) => {
-			time += this.calendarService.getTotalTimeForDay(day, timeField);
-		});
-
-		return this.formatTimeToString(time);
-	}
-
 	getTimeEntries(projIds?: number[], disableAnimation: boolean = false): void {
 		this.animationDisabled = disableAnimation;
 		this.loadingService.addLoading();
@@ -120,13 +110,6 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 		} else {
 			this.projectTimeEntries = this.timeEntries;
 		}
-	}
-
-	formatTimeToString(s: number): string {
-		let m = Math.floor(s / 60);
-		let h = Math.floor(m / 60);
-		m = m - h * 60;
-		return (((h > 99) ? ('' + h) : ('00' + h).slice(-2)) + ':' + ('00' + m).slice(-2));
 	}
 
 	onResize(event): void {

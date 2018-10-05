@@ -6,6 +6,7 @@ import { Directive, ElementRef, HostListener, Output, EventEmitter, Input } from
 
 export class TimeDirective {
 	@Input() ctTime: number;
+	@Input() enableFormat: boolean = true;
 	@Output() ngModelChange: EventEmitter<any> = new EventEmitter();
 	@Output() timeChanged: EventEmitter<any> = new EventEmitter();
 
@@ -60,7 +61,11 @@ export class TimeDirective {
 	}
 
 	private formatTime(time?: string): string {
-		return (+time >= 0 && +time < 10) ? '0' + +time : time;
+		if (this.enableFormat) {
+			return (+time >= 0 && +time < 10) ? '0' + +time : time;
+		} else {
+			return +time + '';
+		}
 	}
 
 	private limitTime(time: string): string {

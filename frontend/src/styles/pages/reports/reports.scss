@@ -26,12 +26,12 @@ $fieldHeight: 42px;
     line-height: $fieldHeight;
     font-weight: 700;
     color: #8994b3;
+  }
 
-    .fa {
-      position: absolute;
-      right: 0;
-      top: 8px;
-    }
+  [class*="fa-angle"] {
+    position: absolute;
+    right: 0;
+    top: 10px;
   }
 
   .ct-select-selected-options-text, .ct-select-component {
@@ -124,19 +124,27 @@ $fieldHeight: 42px;
   width: 300px;
   height: calc(100% - 66px);
   background-color: $nav-background;
+  border-top: 1px solid $gray-page-background;
   box-sizing: border-box;
   box-shadow: $box-shadow;
-  overflow: auto;
   z-index: 1;
 
   .ct-header {
     margin-bottom: 25px;
+  }
+
+  .ct-reports-sidebar-container {
+    height: calc(100vh - 66px);
   }
 }
 
 .ct-sidebar-block {
   padding: 25px 30px 40px;
   border-top: 1px solid $gray-page-background;
+
+  &:first-child {
+    border-top: none;
+  }
 }
 
 .ct-reports-multiselect {
@@ -231,6 +239,9 @@ $fieldHeight: 42px;
   margin-bottom: 5px;
   font-weight: 700;
   color: $black;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .ct-reports-chart-value {
@@ -375,6 +386,10 @@ $fieldHeight: 42px;
       width: 200px;
     }
 
+    .ct-cell-project, .ct-cell-task {
+      vertical-align: top;
+    }
+
     .ct-cell-user {
       width: 200px;
       font-weight: 700;
@@ -399,8 +414,11 @@ $fieldHeight: 42px;
       text-align: right;
 
       div {
-        margin-top: 7px;
         font-size: 12px;
+
+        &:not(:only-child) {
+          margin-top: 7px;
+        }
       }
     }
   }
@@ -415,6 +433,11 @@ $fieldHeight: 42px;
     background-color: #fff;
     border-radius: 5px;
     padding: 25px;
+
+    > * {
+      height: 30px;
+      line-height: 30px;
+    }
 
     .ct-total-time-container {
       float: right;

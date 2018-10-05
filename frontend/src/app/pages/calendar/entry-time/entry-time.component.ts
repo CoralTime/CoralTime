@@ -20,7 +20,6 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 
 	@Input() timeEntry: TimeEntry;
 	@Output() deleted: EventEmitter<void> = new EventEmitter<void>();
-	@Output() timerUpdated: EventEmitter<void> = new EventEmitter<void>();
 	@ViewChild('entryForm') entryForm;
 
 	private calendarTask: HTMLElement;

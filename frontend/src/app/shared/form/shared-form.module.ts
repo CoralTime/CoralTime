@@ -37,7 +37,8 @@ import { ColorPickerModule } from './color-picker/color-picker.module';
 		SelectComponent,
 		TextareaComponent,
 		TextMaskModule,
-		ColorPickerModule
+		ColorPickerModule,
+		NgSlimScrollModule
 	]
 })
 
