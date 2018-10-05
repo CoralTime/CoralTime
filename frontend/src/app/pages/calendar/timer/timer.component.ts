@@ -48,7 +48,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {
-			this.userInfo = this.impersonationService.impersonationUser || data.user;
+			this.userInfo = data.user;
 		});
 
 		this.initTimer();
@@ -61,21 +61,21 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 	initTimer(): void {
 		this.calendarService.getTimer().subscribe((res) => {
-				this.timeEntry = res || new TimeEntry({
-					date: DateUtils.formatDateToString(new Date()),
-					memberId: this.impersonationService.impersonationId || this.authService.authUser.id
-				});
-
-				if (this.isTimerExist()) {
-					this.timerValue = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
-				}
-				if (this.isTimerActivated()) {
-					this.startTimerFront();
-				}
-
-				this.checkTimer();
-				this.loadProjects();
+			this.timeEntry = res || new TimeEntry({
+				date: DateUtils.formatDateToString(new Date()),
+				memberId: this.impersonationService.impersonationId || this.authService.authUser.id
 			});
+
+			if (this.isTimerExist()) {
+				this.timerValue = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
+			}
+			if (this.isTimerActivated()) {
+				this.startTimerFront();
+			}
+
+			this.checkTimer();
+			this.loadProjects();
+		});
 	}
 
 	isTimerActivated(): boolean {
@@ -114,15 +114,15 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	private convertSecondsToStringFormat(time: number): string {
-		let h = Math.floor(time / 3600 >> 0);
-		let m = Math.floor(time / 60 >> 0) - h * 60;
+		const h = Math.floor(time / 3600 >> 0);
+		const m = Math.floor(time / 60 >> 0) - h * 60;
 		return ('00' + h).slice(-2) + ':' + ('00' + m).slice(-2);
 	}
 
 	private convertSecondsToTimeFormat(time: number): Time {
-		let h = Math.floor(time / 3600 >> 0);
-		let m = Math.floor(time / 60 >> 0) - h * 60;
-		let s = time - m * 60 - h * 3600;
+		const h = Math.floor(time / 3600 >> 0);
+		const m = Math.floor(time / 60 >> 0) - h * 60;
+		const s = time - m * 60 - h * 3600;
 		return new Time(('00' + h).slice(-2), ('00' + m).slice(-2), ('00' + s).slice(-2));
 	}
 
@@ -154,7 +154,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	startTimerFront(): void {
-		let timer = Observable.timer(0, 1000);
+		const timer = Observable.timer(0, 1000);
 		this.timerSubscription = timer.subscribe(() => {
 			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
 				+ this.timeEntry.timeValues.timeActual;
@@ -195,7 +195,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	createTimer(): Promise<void> {
-		let timeEntry = this.createDefaultTimeEntry();
+		const timeEntry = this.createDefaultTimeEntry();
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 
 		this.isTimerLoading = true;
@@ -215,7 +215,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	resumeTimer(): Promise<void> {
-		let timeEntry = Object.assign({}, this.timeEntry);
+		const timeEntry = Object.assign({}, this.timeEntry);
 
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeValues.timeActual;
 		timeEntry.timeValues.timeActual = 0;
@@ -236,7 +236,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	pauseTimer(): Promise<void> {
-		let timeEntry = Object.assign({}, this.timeEntry);
+		const timeEntry = Object.assign({}, this.timeEntry);
 
 		timeEntry.timeOptions.timeTimerStart = DateUtils.getSecondsFromStartDay(true);
 		timeEntry.timeValues.timeActual = this.ticks;
@@ -258,7 +258,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	deleteTimer(): Promise<void> {
-		let timeEntry = Object.assign({}, this.timeEntry);
+		const timeEntry = Object.assign({}, this.timeEntry);
 
 		timeEntry.timeOptions = {
 			isFromToShow: true,
@@ -296,7 +296,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 		let errorMessage: string;
 
 		let isTimeEntryAvailable: boolean;
-		if (this.userInfo.isAdmin || this.timeEntry.isUserManagerOnProject) {
+		if (this.getUserInfo().isAdmin || this.timeEntry.isUserManagerOnProject) {
 			isTimeEntryAvailable = true;
 		} else {
 			isTimeEntryAvailable = !this.timeEntry.isLocked
@@ -319,10 +319,10 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	autoStopTimer(errorMessage: string): void {
-		let timeEntry = new TimeEntry(this.timeEntry);
-		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
-		let finalTimerValue = this.limitTimerValue(MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual));
-		let timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
+		const timeEntry = new TimeEntry(this.timeEntry);
+		const totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
+		const finalTimerValue = this.limitTimerValue(MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual));
+		const timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
 			- new Date().getTimezoneOffset() * 60); // locale format
 
 		timeEntry.timeOptions = {
@@ -372,7 +372,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	private isTrackedTimeValid(): boolean {
-		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
+		const totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(this.getDayInfo(), 'timeActual');
 		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
 	}
 
@@ -402,15 +402,19 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	private isCurrentTrackedTimeValid(): boolean {
-		let dayInfo = this.calendarService.getDayInfoByDate(this.timeEntry.date);
-		let totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
+		const dayInfo = this.calendarService.getDayInfoByDate(this.timeEntry.date);
+		const totalTrackedTimeForDay = this.calendarService.getTotalTimeForDay(dayInfo, 'timeActual');
 
 		return totalTrackedTimeForDay + (this.ticks || this.timeEntry.timeValues.timeActual) < MAX_TIMER_VALUE;
 	}
 
+	private getUserInfo(): User {
+		return this.impersonationService.impersonationUser || this.userInfo;
+	}
+
 	private loadProjects(): void {
 		this.projectsService.getProjects(true).subscribe((projectList) => {
-			this.defaultProject = ArrayUtils.findByProperty(projectList, 'id', this.userInfo.defaultProjectId);
+			this.defaultProject = ArrayUtils.findByProperty(projectList, 'id', this.getUserInfo().defaultProjectId);
 
 			if (this.defaultProject) {
 				this.timeEntry.projectId = this.defaultProject.id;
@@ -424,7 +428,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	private loadTasks(projectId?: number): void {
 		this.tasksService.getActiveTasks(projectId)
 			.subscribe((res) => {
-				this.defaultTask = ArrayUtils.findByProperty(res.data, 'id', this.userInfo.defaultTaskId);
+				this.defaultTask = ArrayUtils.findByProperty(res.data, 'id', this.getUserInfo().defaultTaskId);
 
 				if (this.defaultTask) {
 					this.timeEntry.taskTypesId = this.defaultTask.id;

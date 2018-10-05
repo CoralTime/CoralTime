@@ -209,8 +209,13 @@ export class CalendarTaskComponent implements OnInit {
 	// GENERAL
 
 	calculateCalendarTaskHeight(): number {
-		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 125 - 96;
-		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - 25 : taskHeight;
+		const fromToHeight = 25;
+		const gap = 6; // vertical distance between timeEntries
+		const heightOfOneHour = 65; // 520px / 8h
+		const staticHeight = 66 + gap;
+		const minHours = 2.5; // staticHeight + 93px (minHeight) / heightOfOneHour
+		const taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, minHours) * heightOfOneHour - staticHeight;
+		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - fromToHeight : taskHeight;
 	}
 
 	numberToHex(value: number): string {
