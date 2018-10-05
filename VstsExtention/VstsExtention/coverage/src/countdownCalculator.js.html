@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src\countdownCalculator.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> countdownCalculator.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>62/62</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>25/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>8/8</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>61/61</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">31×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">15×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">187×</span>
+<span class="cline-any cline-yes">159×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-yes">31×</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">22×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">187×</span>
+<span class="cline-any cline-yes">187×</span>
+<span class="cline-any cline-yes">187×</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use strict";
+// ---------------------------------------------------------------------
+// &lt;copyright file="countdownCalculator.ts"&gt;
+//    This code is licensed under the MIT License.
+//    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+//    ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+//    TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+//    PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// &lt;/copyright&gt;
+// &lt;summary&gt;
+//    This is part of the Countdown widget
+//    from the ALM Rangers. This file contains the
+//    code to calculate the countdown delta.
+// &lt;/summary&gt;
+// ---------------------------------------------------------------------
+exports.__esModule = true;
+var countdownResult = require("./CountdownResult");
+var CountdownCalculator = /** @class */ (function () {
+    function CountdownCalculator(from, to, roundNumber, workingdays) {
+        if (workingdays === void 0) { workingdays = []; }
+        this.from = from;
+        this.to = to;
+        this.roundNumber = roundNumber;
+        this.workingdays = workingdays;
+    }
+    CountdownCalculator.prototype.getDifference = function () {
+        var _this = this;
+        if (!this.isValid()) {
+            return new countdownResult.CountdownResult(0, countdownResult.Unit.Invalid, this.roundNumber);
+        }
+        var diff = function (unit) {
+            return _this.to.diff(_this.from, countdownResult.Unit[unit].toLowerCase(), unit === countdownResult.Unit.Days);
+        };
+        var numberOfExcludedDays = 0;
+        if (this.workingdays.length &gt; 0) {
+            numberOfExcludedDays = this.countExcluded();
+        }
+        var test = diff(countdownResult.Unit.Days);
+        this.to.add(-numberOfExcludedDays, countdownResult.Unit[countdownResult.Unit.Days].toLowerCase());
+        var numberOfDays = diff(countdownResult.Unit.Days);
+        if (numberOfDays &gt;= 1.0) {
+            // round up to the nearest 10th of a day and remove extranneous fractional part
+            return new countdownResult.CountdownResult(numberOfDays, countdownResult.Unit.Days, this.roundNumber);
+        }
+        else {
+            var numberOfHours = diff(countdownResult.Unit.Hours);
+            if (numberOfHours &gt;= 1) {
+                return new countdownResult.CountdownResult(numberOfHours, countdownResult.Unit.Hours, this.roundNumber);
+            }
+            else {
+                var numberOfMinutes = diff(countdownResult.Unit.Minutes);
+                if (numberOfMinutes &gt;= 1) {
+                    return new countdownResult.CountdownResult(numberOfMinutes, countdownResult.Unit.Minutes, this.roundNumber);
+                }
+                else {
+                    var numberOfSeconds = diff(countdownResult.Unit.Seconds);
+                    return new countdownResult.CountdownResult(numberOfSeconds, countdownResult.Unit.Seconds, this.roundNumber);
+                }
+            }
+        }
+    };
+    CountdownCalculator.prototype.isValid = function () {
+        return this.from.isBefore(this.to);
+    };
+    CountdownCalculator.prototype.getDayOfWeekNumber = function (day) {
+        if (typeof day === "string") { // for compatibility with old API
+            switch (day) {
+                case "sunday": return 0;
+                case "monday": return 1;
+                case "tuesday": return 2;
+                case "wednesday": return 3;
+                case "thursday": return 4;
+                case "friday": return 5;
+                case "saturday": return 6;
+            }
+        }
+        else {
+            return day;
+        }
+    };
+    CountdownCalculator.prototype.isWorkDay = function (day) {
+        for (var _i = 0, _a = this.workingdays; _i &lt; _a.length; _i++) {
+            var dayString = _a[_i];
+            var workingDay = this.getDayOfWeekNumber(dayString);
+            if (workingDay === day) {
+                return true;
+            }
+        }
+        return false;
+    };
+    CountdownCalculator.prototype.countExcluded = function () {
+        var days = this.to.diff(this.from, "days");
+        var excludedDays = 0;
+        for (var i = 1; i &lt;= days; i++) { // starting from 1 for not include the current day
+            var weekday = this.from.clone().add(i, "days").weekday();
+            if (!this.isWorkDay(weekday)) {
+                excludedDays++;
+            }
+        }
+        return excludedDays;
+    };
+    return CountdownCalculator;
+}());
+exports.CountdownCalculator = CountdownCalculator;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Thu Oct 04 2018 13:45:29 GMT+0300 (RTZ 2 (зима))
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

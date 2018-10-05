@@ -1,0 +1,56 @@
+{
+  "name": "coraltime-tracker",
+  "version": "0.1.0",
+  "description": "CoralTime tracker extention",
+  "keywords": [
+    "vsts",
+    "tfs"
+  ],
+  "scripts": {
+    "build": "npm run lint && npm run clean && npm run webpack",
+    "clean": "rimraf ./dist && rimraf ./*.vsix",
+    "gallery-publish": "npm run build && tfx extension publish --rev-version --token ",
+    "lint": "tslint -c tslint.json 'src/*.ts'",
+    "package": "tfx extension create  --rev-version",
+    "postbuilddemo": "npm run package",
+    "webpack": "webpack --progress --colors --config webpack.config.js --output-path ./dist -p",
+    "compiletests": "tsc ./tests/CoralTimeTrackerSpec.ts",
+    "runtests": "jasmine-node --test-dir ./tests --verbose --junitreport --output ./reportTests/",
+    "runcovertests": "istanbul cover --hook-run-in-context --report cobertura --report html node_modules/jasmine-node/bin/jasmine-node --test-dir ./tests --verbose --junitreport --output ./reportTests/",
+    "inlinesource": "gulp inlinesource",
+    "pretest": "rimraf ./reportTests && rimraf ./coverage",
+    "test": "npm run compiletests && npm run runtests && npm run runcovertests",
+    "posttest": "npm run inlinesource"
+  },
+  "author": "CoralTeam",
+  "license": "MIT",
+  "devDependencies": {
+    "cpx": "^1.5.0",
+    "gulp": "^3.9.1",
+    "gulp-inline-source": "^3.1.0",
+    "istanbul": "^0.4.5",
+    "jasmine-node": "^1.14.5",
+    "rimraf": "^2.6.1",
+    "tfx-cli": "^0.5.14",
+    "ts-loader": "^4.4.2",
+    "tslint": "^5.2.0",
+    "tslint-loader": "^3.5.3",
+    "typescript": "2.9.2",
+    "webpack": "^4.16.1",
+    "webpack-cli": "^3.1.0",
+    "webpack-dev-server": "^3.1.9"
+  },
+  "dependencies": {
+    "@types/jasmine": "^2.5.53",
+    "@types/jquery": "^3.3.5",
+    "@types/q": "1.5.0",
+    "@types/react": "^16.4.6",
+    "applicationinsights-js": "^1.0.9",
+    "jasmine": "^3.1.0",
+    "jquery": "^3.1.0",
+    "requirejs": "^2.2.0",
+    "telemetryclient-team-services-extension": "*",
+    "ts-promise": "^2.0.0",
+    "vss-web-extension-sdk": "^5.134.0"
+  }
+}
