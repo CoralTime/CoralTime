@@ -1,4 +1,4 @@
-﻿export interface IExtensionContext {
+﻿export interface IProjectContext {
     projectName: string;
     projectId: string;
     userName: string;

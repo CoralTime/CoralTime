@@ -1,57 +1,68 @@
 // tslint:disable-next-line
 /// <reference path="isettings.d.ts" />
 // tslint:disable-next-line
-/// <reference path="iextentionContext.ts"/>
+/// <reference path="iprojectContext.ts"/>
 
+import { IPromise } from "q";
 import Q = require("q");
 import Combos = require("VSS/Controls/Combos");
 import WebApi_Constants = require("VSS/WebApi/Constants");
-import { IExtensionContext } from "./iextentionContext";
+import { IProjectContext } from "./iprojectContext";
+
+// import { settings } from "./telemetryClientSettings";
 
 // import TelemetryClient = require("scripts/TelemetryClient");
 
 export class Configuration {
-    private static $dateTimeCombo: Combos.Combo = null;
 
-    private widgetConfigurationContext = null;
-    private extentionSettings = null;
+    private extentionSettings: ISettings;
     private $siteUrl = $("#siteUrl-input");
     private $userName = $("#userName-input");
-    private $password = $("#password-input");
-    private $isSSO = $("#isSSO-input");
+    private accessToken: string;
+    constructor() {
+        this.load();
+    }
 
-    private currentIterationEnd = null;
-    constructor(public WidgetHelpers, public isSprintWidget: boolean) { }
-
-    public load(widgetSettings, widgetConfigurationContext) {
-        this.widgetConfigurationContext = widgetConfigurationContext;
-        const settings: ISettings = JSON.parse(widgetSettings.customSettings.data);
-        this.extentionSettings = this.getExtensionContext();
-
-        return this.WidgetHelpers.WidgetStatusHelper.Success();
+    public load() {
+        this.getKeyValueFromStorage("settings")
+            .then((savedSettings) => {
+                this.extentionSettings = (JSON.parse(savedSettings).data);
+                this.$siteUrl.val(this.extentionSettings.siteUrl);
+                this.$userName.val(this.extentionSettings.userName);
+            });
+        this.loadAccessToken();
     }
 
     public onSave() {
-        const isValid = true;
-        if (isValid) {
+        const settings = this.getCustomSettings();
+        this.setKeyValueInStorage("settings", settings);
+    }
 
-            // TelemetryClient.TelemetryClient.getClient().trackEvent("Updated configuration");
-            return this.WidgetHelpers.WidgetConfigurationSave.Valid(this.getCustomSettings());
-        } else {
-            return this.WidgetHelpers.WidgetConfigurationSave.Invalid();
-        }
+    public getExtensionContext(): IProjectContext {
+        const webContext = VSS.getWebContext();
+        const extensionContext: IProjectContext = {
+            projectId: webContext.project.id,
+            projectName: webContext.project.name,
+            userEmail: webContext.user.email,
+            userName: webContext.user.uniqueName,
+        };
+        return extensionContext;
+    }
+
+    public getSettings(): ISettings {
+        return this.extentionSettings;
+    }
+
+    public getAccessToken(): string {
+        return this.accessToken;
     }
 
     private getCustomSettings() {
         const siteUrl = (this.$siteUrl.val() as string);
         const userName = (this.$userName.val() as string);
-        const password = (this.$password.val() as string);
-        const isSSO = (this.$isSSO.prop("checked") as boolean);
 
         const result = {
             data: JSON.stringify({
-                isSSO,
-                password,
                 siteUrl,
                 userName,
             } as ISettings),
@@ -59,15 +70,29 @@ export class Configuration {
         return result;
     }
 
-    private getExtensionContext(): IExtensionContext {
-        const webContext = VSS.getWebContext();
-        const extensionContext: IExtensionContext = {
-            projectId: webContext.project.id,
-            projectName: webContext.project.name,
-            userEmail: webContext.user.email,
-            userName: webContext.user.uniqueName,
-        };
+    private setKeyValueInStorage(key, value): void {
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            // Set value in user scope
+            dataService.setValue(key, value, { scopeType: "User" }).then((resvalue) => {
+                alert(resvalue);
+            });
+        });
+    }
 
-        return extensionContext;
+    private getKeyValueFromStorage(key): IPromise<string> {
+        const deferred = Q.defer<string>();
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            // Get value from user scope
+            dataService.getValue(key, { scopeType: "User" }).then((value) => {
+                deferred.resolve(value as string);
+            });
+        });
+        return deferred.promise;
+    }
+
+    private loadAccessToken() {
+        VSS.getAppToken().then((token) => {
+            this.accessToken = token.token;
+        });
     }
 }

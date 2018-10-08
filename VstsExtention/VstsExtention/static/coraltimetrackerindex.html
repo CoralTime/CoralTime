@@ -8,27 +8,19 @@
     <div class="content">
         <div class="formContent">
 
-            <div class="rowWrap">
-                <label for="recordTaskType" class="rowLabel">Task Type</label>
-                <div id="recordTaskType" class="rowControl"></div>
-            </div>
+            <label>Task Type</label>
+            <input type="text" id="recordTaskType-input" />
 
-            <div class="rowWrap">
-                <label for="recordDate" class="rowLabel">Record Date</label>
-                <div id="recordDate" class="rowControl"></div>
-            </div>
+            <label>Record Date</label>
+            <input type="date" id="recordDate-input" />
 
-            <div class="rowWrap">
-                <label for="recordActualWork" class="rowLabel">Actual Work</label>
-                <div id="recordActualWork" class="rowControl"></div>
-            </div>
+            <label>Actual Work</label>
+            <input type="number" id="recordActualWork-input" />
 
-            <div class="rowWrap">
-                <label for="recordEstimateWork" class="rowLabel">Estimate Work</label>
-                <div id="recordEstimateWork" class="rowControl"></div>
-            </div>
+            <label>Estimate Work</label>
+            <input type="number" id="recordEstimateWork-input" />
 
-            <div id="recordSubmit"></div>
+            <div id="recordSubmit">Submit</div>
 
         </div>
     </div>
@@ -38,8 +30,7 @@
 
     <script src="lib/VSS.SDK.js"></script>
     <script src="lib/jquery.js"></script>
-    <script src="lib/ai.0.js"></script>
-    
+    <script src="lib/ai.0.js"></script>    
 
     <script type="text/javascript">
         VSS.init(
@@ -49,8 +40,14 @@
             usePlatformScripts: true,
             usePlatformStyles: true
         });
+
         VSS.ready(function () {
-            require(["dist/app"], function (main) { });
+            require(["dist/app"], function (main) {
+                $("#recordSubmit").click(function () {
+                    main.onSave();
+                });
+                VSS.notifyLoadSucceeded();
+            });
         });
     </script>
 </body>
