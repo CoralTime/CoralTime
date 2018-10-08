@@ -36,6 +36,10 @@ export class TimeDirective {
 			current = this.formatTime(current);
 		}
 
+		if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Tab') {
+			this.timeChanged.emit(current);
+		}
+
 		this.ngModelChange.emit(current);
 	}
 

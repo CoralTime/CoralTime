@@ -110,7 +110,12 @@ export class EntryTimeComponent implements AfterContentInit, OnDestroy {
 	private checkIsPlaceAvailable(isOpen: boolean): void {
 		if (!isOpen) {
 			this.calendarTaskContainer.style.paddingBottom = '0';
+			document.body.classList.remove('ct-noscroll');
 			return;
+		}
+
+		if (this.isOpenMobile) {
+			document.body.classList.add('ct-noscroll');
 		}
 
 		if (!this.isDirectionTop && !this.isOpenMobile) {

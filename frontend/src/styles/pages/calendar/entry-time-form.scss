@@ -15,6 +15,7 @@ ct-entry-time {
   position: absolute;
   top: 0;
   width: 350px;
+  max-width: 100vw;
   visibility: hidden;
   opacity: 0;
   z-index: 1001;
@@ -50,21 +51,51 @@ ct-entry-time {
   }
 
   &.ct-open-mobile {
+    position: fixed;
     left: 0;
     right: 0;
-    top: calc(100% + 10px);
+    bottom: 0;
+    top: auto;
     margin: auto;
+    overflow: auto;
+    max-height: 100vh;
 
-    .ct-form-container {
-      &:after {
-        border-right-color: transparent;
-        border-bottom-color: $calendarTaskColor;
+    .ct-form-actions {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      max-width: 290px;
+      margin: auto;
+
+      &:before {
+        position: fixed;
         left: 0;
-        right: 0;
-        margin: auto;
-        top: -30px;
+        bottom: 0;
+        width: 100%;
+        height: 78px;
+        content: '';
+        background: #fff;
       }
     }
+
+    .ct-form-container {
+      padding-bottom: 52px;
+    }
+
+
+    // add background
+    //@media (max-width: $calendarPhoneWidth) {
+    //  &:before {
+    //    position: fixed;
+    //    left: 0;
+    //    top: 0;
+    //    width: 100%;
+    //    height: 100%;
+    //    content: '';
+    //    background-color: rgba(100, 111, 121, 0.6);
+    //  }
+    //}
   }
 
   &.ct-direction-top {
@@ -75,19 +106,6 @@ ct-entry-time {
       &:after {
         top: auto;
         bottom: 18px;
-      }
-    }
-  }
-
-  &.ct-direction-top.ct-open-mobile {
-    top: auto;
-    bottom: calc(100% + 10px);
-
-    .ct-form-container {
-      &:after {
-        border-bottom-color: transparent;
-        border-top-color: $calendarTaskColor;
-        bottom: -30px;
       }
     }
   }
