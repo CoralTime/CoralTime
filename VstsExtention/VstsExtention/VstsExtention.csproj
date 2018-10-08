@@ -52,7 +52,7 @@
     <Content Include="static\lib\VSS.SDK.min.js" />
     <Content Include="webpack.config.js" />
     <TypeScriptCompile Include="src\configuration.ts" />
-    <TypeScriptCompile Include="src\extentionContext.ts" />
+    <TypeScriptCompile Include="src\iextentionContext.ts" />
     <TypeScriptCompile Include="src\isettings.d.ts" />
     <TypeScriptCompile Include="src\main.ts" />
     <TypeScriptCompile Include="src\telemetryClientSettings.ts" />
