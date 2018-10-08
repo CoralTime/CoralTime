@@ -28,6 +28,10 @@
     opacity: 1;
     z-index: 9999;
   }
+
+  &.ct-impersonate {
+    margin-top: 50px;
+  }
 }
 
 @keyframes ld-spin-fast {
