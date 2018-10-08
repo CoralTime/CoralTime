@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <link href="lib/jquery.datetimepicker.css" rel="stylesheet" />
+    <title>CoralTime traccker settings</title>
     <link href="css/app.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
         <div>
             <label>Url of CoralTime site</label>
-            <input type="text" id="siteurl" />
+            <input type="text" id="siteUrl-input" />
+
+            <label>Username of CoralTime site</label>
+            <input type="text" id="userName-input" />
         </div>
 
         <div class="configuration-bottom">
-            &nbsp;
+            <button class="saveButton">Save Settings</button>
         </div>
     </div>
     <div class="error"></div>
@@ -31,6 +34,7 @@
 
         VSS.ready(function () {
             require(["dist/dialog"], function (configuration) { });
+            VSS.notifyLoadSucceeded();
         });
     </script>
 </body>
