@@ -1,5 +1,5 @@
 <div class="ct-total-tracked-time">
-    <button class="ct-round-button"
+    <button *ngIf="!getImpersonationUser()" class="ct-round-button"
             [class.ct-timer-play-icon]="!isTimerActivated()"
             [class.ct-timer-pause-icon]="isTimerActivated()"
             [class.ct-loading]="isTimerLoading"

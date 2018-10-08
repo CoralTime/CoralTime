@@ -482,6 +482,10 @@ $titleDayHeight: 145px;
     }
   }
 
+  &.ct-form-opened {
+    z-index: 1005;
+  }
+
   .ct-calendar-day-active & > div {
     opacity: .5;
   }
@@ -514,6 +518,10 @@ $titleDayHeight: 145px;
 .ct-calendar-day-tasks {
   margin-top: $titleDayHeight + 10px;
   padding: 0 5px 5px;
+
+  @media (max-width: $calendarPhoneWidth) {
+    padding-bottom: 77px;
+  }
 }
 
 .ct-calendar-weekly-view {
@@ -752,6 +760,8 @@ $titleDayHeight: 145px;
 
 .ct-impersonation-header + .ct-wrapper .ct-total-tracked-time {
   top: 60px;
+  padding: 0;
+  width: 195px;
 
   @media (max-width: $calendarTabletWidth) {
     top: 63px;

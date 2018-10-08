@@ -11,6 +11,7 @@
   position: relative;
   border-radius: 5px !important;
   background-color: $calendarTaskColor;
+  max-height: calc(100vh - 40px);
   padding: 30px !important;
 }
 
@@ -141,7 +142,7 @@ div.ui-shadow {
 }
 
 .cdk-overlay-container {
-  z-index: 1001;
+  z-index: 1100;
 }
 
 .cdk-overlay-pane {
