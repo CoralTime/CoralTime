@@ -752,6 +752,8 @@ $titleDayHeight: 145px;
 
 .ct-impersonation-header + .ct-wrapper .ct-total-tracked-time {
   top: 60px;
+  padding: 0;
+  width: 195px;
 
   @media (max-width: $calendarTabletWidth) {
     top: 63px;

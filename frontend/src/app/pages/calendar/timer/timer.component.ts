@@ -51,9 +51,11 @@ export class TimerComponent implements OnInit, OnDestroy {
 			this.userInfo = data.user;
 		});
 
-		this.initTimer();
+		if (!this.getImpersonationUser()) {
+			this.initTimer();
+		}
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (this.authService.isLoggedIn()) {
+			if (!this.getImpersonationUser()) {
 				this.initTimer();
 			}
 		});
@@ -296,7 +298,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 		let errorMessage: string;
 
 		let isTimeEntryAvailable: boolean;
-		if (this.getUserInfo().isAdmin || this.timeEntry.isUserManagerOnProject) {
+		if (this.userInfo.isAdmin || this.timeEntry.isUserManagerOnProject) {
 			isTimeEntryAvailable = true;
 		} else {
 			isTimeEntryAvailable = !this.timeEntry.isLocked
@@ -389,6 +391,10 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 	// GENERAL
 
+	getImpersonationUser(): User {
+		return this.impersonationService.impersonationUser;
+	}
+
 	private createDefaultTimeEntry(): TimeEntry {
 		return new TimeEntry({
 			color: this.defaultProject.color,
@@ -408,13 +414,9 @@ export class TimerComponent implements OnInit, OnDestroy {
 		return totalTrackedTimeForDay + (this.ticks || this.timeEntry.timeValues.timeActual) < MAX_TIMER_VALUE;
 	}
 
-	private getUserInfo(): User {
-		return this.impersonationService.impersonationUser || this.userInfo;
-	}
-
 	private loadProjects(): void {
 		this.projectsService.getProjects(true).subscribe((projectList) => {
-			this.defaultProject = ArrayUtils.findByProperty(projectList, 'id', this.getUserInfo().defaultProjectId);
+			this.defaultProject = ArrayUtils.findByProperty(projectList, 'id', this.userInfo.defaultProjectId);
 
 			if (this.defaultProject) {
 				this.timeEntry.projectId = this.defaultProject.id;
@@ -428,7 +430,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	private loadTasks(projectId?: number): void {
 		this.tasksService.getActiveTasks(projectId)
 			.subscribe((res) => {
-				this.defaultTask = ArrayUtils.findByProperty(res.data, 'id', this.getUserInfo().defaultTaskId);
+				this.defaultTask = ArrayUtils.findByProperty(res.data, 'id', this.userInfo.defaultTaskId);
 
 				if (this.defaultTask) {
 					this.timeEntry.taskTypesId = this.defaultTask.id;

@@ -211,9 +211,9 @@ export class CalendarTaskComponent implements OnInit {
 	calculateCalendarTaskHeight(): number {
 		const fromToHeight = 25;
 		const gap = 6; // vertical distance between timeEntries
-		const heightOfOneHour = 65; // 520px / 8h
 		const staticHeight = 66 + gap;
-		const minHours = 2.5; // staticHeight + 93px (minHeight) / heightOfOneHour
+		const heightOfOneHour = 65; // 520/8 // 520px - available place for timeEntries
+		const minHours = 2.5; // (staticHeight + 93)/heightOfOneHour // 93px - minHeight for description with 1 line
 		const taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, minHours) * heightOfOneHour - staticHeight;
 		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - fromToHeight : taskHeight;
 	}
