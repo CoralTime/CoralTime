@@ -37,17 +37,17 @@ export class ImpersonationService {
 	}
 
 	getStorage(): void {
-		if (localStorage.hasOwnProperty(IMPERSONATION_USER_STORAGE_KEY)) {
-			this.impersonateMember(JSON.parse(localStorage.getItem(IMPERSONATION_USER_STORAGE_KEY)));
+		if (sessionStorage.hasOwnProperty(IMPERSONATION_USER_STORAGE_KEY)) {
+			this.impersonateMember(JSON.parse(sessionStorage.getItem(IMPERSONATION_USER_STORAGE_KEY)));
 		}
 	}
 
 	setStorage(user: User): void {
-		localStorage.setItem(IMPERSONATION_USER_STORAGE_KEY, JSON.stringify(user));
+		sessionStorage.setItem(IMPERSONATION_USER_STORAGE_KEY, JSON.stringify(user));
 	}
 
 	clearStorage(): void {
-		localStorage.removeItem(IMPERSONATION_USER_STORAGE_KEY);
+		sessionStorage.removeItem(IMPERSONATION_USER_STORAGE_KEY);
 	}
 
 	isNotAdmin(): boolean {

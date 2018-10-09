@@ -115,6 +115,10 @@ export class SelectComponent implements ControlValueAccessor {
 		return option ? (this.displayName ? option[this.displayName] : option) : '';
 	}
 
+	trackByFn(index: number, item: any) {
+		return item[this.trackBy];
+	}
+
 	/**
 	 * Implemented as part of ControlValueAccessor.
 	 */
