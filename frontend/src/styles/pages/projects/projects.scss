@@ -53,14 +53,6 @@
   }
 }
 
-.ct-project-tasks-dialog {
-  width: 600px;
-
-  .ct-popup-table-wrapper .ct-grid-container:only-child .ui-datatable-scrollable-body {
-    max-height: calc(90vh - 185px);
-  }
-}
-
 .ct-projects-tasks-form.ct-form {
   position: relative;
   display: inline-block;

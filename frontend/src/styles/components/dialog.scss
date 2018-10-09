@@ -12,13 +12,13 @@
 
   .ct-popup-table-wrapper {
     .ui-datatable-scrollable-body {
-      max-height: calc((90vh - 180px) / 2);
+      max-height: calc((100vh - 325px) / 2);
       overflow: hidden;
     }
 
     .ct-grid-container:only-child {
       .ui-datatable-scrollable-body {
-        max-height: calc(90vh - 150px);
+        max-height: calc(100vh - 290px);
       }
     }
   }
@@ -382,7 +382,7 @@
 
 .ct-data-dialog {
   width: 900px;
-  height: 90vh;
+  height: calc(100vh - 100px);
 
   &.ct-small-data-dialog {
     width: 600px;

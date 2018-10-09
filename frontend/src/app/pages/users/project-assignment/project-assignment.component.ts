@@ -251,7 +251,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 	}
 
 	private changeScrollableContainer(): void {
-		const HEIGHT = 230;
+		const HEIGHT = 325;
 		let grid = this.gridContainer.nativeElement;
 		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
 
@@ -259,14 +259,14 @@ export class UserProjectAssignmentComponent implements OnInit {
 			return;
 		}
 
-		wrappers[0].setAttribute('style', 'max-height: calc((90vh - ' + HEIGHT + 'px)/2)');
-		wrappers[1].setAttribute('style', 'max-height: calc((90vh - ' + HEIGHT + 'px)/2)');
+		wrappers[0].setAttribute('style', 'max-height: calc((100vh - ' + HEIGHT + 'px)/2)');
+		wrappers[1].setAttribute('style', 'max-height: calc((100vh - ' + HEIGHT + 'px)/2)');
 
-		if (wrappers[0].scrollHeight < (window.innerHeight * 0.9 - HEIGHT) / 2) {
-			wrappers[1].setAttribute('style', 'max-height: calc(90vh - ' + HEIGHT + 'px - ' + wrappers[0].scrollHeight + 'px)');
+		if (wrappers[0].scrollHeight < (window.innerHeight - HEIGHT) / 2) {
+			wrappers[1].setAttribute('style', 'max-height: calc(100vh - ' + HEIGHT + 'px - ' + wrappers[0].scrollHeight + 'px)');
 		}
-		if (wrappers[1].scrollHeight < (window.innerHeight * 0.9 - HEIGHT) / 2) {
-			wrappers[0].setAttribute('style', 'max-height: calc(90vh - ' + HEIGHT + 'px - ' + wrappers[1].scrollHeight + 'px)');
+		if (wrappers[1].scrollHeight < (window.innerHeight - HEIGHT) / 2) {
+			wrappers[0].setAttribute('style', 'max-height: calc(100vh - ' + HEIGHT + 'px - ' + wrappers[1].scrollHeight + 'px)');
 		}
 	}
 }
