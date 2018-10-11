@@ -335,3 +335,5 @@ backend/.vscode/
 backend/CoralTime/ConfigsNetCore2.0/
 backend/CoralTime/commands.json
 /frontend/frontend.sln
+
+dist/

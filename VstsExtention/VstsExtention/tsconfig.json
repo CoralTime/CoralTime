@@ -7,7 +7,6 @@
     "types": [
       "vss-web-extension-sdk"
     ]
-
   },
   "exclude": [
     "node_modules"

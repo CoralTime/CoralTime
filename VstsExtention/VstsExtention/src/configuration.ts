@@ -7,6 +7,7 @@ import { IPromise } from "q";
 import Q = require("q");
 import Combos = require("VSS/Controls/Combos");
 import WebApi_Constants = require("VSS/WebApi/Constants");
+import "../static/_scss/styles.scss";
 import { IProjectContext } from "./iprojectContext";
 
 // import { settings } from "./telemetryClientSettings";

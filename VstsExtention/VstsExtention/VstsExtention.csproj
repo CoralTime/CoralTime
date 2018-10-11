@@ -67,6 +67,7 @@
     <Content Include="chutzpah.json" />
     <Content Include="tsconfig.json" />
     <Content Include="tslint.json" />
+    <Content Include="static\scss\styles.scss" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
