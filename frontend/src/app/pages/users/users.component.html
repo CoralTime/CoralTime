@@ -10,7 +10,7 @@
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Users</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Inactive Users</a>
         </div>
-        <div (click)="openUserDialog()" class="ct-add-link">
+        <div *ctIsGranted="'roleAddMember'" (click)="openUserDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New User</a>
         </div>
     </div>

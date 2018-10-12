@@ -1,19 +1,18 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { Router } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { Project } from '../../models/project';
-import { AuthUser } from '../../core/auth/auth-user';
 import { PagedResult } from '../../services/odata';
+import { AclService } from '../../core/auth/acl.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ROWS_ON_PAGE } from '../../core/constant.service';
-import { ImpersonationService } from '../../services/impersonation.service';
 import { NotificationService } from '../../core/notification.service';
+import { ImpersonationService } from '../../services/impersonation.service';
 import { ProjectsService } from '../../services/projects.service';
-import { ProjectSettingsFormComponent } from './project-settings-form/project-settings-form.component';
 import { ProjectFormComponent } from './project-form/project-form.component';
-import { ProjectTasksComponent } from './project-tasks-form/project-tasks.component';
 import { ProjectUsersComponent } from './project-members-form/project-members.component';
+import { ProjectTasksComponent } from './project-tasks-form/project-tasks.component';
+import { ProjectSettingsFormComponent } from './project-settings-form/project-settings-form.component';
 import { numberToHex } from '../../shared/form/color-picker/color-picker.component';
 
 @Component({
@@ -31,7 +30,6 @@ export class ProjectsComponent implements OnInit {
 
 	@ViewChild('pageContainer') pageContainer: ElementRef;
 
-	private authUser: AuthUser;
 	private lastEvent: any;
 	private subject = new Subject<any>();
 
@@ -40,48 +38,19 @@ export class ProjectsComponent implements OnInit {
 	private dialogUserRef: MatDialogRef<ProjectUsersComponent>;
 	private dialogSettingsRef: MatDialogRef<ProjectSettingsFormComponent>;
 
-	constructor(private authService: AuthService,
+	constructor(private aclService: AclService,
+	            private authService: AuthService,
 	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
-	            private projectsService: ProjectsService,
-	            private router: Router) {
-		this.impersonationService.checkImpersonationRole('projects');
+	            private projectsService: ProjectsService) {
 	}
 
 	ngOnInit() {
-		this.authUser = this.authService.authUser;
-		// TODO: fix string to bool
-		if (this.authUser.role !== 1 && this.authUser.isManager !== 'true') {
-			this.router.navigate(['/calendar']);
-		}
 		this.getProjects();
 	}
 
-	onEndScroll(): void {
-		if (!this.isAllProjects) {
-			this.loadLazy();
-		}
-	}
-
-	getProjects(): void {
-		this.subject.debounceTime(500).switchMap(() => {
-			return this.projectsService.getManagerProjectsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-		})
-			.subscribe((res: PagedResult<Project>) => {
-					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
-						this.pagedResult = res;
-					} else {
-						this.pagedResult.data = this.pagedResult.data.concat(res.data);
-					}
-
-					this.lastEvent.first = this.pagedResult.data.length;
-					this.updatingGrid = false;
-					this.checkIsAllProjects();
-				},
-				() => this.notificationService.danger('Error loading projects.')
-			);
-	}
+	// GRID DISPLAYING
 
 	loadLazy(event = null, updatePage?: boolean): void {
 		if (event) {
@@ -107,13 +76,44 @@ export class ProjectsComponent implements OnInit {
 		});
 	}
 
+	onEndScroll(): void {
+		if (!this.isAllProjects) {
+			this.loadLazy();
+		}
+	}
+
 	private checkIsAllProjects(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllProjects = true;
 		}
 	}
 
+	private getProjects(): void {
+		this.subject.debounceTime(500).switchMap(() => {
+			return this.projectsService.getManagerProjectsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
+		})
+			.subscribe((res: PagedResult<Project>) => {
+					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
+						this.pagedResult = res;
+					} else {
+						this.pagedResult.data = this.pagedResult.data.concat(res.data);
+					}
+
+					this.lastEvent.first = this.pagedResult.data.length;
+					this.updatingGrid = false;
+					this.checkIsAllProjects();
+				},
+				() => this.notificationService.danger('Error loading projects.')
+			);
+	}
+
+	// FORM
+
 	openProjectDialog(project: Project = null): void {
+		if (!this.aclService.isGranted('roleEditProject')) {
+			return;
+		}
+
 		this.dialogRef = this.dialog.open(ProjectFormComponent);
 		this.dialogRef.componentInstance.project = project;
 
@@ -144,7 +144,7 @@ export class ProjectsComponent implements OnInit {
 		this.dialogUserRef.componentInstance.project = project;
 	}
 
-	onSubmit(response: any): void {
+	private onSubmit(response: any): void {
 		if (response.error) {
 			this.notificationService.danger('Error saving project.');
 			return;
@@ -159,6 +159,16 @@ export class ProjectsComponent implements OnInit {
 		this.loadLazy(null, true);
 	}
 
+	// GENERAL
+
+	onResize(): void {
+		this.resizeObservable.next();
+	}
+
+	numberToHex(value: number): string {
+		return numberToHex(value);
+	}
+
 	toggleTab(isActiveTab: boolean): void {
 		if (this.lastEvent) {
 			this.lastEvent.first = 0;
@@ -167,13 +177,5 @@ export class ProjectsComponent implements OnInit {
 
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
-	}
-
-	numberToHex(value: number): string {
-		return numberToHex(value);
-	}
-
-	onResize(): void {
-		this.resizeObservable.next();
 	}
 }

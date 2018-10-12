@@ -1,17 +1,15 @@
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-
-import { PagedResult } from './../../services/odata';
-import { NotificationService } from '../../core/notification.service';
+import { Subject } from 'rxjs';
+import { PagedResult } from '../../services/odata';
 import { Client } from '../../models/client';
+import { AclService } from '../../core/auth/acl.service';
+import { ROWS_ON_PAGE } from '../../core/constant.service';
+import { NotificationService } from '../../core/notification.service';
+import { ImpersonationService } from '../../services/impersonation.service';
 import { ClientsService } from '../../services/clients.service';
 import { ClientFormComponent } from './form/client-form.component';
-import { Subject } from 'rxjs';
-import { AclService } from '../../core/auth/acl.service';
-import { ImpersonationService } from '../../services/impersonation.service';
 import { ClientProjectAssignmentComponent } from './project-assignment/project-assignment.component';
-
-const ROWS_ON_PAGE = 15;
 
 @Component({
 	selector: 'ct-clients',
@@ -39,41 +37,13 @@ export class ClientsComponent implements OnInit {
 	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService) {
-		this.impersonationService.checkImpersonationRole('clients');
 	}
 
 	ngOnInit() {
 		this.getClients();
 	}
 
-	onEndScroll(): void {
-		if (!this.isAllClients) {
-			this.loadLazy();
-		}
-	}
-
-	getClients(): void {
-		this.subject.debounceTime(500).switchMap(() => {
-			if (this.aclService.isGranted('roleAddClient')) {
-				return this.clientsService.getClientsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-			} else {
-				return this.clientsService.getManagerClientsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-			}
-		})
-			.subscribe((res: PagedResult<Client>) => {
-					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
-						this.pagedResult = res;
-					} else {
-						this.pagedResult.data = this.pagedResult.data.concat(res.data);
-					}
-
-					this.lastEvent.first = this.pagedResult.data.length;
-					this.updatingGrid = false;
-					this.checkIsAllClients();
-				},
-				() => this.notificationService.danger('Error loading clients.')
-			);
-	}
+	// GRID DISPLAYING
 
 	loadLazy(event = null, updatePage?: boolean): void {
 		if (event) {
@@ -99,13 +69,44 @@ export class ClientsComponent implements OnInit {
 		});
 	}
 
+	onEndScroll(): void {
+		if (!this.isAllClients) {
+			this.loadLazy();
+		}
+	}
+
 	private checkIsAllClients(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllClients = true;
 		}
 	}
 
+	private getClients(): void {
+		this.subject.debounceTime(500).switchMap(() => {
+			return this.clientsService.getClientsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
+		})
+			.subscribe((res: PagedResult<Client>) => {
+					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
+						this.pagedResult = res;
+					} else {
+						this.pagedResult.data = this.pagedResult.data.concat(res.data);
+					}
+
+					this.lastEvent.first = this.pagedResult.data.length;
+					this.updatingGrid = false;
+					this.checkIsAllClients();
+				},
+				() => this.notificationService.danger('Error loading clients.')
+			);
+	}
+
+	// FORM
+
 	openClientDialog(client: Client = null): void {
+		if (!this.aclService.isGranted('roleEditClient')) {
+			return;
+		}
+
 		this.dialogRef = this.dialog.open(ClientFormComponent);
 		this.dialogRef.componentInstance.client = client;
 
@@ -115,7 +116,12 @@ export class ClientsComponent implements OnInit {
 		});
 	}
 
-	onSubmit(response: any): void {
+	openProjectAssignmentDialog(client: Client = null): void {
+		this.dialogProjectAssignmentRef = this.dialog.open(ClientProjectAssignmentComponent);
+		this.dialogProjectAssignmentRef.componentInstance.client = client;
+	}
+
+	private onSubmit(response: any): void {
 		if (response.error) {
 			this.notificationService.danger('Error saving client.');
 			return;
@@ -130,6 +136,12 @@ export class ClientsComponent implements OnInit {
 		this.loadLazy(null, true);
 	}
 
+	// GENERAL
+
+	onResize(): void {
+		this.resizeObservable.next();
+	}
+
 	toggleTab(isActiveTab: boolean): void {
 		if (this.lastEvent) {
 			this.lastEvent.first = 0;
@@ -138,14 +150,5 @@ export class ClientsComponent implements OnInit {
 
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
-	}
-
-	onResize(): void {
-		this.resizeObservable.next();
-	}
-
-	openProjectAssignmentDialog(client: Client = null): void {
-		this.dialogProjectAssignmentRef = this.dialog.open(ClientProjectAssignmentComponent);
-		this.dialogProjectAssignmentRef.componentInstance.client = client;
 	}
 }

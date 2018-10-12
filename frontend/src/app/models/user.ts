@@ -1,3 +1,5 @@
+import { Roles } from '../core/auth/permissions';
+
 export class User {
 	dateFormat: string;
 	dateFormatId: number;
@@ -45,5 +47,9 @@ export class User {
 
 	getRole(): string {
 		return this.isAdmin ? 'Admin' : 'User';
+	}
+
+	getPermissionRole(): number {
+		return this.isAdmin ? Roles['admin'] : (this.isManager ? Roles['manager'] : Roles['user']);
 	}
 }

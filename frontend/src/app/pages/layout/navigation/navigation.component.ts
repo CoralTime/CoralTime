@@ -22,13 +22,13 @@ const FULL_MANAGE_ITEMS = [
 		label: 'Projects',
 		icon: 'ct-projects-icon',
 		routerLink: ['/projects'],
-		permission: 'roleAssignProjectMember'
+		permission: 'roleViewProject'
 	},
 	{
 		label: 'Clients',
 		icon: 'ct-clients-icon',
 		routerLink: ['/clients'],
-		permission: 'roleAddClient'
+		permission: 'roleViewClient'
 
 	},
 	{

@@ -6,11 +6,13 @@
 <div #pageContainer class="ct-page-container ct-tasks-page">
     <div class="ct-page-header">
         <h3 class="ct-header">Tasks</h3>
+
         <div class="ct-page-tabs">
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Tasks</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Tasks</a>
         </div>
-        <div (click)="openTaskDialog()" class="ct-add-link">
+
+        <div *ctIsGranted="'roleAddTask'" (click)="openTaskDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New task</a>
         </div>
     </div>

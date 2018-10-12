@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Client } from '../models/client';
 
@@ -12,8 +12,8 @@ export class ClientsService {
 	}
 
 	getClients(): Observable<Client[]> {
-		let filters = [];
-		let query = this.odata
+		const filters = [];
+		const query = this.odata
 			.Query();
 
 		query.OrderBy('name asc');
@@ -24,36 +24,8 @@ export class ClientsService {
 	}
 
 	getClientsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Client>> {
-		let filters = [];
-		let query = this.odata
-			.Query()
-			.Top(event.rows)
-			.Skip(event.first);
-
-		if (event.sortField) {
-			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
-		} else {
-			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
-		}
-
-		if (filterStr) {
-			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
-		}
-
-		filters.push('isActive eq ' + isActive);
-		query.Filter(filters.join(' and '));
-
-		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: Object) => new Client(x));
-			return res;
-		});
-	}
-
-	getManagerClientsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Client>> {
-		let odata = this.odataFactory.CreateService<Client>('ManagerClients');
-
-		let filters = [];
-		let query = odata
+		const filters = [];
+		const query = this.odata
 			.Query()
 			.Top(event.rows)
 			.Skip(event.first);
@@ -83,7 +55,7 @@ export class ClientsService {
 			throw new Error('Please, specify client name');
 		}
 
-		let query = this.odata
+		const query = this.odata
 			.Query()
 			.Top(1);
 

@@ -11,8 +11,7 @@ const routes: Routes = [
 		component: ReportsComponent,
 		canActivate: [AuthGuard],
 		data: {
-			title: 'Reports',
-			role: 'roleViewProject'
+			title: 'Reports'
 		},
 		resolve: {
 			user: UserInfoResolve

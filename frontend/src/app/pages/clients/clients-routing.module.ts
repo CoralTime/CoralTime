@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { ClientsComponent } from './clients.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
+import { ClientsComponent } from './clients.component';
 
 const routes: Routes = [
 	{
@@ -10,7 +9,6 @@ const routes: Routes = [
 		component: ClientsComponent,
 		canActivate: [AuthGuard],
 		data: {
-			title: 'Clients',
 			role: 'roleViewClient'
 		}
 	}

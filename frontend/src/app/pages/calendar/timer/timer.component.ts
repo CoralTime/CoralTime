@@ -55,7 +55,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 			this.initTimer();
 		}
 		this.subscriptionImpersonation = this.impersonationService.onChange.subscribe(() => {
-			if (!this.getImpersonationUser()) {
+			if (this.authService.isLoggedIn() && !this.getImpersonationUser()) {
 				this.initTimer();
 			}
 		});
@@ -383,8 +383,8 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
+		this.subscriptionImpersonation.unsubscribe();
 		if (this.timerSubscription) {
-			this.subscriptionImpersonation.unsubscribe();
 			this.timerSubscription.unsubscribe();
 		}
 	}
