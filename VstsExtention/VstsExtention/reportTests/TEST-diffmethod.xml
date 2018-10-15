@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuites>
-<testsuite name="diff method " errors="0" tests="3" failures="0" time="0" timestamp="2018-10-04T13:44:45">
-  <testcase classname="diff method " name="diff from 06-10-2016 14:20 Europe/Paris to 11-10-2016 02:00 Europe/Paris to be 5 days" time="0"></testcase>
-  <testcase classname="diff method " name="round diff from 06-10-2016 14:20 Europe/Paris to 11-10-2016 02:00 Europe/Paris to be 5 days" time="0"></testcase>
-  <testcase classname="diff method " name="diff from 16-10-2016 11:38 Europe/Paris to 30-10-2016 23:59 Europe/Paris
-			With no skip no-working days to be 19 days" time="0"></testcase>
-</testsuite>
-</testsuites>

@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -36,10 +36,6 @@
     "type": "git",
     "uri": "https://github.com/CoralTime/CoralTime"
   },
-  "branding": {
-    "color": "rgb(51,65,133)",
-    "theme": "dark"
-  },
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"
@@ -60,7 +56,9 @@
         "uri": "static/coraltimetrackerindex.html",
         "order": 99,
         "height": 500,
-        "supportedScopes": [ "project_team" ]
+        "supportedScopes": [
+          "project_team"
+        ]
       }
     },
     {
@@ -105,8 +103,5 @@
       "addressable": true,
       "path": "src"
     }
-  ],
-  "scopes": [
-    "vso.work"
   ]
 }

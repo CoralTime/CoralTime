@@ -3,9 +3,10 @@
     "module": "amd",
     "moduleResolution": "node",
     "target": "es5",
-    "sourceMap": true,
+    "outDir": "dist/",
     "types": [
-      "vss-web-extension-sdk"
+      "vss-web-extension-sdk",
+      "q"
     ]
   },
   "exclude": [

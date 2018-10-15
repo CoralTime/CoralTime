@@ -1,65 +1,28 @@
 {
   "name": "coraltime-tracker",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "CoralTime tracker extention",
   "keywords": [
     "vsts",
     "tfs"
   ],
   "scripts": {
-    "build": "npm run lint && npm run clean && npm run webpack",
-    "clean": "rimraf ./dist && rimraf ./*.vsix",
-    "gallery-publish": "npm run build && tfx extension publish --rev-version --token ",
-    "lint": "tslint -c tslint.json 'src/*.ts'",
-    "package": "tfx extension create  --rev-version",
-    "postbuilddemo": "npm run package",
-    "webpack": "webpack --progress --colors --config webpack.config.js --output-path ./dist -p",
-    "compiletests": "tsc ./tests/CoralTimeTrackerSpec.ts",
-    "runtests": "jasmine-node --test-dir ./tests --verbose --junitreport --output ./reportTests/",
-    "runcovertests": "istanbul cover --hook-run-in-context --report cobertura --report html node_modules/jasmine-node/bin/jasmine-node --test-dir ./tests --verbose --junitreport --output ./reportTests/",
-    "inlinesource": "gulp inlinesource",
-    "pretest": "rimraf ./reportTests && rimraf ./coverage",
-    "test": "npm run compiletests && npm run runtests && npm run runcovertests",
-    "posttest": "npm run inlinesource",
-    "watch": "webpack-dev-server --mode development --watch",
-    "hot": "webpack-dev-server --hot --colors"
+    "build": "tsc -p .",
+    "postbuild": "npm run package",
+    "package": "tfx extension create",
+    "clean": "rimraf ./dist && rimraf ./*.vsix"
   },
   "author": "CoralTeam",
   "license": "MIT",
-  "dependencies": {
-    "@types/jasmine": "^2.5.53",
-    "@types/jquery": "^3.3.5",
-    "@types/q": "1.5.0",
-    "@types/react": "^16.4.6",
-    "applicationinsights-js": "^1.0.9",
-    "autoprefixer": "^9.1.5",
-    "jasmine": "^3.1.0",
-    "jquery": "^3.3.1",
-    "q": "^1.5.1",
-    "requirejs": "^2.2.0",
-    "telemetryclient-team-services-extension": "*",
-    "ts-promise": "^2.0.0",
-    "typescript": "2.9.2",
-    "vss-web-extension-sdk": "^5.134.0",
-    "webpack-dev-server": "^3.1.9"
-  },
   "devDependencies": {
-    "cpx": "^1.5.0",
-    "css-loader": "^1.0.0",
-    "gulp": "^3.9.1",
-    "gulp-inline-source": "^3.1.0",
-    "istanbul": "^0.4.5",
-    "jasmine-node": "^1.14.5",
-    "mini-css-extract-plugin": "^0.4.4",
-    "node-sass": "^4.9.3",
-    "postcss-loader": "^3.0.0",
-    "rimraf": "^2.6.1",
-    "sass-loader": "^7.1.0",
-    "tfx-cli": "^0.5.14",
-    "ts-loader": "^4.4.2",
-    "tslint": "^5.2.0",
-    "tslint-loader": "^3.5.3",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2"
+    "ncp": "2.0.0",
+    "rimraf": "2.6.2",
+    "tfx-cli": "0.6.3",
+    "typescript": "2.4.0"
+  },
+  "dependencies": {
+    "@types/jquery": "3.3.17",
+    "@types/q": "0.0.32",
+    "vss-web-extension-sdk": "5.141.0"
   }
 }

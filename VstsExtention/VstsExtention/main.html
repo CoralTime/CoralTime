@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Public Events</title>
+    <script src="static/lib/VSS.SDK.min.js"></script>
+</head>
+
+<body>
+<script type="text/javascript">
+    VSS.init({
+        explicitNotifyLoaded: true,
+        usePlatformScripts: true,
+        moduleLoaderConfig: {
+            paths: {
+                "PublicEvents": "scripts"
+            }
+        }
+    });
+
+    VSS.require(["PublicEvents/PublicEventsSource"], function (PubEvents) {
+        var context = VSS.getExtensionContext();
+        VSS.register(context.publisherId + "." + context.extensionId + "." + "public-events-source", function (context) {
+            return new PubEvents.PublicEventsSource();
+        });
+        VSS.notifyLoadSucceeded();
+    });
+</script>
+</body>
+
+</html>
