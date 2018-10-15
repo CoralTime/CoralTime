@@ -7,6 +7,6 @@ namespace CoralTime.ViewModels.TimeEntries
     public class TimerView
     {
         public TimeEntryView TimeEntry { get; set; }
-        public int TrackedTime { get; set; }
+        public int? TrackedTime { get; set; }
     }
 }

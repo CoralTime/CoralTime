@@ -45,6 +45,6 @@ namespace CoralTime.Api.v1
         
         // GET: api/v1/TimeEntries/TimeEntryTimer
         [HttpGet(Constants.Routes.TimeEntryTimer)]
-        public IActionResult Get() => new JsonResult(_service.GetTimeEntryTimer());
+        public IActionResult Get(DateTime? date) => new JsonResult(_service.GetTimeEntryTimer(date));
     }
 }
