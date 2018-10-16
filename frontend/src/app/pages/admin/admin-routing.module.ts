@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { AdminComponent } from './admin.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
+import { AdminComponent } from './admin.component';
 
 const routes: Routes = [
 	{
 		path: '',
 		component: AdminComponent,
-		canActivate: [AuthGuard]
+		canActivate: [AuthGuard],
+		data: {
+			role: 'roleViewAdminPanel'
+		}
 	}
 ];
 

@@ -1,15 +1,14 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-
-import { PagedResult } from '../../services/odata/query';
-import { TasksService } from '../../services/tasks.service';
-import { NotificationService } from '../../core/notification.service';
-import { Task } from '../../models/task';
-import { TaskFormComponent } from './form/tasks-form.component';
 import { Subject } from 'rxjs';
+import { Task } from '../../models/task';
+import { PagedResult } from '../../services/odata';
 import { AclService } from '../../core/auth/acl.service';
-import { ImpersonationService } from '../../services/impersonation.service';
 import { ROWS_ON_PAGE } from '../../core/constant.service';
+import { NotificationService } from '../../core/notification.service';
+import { ImpersonationService } from '../../services/impersonation.service';
+import { TasksService } from '../../services/tasks.service';
+import { TaskFormComponent } from './form/tasks-form.component';
 
 @Component({
 	selector: 'ct-tasks',
@@ -36,41 +35,13 @@ export class TasksComponent implements OnInit {
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private tasksService: TasksService) {
-		this.impersonationService.checkImpersonationRole('tasks');
 	}
 
 	ngOnInit() {
 		this.getTasks();
 	}
 
-	onEndScroll(): void {
-		if (!this.isAllTasks) {
-			this.loadLazy();
-		}
-	}
-
-	getTasks(): void {
-		this.subject.debounceTime(500).switchMap(() => {
-			if (this.aclService.isGranted('roleAddProject')) {
-				return this.tasksService.getTasksWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-			} else {
-				return this.tasksService.getManagerTasksWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-			}
-		})
-			.subscribe((res: PagedResult<Task>) => {
-					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
-						this.pagedResult = res;
-					} else {
-						this.pagedResult.data = this.pagedResult.data.concat(res.data);
-					}
-
-					this.lastEvent.first = this.pagedResult.data.length;
-					this.updatingGrid = false;
-					this.checkIsAllTasks();
-				},
-				() => this.notificationService.danger('Error loading tasks.')
-			);
-	}
+	// GRID DISPLAYING
 
 	loadLazy(event = null, updatePage?: boolean): void {
 		if (event) {
@@ -96,13 +67,44 @@ export class TasksComponent implements OnInit {
 		});
 	}
 
+	onEndScroll(): void {
+		if (!this.isAllTasks) {
+			this.loadLazy();
+		}
+	}
+
 	private checkIsAllTasks(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllTasks = true;
 		}
 	}
 
+	private getTasks(): void {
+		this.subject.debounceTime(500).switchMap(() => {
+			return this.tasksService.getTasksWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
+		})
+			.subscribe((res: PagedResult<Task>) => {
+					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
+						this.pagedResult = res;
+					} else {
+						this.pagedResult.data = this.pagedResult.data.concat(res.data);
+					}
+
+					this.lastEvent.first = this.pagedResult.data.length;
+					this.updatingGrid = false;
+					this.checkIsAllTasks();
+				},
+				() => this.notificationService.danger('Error loading tasks.')
+			);
+	}
+
+	// FORM
+
 	openTaskDialog(task: Task = null): void {
+		if (!this.aclService.isGranted('roleEditTask')) {
+			return;
+		}
+
 		this.dialogRef = this.dialog.open(TaskFormComponent);
 		this.dialogRef.componentInstance.task = task;
 
@@ -112,7 +114,7 @@ export class TasksComponent implements OnInit {
 		});
 	}
 
-	onSubmit(response: any): void {
+	private onSubmit(response: any): void {
 		if (response.error) {
 			this.notificationService.danger('Error saving task.');
 			return;
@@ -127,6 +129,12 @@ export class TasksComponent implements OnInit {
 		this.loadLazy(null, true);
 	}
 
+	// GENERAL
+
+	onResize(): void {
+		this.resizeObservable.next();
+	}
+
 	toggleTab(isActiveTab: boolean): void {
 		if (this.lastEvent) {
 			this.lastEvent.first = 0;
@@ -135,9 +143,5 @@ export class TasksComponent implements OnInit {
 
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
-	}
-
-	onResize(): void {
-		this.resizeObservable.next();
 	}
 }

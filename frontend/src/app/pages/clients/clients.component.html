@@ -6,11 +6,13 @@
 <div #pageContainer class="ct-page-container ct-clients-page">
     <div class="ct-page-header">
         <h3 class="ct-header">Clients</h3>
+
         <div class="ct-page-tabs">
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Clients</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Clients</a>
         </div>
-        <div (click)="openClientDialog()" class="ct-add-link">
+
+        <div *ctIsGranted="'roleAddClient'" (click)="openClientDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New Client</a>
         </div>
     </div>

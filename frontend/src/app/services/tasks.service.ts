@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Task } from '../models/task';
 
@@ -23,34 +23,6 @@ export class TasksService {
 			filters.push('projectId eq null');
 		}
 		filters.push('isActive eq true');
-		query.Filter(filters.join(' and '));
-
-		return query.ExecWithCount().map(res => {
-			res.data = res.data.map((x: Object) => new Task(x));
-			return res;
-		});
-	}
-
-	getManagerTasksWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Task>> {
-		let odata = this.odataFactory.CreateService<Task>('ManagerTasks');
-
-		let filters = [];
-		let query = odata
-			.Query()
-			.Top(event.rows)
-			.Skip(event.first);
-
-		if (event.sortField) {
-			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
-		} else {
-			query.OrderBy('name' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
-		}
-
-		if (filterStr) {
-			filters.push('contains(tolower(name),\'' + filterStr.trim().toLowerCase() + '\')');
-		}
-
-		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
 		return query.ExecWithCount().map(res => {

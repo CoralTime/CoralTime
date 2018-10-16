@@ -26,6 +26,6 @@ export class AuthUser {
 		this.nickname = decodedToken.nickname;
 		this.refreshTokenExpiration = new Date().getTime() + decodedToken.refreshTokenLifeTime * 1000;
 		let roleName = Array.isArray(decodedToken.role) ? decodedToken.role[0] : decodedToken.role;
-		this.role = Roles[roleName];
+		this.role = (roleName === 'user' && this.isManager) ? Roles['manager'] : Roles[roleName];
 	}
 }

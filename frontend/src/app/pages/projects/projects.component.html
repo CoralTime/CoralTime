@@ -6,10 +6,12 @@
 <div #pageContainer class="ct-page-container ct-projects-page">
     <div class="ct-page-header">
         <h3 class="ct-header">Projects</h3>
+
         <div class="ct-page-tabs">
             <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Projects</a>
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Projects</a>
         </div>
+
         <div *ctIsGranted="'roleAddProject'" (click)="openProjectDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New Project</a>
         </div>
