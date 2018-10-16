@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -41,13 +41,15 @@
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
+  "scopes": [
+    "vso.work"
+  ],
   "contributions": [
     {
       "id": "CoralTimeTracker",
       "type": "ms.vss-work-web.work-item-form-control",
       "targets": [
-        "ms.vss-work-web.work-item-form",
-        ".CoralTimeTracker-Configuration"
+        "ms.vss-work-web.work-item-form"
       ],
       "properties": {
         "name": "CoralTimeTracker",
@@ -63,14 +65,18 @@
     },
     {
       "id": "CoralTimeTracker-Configuration",
-      "type": "ms.vss-dashboards-web.widget-configuration",
+      "type": "ms.vss-web.action",
       "targets": [
-        "ms.vss-dashboards-web.widget-configuration"
+        "ms.vss-work-web.work-item-toolbar-menu"
       ],
       "properties": {
         "name": "CoralTimeTracker Configuration",
         "description": "Configures the CoralTimeTracker.",
-        "uri": "static/coraltimetrackerconfiguration.html"
+        "uri": "static/coraltimetrackerconfiguration.html",
+        "icon": "static/img/logo.png",
+        "toolbarText": "Configuration",
+        "group": "actions",
+        "registeredObjectId": "TrackerConfiguration"
       }
     }
   ],
