@@ -16,7 +16,7 @@ import { IProjectContext } from "./iprojectContext";
 
 export class Configuration {
 
-    private extentionSettings: ISettings;
+    private extensionSettings: ISettings;
     private $siteUrl = $("#siteUrl-input");
     private $userName = $("#userName-input");
     private accessToken: string;
@@ -27,9 +27,9 @@ export class Configuration {
     public load() {
         this.getKeyValueFromStorage("settings")
             .then((savedSettings) => {
-                this.extentionSettings = (JSON.parse(savedSettings).data);
-                this.$siteUrl.val(this.extentionSettings.siteUrl);
-                this.$userName.val(this.extentionSettings.userName);
+                this.extensionSettings = (JSON.parse(savedSettings).data);
+                this.$siteUrl.val(this.extensionSettings.siteUrl);
+                this.$userName.val(this.extensionSettings.userName);
             });
         this.loadAccessToken();
     }
@@ -51,7 +51,7 @@ export class Configuration {
     }
 
     public getSettings(): ISettings {
-        return this.extentionSettings;
+        return this.extensionSettings;
     }
 
     public getAccessToken(): string {

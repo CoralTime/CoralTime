@@ -1,7 +1,7 @@
 {
   "name": "coraltime-tracker",
   "version": "1.0.0",
-  "description": "CoralTime tracker extention",
+  "description": "CoralTime tracker extension",
   "keywords": [
     "vsts",
     "tfs"

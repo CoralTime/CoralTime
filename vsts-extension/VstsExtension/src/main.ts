@@ -6,7 +6,7 @@
 import Configuration = require("./configuration");
 import { IProjectContext } from "./iprojectContext";
 
-export class TiemEntryService {
+export class TeamEntryService {
 
     private $recordTaskType = $("#recordTaskType-input");
     private $recordDate = $("#recordDate-input");
@@ -14,7 +14,7 @@ export class TiemEntryService {
     private $recordEstimateWork = $("#recordEstimateWork-input");
     private config: Configuration.Configuration;
     private projectContext: IProjectContext;
-    private extentionSettings: ISettings;
+    private extensionSettings: ISettings;
 
     public onSave() {
         this.loadConfiguration();
@@ -43,12 +43,12 @@ export class TiemEntryService {
                 alert("Time entry saved successfully");
             },
             type: "post",
-            url: this.extentionSettings.siteUrl + "/api/v1/timeentires/vsts",
+            url: this.extensionSettings.siteUrl + "/api/v1/timeentires/vsts",
         });
     }
 
     private loadConfiguration() {
         this.projectContext = this.config.getExtensionContext();
-        this.extentionSettings = this.config.getSettings();
+        this.extensionSettings = this.config.getSettings();
     }
 }
