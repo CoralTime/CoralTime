@@ -4,10 +4,12 @@
             [class.ct-timer-pause-icon]="isTimerActivated()"
             [class.ct-loading]="isTimerLoading"
             [title]="getButtonTitle()"
+            [disabled]="isTimerLoading"
             (click)="toggleTimer()"></button>
     <button *ngIf="isTimerExist()" title="Stop timer"
             class="ct-round-button ct-timer-stop-icon"
             [class.ct-loading]="isTimerLoading2"
+            [disabled]="isTimerLoading2"
             (click)="stopTimer(true)"></button>
     <span *ngIf="isTimerExist()" class="ct-hours-tracked ct-timer-exist"
           title="Timer value"

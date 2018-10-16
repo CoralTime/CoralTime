@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
-import { TimeEntry, CalendarDay, DateUtils } from '../models/calendar';
+import { TimeEntry, CalendarDay, DateUtils, TimerResponse } from '../models/calendar';
 import { ArrayUtils } from '../core/object-utils';
 import { ConstantService } from '../core/constant.service';
 
@@ -23,10 +23,10 @@ export class CalendarService {
 	}
 
 	getTimeEntries(dateFrom: string, dif?: number): Observable<TimeEntry[]> {
-		let dateTo = moment(this.moveDate(dateFrom, dif || 1)).toDate();
-		let newDateTo = DateUtils.formatDateToString(dateTo.setDate(dateTo.getDate() - 1));
+		const dateTo = moment(this.moveDate(dateFrom, dif || 1)).toDate();
+		const newDateTo = DateUtils.formatDateToString(dateTo.setDate(dateTo.getDate() - 1));
 
-		let params = {
+		const params = {
 			'dateBegin': dateFrom + 'T00:00:00Z',
 			'dateEnd': newDateTo + 'T23:59:59Z'
 		};
@@ -58,9 +58,10 @@ export class CalendarService {
 		});
 	}
 
-	getTimer(): Observable<TimeEntry> {
-		return this.http.get(this.constantService.timeEntriesApi + 'TimeEntryTimer')
-			.map((res: Object) => res && new TimeEntry(res));
+	getTimer(): Observable<TimerResponse> {
+		const date = DateUtils.formatDateToString(new Date());
+		return this.http.get(this.constantService.timeEntriesApi + 'TimeEntryTimer?date=' + date)
+			.map((res: Object) => new TimerResponse(res));
 	}
 
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {
@@ -73,20 +74,20 @@ export class CalendarService {
 	}
 
 	getWeekBeginning(date: string, firstDayOfWeek: number): string {
-		let thisDate = moment(date).toDate();
-		let firstDayCorrection = (thisDate.getDay() < firstDayOfWeek) ? -7 : 0;
-		let dayCorrection = thisDate.setDate(thisDate.getDate() - thisDate.getDay() + firstDayOfWeek + firstDayCorrection);
+		const thisDate = moment(date).toDate();
+		const firstDayCorrection = (thisDate.getDay() < firstDayOfWeek) ? -7 : 0;
+		const dayCorrection = thisDate.setDate(thisDate.getDate() - thisDate.getDay() + firstDayOfWeek + firstDayCorrection);
 		return DateUtils.formatDateToString(new Date(dayCorrection));
 	}
 
 	private moveDate(date: string, dif: number): string {
-		let newDate = moment(date).toDate();
+		const newDate = moment(date).toDate();
 		return DateUtils.formatDateToString(newDate.setDate(newDate.getDate() + dif));
 	}
 
 	private sortTimeEntries(timeEntries: TimeEntry[]): TimeEntry[] {
-		let arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === true);
-		let otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === false);
+		const arrayWithFromToPeriod = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === true);
+		const otherTimeEntries = timeEntries.filter((timeEntry) => timeEntry.timeOptions.isFromToShow === false);
 
 		ArrayUtils.sortByField(arrayWithFromToPeriod, 'timeValues', 1, 'timeFrom');
 		ArrayUtils.sortByField(otherTimeEntries, 'id');

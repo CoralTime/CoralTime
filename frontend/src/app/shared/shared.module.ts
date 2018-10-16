@@ -17,7 +17,6 @@ import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
 import { UserPicComponent } from './user-pic/user-pic.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
-import { ExpansionPanelComponent } from './expansion-panel/expansion-panel.component';
 import { ChartComponent } from './chart/chart.component';
 
 @NgModule({
@@ -38,7 +37,6 @@ import { ChartComponent } from './chart/chart.component';
 	declarations: [
 		ReadMoreComponent,
 		ConfirmationComponent,
-		ExpansionPanelComponent,
 		UserPicComponent,
 		ChartComponent
 	],
@@ -60,7 +58,6 @@ import { ChartComponent } from './chart/chart.component';
 		SharedFormModule,
 		UserPicComponent,
 		ConfirmationComponent,
-		ExpansionPanelComponent,
 		ChartComponent
 	]
 })

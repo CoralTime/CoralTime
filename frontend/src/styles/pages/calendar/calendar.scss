@@ -460,6 +460,7 @@ $titleDayHeight: 145px;
     top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
     border: 2px dotted $main-grey;
     border-radius: 5px;
     font-size: 14px;
@@ -484,6 +485,7 @@ $titleDayHeight: 145px;
 
   &.ct-form-opened {
     z-index: 1005;
+    background-color: $gray-page-background;
   }
 
   .ct-calendar-day-active & > div {
