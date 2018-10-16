@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="css/app.css" rel="stylesheet" />
+</head>
+<body class="coraltime">
+
+<div class="content">
+    <div class="formContent">
+
+        <label>Task Type</label>
+        <input type="text" id="recordTaskType-input"/>
+
+        <label>Record Date</label>
+        <input type="date" id="recordDate-input"/>
+
+        <label>Actual Work</label>
+        <input type="number" id="recordActualWork-input"/>
+
+        <label>Estimate Work</label>
+        <input type="number" id="recordEstimateWork-input"/>
+
+        <div id="recordSubmit">Submit</div>
+
+    </div>
+</div>
+<div class="container">
+    <div id="error-container" class="error-text"></div>
+</div>
+
+<script src="lib/VSS.SDK.min.js"></script>
+<script src="lib/jquery.js"></script>
+<script src="lib/require.js"></script>
+
+<script type="text/javascript">
+    VSS.init(
+        {
+            explicitNotifyLoaded: true,
+            setupModuleLoader: true,
+            usePlatformScripts: true,
+            usePlatformStyles: true
+        });
+
+        require(["main"], function (main) {
+            $("#recordSubmit").click(function () {
+                main.onSave();
+            });
+            VSS.notifyLoadSucceeded();
+        });
+    VSS.ready(function () {
+    });
+</script>
+</body>
+</html>
