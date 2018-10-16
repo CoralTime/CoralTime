@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <PropertyGroup>
@@ -47,27 +47,22 @@
     <Content Include="static\coraltimetrackerconfiguration.html" />
     <Content Include="static\css\app.css" />
     <Content Include="static\img\logo.png" />
-    <Content Include="static\lib\ai.0.js" />
-    <Content Include="static\lib\ai.js" />
+    <Content Include="static\lib\require.js" />
     <Content Include="static\lib\VSS.SDK.min.js" />
-    <Content Include="webpack.config.js" />
     <TypeScriptCompile Include="src\configuration.ts" />
     <TypeScriptCompile Include="src\iprojectContext.ts" />
     <TypeScriptCompile Include="src\isettings.d.ts" />
     <TypeScriptCompile Include="src\main.ts" />
-    <TypeScriptCompile Include="src\telemetryClientSettings.ts" />
-    <TypeScriptCompile Include="tests\CoralTimeTrackerSpec.ts" />
     <Content Include="Overview.md" />
+    <Content Include="bower.json" />
+    <Content Include="package-lock.json" />
     <None Include="package.json" />
-    <Content Include="static\lib\jquery.datetimepicker.css" />
-    <Content Include="static\lib\jquery.datetimepicker.js" />
     <Content Include="static\lib\jquery.js" />
     <Content Include="static\lib\VSS.SDK.js" />
     <Content Include="web.config" />
-    <Content Include="chutzpah.json" />
     <Content Include="tsconfig.json" />
     <Content Include="tslint.json" />
-    <Content Include="static\scss\styles.scss" />
+    <Content Include="typings.json" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
