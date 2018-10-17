@@ -46,14 +46,11 @@
             <!--</div>-->
         </div>
         <div class="ct-form-actions">
-            <button class="ct-submit-button" #recordSubmit>Submit</button>
+            <button type="button" class="ct-submit-button" id="recordSubmit">Submit</button>
         </div>
     </form>
 </div>
 <script src="lib/VSS.SDK.min.js"></script>
-<script src="lib/jquery.js"></script>
-<script src="lib/require.js"></script>
-
 <script type="text/javascript">
     VSS.init(
         {
@@ -61,16 +58,38 @@
             setupModuleLoader: true,
             usePlatformScripts: true,
             usePlatformStyles: true
-        });
+        }
+    );
 
-    require(["main"], function (main) {
+    VSS.require(["dist/main"], function (main) {
+        console.log(main);
+        VSS.register("CoralTimeTracker", function () {});
+        VSS.notifyLoadSucceeded();
+
         $("#recordSubmit").click(function () {
+            console.log('Saved!');
             main.onSave();
         });
-        VSS.notifyLoadSucceeded();
     });
-    VSS.ready(function () {
-    });
+
+    // VSS.init({
+    //     explicitNotifyLoaded: true,
+    //     usePlatformStyles: true
+    // });
+    //
+    // VSS.require("TFS/Dashboards/WidgetHelpers", function (WidgetHelpers) {
+    //     WidgetHelpers.IncludeWidgetStyles();
+    //     VSS.register("CoralTimeTracker", function () {
+    //         return {
+    //         }
+    //     });
+    //     VSS.notifyLoadSucceeded();
+    //     $("#recordSubmit").click(function () {
+    //         console.log('Saved!');
+    //         // main.onSave();
+    //     });
+    // });
+
 </script>
 </body>
 </html>
