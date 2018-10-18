@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>CoralTime tracker settings</title>
-    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
@@ -19,8 +19,6 @@
         </div>
     </div>
     <div class="error"></div>
-
-    <script src="lib/jquery.js"></script>
     <script src="lib/VSS.SDK.min.js"></script>
 
     <script type="text/javascript">
@@ -31,8 +29,9 @@
             usePlatformStyles: true
         });
 
-        VSS.ready(function () {
-            require(["dist/dialog"], function (configuration) { });
+        VSS.require(["dist/configuration"], function (configuration) {
+            console.log(configuration);
+            VSS.register("CoralTimeTracker-Configuration", function () {});
             VSS.notifyLoadSucceeded();
         });
     </script>

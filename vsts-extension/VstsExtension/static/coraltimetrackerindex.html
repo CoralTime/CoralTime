@@ -1,37 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="css/app.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet"/>
 </head>
-<body class="coraltime">
-
-<div class="content">
-    <div class="formContent">
-
-        <label>Task Type</label>
-        <input type="text" id="recordTaskType-input"/>
-
-        <label>Record Date</label>
-        <input type="date" id="recordDate-input"/>
-
-        <label>Actual Work</label>
-        <input type="number" id="recordActualWork-input"/>
-
-        <label>Estimate Work</label>
-        <input type="number" id="recordEstimateWork-input"/>
-
-        <div id="recordSubmit">Submit</div>
-
-    </div>
+<body>
+<div class="widget coraltime">
+    <h2 class="ct-title">CoralTime</h2>
+    <form class="formContent">
+        <div class="ct-date">
+            <input class="ct-input" name="date" type="date">
+        </div>
+        <div class="ct-project">
+            CoralMSP
+        </div>
+        <div class="ct-task">
+            <select name="task" class="ct-select" required>
+                <option value="1">Coding</option>
+                <option value="2">Test</option>
+            </select>
+        </div>
+        <textarea class="ct-description"
+                  name="description"
+                  placeholder="Add task details"
+                  maxlength="1000"></textarea>
+        <div class="ct-time-period">
+            <div class="ct-actual-time">
+                <i class="ct-icon ct-timeactual-icon" title="Tracked time"></i>
+                <input name="timeActualHours"
+                       type="number"
+                       autocomplete="off"
+                       value="00">h
+                <input name="timeActualMinutes"
+                       type="number"
+                       autocomplete="off"
+                       value="00">m
+            </div>
+            <!--<button type="button" *ngIf="!isEstimatedTimeShown"-->
+            <!--class="ct-show-input ct-estimated-time-button"-->
+            <!--(click)="isEstimatedTimeShown = !isEstimatedTimeShown">Estimate-->
+            <!--</button>-->
+            <!--<div *ngIf="isEstimatedTimeShown" class="ct-estimated-time">-->
+            <!--<i class="ct-icon ct-timeestimated-icon" title="Planned time"></i>-->
+            <!--<input name="timeEstimatedHours" autocomplete="off">h-->
+            <!--<input name="timeEstimatedMinutes" autocomplete="off">m-->
+            <!--</div>-->
+        </div>
+        <div class="ct-form-actions">
+            <button type="button" class="ct-submit-button" id="recordSubmit">Submit</button>
+        </div>
+    </form>
 </div>
-<div class="container">
-    <div id="error-container" class="error-text"></div>
-</div>
-
 <script src="lib/VSS.SDK.min.js"></script>
-<script src="lib/jquery.js"></script>
-<script src="lib/require.js"></script>
-
 <script type="text/javascript">
     VSS.init(
         {
@@ -39,16 +58,38 @@
             setupModuleLoader: true,
             usePlatformScripts: true,
             usePlatformStyles: true
-        });
+        }
+    );
 
-        require(["main"], function (main) {
-            $("#recordSubmit").click(function () {
-                main.onSave();
-            });
-            VSS.notifyLoadSucceeded();
+    VSS.require(["dist/main"], function (main) {
+        console.log(main);
+        VSS.register("CoralTimeTracker", function () {});
+        VSS.notifyLoadSucceeded();
+
+        $("#recordSubmit").click(function () {
+            console.log('Saved!');
+            main.onSave();
         });
-    VSS.ready(function () {
     });
+
+    // VSS.init({
+    //     explicitNotifyLoaded: true,
+    //     usePlatformStyles: true
+    // });
+    //
+    // VSS.require("TFS/Dashboards/WidgetHelpers", function (WidgetHelpers) {
+    //     WidgetHelpers.IncludeWidgetStyles();
+    //     VSS.register("CoralTimeTracker", function () {
+    //         return {
+    //         }
+    //     });
+    //     VSS.notifyLoadSucceeded();
+    //     $("#recordSubmit").click(function () {
+    //         console.log('Saved!');
+    //         // main.onSave();
+    //     });
+    // });
+
 </script>
 </body>
 </html>
