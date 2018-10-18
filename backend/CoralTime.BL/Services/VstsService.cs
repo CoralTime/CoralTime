@@ -77,7 +77,7 @@ namespace CoralTime.BL.Services
 
         public Member GetVstsMember(string token, string id, string userName)
         {
-            var parsedToken = ValidateToken(token);
+            //var parsedToken = ValidateToken(token);
             if (token != null)
             {
                 var member = _uow.MemberRepository.LinkedCacheGetByUserName(userName);
@@ -104,11 +104,12 @@ namespace CoralTime.BL.Services
             {
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                 ValidateIssuer = false,
-                RequireSignedTokens = true,
+                RequireSignedTokens = false,
                 RequireExpirationTime = true,
                 ValidateLifetime = true,
                 ValidateAudience = false,
-                ValidateActor = false
+                ValidateActor = false,
+                ValidateIssuerSigningKey = false
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

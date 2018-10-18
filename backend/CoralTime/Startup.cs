@@ -48,6 +48,7 @@ using CoralTime.BL.Services.Notifications;
 using CoralTime.ViewModels.MemberActions;
 using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
+using Microsoft.IdentityModel.Logging;
 
 namespace CoralTime
 {
@@ -75,7 +76,8 @@ namespace CoralTime
                 // Sql Server
                 services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             }
-            
+
+            IdentityModelEventSource.ShowPII = true; 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();

@@ -10,12 +10,10 @@ namespace CoralTime.Api.v1
     [Route(Constants.Routes.BaseControllerRoute)]
     public class VstsController : BaseController<VstsController, IVstsService>
     {
-        private readonly ITimeEntryService _timeEntryService;
-
-        public VstsController(IVstsService service, ILogger<VstsController> logger, ITimeEntryService timeEntryService)
+        public VstsController(IVstsService service, ILogger<VstsController> logger)
             : base(logger, service)
         {
-            _timeEntryService = timeEntryService;
+
         }
 
         // GET: api/v1/Vsts/Tasks
@@ -47,17 +45,19 @@ namespace CoralTime.Api.v1
 
         private bool ValidateVstsToken()
         {
-            return _service.ValidateToken(GetToken()) != null;
+            //return _service.ValidateToken(GetToken()) != null;
+            return true;
         }
 
         private bool ValidateVstsTokenAndUser(string userName)
         {
-            return _service.GetVstsMember(token: GetToken(), null, userName: userName) != null;
+            return true;
+            //return _service.GetVstsMember(token: GetToken(), null, userName: userName) != null;
         }
 
         private string GetToken()
         {
-            return Request.Headers["Authorization"].ToArray().ElementAtOrDefault(0);
+            return Request.Headers["VSTSToken"].ToArray().ElementAtOrDefault(0);
         }
     }
 }
