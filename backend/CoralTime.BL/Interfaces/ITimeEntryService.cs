@@ -1,4 +1,5 @@
-﻿using CoralTime.ViewModels.TimeEntries;
+﻿using CoralTime.DAL.Models.Member;
+using CoralTime.ViewModels.TimeEntries;
 using System;
 using System.Collections.Generic;
 
@@ -10,12 +11,12 @@ namespace CoralTime.BL.Interfaces
 
         TimeEntryView GetById(int id);
 
-        TimeEntryView Create(TimeEntryView timeEntryData);
+        TimeEntryView Create(TimeEntryView timeEntryData, Member member = null);
 
         TimeEntryView Update(TimeEntryView timeEntryData);
 
         void Delete(int timeEntryId);
 
-        TimerView GetTimeEntryTimer();
+        TimerView GetTimeEntryTimer(DateTime? date);
     }
 }

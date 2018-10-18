@@ -53,29 +53,37 @@ namespace CoralTime.BL.Services
             return timeEntryById.GetView(BaseMemberImpersonated.User.UserName, Mapper);
         }
 
-        public TimerView GetTimeEntryTimer()
+        public TimerView GetTimeEntryTimer(DateTime? date)
         {
             var timeEntryTimer = Uow.TimeEntryRepository.GetQuery()
                 .FirstOrDefault(tEntry => tEntry.MemberId == BaseMemberImpersonated.Id && tEntry.TimeTimerStart > 0);
+
             if (timeEntryTimer == null)
-                return null;
+            {
+                return (date == null) ?
+                     null :
+                     new TimerView
+                     {
+                         TrackedTime = GetTrackedTime(date ?? DateTime.Now.Date, BaseMemberImpersonated.Id)
+                     };
+            }
+
             var timeEntry = timeEntryTimer.GetView(BaseMemberImpersonated.User.UserName, Mapper);
-            var trackedTime = Uow.TimeEntryRepository.GetQuery(withIncludes: false)
-                .Where(x=> x.Date == timeEntry.Date && x.MemberId == timeEntry.MemberId)
-                .Sum(x => x.TimeActual);
+            var trackedTime = GetTrackedTime(timeEntry.Date, timeEntry.MemberId);
+
             return new TimerView
             {
                 TimeEntry = timeEntry,
                 TrackedTime = trackedTime
             };
         }
-        
-        public TimeEntryView Create(TimeEntryView timeEntryView)
+               
+        public TimeEntryView Create(TimeEntryView timeEntryView, Member member = null)
         {
             var timeEntry = new TimeEntry();
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntry, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntry, out var relatedMemberByName, out var relatedProjectById, member: member);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(BaseMemberCurrent.User.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
@@ -95,10 +103,10 @@ namespace CoralTime.BL.Services
             try
             {
                 Uow.TimeEntryRepository.Insert(timeEntry);
-                Uow.Save();
+                Uow.Save(memberId: member?.Id);
 
                 var timeEntryWithUpdateRelatedEntities = Uow.TimeEntryRepository.LinkedCacheGetById(timeEntry.Id);
-                return timeEntryWithUpdateRelatedEntities.GetView(BaseMemberImpersonated.User.UserName, Mapper);
+                return timeEntryWithUpdateRelatedEntities.GetView(member?.User?.UserName ?? BaseMemberImpersonated.User.UserName, Mapper);
             }
             catch (Exception e)
             {
@@ -244,9 +252,9 @@ namespace CoralTime.BL.Services
 
         #region Added Methods for Checks.
 
-        private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, out Member relatedMemberByName, out Project relatedProjectById)
+        private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, out Member relatedMemberByName, out Project relatedProjectById, Member member = null)
         {
-            relatedMemberByName = BaseMemberImpersonated;
+            relatedMemberByName = member ?? BaseMemberImpersonated;
             var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(BaseMemberCurrent.User.IsAdmin, BaseMemberImpersonated.Id, timeEntry.ProjectId);
 
             relatedProjectById = GetRelatedProjectById(timeEntryView.ProjectId, isOnlyMemberAtProject);
@@ -446,6 +454,13 @@ namespace CoralTime.BL.Services
         private static int RoundTime(int time)
         {
             return time - time % Constants.SecondsInMinute;
+        }
+
+        private int GetTrackedTime(DateTime date, int memberId)
+        {
+            return Uow.TimeEntryRepository.GetQuery(withIncludes: false)
+                .Where(x => x.Date == date && x.MemberId == memberId)
+                .Sum(x => x.TimeActual);
         }
 
         #endregion

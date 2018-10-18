@@ -1,6 +1,7 @@
 ﻿using CoralTime.Common.Constants;
 using CoralTime.DAL.Models;
 using CoralTime.ViewModels.Azure;
+using IdentityServer4.Models;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -15,7 +16,6 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using static IdentityModel.OidcConstants;
 
 namespace CoralTime.Services
 {
@@ -46,7 +46,7 @@ namespace CoralTime.Services
 
             if (string.IsNullOrEmpty(userToken))
             {
-                context.Result = new GrantValidationResult(TokenErrors.InvalidGrant, null);
+                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidRequest, "Token is empty");
                 return;
             }
 
@@ -55,7 +55,7 @@ namespace CoralTime.Services
                 var token = await ValidateTokenAsync(userToken);
                 if (token == null)
                 {
-                    context.Result = new GrantValidationResult(TokenErrors.InvalidGrant, null);
+                    context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "Invalid token");
                     return;
                 }
 
@@ -69,12 +69,12 @@ namespace CoralTime.Services
                     return;
                 }
 
-                context.Result = new GrantValidationResult(TokenErrors.AccessDenied, "User does not exist");
+                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "User does not exist");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                context.Result = new GrantValidationResult(TokenErrors.InvalidGrant, null);
+                context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, null);
             }
         }
 
