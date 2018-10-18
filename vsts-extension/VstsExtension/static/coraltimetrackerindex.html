@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>CoralTime tracker</title>
     <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>
 <div class="widget coraltime">
-    <h2 class="ct-title">CoralTime</h2>
     <form class="formContent">
         <div class="ct-date">
-            <input class="ct-input" name="date" type="date">
+            <input class="ct-input" id="recordDate"
+                   name="date"
+                   type="date"
+                   required>
         </div>
         <div class="ct-project">
             CoralMSP
         </div>
         <div class="ct-task">
-            <select name="task" class="ct-select" required>
+            <select class="ct-select" id="recordTask"
+                    name="task"
+                    required>
                 <option value="1">Coding</option>
                 <option value="2">Test</option>
             </select>
         </div>
-        <textarea class="ct-description"
+        <textarea class="ct-description" id="recordDescription"
                   name="description"
                   placeholder="Add task details"
                   maxlength="1000"></textarea>
@@ -56,40 +61,17 @@
         {
             explicitNotifyLoaded: true,
             setupModuleLoader: true,
-            usePlatformScripts: true,
-            usePlatformStyles: true
+            usePlatformScripts: true
         }
     );
 
-    VSS.require(["dist/main"], function (main) {
-        console.log(main);
-        VSS.register("CoralTimeTracker", function () {});
-        VSS.notifyLoadSucceeded();
-
-        $("#recordSubmit").click(function () {
-            console.log('Saved!');
-            main.onSave();
+    VSS.require(["dist/timeEntryService", "dist/configuration", "dist/main"], function (teamEntryService) {
+        VSS.getAppToken().then((token) => {
+            console.log("getAppToken - ", token);
         });
+
+        VSS.notifyLoadSucceeded();
     });
-
-    // VSS.init({
-    //     explicitNotifyLoaded: true,
-    //     usePlatformStyles: true
-    // });
-    //
-    // VSS.require("TFS/Dashboards/WidgetHelpers", function (WidgetHelpers) {
-    //     WidgetHelpers.IncludeWidgetStyles();
-    //     VSS.register("CoralTimeTracker", function () {
-    //         return {
-    //         }
-    //     });
-    //     VSS.notifyLoadSucceeded();
-    //     $("#recordSubmit").click(function () {
-    //         console.log('Saved!');
-    //         // main.onSave();
-    //     });
-    // });
-
 </script>
 </body>
 </html>

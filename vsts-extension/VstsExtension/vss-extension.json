@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.4.8",
+  "version": "0.0.4.39",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -73,10 +73,7 @@
         "name": "CoralTimeTracker Configuration",
         "description": "Configures the CoralTimeTracker.",
         "uri": "static/coraltimetrackerconfiguration.html",
-        "icon": "static/img/logo.png",
-        "toolbarText": "Configuration",
-        "group": "actions",
-        "registeredObjectId": "TrackerConfiguration"
+        "icon": "static/img/logo.png"
       }
     }
   ],
