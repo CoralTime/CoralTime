@@ -137,14 +137,14 @@ namespace CoralTime.DAL.Repositories
 
         #endregion
 
-        public int Save(bool isAnonymousRequest = false)
+        public int Save(bool isAnonymousRequest = false, int? memberId = null)
         {
             try
             {
                 var actions = new List<MemberAction>();
                 if (!isAnonymousRequest)
                 {
-                    actions = CreateMemberActions();
+                    actions = CreateMemberActions(memberId);
                 }
                 
                 var changesCount = AppDbContext.SaveChanges();
@@ -174,7 +174,7 @@ namespace CoralTime.DAL.Repositories
 
         #region Save MemberActions
 
-        private List<MemberAction> CreateMemberActions()
+        private List<MemberAction> CreateMemberActions(int? memberId = null)
         {
             var jsonSettings = new JsonSerializerSettings()
             {
@@ -200,7 +200,7 @@ namespace CoralTime.DAL.Repositories
 
                 var action = new MemberAction
                 {
-                    MemberId = MemberCurrent.Id,
+                    MemberId = memberId ?? MemberCurrent.Id,
                     ChangedObject = JsonConvert.SerializeObject(newValue, jsonSettings),
                     Entity = entry.Entity.GetType().Name,
                     ChangedFields = JsonConvert.SerializeObject(DetailedCompare(newValue: newValue, oldValue: oldValue), jsonSettings),

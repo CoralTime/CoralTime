@@ -78,12 +78,12 @@ namespace CoralTime.BL.Services
             };
         }
                
-        public TimeEntryView Create(TimeEntryView timeEntryView)
+        public TimeEntryView Create(TimeEntryView timeEntryView, Member member = null)
         {
             var timeEntry = new TimeEntry();
 
             // Check if exists related entities.
-            CheckRelatedEntities(timeEntryView, timeEntry, out var relatedMemberByName, out var relatedProjectById);
+            CheckRelatedEntities(timeEntryView, timeEntry, out var relatedMemberByName, out var relatedProjectById, member: member);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
             var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(BaseMemberCurrent.User.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
@@ -103,10 +103,10 @@ namespace CoralTime.BL.Services
             try
             {
                 Uow.TimeEntryRepository.Insert(timeEntry);
-                Uow.Save();
+                Uow.Save(memberId: member?.Id);
 
                 var timeEntryWithUpdateRelatedEntities = Uow.TimeEntryRepository.LinkedCacheGetById(timeEntry.Id);
-                return timeEntryWithUpdateRelatedEntities.GetView(BaseMemberImpersonated.User.UserName, Mapper);
+                return timeEntryWithUpdateRelatedEntities.GetView(member?.User?.UserName ?? BaseMemberImpersonated.User.UserName, Mapper);
             }
             catch (Exception e)
             {
@@ -252,9 +252,9 @@ namespace CoralTime.BL.Services
 
         #region Added Methods for Checks.
 
-        private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, out Member relatedMemberByName, out Project relatedProjectById)
+        private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, out Member relatedMemberByName, out Project relatedProjectById, Member member = null)
         {
-            relatedMemberByName = BaseMemberImpersonated;
+            relatedMemberByName = member ?? BaseMemberImpersonated;
             var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(BaseMemberCurrent.User.IsAdmin, BaseMemberImpersonated.Id, timeEntry.ProjectId);
 
             relatedProjectById = GetRelatedProjectById(timeEntryView.ProjectId, isOnlyMemberAtProject);

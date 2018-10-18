@@ -79,7 +79,8 @@ namespace CoralTime.Common.Constants
             public const string PingRoute = "ping";
             public const string PingdatabaseRoute = "pingdatabase";
             public const string TimeEntryTimer = "TimeEntryTimer";
-            
+            public const string Tasks = "Tasks";
+
             private const string WithMembers = "/members";
             private const string WithProjects = "/projects";
             private const string WithNotifications = "/Notifications";
