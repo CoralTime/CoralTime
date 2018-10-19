@@ -1,5 +1,5 @@
-import { Configuration } from "./configuration";
-import { IProjectContext } from "./iprojectContext";
+import { ConfigurationService } from "./configurationService";
+import { IProjectContext } from "./models/iprojectContext";
 
 export class TimeEntryService {
 
@@ -9,18 +9,40 @@ export class TimeEntryService {
     private $recordSubmit = $("#recordSubmit");
     // private $recordActualWork = $("#recordActualWork");
     // private $recordEstimateWork = $("#recordEstimateWork");
-    private config: Configuration = new Configuration();
     private projectContext: IProjectContext;
     private extensionSettings: ISettings;
 
-    constructor() {
+    constructor(private config: ConfigurationService) {
         this.initialize();
+        this.config.accessTokenPromise.then(() => {
+            this.getTasksForProject();
+        });
     }
 
     public initialize(): void {
+        this.loadConfiguration();
         this.$recordSubmit.click(() => {
             console.log("Saved!");
             this.onSave();
+        });
+    }
+
+    public getTasksForProject() {
+        $.ajax({
+            dataType: "json",
+            error: (data) => {
+                alert("Error get tasks for CoralTime");
+            },
+            headers: {
+                "Content-Type": "application/json",
+                "VSTSToken": "Bearer " + this.config.getAccessToken(),
+            },
+            success: (data) => {
+                console.log(data);
+                alert("Time entry saved successfully");
+            },
+            type: "get",
+            url: this.extensionSettings.siteUrl + "/api/v1/vsts/tasks?ProjectName=" + this.projectContext.projectName,
         });
     }
 

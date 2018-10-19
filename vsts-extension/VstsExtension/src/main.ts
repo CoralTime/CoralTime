@@ -1,11 +1,11 @@
-import { Configuration } from "./configuration";
+import { ConfigurationService } from "./configurationService";
 import { TimeEntryService } from "./timeEntryService";
 
 const context = VSS.getExtensionContext();
 VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker", () => {
-    return new TimeEntryService();
+    return new TimeEntryService(new ConfigurationService());
 });
 
 VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker-Configuration", () => {
-    return new Configuration();
+    return new ConfigurationService();
 });

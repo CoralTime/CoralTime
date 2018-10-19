@@ -65,11 +65,7 @@
         }
     );
 
-    VSS.require(["dist/timeEntryService", "dist/configuration", "dist/main"], function (teamEntryService) {
-        VSS.getAppToken().then((token) => {
-            console.log("getAppToken - ", token);
-        });
-
+    VSS.require(["dist/timeEntryService", "dist/configurationService", "dist/main"], () => {
         VSS.notifyLoadSucceeded();
     });
 </script>

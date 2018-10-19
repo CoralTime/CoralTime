@@ -1,13 +1,14 @@
 import Q = require("q");
 import { IPromise } from "q";
-import { IProjectContext } from "./iprojectContext";
+import { IProjectContext } from "./models/iprojectContext";
 
-export class Configuration {
+export class ConfigurationService {
 
+    public accessTokenPromise: PromiseLike<void>;
+    private accessToken: string;
     private extensionSettings: ISettings;
     private $siteUrl = $("#siteUrl-input");
     private $userName = $("#userName-input");
-    private accessToken: string;
 
     constructor() {
         this.load();
@@ -75,9 +76,7 @@ export class Configuration {
         const deferred = Q.defer<string>();
         VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
             // Get value from user scope
-            console.log(11, key);
             dataService.getValue(key, {scopeType: "User"}).then((value) => {
-                console.log(22, value);
                 deferred.resolve(value as string);
             });
         });
@@ -85,7 +84,7 @@ export class Configuration {
     }
 
     private loadAccessToken(): void {
-        VSS.getAppToken().then((token) => {
+        this.accessTokenPromise = VSS.getAppToken().then((token) => {
             this.accessToken = token.token;
         });
     }
