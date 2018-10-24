@@ -10,13 +10,13 @@ export class ConfigurationService {
     private $siteUrl = $("#siteUrl-input");
     private $userName = $("#userName-input");
 
-    constructor() {
+    constructor(public WidgetHelpers) {
         this.load();
     }
 
     public load(): void {
         this.extensionSettings = {
-            siteUrl: "coralteam.coraltime.io",
+            siteUrl: "https://coralteamdev.coraltime.io",
             userName: "Roman",
         };
         // this.getKeyValueFromStorage("settings")
@@ -89,3 +89,37 @@ export class ConfigurationService {
         });
     }
 }
+
+const context = VSS.getExtensionContext();
+VSS.require(["TFS/Dashboards/WidgetHelpers"], (WidgetHelpers) => {
+    VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker-Configuration", () => {
+        const configuration = new ConfigurationService(WidgetHelpers);
+        return configuration;
+    });
+
+    VSS.notifyLoadSucceeded();
+});
+
+// VSS.require("TFS/Dashboards/WidgetHelpers", (WidgetHelpers) => {
+//     VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker-Configuration", () => {
+//         return {
+//             load: (widgetSettings, widgetConfigurationContext) => {
+//                 const settings = JSON.parse(widgetSettings.customSettings.data);
+//                 if (settings && settings.queryPath) {
+//                     // $queryDropdown.val(settings.queryPath);
+//                 }
+//
+//                 return WidgetHelpers.WidgetStatusHelper.Success();
+//             },
+//             onSave: () => {
+//                 const customSettings = {
+//                     data: JSON.stringify({
+//                         queryPath: "",
+//                     }),
+//                 };
+//                 return WidgetHelpers.WidgetConfigurationSave.Valid(customSettings);
+//             },
+//         };
+//     });
+//     VSS.notifyLoadSucceeded();
+// });

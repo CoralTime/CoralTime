@@ -1,10 +1,26 @@
+import $ = require("jquery");
 import { ConfigurationService } from "./configurationService";
 import { IProjectContext } from "./models/iprojectContext";
+
+const OPTIONS = [
+    {
+        label: "Coding",
+        value: "1",
+    },
+    {
+        label: "Reading",
+        value: "2",
+    },
+    {
+        label: "Test",
+        value: "3",
+    },
+];
 
 export class TimeEntryService {
 
     private $recordDate = $("#recordDate");
-    private $recordTaskType = $("#recordTaskType");
+    private $recordTask = $("#recordTask");
     private $recordDescription = $("#recordDescription");
     private $recordSubmit = $("#recordSubmit");
     // private $recordActualWork = $("#recordActualWork");
@@ -31,18 +47,18 @@ export class TimeEntryService {
         $.ajax({
             dataType: "json",
             error: (data) => {
-                alert("Error get tasks for CoralTime");
+                console.log("Error get tasks for CoralTime", data);
+                this.addOptions();
             },
             headers: {
                 "Content-Type": "application/json",
                 "VSTSToken": "Bearer " + this.config.getAccessToken(),
             },
             success: (data) => {
-                console.log(data);
-                alert("Time entry saved successfully");
+                console.log("Time entry saved successfully", data);
             },
             type: "get",
-            url: this.extensionSettings.siteUrl + "/api/v1/vsts/tasks?ProjectName=" + this.projectContext.projectName,
+            url: this.extensionSettings.siteUrl + "/api/v1/VSTS/Tasks?ProjectName=" + this.projectContext.projectName,
         });
     }
 
@@ -54,7 +70,7 @@ export class TimeEntryService {
             date: (this.$recordDate.val() as string),
             description: (this.$recordDescription.val() as string),
             // estimatedTime: (this.$recordEstimateWork.val() as number),
-            task: (this.$recordTaskType.val() as string),
+            task: (this.$recordTask.val() as string),
             userEmail: (this.projectContext.userEmail as string),
             userName: (this.projectContext.userName as string),
             vstsProjectId: (this.projectContext.projectId as string),
@@ -74,7 +90,7 @@ export class TimeEntryService {
                 alert("Time entry saved successfully");
             },
             type: "post",
-            url: this.extensionSettings.siteUrl + "/api/v1/timeentires/vsts",
+            url: this.extensionSettings.siteUrl + "/api/v1/timeentires/VSTS",
         });
     }
 
@@ -82,4 +98,22 @@ export class TimeEntryService {
         this.projectContext = this.config.getExtensionContext();
         this.extensionSettings = this.config.getSettings();
     }
+
+    private addOptions(): void {
+        $.each(OPTIONS, (index, itemData) => {
+            this.$recordTask.append($("<option/>", {
+                text: itemData.label,
+                value: itemData.value,
+            }));
+        });
+    }
 }
+
+const context = VSS.getExtensionContext();
+VSS.require("TFS/Dashboards/WidgetHelpers", (WidgetHelpers) => {
+    VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker", () => {
+        const timeEntryService = new TimeEntryService(new ConfigurationService(WidgetHelpers));
+        return timeEntryService;
+    });
+    VSS.notifyLoadSucceeded();
+});

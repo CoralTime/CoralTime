@@ -24,12 +24,10 @@
 <script type="text/javascript">
     VSS.init({
         explicitNotifyLoaded: true,
-        setupModuleLoader: true,
         usePlatformScripts: true
     });
 
-    VSS.require(["dist/configurationService", "dist/main"], () => {
-        VSS.notifyLoadSucceeded();
+    VSS.require(["dist/configurationService"], () => {
     });
 </script>
 </body>

@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.5.16",
+  "version": "0.0.5.54",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -67,9 +67,10 @@
       "id": "CoralTimeTracker-Configuration",
       "type": "ms.vss-web.action",
       "targets": [
-        "ms.vss-work-web.work-item-toolbar-menu"
+        "ms.vss-work-web.work-item-context-menu"
       ],
       "properties": {
+        "text": "CoralTime Configuration",
         "name": "CoralTimeTracker Configuration",
         "description": "Configures the CoralTimeTracker.",
         "uri": "static/coraltimetrackerconfiguration.html",

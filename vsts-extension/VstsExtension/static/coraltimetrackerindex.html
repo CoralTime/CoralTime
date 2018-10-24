@@ -20,8 +20,6 @@
             <select class="ct-select" id="recordTask"
                     name="task"
                     required>
-                <option value="1">Coding</option>
-                <option value="2">Test</option>
             </select>
         </div>
         <textarea class="ct-description" id="recordDescription"
@@ -60,13 +58,11 @@
     VSS.init(
         {
             explicitNotifyLoaded: true,
-            setupModuleLoader: true,
             usePlatformScripts: true
         }
     );
 
-    VSS.require(["dist/timeEntryService", "dist/configurationService", "dist/main"], () => {
-        VSS.notifyLoadSucceeded();
+    VSS.require(["dist/configurationService", "dist/timeEntryService"], () => {
     });
 </script>
 </body>
