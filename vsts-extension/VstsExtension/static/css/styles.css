@@ -106,3 +106,7 @@ input[type='number'] {
   background-image: url(../img/time-tracked.png);
   background-size: 20px;
 }
+
+.icon.menu-item-icon img {
+  max-width: 100%;
+}

@@ -1,5 +1,6 @@
 import Q = require("q");
 import { IPromise } from "q";
+import Dialogs = require("VSS/Controls/Dialogs");
 import { IProjectContext } from "./models/iprojectContext";
 
 export class ConfigurationService {
@@ -15,6 +16,7 @@ export class ConfigurationService {
     }
 
     public load(): void {
+        const that = this;
         this.extensionSettings = {
             siteUrl: "https://coralteamdev.coraltime.io",
             userName: "Roman",
@@ -26,9 +28,12 @@ export class ConfigurationService {
         //         this.$userName.val(this.extensionSettings.userName);
         //     });
         this.loadAccessToken();
+
+        return that.WidgetHelpers.WidgetStatusHelper.Success();
     }
 
     public onSave(): void {
+        console.log(33);
         const settings = this.getCustomSettings();
         this.setKeyValueInStorage("settings", settings);
     }
@@ -91,35 +96,56 @@ export class ConfigurationService {
 }
 
 const context = VSS.getExtensionContext();
+const dialogContributionId = context.publisherId + "." + context.extensionId + ".ConfigurationDialog";
+
 VSS.require(["TFS/Dashboards/WidgetHelpers"], (WidgetHelpers) => {
-    VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker-Configuration", () => {
-        const configuration = new ConfigurationService(WidgetHelpers);
-        return configuration;
+    VSS.register(context.publisherId + "." + context.extensionId + ".ConfigurationDialogButton", () => {
+        return {
+            // Called when the menu item is clicked.
+            execute: (actionContext) => {
+                let form;
+                VSS.getService(VSS.ServiceIds.Dialog).then((dialogService: any) => {
+                    const dialogOptions = {
+                        cancelText: "Cancel",
+                        getDialogResult: () => {
+                            return form ? form.getFormData() : null;
+                        },
+                        height: 600,
+                        okCallback: (result) => {
+                            console.log(JSON.stringify(result));
+                        },
+                        okText: "Save Settings",
+                        title: "CoralTimeTracker Configuration",
+                        width: 800,
+                    } as Dialogs.IModalDialogOptions;
+
+                    dialogService.openDialog(dialogContributionId, dialogOptions).then((dialog) => {
+                        dialog.getContributionInstance("ConfigurationDialog").then((formInstance) => {
+                            form = formInstance;
+
+                            // Subscribe to form input changes and update the Ok enabled state
+                            form.attachFormChanged((isValid) => {
+                                dialog.updateOkButton(isValid);
+                            });
+
+                            // Set the initial ok enabled state
+                            form.isFormValid().then((isValid) => {
+                                dialog.updateOkButton(isValid);
+                            });
+                        });
+                    });
+                });
+            },
+        };
     });
 
     VSS.notifyLoadSucceeded();
 });
 
-// VSS.require("TFS/Dashboards/WidgetHelpers", (WidgetHelpers) => {
-//     VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker-Configuration", () => {
-//         return {
-//             load: (widgetSettings, widgetConfigurationContext) => {
-//                 const settings = JSON.parse(widgetSettings.customSettings.data);
-//                 if (settings && settings.queryPath) {
-//                     // $queryDropdown.val(settings.queryPath);
-//                 }
-//
-//                 return WidgetHelpers.WidgetStatusHelper.Success();
-//             },
-//             onSave: () => {
-//                 const customSettings = {
-//                     data: JSON.stringify({
-//                         queryPath: "",
-//                     }),
-//                 };
-//                 return WidgetHelpers.WidgetConfigurationSave.Valid(customSettings);
-//             },
-//         };
-//     });
-//     VSS.notifyLoadSucceeded();
-// });
+VSS.require(["TFS/Dashboards/WidgetHelpers"], (WidgetHelpers) => {
+    VSS.register(dialogContributionId, () => {
+        return new ConfigurationService(WidgetHelpers);
+    });
+
+    VSS.notifyLoadSucceeded();
+});

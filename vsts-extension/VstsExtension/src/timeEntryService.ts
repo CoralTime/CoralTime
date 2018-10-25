@@ -111,9 +111,8 @@ export class TimeEntryService {
 
 const context = VSS.getExtensionContext();
 VSS.require("TFS/Dashboards/WidgetHelpers", (WidgetHelpers) => {
-    VSS.register(context.publisherId + "." + context.extensionId + "." + "CoralTimeTracker", () => {
-        const timeEntryService = new TimeEntryService(new ConfigurationService(WidgetHelpers));
-        return timeEntryService;
+    VSS.register(context.publisherId + "." + context.extensionId + ".CoralTimeTracker", () => {
+        return new TimeEntryService(new ConfigurationService(WidgetHelpers));
     });
     VSS.notifyLoadSucceeded();
 });
