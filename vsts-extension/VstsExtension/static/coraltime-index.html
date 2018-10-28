@@ -5,8 +5,8 @@
     <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>
-<div class="widget coraltime">
-    <form class="formContent">
+<div class="ct-coraltime">
+    <form>
         <div class="ct-date">
             <input class="ct-input" id="recordDate"
                    name="date"
@@ -62,7 +62,7 @@
         }
     );
 
-    VSS.require(["dist/configurationService", "dist/timeEntryService"], () => {
+    VSS.require(["dist/timeEntryForm"], () => {
     });
 </script>
 </body>

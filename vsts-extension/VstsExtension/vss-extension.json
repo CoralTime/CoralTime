@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.6.1",
+  "version": "0.0.6.36",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -55,7 +55,7 @@
         "name": "CoralTimeTracker",
         "description": "Track your time in CoralTime.",
         "previewImageUrl": "static/img/logo.png",
-        "uri": "static/coraltimetrackerindex.html",
+        "uri": "static/coraltime-index.html",
         "order": 99,
         "height": 500,
         "supportedScopes": [
@@ -73,8 +73,8 @@
         "text": "CoralTime Configuration",
         "name": "CoralTimeTracker Configuration",
         "description": "Configuration dialog button.",
-        "uri": "static/coraltimetrackerconfiguration.html",
-        "icon": "static/img/logo.png"
+        "uri": "static/coraltime-configuration.html",
+        "icon": "static/img/logo-menu.png"
       }
     },
     {
@@ -82,18 +82,18 @@
       "type": "ms.vss-web.control",
       "description": "CoralTimeTracker Configuration dialog.",
       "properties": {
-        "uri": "static/coraltimetrackerconfiguration.html"
+        "uri": "static/coraltime-configuration.html"
       }
     }
   ],
   "files": [
     {
       "addressable": true,
-      "path": "static/coraltimetrackerindex.html"
+      "path": "static/coraltime-index.html"
     },
     {
       "addressable": true,
-      "path": "static/coraltimetrackerconfiguration.html"
+      "path": "static/coraltime-configuration.html"
     },
     {
       "addressable": true,

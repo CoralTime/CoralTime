@@ -1,8 +1,9 @@
 ﻿:root {
   --main-blue: #00a0de;
+  --error-color: rgba(218, 10, 0, 1);
 }
 
-.widget.coraltime {
+.ct-coraltime {
   max-width: 350px;
   padding: 20px;
   font-size: 14px;
@@ -29,7 +30,7 @@ input::-webkit-inner-spin-button {
 }
 
 input[type='number'] {
-  -moz-appearance:textfield;
+  -moz-appearance: textfield;
 }
 
 .ct-input, .ct-select, .ct-project {
@@ -66,7 +67,7 @@ input[type='number'] {
   text-align: center;
   letter-spacing: 0.3px;
   border: none;
-  border-bottom: 1px solid rgba(255,255,255,.5);
+  border-bottom: 1px solid rgba(255, 255, 255, .5);
   color: #fff;
 }
 
@@ -107,6 +108,35 @@ input[type='number'] {
   background-size: 20px;
 }
 
-.icon.menu-item-icon img {
-  max-width: 100%;
+.ct-coraltime-configuration {
+  font-size: 14px;
+}
+
+.ct-coraltime-configuration label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ct-coraltime-configuration input {
+  width: 100%;
+  padding: 0 5px;
+  line-height: 24px;
+}
+
+.ct-validation-error {
+  font-size: 12px;
+  color: var(--error-color);
+  visibility: hidden;
+}
+
+.ct-validation-error:before {
+  display: inline-block;
+  margin-right: 5px;
+  content: "\ea02 ";
+  font-family: "Bowtie";
+  font-size: 14px;
+  color: var(--error-color);
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

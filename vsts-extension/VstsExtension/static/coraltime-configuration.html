@@ -5,13 +5,12 @@
     <link href="css/styles.css" rel="stylesheet"/>
 </head>
 <body>
-<div class="dialog-content">
-    <div>
+<div class="ct-coraltime-configuration">
+    <div class="single-line-text-input" id="siteUrl">
         <label>Url of CoralTime site</label>
-        <input type="text" id="siteUrl-input"/>
+        <input name="siteUrl" type="text" id="siteUrl-input"/>
 
-        <label>Username of CoralTime site</label>
-        <input type="text" id="userName-input"/>
+        <span class="ct-validation-error"></span>
     </div>
 </div>
 <script src="lib/VSS.SDK.min.js"></script>
@@ -22,7 +21,7 @@
         usePlatformScripts: true
     });
 
-    VSS.require(["dist/configurationService"], () => {
+    VSS.require(["dist/configurationForm"], () => {
     });
 </script>
 </body>
