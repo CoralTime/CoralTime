@@ -98,7 +98,7 @@ namespace CoralTime.BL.Services
             {
                 return null;
             }
-            var secret = _config["VstsExtensionSecret"]; // your extension's secret
+            var secret = _config["Vsts:VstsExtensionSecret"]; // your extension's secret
 
             var validationParameters = new TokenValidationParameters()
             {
