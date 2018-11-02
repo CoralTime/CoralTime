@@ -9,7 +9,7 @@ export class ConfigurationForm {
     private $siteUrlErrorText = $(".ct-validation-error");
 
     constructor(private widgetHelpers) {
-        this.configurationService = new ConfigurationService(widgetHelpers);
+        this.configurationService = new ConfigurationService();
         this.load();
     }
 

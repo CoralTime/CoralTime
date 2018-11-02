@@ -3,7 +3,7 @@
 
 ## Contributors
 
-We thank the following contributor(s) for this widget: Denis Gavrilov
+We thank the following contributor(s) for this widget: Denis Gavrilov, Roman Churpita
 
 ## Feedback
 

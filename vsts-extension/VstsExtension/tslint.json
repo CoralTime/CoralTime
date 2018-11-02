@@ -23,7 +23,7 @@
       false
     ],
     "no-empty": false,
-    "no-trailing-whitespace": false
+    "variable-name": false
   },
   "rulesDirectory": []
 }

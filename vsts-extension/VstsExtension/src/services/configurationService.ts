@@ -8,7 +8,7 @@ export class ConfigurationService {
     private accessToken: string;
     private extensionSettings: ISettings;
 
-    constructor(private WidgetHelpers) {
+    constructor() {
         this.load();
     }
 
@@ -42,7 +42,7 @@ export class ConfigurationService {
         //     });
         this.loadAccessToken();
 
-        return that.WidgetHelpers.WidgetStatusHelper.Success();
+        // return that.WidgetHelpers.WidgetStatusHelper.Success();
     }
 
     setKeyValueInStorage(key, value): void {
@@ -69,5 +69,7 @@ export class ConfigurationService {
         this.accessTokenPromise = VSS.getAppToken().then((token) => {
             this.accessToken = token.token;
         });
+        // VSS.getAccessToken().then((token) => {
+        // });
     }
 }

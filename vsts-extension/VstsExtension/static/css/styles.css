@@ -1,111 +1,82 @@
 ﻿:root {
-  --main-blue: #00a0de;
+  --main-blue: rgba(0, 120, 212, 1);
+  --main-gray: rgba(234, 234, 234, 1);
   --error-color: rgba(218, 10, 0, 1);
 }
 
 .ct-coraltime {
   max-width: 350px;
   padding: 20px;
+}
+
+[class*="-container"] {
+  margin-bottom: 5px;
+}
+
+.ct-textarea {
+  width: 100%;
+  border: 1px solid transparent;
+  box-shadow: none;
   font-size: 14px;
 }
 
-.ct-input, .ct-select, .ct-description {
-  width: 100%;
-  border: 0;
-  border-bottom: 1px solid #f3f4f6;
-  box-shadow: none;
-  font-family: inherit;
+.ct-textarea:hover {
+  border-color: var(--main-gray);
 }
 
-.ct-input:focus, .ct-select:focus, .ct-description:focus {
+.ct-textarea:focus {
   outline: 0;
   border-color: var(--main-blue);
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  /* display: none; <- Crashes Chrome on hover */
-  -webkit-appearance: none;
-  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-}
-
-input[type='number'] {
-  -moz-appearance: textfield;
-}
-
-.ct-input, .ct-select, .ct-project {
-  height: 42px;
-  line-height: 42px;
-  margin-bottom: 15px;
-  color: #728096;
-}
-
-.ct-description {
+.ct-textarea {
+  border-color: var(--main-gray);
   resize: none;
-  height: 50px;
 }
 
-.ct-time-period {
-  margin: 20px -30px;
-  padding: 20px 30px;
-  background: var(--main-blue);
+.ct-coraltime label {
+  padding: 0 5px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  color: rgba(0, 0, 0, .55);
 }
 
-.ct-time-period > div {
-  width: 50%;
-  box-sizing: border-box;
-  font-size: 18px;
-  color: #fff;
+.ct-time-period-container > div {
   display: inline-block;
+  width: 50%;
+  line-height: 20px;
 }
 
-.ct-time-period input {
+.ct-time-period-container > div > div {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.ct-time-period-container .combo {
   width: 22px;
-  outline: 0;
-  background: none;
-  font-size: 18px;
+  float: left;
+  margin-right: 5px;
+  line-height: initial;
+}
+
+.ct-time-period-container input {
   text-align: center;
-  letter-spacing: 0.3px;
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, .5);
-  color: #fff;
 }
 
 .ct-submit-button {
+  float: right;
+  margin-top: 10px;
   background-color: var(--main-blue);
   border: none;
-  border-radius: 5px;
-  height: 40px;
-  width: 88px;
-  float: right;
-  font-size: 14px;
   color: #fff;
-  cursor: pointer;
-  outline: 0;
-  transition-duration: .3s;
 }
 
 .ct-submit-button[disabled] {
   background-color: #728096;
   opacity: .7;
-}
-
-.ct-icon {
-  position: relative;
-  top: -1px;
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  margin-right: 5px;
-  vertical-align: middle;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.ct-timeactual-icon {
-  background-image: url(../img/time-tracked.png);
-  background-size: 20px;
 }
 
 .ct-coraltime-configuration {

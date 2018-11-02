@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.6.36",
+  "version": "0.0.6.135",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -46,43 +46,26 @@
   ],
   "contributions": [
     {
-      "id": "CoralTimeTracker",
+      "id": "CoralTime",
       "type": "ms.vss-work-web.work-item-form-control",
+      "description": "Track your time in CoralTime",
       "targets": [
         "ms.vss-work-web.work-item-form"
       ],
       "properties": {
-        "name": "CoralTimeTracker",
-        "description": "Track your time in CoralTime.",
-        "previewImageUrl": "static/img/logo.png",
-        "uri": "static/coraltime-index.html",
-        "order": 99,
-        "height": 500,
-        "supportedScopes": [
-          "project_team"
-        ]
-      }
-    },
-    {
-      "id": "ConfigurationDialogButton",
-      "type": "ms.vss-web.action",
-      "targets": [
-        "ms.vss-work-web.work-item-context-menu"
-      ],
-      "properties": {
-        "text": "CoralTime Configuration",
-        "name": "CoralTimeTracker Configuration",
-        "description": "Configuration dialog button.",
-        "uri": "static/coraltime-configuration.html",
-        "icon": "static/img/logo-menu.png"
-      }
-    },
-    {
-      "id": "ConfigurationDialog",
-      "type": "ms.vss-web.control",
-      "description": "CoralTimeTracker Configuration dialog.",
-      "properties": {
-        "uri": "static/coraltime-configuration.html"
+        "inputs": [
+          {
+            "id": "SiteUrl",
+            "name": "Enter site url",
+            "validation": {
+              "dataType": "String",
+              "isRequired": false
+            }
+          }
+        ],
+        "height": 700,
+        "name": "CoralTime Tracker",
+        "uri": "static/coraltime-index.html"
       }
     }
   ],

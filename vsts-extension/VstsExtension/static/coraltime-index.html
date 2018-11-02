@@ -6,37 +6,25 @@
 </head>
 <body>
 <div class="ct-coraltime">
-    <form>
-        <div class="ct-date">
-            <input class="ct-input" id="recordDate"
-                   name="date"
-                   type="date"
-                   required>
+    <form autocomplete="off">
+        <div class="ct-date-container">
+            <label>Date</label>
         </div>
-        <div class="ct-project">
-            CoralMSP
+        <div class="ct-task-container">
+            <label>Task</label>
         </div>
-        <div class="ct-task">
-            <select class="ct-select" id="recordTask"
-                    name="task"
-                    required>
-            </select>
+        <div class="ct-description-container">
+            <label for="recordDescription">Description</label>
+            <textarea class="ct-textarea" id="recordDescription"
+                      name="description"
+                      maxlength="1000"
+                      rows="5"></textarea>
         </div>
-        <textarea class="ct-description" id="recordDescription"
-                  name="description"
-                  placeholder="Add task details"
-                  maxlength="1000"></textarea>
-        <div class="ct-time-period">
+        <div class="ct-time-period-container">
             <div class="ct-actual-time">
-                <i class="ct-icon ct-timeactual-icon" title="Tracked time"></i>
-                <input name="timeActualHours"
-                       type="number"
-                       autocomplete="off"
-                       value="00">h
-                <input name="timeActualMinutes"
-                       type="number"
-                       autocomplete="off"
-                       value="00">m
+                <label>Actual time</label>
+                <div class="ct-actual-time-hours">h</div>
+                <div class="ct-actual-time-minutes">m</div>
             </div>
             <!--<button type="button" *ngIf="!isEstimatedTimeShown"-->
             <!--class="ct-show-input ct-estimated-time-button"-->
@@ -48,7 +36,7 @@
             <!--<input name="timeEstimatedMinutes" autocomplete="off">m-->
             <!--</div>-->
         </div>
-        <div class="ct-form-actions">
+        <div class="ct-form-actions-container">
             <button type="button" class="ct-submit-button" id="recordSubmit">Submit</button>
         </div>
     </form>

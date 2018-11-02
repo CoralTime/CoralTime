@@ -7,8 +7,8 @@ export class TimeEntryService {
     private projectContext: IProjectContext;
     private extensionSettings: ISettings;
 
-    constructor(private widgetHelpers) {
-        this.configService = new ConfigurationService(widgetHelpers);
+    constructor() {
+        this.configService = new ConfigurationService();
         this.configService.accessTokenPromise.then(() => {
             this.loadConfiguration();
         });
