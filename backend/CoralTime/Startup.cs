@@ -233,6 +233,7 @@ namespace CoralTime
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IMemberActionService, MemberActionService>();
             services.AddScoped<IVstsService, VstsService>();
+            services.AddScoped<IVstsAdminService, VstsService>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)

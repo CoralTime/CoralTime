@@ -300,5 +300,14 @@ namespace CoralTime.Common.Constants
 
         public const string CertificateKeys = "CertificateKeys";
         public const string CertificateKeysTime = "CertificateKeysTime";
+
+        #region VSTS 
+
+        public const string VstsProjectsUrl = "/_apis/projects";
+        public const string VstsTeamsUrl = "/teams";
+        public const string VstsMembersUrl = "/members";
+
+        #endregion VSTS
+
     }
 }
