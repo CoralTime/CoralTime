@@ -43,32 +43,28 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="static\coraltimetrackerindex.html" />
-    <Content Include="static\coraltimetrackerconfiguration.html" />
-    <Content Include="static\css\app.css" />
+    <Content Include="static\coraltime-configuration.html" />
+    <Content Include="static\coraltime-index.html" />
+    <Content Include="static\css\styles.css" />
+    <Content Include="static\img\logo-menu.png" />
     <Content Include="static\img\logo.png" />
-    <Content Include="static\lib\require.js" />
+    <Content Include="static\img\time-tracked.png" />
     <Content Include="static\lib\VSS.SDK.min.js" />
-    <TypeScriptCompile Include="src\configuration.ts" />
-    <TypeScriptCompile Include="src\iprojectContext.ts" />
-    <TypeScriptCompile Include="src\isettings.d.ts" />
-    <TypeScriptCompile Include="src\main.ts" />
+    <TypeScriptCompile Include="src\configurationForm.ts" />
     <Content Include="Overview.md" />
     <Content Include="bower.json" />
     <Content Include="package-lock.json" />
     <None Include="package.json" />
-    <Content Include="static\lib\jquery.js" />
-    <Content Include="static\lib\VSS.SDK.js" />
     <Content Include="web.config" />
     <Content Include="tsconfig.json" />
     <Content Include="tslint.json" />
     <Content Include="typings.json" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
+    <TypeScriptCompile Include="src\models\iprojectContext.d.ts" />
+    <TypeScriptCompile Include="src\models\isettings.d.ts" />
+    <TypeScriptCompile Include="src\models\itimeEntry.d.ts" />
+    <TypeScriptCompile Include="src\services\configurationService.ts" />
+    <TypeScriptCompile Include="src\services\timeEntryService.ts" />
+    <TypeScriptCompile Include="src\timeEntryForm.ts" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vss-extension.json" />

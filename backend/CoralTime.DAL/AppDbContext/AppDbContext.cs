@@ -1,14 +1,13 @@
-﻿using System;
-using CoralTime.DAL.Models;
+﻿using CoralTime.DAL.Models;
+using CoralTime.DAL.Models.LogChanges;
+using CoralTime.DAL.Models.Member;
+using CoralTime.DAL.Models.ReportsSettings;
+using CoralTime.DAL.Models.Vsts;
 using IdentityServer4.EntityFramework.Entities;
 using IdentityServer4.EntityFramework.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using CoralTime.Common.Constants;
-using CoralTime.DAL.Models.LogChanges;
-using CoralTime.DAL.Models.Member;
-using CoralTime.DAL.Models.ReportsSettings;
 
 namespace CoralTime.DAL
 {
@@ -40,8 +39,12 @@ namespace CoralTime.DAL
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
         public DbSet<ReportsSettings> ReportsSettings { get; set; }
-        
+
         public DbSet<MemberAction> MemberActions { get; set; }
+
+        public DbSet<VstsUser> VstsUsers { get; set; }
+
+        public DbSet<VstsProject> VstsProjects { get; set; }
 
         public Task<int> SaveChangesAsync()
         {
@@ -124,6 +127,12 @@ namespace CoralTime.DAL
 
             builder.Entity<MemberAction>()
                 .HasOne(p => p.Member);
+
+            builder.Entity<VstsProject>()
+                .HasOne(p => p.Project);
+
+            builder.Entity<VstsUser>()
+                .HasOne(p => p.User);
 
             base.OnModelCreating(builder);
         }

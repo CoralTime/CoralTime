@@ -15,6 +15,7 @@ using CoralTime.DAL.Repositories.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using MemberActionTypes = CoralTime.Common.Constants.Constants.MemberActionTypes;
+using CoralTime.DAL.Repositories.Vsts;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -57,6 +58,12 @@ namespace CoralTime.DAL.Repositories
         
         private MemberActionRepository _memberActionRepository;
         public MemberActionRepository MemberActionRepository => _memberActionRepository ?? (_memberActionRepository = new MemberActionRepository(AppDbContext, MemoryCache, UserId));
+
+        private VstsProjectRepository _vstsProjectRepository;
+        public VstsProjectRepository VstsProjectRepository => _vstsProjectRepository ?? (_vstsProjectRepository = new VstsProjectRepository(AppDbContext, MemoryCache, UserId));
+
+        private VstsUserRepository _vstsUserRepository;
+        public VstsUserRepository VstsUserRepository => _vstsUserRepository ?? (_vstsUserRepository = new VstsUserRepository(AppDbContext, MemoryCache, UserId));
 
         #endregion
 
