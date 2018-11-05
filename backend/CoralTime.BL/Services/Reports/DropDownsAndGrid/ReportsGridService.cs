@@ -87,8 +87,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 foreach (var item in report.GroupedItems)
                 {
-                    item.GroupByType.WorkingHoursPerDay = ReportMemberImpersonated.WorkingHoursPerDay;
-                    item.GroupByType.MemberUrlIcon = _imageService.GetUrlIcon(ReportMemberImpersonated.Id);
+                    item.GroupByType.MemberUrlIcon = _imageService.GetUrlIcon(item.GroupByType.MemberId);
+                    item.GroupByType.WorkingHoursPerDay = GetWorkingHoursPerDay(item.GroupByType.MemberId);
                 }
             }
             else
@@ -97,28 +97,33 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
+        private int? GetWorkingHoursPerDay(int memberId)
+        {
+            return Uow.MemberRepository.LinkedCacheGetById(memberId)?.WorkingHoursPerDay;
+        }
+
+        private Dictionary<int, string> iconUrls = new Dictionary<int, string>();
+
+        private string GetMemberIcon(int memberId)
+        {
+            if (!iconUrls.ContainsKey(memberId))
+            {
+                var iconUrl = _imageService.GetUrlIcon(memberId);
+                iconUrls.Add(memberId, iconUrl);
+                return iconUrl;
+            }
+            return iconUrls[memberId];
+        }
+
         private void AddMemberIcons(ReportTotalView report)
         {
-            var iconUrl = _imageService.GetUrlIcon(report.MemberId);
-            report.MemberUrlIcon = iconUrl;
-
-            var iconUrls = new Dictionary<int, string>();
-            iconUrls.Add(report.MemberId, iconUrl);
+            report.MemberUrlIcon = GetMemberIcon(report.MemberId);
             foreach (var item in report.GroupedItems)
             {
-                if (!iconUrls.ContainsKey(item.MemberId))
-                {
-                    iconUrls.Add(item.MemberId, _imageService.GetUrlIcon(item.MemberId));
-                }
-                item.MemberUrlIcon = iconUrls.GetValueOrDefault(item.MemberId);
-
+                item.MemberUrlIcon = GetMemberIcon(item.MemberId);
                 foreach (var entryItem in item.Items)
                 {
-                    if (!iconUrls.ContainsKey(entryItem.MemberId))
-                    {
-                        iconUrls.Add(entryItem.MemberId, _imageService.GetUrlIcon(entryItem.MemberId));
-                    }
-                    entryItem.MemberUrlIcon = iconUrls.GetValueOrDefault(entryItem.MemberId);
+                    entryItem.MemberUrlIcon = GetMemberIcon(entryItem.MemberId);
                 }
             }
         }
