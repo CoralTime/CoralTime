@@ -6,10 +6,6 @@ namespace CoralTime.MySqlMigrations.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_TimeEntries_MemberId",
-                table: "TimeEntries");
-
             migrationBuilder.CreateIndex(
                 name: "IX_TimeEntries_MemberId_Date",
                 table: "TimeEntries",
@@ -21,11 +17,6 @@ namespace CoralTime.MySqlMigrations.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_TimeEntries_MemberId_Date",
                 table: "TimeEntries");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TimeEntries_MemberId",
-                table: "TimeEntries",
-                column: "MemberId");
         }
     }
 }
