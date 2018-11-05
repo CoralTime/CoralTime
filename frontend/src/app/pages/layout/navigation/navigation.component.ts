@@ -141,7 +141,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		if (this.aclService.isGranted('roleAddProject')) {
 			this.showManageMenu = true;
 			this.authService.isUserAdminOrManager = true;
-			return;
 		}
 
 		this.loadingService.addLoading();

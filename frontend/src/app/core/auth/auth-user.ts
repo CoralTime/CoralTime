@@ -5,7 +5,7 @@ export class AuthUser {
 	readonly accessToken: string;
 	readonly expiresIn: number;
 	readonly id: number;
-	readonly isManager: string;
+	readonly isManager: boolean;
 	readonly isSso: boolean;
 	readonly nickname: string;
 	readonly refreshToken: string;
@@ -22,7 +22,7 @@ export class AuthUser {
 
 		let decodedToken = jwt_decode(data.access_token);
 		this.id = +decodedToken.id;
-		this.isManager = decodedToken.isManager;
+		this.isManager = decodedToken.isManager === 'true';
 		this.nickname = decodedToken.nickname;
 		this.refreshTokenExpiration = new Date().getTime() + decodedToken.refreshTokenLifeTime * 1000;
 		let roleName = Array.isArray(decodedToken.role) ? decodedToken.role[0] : decodedToken.role;
