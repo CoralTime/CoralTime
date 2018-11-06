@@ -31,36 +31,14 @@ namespace CoralTime.BL.Services
             _timeEntryService = timeEntryService;
         }
 
-        private TimeEntryView ConvertTimeEntryFromVsts(VstsTimeEntry vstsTimeEnry)
+        public int? GetProjectIdByVstsProjectId(string projectId)
         {
-            return new TimeEntryView
-            {
-                Description = vstsTimeEnry.Description,
-                Date = vstsTimeEnry.Date,
-                ProjectId = GetProjectIdByProjectName(vstsTimeEnry.ProjectName) ?? 0,
-                TaskTypesId = GetTaskId(taskName: vstsTimeEnry.TaskName, projectName: vstsTimeEnry.ProjectName) ?? 0,
-                MemberId = GetMemberIdByName(vstsTimeEnry.UserName) ?? 0,
-                TimeOptions = new TimeOptions
-                {
-                    IsFromToShow = false,
-                    TimeTimerStart = 0
-                },
-                TimeValues = new TimeValuesView
-                {
-                    TimeActual = vstsTimeEnry.TimeActual,
-                    TimeEstimated = vstsTimeEnry.TimeEstimated
-                }
-            };
-        }
-
-        public int? GetProjectIdByProjectName(string projectName)
-        {
-            return _uow.ProjectRepository.LinkedCacheGetByName(projectName)?.Id;
+            return _uow.VstsProjectRepository.GetQuery().Single(x=> x.VstsProjectId == projectId)?.ProjectId;
         }
 
         public List<VstsTask> GetTasksByProject(string projectName)
         {
-            var projectId = GetProjectIdByProjectName(projectName);
+            var projectId = GetProjectIdByVstsProjectId(projectName);
             return _uow.TaskTypeRepository.LinkedCacheGetList()
                 .Where(x => (x.ProjectId == null || x.ProjectId == projectId) && x.IsActive)
                 .Select(x => new VstsTask
@@ -81,21 +59,28 @@ namespace CoralTime.BL.Services
             return _uow.MemberRepository.LinkedCacheGetByUserName(userName)?.Id;
         }
 
-        public Member GetVstsMember(string token, string id, string userName)
+        public Member GetVstsMember(string token)
         {
-            //var parsedToken = ValidateToken(token);
+            var parsedToken = ValidateToken(token);
             if (token != null)
             {
-                var member = _uow.MemberRepository.LinkedCacheGetByUserName(userName);
-                return member;
+                var nameId = parsedToken.Payload["nameid"].ToString();
+                var user = _uow.VstsUserRepository.GetUserByVstsNameId(nameId);
+                if (user != null)
+                {
+                    var member = _uow.MemberRepository.LinkedCacheGetByUserName(user.UserName);
+                    return member;
+                }                
             }
             return null;
         }
 
-        public bool SaveTimeEntry(VstsTimeEntry vstsTimeEnry)
+        public bool SaveTimeEntry(TimeEntryView vstsTimeEnry, Member member)
         {
-            var timeEntry = ConvertTimeEntryFromVsts(vstsTimeEnry);
-            return _timeEntryService.Create(timeEntry) != null;
+            if (member == null)
+                return false;
+
+            return _timeEntryService.Create(vstsTimeEnry, member) != null;
         }
 
         public JwtSecurityToken ValidateToken(string issuedToken)
@@ -104,23 +89,24 @@ namespace CoralTime.BL.Services
             {
                 return null;
             }
-            var secret = _config["VstsExtensionSecret"]; // your extension's secret
+            //var secret = _config["VstsExtensionSecret"]; // your extension's secret
 
-            var validationParameters = new TokenValidationParameters()
-            {
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-                ValidateIssuer = false,
-                RequireSignedTokens = false,
-                RequireExpirationTime = true,
-                ValidateLifetime = true,
-                ValidateAudience = false,
-                ValidateActor = false,
-                ValidateIssuerSigningKey = false
-            };
+            //var validationParameters = new TokenValidationParameters()
+            //{
+            //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+            //    ValidateIssuer = false,
+            //    RequireSignedTokens = false,
+            //    RequireExpirationTime = true,
+            //    ValidateLifetime = true,
+            //    ValidateAudience = false,
+            //    ValidateActor = false,
+            //    ValidateIssuerSigningKey = false
+            //};
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(issuedToken, validationParameters, out var valiadtedToken);
-            return valiadtedToken as JwtSecurityToken;
+            //var principal = tokenHandler.ValidateToken(issuedToken, validationParameters, out var valiadtedToken);
+            //return valiadtedToken as JwtSecurityToken;
+            return tokenHandler.ReadJwtToken(issuedToken);
         }
 
         public VstsSetup GetVstsSetupInfo(VstsSetup vstsSetup)

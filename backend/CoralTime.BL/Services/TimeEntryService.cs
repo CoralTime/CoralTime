@@ -86,7 +86,7 @@ namespace CoralTime.BL.Services
             CheckRelatedEntities(timeEntryView, timeEntry, out var relatedMemberByName, out var relatedProjectById, member: member);
 
             // Check Lock TimeEntries: User cannot Create TimeEntry, if enable Lock TimeEntry in Project settings.  
-            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(BaseMemberCurrent.User.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
+            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject((member ?? BaseMemberCurrent).User.IsAdmin, relatedMemberByName.Id, timeEntry.ProjectId);
             CheckLockTimeEntryByProjectSettings(timeEntryView.Date, relatedProjectById, isOnlyMemberAtProject);
 
             // Check correct timing values from TimeEntryView.
@@ -102,11 +102,11 @@ namespace CoralTime.BL.Services
 
             try
             {
-                Uow.TimeEntryRepository.Insert(timeEntry);
+                Uow.TimeEntryRepository.Insert(timeEntry, member?.UserId);
                 Uow.Save(memberId: member?.Id);
 
                 var timeEntryWithUpdateRelatedEntities = Uow.TimeEntryRepository.LinkedCacheGetById(timeEntry.Id);
-                return timeEntryWithUpdateRelatedEntities.GetView(member?.User?.UserName ?? BaseMemberImpersonated.User.UserName, Mapper);
+                return timeEntryWithUpdateRelatedEntities.GetView((member ?? BaseMemberImpersonated).User.UserName, Mapper);
             }
             catch (Exception e)
             {
@@ -255,7 +255,7 @@ namespace CoralTime.BL.Services
         private void CheckRelatedEntities(TimeEntryView timeEntryView, TimeEntry timeEntry, out Member relatedMemberByName, out Project relatedProjectById, Member member = null)
         {
             relatedMemberByName = member ?? BaseMemberImpersonated;
-            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject(BaseMemberCurrent.User.IsAdmin, BaseMemberImpersonated.Id, timeEntry.ProjectId);
+            var isOnlyMemberAtProject = !IsAdminOrManagerOfProject((member ?? BaseMemberCurrent).User.IsAdmin, (member ?? BaseMemberImpersonated).Id, timeEntry.ProjectId);
 
             relatedProjectById = GetRelatedProjectById(timeEntryView.ProjectId, isOnlyMemberAtProject);
             var relatedMemberById = GetRelatedMemberById(timeEntryView.MemberId, isOnlyMemberAtProject);
@@ -434,6 +434,7 @@ namespace CoralTime.BL.Services
 
             timeEntry.Description = timeEntryView.Description;
             timeEntry.IsFromToShow = timeEntryView.TimeOptions.IsFromToShow;
+            timeEntry.WorkItemId = timeEntryView.WorkItemId;
 
             #endregion
         }

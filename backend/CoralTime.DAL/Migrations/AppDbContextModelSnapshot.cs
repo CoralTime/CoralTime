@@ -467,6 +467,8 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<int>("TimeTo");
 
+                    b.Property<string>("WorkItemId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");

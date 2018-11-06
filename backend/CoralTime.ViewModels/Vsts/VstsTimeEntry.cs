@@ -1,21 +1,24 @@
-﻿using System;
+﻿using CoralTime.ViewModels.TimeEntries;
+using System;
 
 namespace CoralTime.ViewModels.Vsts
 {
     public class VstsTimeEntry
     {
-        public string ProjectName { get; set; }
+        public string ProjectId { get; set; }
 
-        public string TaskName { get; set; }
+        public string TaskId { get; set; }
 
         public DateTime Date { get; set; }
 
         public string Description { get; set; }
 
-        public int TimeActual { get; set; }
+        public string MemberId { get; set; }
 
-        public int? TimeEstimated { get; set; }
+        public int VstsEntityId { get; set; }
 
-        public string UserName { get; set; }
+        public TimeOptions TimeOptions { get; set; }
+
+        public TimeValuesView TimeValues { get; set; }
     }
 }
