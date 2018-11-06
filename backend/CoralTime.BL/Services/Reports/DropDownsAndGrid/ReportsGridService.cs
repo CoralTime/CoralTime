@@ -65,7 +65,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     case (int) ReportsGroupByIds.Client:
                     {
                         var timeEntriesGroupByClients = filteredTimeEntries
-                            .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
+                            .GroupBy(i => i.Project.Client ?? CreateWithOutClientInstance())
                             .OrderBy(x => x.Key.Name)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
@@ -87,8 +87,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 foreach (var item in report.GroupedItems)
                 {
-                    item.GroupByType.MemberUrlIcon = _imageService.GetUrlIcon(item.GroupByType.MemberId);
-                    item.GroupByType.WorkingHoursPerDay = GetWorkingHoursPerDay(item.GroupByType.MemberId);
+                    item.GroupByType.MemberUrlIcon = GetMemberIcon(item.GroupByType.MemberId);
+                    item.GroupByType.WorkingHoursPerDay = Uow.MemberRepository.LinkedCacheGetById(item.GroupByType.MemberId)?.WorkingHoursPerDay;
                 }
             }
             else
@@ -97,10 +97,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private int? GetWorkingHoursPerDay(int memberId)
-        {
-            return Uow.MemberRepository.LinkedCacheGetById(memberId)?.WorkingHoursPerDay;
-        }
+        #region Add member icons in report
 
         private Dictionary<int, string> iconUrls = new Dictionary<int, string>();
 
@@ -127,6 +124,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             }
         }
+
+        #endregion Add member icons in report
 
         public ReportTotalView InitializeReportTotalView(ReportsGridView reportsGridView)
         {
