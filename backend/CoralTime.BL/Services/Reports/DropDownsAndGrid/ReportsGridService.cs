@@ -65,7 +65,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     case (int) ReportsGroupByIds.Client:
                     {
                         var timeEntriesGroupByClients = filteredTimeEntries
-                            .GroupBy(i => i.Project.Client == null ? CreateWithOutClientInstance() : i.Project.Client)
+                            .GroupBy(i => i.Project.Client ?? CreateWithOutClientInstance())
                             .OrderBy(x => x.Key.Name)
                             .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
 
@@ -87,8 +87,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 foreach (var item in report.GroupedItems)
                 {
-                    item.GroupByType.WorkingHoursPerDay = ReportMemberImpersonated.WorkingHoursPerDay;
-                    item.GroupByType.MemberUrlIcon = _imageService.GetUrlIcon(ReportMemberImpersonated.Id);
+                    item.GroupByType.MemberUrlIcon = GetMemberIcon(item.GroupByType.MemberId);
+                    item.GroupByType.WorkingHoursPerDay = Uow.MemberRepository.LinkedCacheGetById(item.GroupByType.MemberId)?.WorkingHoursPerDay;
                 }
             }
             else
@@ -97,31 +97,35 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
+        #region Add member icons in report
+
+        private Dictionary<int, string> iconUrls = new Dictionary<int, string>();
+
+        private string GetMemberIcon(int memberId)
+        {
+            if (!iconUrls.ContainsKey(memberId))
+            {
+                var iconUrl = _imageService.GetUrlIcon(memberId);
+                iconUrls.Add(memberId, iconUrl);
+                return iconUrl;
+            }
+            return iconUrls[memberId];
+        }
+
         private void AddMemberIcons(ReportTotalView report)
         {
-            var iconUrl = _imageService.GetUrlIcon(report.MemberId);
-            report.MemberUrlIcon = iconUrl;
-
-            var iconUrls = new Dictionary<int, string>();
-            iconUrls.Add(report.MemberId, iconUrl);
+            report.MemberUrlIcon = GetMemberIcon(report.MemberId);
             foreach (var item in report.GroupedItems)
             {
-                if (!iconUrls.ContainsKey(item.MemberId))
-                {
-                    iconUrls.Add(item.MemberId, _imageService.GetUrlIcon(item.MemberId));
-                }
-                item.MemberUrlIcon = iconUrls.GetValueOrDefault(item.MemberId);
-
+                item.MemberUrlIcon = GetMemberIcon(item.MemberId);
                 foreach (var entryItem in item.Items)
                 {
-                    if (!iconUrls.ContainsKey(entryItem.MemberId))
-                    {
-                        iconUrls.Add(entryItem.MemberId, _imageService.GetUrlIcon(entryItem.MemberId));
-                    }
-                    entryItem.MemberUrlIcon = iconUrls.GetValueOrDefault(entryItem.MemberId);
+                    entryItem.MemberUrlIcon = GetMemberIcon(entryItem.MemberId);
                 }
             }
         }
+
+        #endregion Add member icons in report
 
         public ReportTotalView InitializeReportTotalView(ReportsGridView reportsGridView)
         {

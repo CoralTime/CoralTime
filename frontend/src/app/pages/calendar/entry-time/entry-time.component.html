@@ -1,3 +1,4 @@
+<div *ngIf="isOpenMobile" class="ct-bg-mobile"></div>
 <ct-entry-time-form *ngIf="isOpen" [timeEntry]="timeEntry"
                     [class.ct-open]="isOpen"
                     [class.ct-open-left]="isOpenLeft"
@@ -7,5 +8,4 @@
                     (closeEntryTimeForm)="closeTimeEntryForm()"
                     (clickOutside)="closeTimeEntryForm(true)"
                     (deleted)="deleteTimeEntry()"
-                    (timerUpdated)="timerUpdated.emit()"
                     #entryForm></ct-entry-time-form>

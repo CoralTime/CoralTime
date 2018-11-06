@@ -6,7 +6,7 @@ $textAreaHeight: 116px;
   background: #fff;
 
   &.ct-focused {
-    border: 1px solid $nav-link-border;
+    border-color: $main-blue !important;
   }
 
   .ct-textarea {
@@ -15,10 +15,11 @@ $textAreaHeight: 116px;
     width: 100%;
     min-height: 114px;
     padding: 0;
-    background: $primary-btn-text;
+    background: #fff;
     border: none;
     outline: none;
-    font-family: Roboto Regular, sans-serif;
+    font-family: $latoFont;
+    font-weight: 700;
     font-size: 14px;
     line-height: 1.25;
     overflow: hidden;

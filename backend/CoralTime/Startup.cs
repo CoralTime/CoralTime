@@ -174,6 +174,9 @@ namespace CoralTime
             // Add OData
             var edmModel = SetupODataEntities(app.ApplicationServices);
 
+            //Make sure you add app.UseCors before app.UseMvc otherwise the request will be finished before the CORS middleware is applied
+            app.UseCors("AllowAllOrigins");
+
             app.UseMvc();
 
             app.UseMvc(routeBuilder =>
@@ -182,8 +185,6 @@ namespace CoralTime
                 routeBuilder.MapODataServiceRoute("ODataRoute", BaseODataRoute, edmModel);
                 routeBuilder.EnableDependencyInjection();
             });
-
-            app.UseCors("AllowAllOrigins");
 
             app.UseSwagger();
 

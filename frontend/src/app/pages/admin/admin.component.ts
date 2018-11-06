@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { NotificationService } from '../../core/notification.service';
 import { AdminService } from '../../services/admin.service';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
-import { NotificationService } from '../../core/notification.service';
 
 @Component({
 	selector: 'ct-admin',
@@ -11,7 +11,7 @@ import { NotificationService } from '../../core/notification.service';
 export class AdminComponent {
 	memberId: number;
 	projectIds: number[];
-    filterStr: string = '';
+	filterStr: string = '';
 
 	constructor(private adminService: AdminService,
 	            private loadingService: LoadingMaskService,

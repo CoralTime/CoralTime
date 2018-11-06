@@ -1,6 +1,6 @@
 #loading-mask {
   position: fixed;
-  top: 50px;
+  top: $nav-height;
   left: 0;
   height: 100%;
   width: 100%;
@@ -27,6 +27,10 @@
     transition: opacity 1s ease .3s;
     opacity: 1;
     z-index: 9999;
+  }
+
+  &.ct-impersonate {
+    margin-top: 50px;
   }
 }
 

@@ -1,8 +1,7 @@
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
-
-import { AuthService } from './auth.service';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { AclService } from './acl.service';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,11 +13,8 @@ export class AuthGuard implements CanActivate {
 	}
 
 	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-		let url: string = state.url;
-		let role: string = route.data['role'];
-		this.url = url;
-
-		return this.checkLogin(url, role);
+		this.url = state.url;
+		return this.checkLogin(state.url, route.data['role']);
 	}
 
 	checkLogin(url: string, role: string): boolean {

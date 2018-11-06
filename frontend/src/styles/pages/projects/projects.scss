@@ -53,15 +53,8 @@
   }
 }
 
-.ct-project-tasks-dialog {
-  width: 600px;
-
-  .ct-popup-table-wrapper .ct-grid-container:only-child .ui-datatable-scrollable-body {
-    max-height: calc(90vh - 175px);
-  }
-}
-
 .ct-projects-tasks-form.ct-form {
+  position: relative;
   display: inline-block;
   width: 100%;
   margin: 15px 0 -10px;
@@ -74,17 +67,12 @@
     }
   }
 
-  .ct-required-field-container {
-    width: calc(100% - 160px);
-  }
-
   .ct-input {
     height: 30px;
-    width: 100%;
-    background: #f7f5f5;
+    width: calc(100% - 160px);
     font-size: inherit;
-    color: #222;
     border: none;
+    border-bottom: 2px solid $gray-page-background;
   }
 
   .ct-buttons-block {
@@ -108,13 +96,13 @@
 
   .ct-add-button {
     margin-top: 13px;
-    color: $nav-link-border;
+    color: $main-blue;
     line-height: 28px;
 
     .material-icons {
       float: left;
       margin-right: 10px;
-      background: $nav-link-border;
+      background: $main-blue;
     }
 
     &:hover {

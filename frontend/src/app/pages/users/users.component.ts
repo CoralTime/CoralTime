@@ -1,16 +1,16 @@
 import { UserProjectAssignmentComponent } from './project-assignment/project-assignment.component';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-
-import { UsersFormComponent } from './form/users-form.component';
-import { User } from '../../models/user';
-import { UsersService } from '../../services/users.service';
-import { NotificationService } from '../../core/notification.service';
-import { PagedResult } from '../../services/odata/query';
 import { Subject } from 'rxjs';
-import { ImpersonationService } from '../../services/impersonation.service';
+import { User } from '../../models/user';
+import { PagedResult } from '../../services/odata';
+import { AclService } from '../../core/auth/acl.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ROWS_ON_PAGE } from '../../core/constant.service';
+import { NotificationService } from '../../core/notification.service';
+import { ImpersonationService } from '../../services/impersonation.service';
+import { UsersService } from '../../services/users.service';
+import { UsersFormComponent } from './form/users-form.component';
 
 @Component({
 	selector: 'ct-users',
@@ -35,12 +35,12 @@ export class UsersComponent implements OnInit {
 	private dialogRef: MatDialogRef<UsersFormComponent>;
 	private dialogProjectAssignmentRef: MatDialogRef<UserProjectAssignmentComponent>;
 
-	constructor(private authService: AuthService,
+	constructor(private aclService: AclService,
+	            private authService: AuthService,
 	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
 	            private userService: UsersService) {
-		this.impersonationService.checkImpersonationRole('users');
 	}
 
 	ngOnInit() {
@@ -49,34 +49,7 @@ export class UsersComponent implements OnInit {
 		this.getUsers();
 	}
 
-	impersonateMember(user: User): void {
-		this.impersonationService.impersonateMember(user);
-	}
-
-	onEndScroll(): void {
-		if (!this.isAllUsers) {
-			this.loadLazy();
-		}
-	}
-
-	getUsers(): void {
-		this.subject.debounceTime(500).switchMap(() => {
-			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-		})
-			.subscribe((res: PagedResult<User>) => {
-					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
-						this.pagedResult = res;
-					} else {
-						this.pagedResult.data = this.pagedResult.data.concat(res.data);
-					}
-
-					this.lastEvent.first = this.pagedResult.data.length;
-					this.updatingGrid = false;
-					this.checkIsAllUsers();
-				},
-				() => this.notificationService.danger('Error loading Users.')
-			);
-	}
+	// GRID DISPLAYING
 
 	loadLazy(event = null, updatePage?: boolean): void {
 		if (event) {
@@ -102,15 +75,45 @@ export class UsersComponent implements OnInit {
 		});
 	}
 
+	onEndScroll(): void {
+		if (!this.isAllUsers) {
+			this.loadLazy();
+		}
+	}
+
 	private checkIsAllUsers(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllUsers = true;
 		}
 	}
 
+	private getUsers(): void {
+		this.subject.debounceTime(500).switchMap(() => {
+			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
+		})
+			.subscribe((res: PagedResult<User>) => {
+					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
+						this.pagedResult = res;
+					} else {
+						this.pagedResult.data = this.pagedResult.data.concat(res.data);
+					}
+
+					this.lastEvent.first = this.pagedResult.data.length;
+					this.updatingGrid = false;
+					this.checkIsAllUsers();
+				},
+				() => this.notificationService.danger('Error loading Users.')
+			);
+	}
+
+	// FORM
+
 	openUserDialog(user: User = null): void {
 		if (!this.authService.isLoggedIn()) {
 			this.authService.logout();
+			return;
+		}
+		if (!this.aclService.isGranted('roleEditMember')) {
 			return;
 		}
 
@@ -127,7 +130,7 @@ export class UsersComponent implements OnInit {
 		this.dialogProjectAssignmentRef.componentInstance.user = user;
 	}
 
-	onSaved(response: any): void {
+	private onSaved(response: any): void {
 		if (response.error) {
 			this.notificationService.danger('Error saving user.');
 			return;
@@ -142,6 +145,16 @@ export class UsersComponent implements OnInit {
 		this.loadLazy(null, true);
 	}
 
+	// GENERAL
+
+	impersonateMember(user: User): void {
+		this.impersonationService.impersonateMember(user, true);
+	}
+
+	onResize(): void {
+		this.resizeObservable.next();
+	}
+
 	toggleTab(isActiveTab: boolean): void {
 		if (this.lastEvent) {
 			this.lastEvent.first = 0;
@@ -150,9 +163,5 @@ export class UsersComponent implements OnInit {
 
 		this.isActiveTab = isActiveTab;
 		this.loadLazy(null, true);
-	}
-
-	onResize(): void {
-		this.resizeObservable.next();
 	}
 }

@@ -7,13 +7,13 @@
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
             <input class="ct-input-element" #gb placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
-            <i class="fa fa-search"></i>
+            <i class="ct-search-icon"></i>
         </div>
     </div>
 
     <div class="ct-grid" #grid>
         <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
-            <p-dataTable class="ct-grid-container ct-table"
+            <p-dataTable class="ct-grid-container ct-grid-row-border ct-grid-blue"
                          [value]="assignedProjectsPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"
@@ -26,9 +26,9 @@
                 <p-column field="name" header="{{assignedProjectsPagedResult?.count}} projects"
                           [style]="{'width':'500px'}" [sortable]="true"></p-column>
 
-                <p-column *ngIf="client?.isActive" header="Actions" styleClass="ct-user-actions-col">
+                <p-column *ngIf="client?.isActive" header="Actions">
                     <ng-template let-col let-clientProject="rowData" pTemplate="body">
-                        <a class="ct-grid-link ct-grid-ellipse ct-grid-delete" #btn1
+                        <a class="ct-grid-link ct-grid-delete" #btn1
                            (click)="updateProjectClient(clientProject, null, btn1)">
                             <i class="material-icons">clear</i>
                         </a>
@@ -36,7 +36,7 @@
                 </p-column>
             </p-dataTable>
 
-            <p-dataTable *ngIf="client.isActive" class="ct-grid-container ct-table"
+            <p-dataTable *ngIf="client.isActive" class="ct-grid-container ct-grid-row-border"
                          [value]="notAssignedProjectsPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"

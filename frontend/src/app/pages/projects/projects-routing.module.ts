@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { ProjectsComponent } from './projects.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
+import { ProjectsComponent } from './projects.component';
 
 const routes: Routes = [
 	{
@@ -10,7 +9,6 @@ const routes: Routes = [
 		component: ProjectsComponent,
 		canActivate: [AuthGuard],
 		data: {
-			title: 'Projects',
 			role: 'roleViewProject'
 		}
 	}

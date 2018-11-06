@@ -97,8 +97,10 @@ export interface GroupByType {
 	date: string;
 	memberId: number;
 	memberName: string;
+	memberUrlIcon: string;
 	projectId: number;
 	projectName: string;
+	workingHoursPerDay: number;
 }
 
 export interface ReportItem {

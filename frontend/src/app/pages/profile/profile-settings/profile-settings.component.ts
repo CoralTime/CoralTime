@@ -46,6 +46,7 @@ export class ProfileSettingsComponent implements OnInit {
 	isEmailChanged: boolean;
 	isFormShownArray: boolean[] = [true, true, true];
 	isTasksLoading: boolean;
+	numberMask = [/\d/, /\d/];
 	projects: Project[];
 	projectModel: Project;
 	resetPasswordMessage: string;
@@ -252,7 +253,8 @@ export class ProfileSettingsComponent implements OnInit {
 			dateFormatId: this.userModel.dateFormatId,
 			isWeeklyTimeEntryUpdatesSend: this.userModel.isWeeklyTimeEntryUpdatesSend,
 			timeFormat: this.userModel.timeFormat,
-			weekStart: this.userModel.weekStart
+			weekStart: this.userModel.weekStart,
+			workingHoursPerDay: this.userModel.workingHoursPerDay
 		};
 
 		this.loadingService.addLoading();

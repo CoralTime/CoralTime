@@ -1,6 +1,7 @@
 .ct-color-picker {
   position: relative;
   font-size: 0;
+  letter-spacing: 0;
 
   .ui-colorpicker-panel {
     background-color: #fff;
@@ -23,7 +24,7 @@
     border-color: $gray;
 
     &:focus {
-      border-color: $nav-link-border;
+      border-color: $main-blue;
     }
   }
 

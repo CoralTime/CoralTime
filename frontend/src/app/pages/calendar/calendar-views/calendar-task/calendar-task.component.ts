@@ -1,12 +1,11 @@
 import {
-	Component, Input, ViewChild, EventEmitter, Output, OnInit, OnDestroy, QueryList,
-	ViewChildren, ElementRef
+	Component, Input, ViewChild, EventEmitter, Output, OnInit, QueryList, ViewChildren, ElementRef
 } from '@angular/core';
 import { MatDialogRef, MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import Moment = moment.Moment;
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
 import { User } from '../../../../models/user';
 import { NotificationService } from '../../../../core/notification.service';
@@ -16,20 +15,18 @@ import { EntryTimeComponent } from '../../entry-time/entry-time.component';
 import { MultipleDatepickerComponent } from '../../entry-time/multiple-datepicker/multiple-datepicker.component';
 import { numberToHex } from '../../../../shared/form/color-picker/color-picker.component';
 import { MenuComponent } from '../../../../shared/menu/menu.component';
-
-export const MAX_TIMER_VALUE = 86399;
+import { MAX_TIMER_VALUE } from '../../timer/timer.component';
 
 @Component({
 	selector: 'ct-calendar-task',
 	templateUrl: 'calendar-task.component.html'
 })
 
-export class CalendarTaskComponent implements OnInit, OnDestroy {
+export class CalendarTaskComponent implements OnInit {
 	@Input() timeEntry: TimeEntry;
 
 	@Output() closeEntryTimeForm: EventEmitter<void> = new EventEmitter<void>();
 	@Output() timeEntryDeleted: EventEmitter<void> = new EventEmitter<void>();
-	@Output() timerUpdated: EventEmitter<void> = new EventEmitter<void>();
 
 	@ViewChild('form') form: EntryTimeComponent;
 	@ViewChildren(MenuComponent) menuList: QueryList<MenuComponent>;
@@ -40,16 +37,12 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 	isOpenRight: boolean = false;
 	isOpenMobile: boolean = false;
 	isTimeEntryAvailable: boolean;
-	isTimerShown: boolean = false;
 	isUserAdmin: boolean;
 	isUserManagerOnProject: boolean;
 	firstDayOfWeek: number;
 	lockReason: string = '';
 	selectedDate: string;
-	ticks: number;
 	timeFormat: number;
-	timerValue: string;
-	timerSubscription: Subscription;
 
 	constructor(private route: ActivatedRoute,
 	            private calendarService: CalendarService,
@@ -69,11 +62,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 		this.selectedDate = this.timeEntry.date;
 		this.isUserManagerOnProject = this.timeEntry.isUserManagerOnProject;
-
-		if (this.timeEntry.timeOptions.timeTimerStart && this.timeEntry.timeOptions.timeTimerStart !== -1) {
-			this.startTimer();
-		}
-
 		this.checkTimeEntryStatus();
 		this.getDayInfo();
 	}
@@ -218,155 +206,16 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		return true;
 	}
 
-	// TIMER ACTIONS
-
-	checkTimer(): void {
-		let errorMessage: string;
-
-		if (!DateUtils.isToday(this.timeEntry.date)) {
-			errorMessage = 'Selected time period should be within one day. Timer has stopped.'
-		}
-		if (!errorMessage && !this.isTimeEntryAvailable) {
-			errorMessage = 'Timer has stopped, because Time Entry is locked.';
-		}
-		if (!errorMessage && !this.isTrackedTimeValid()) {
-			errorMessage = 'Total actual time should be less than 24 hours. Timer has stopped.';
-		}
-
-		if (errorMessage) {
-			let currentTimeEntry = new TimeEntry(this.timeEntry);
-			let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
-			let finalTimerValue = MAX_TIMER_VALUE - (totalTrackedTimeForDay - this.timeEntry.timeValues.timeActual);
-			let timeTimerStart = this.limitTimerValue(this.timeEntry.timeOptions.timeTimerStart - this.timeEntry.timeValues.timeActual
-				- new Date().getTimezoneOffset() * 60); // locale format
-
-			currentTimeEntry.timeOptions = {
-				isFromToShow: true,
-				timeTimerStart: -1
-			};
-			currentTimeEntry.timeValues = {
-				timeActual: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue),
-				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: timeTimerStart,
-				timeTo: Math.min(MAX_TIMER_VALUE - timeTimerStart, finalTimerValue) + timeTimerStart
-			};
-
-			this.autoStopTimer();
-			this.changeTimerStatus(currentTimeEntry, errorMessage);
-		}
-	}
-
-	updateTimer(): void {
-		this.getDayInfo();
-		this.isTimerShown ? this.autoStopTimer() : this.startTimer();
-	}
-
-	startTimer(): void {
-		this.isTimerShown = true;
-		let timer = Observable.timer(0, 1000);
-
-		this.timerSubscription = timer.subscribe(() => {
-			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
-				+ this.timeEntry.timeValues.timeActual;
-			this.timerValue = this.setTimeString(this.ticks);
-			this.checkTimer();
-		});
-	}
-
-	autoStopTimer(): void {
-		if (this.timerSubscription) {
-			this.timerSubscription.unsubscribe();
-		}
-
-		this.isTimerShown = false;
-	}
-
-	stopTimer(): void {
-		this.calendarService.isTimerActivated = false;
-		this.saveTimerStatus().then((err: any) => {
-			if (err) {
-				return;
-			}
-
-			this.isTimerShown = false;
-			this.timerUpdated.emit();
-			this.timerSubscription.unsubscribe();
-			this.calendarService.isTimerActivated = this.isTimerShown;
-		});
-	}
-
-	private changeTimerStatus(timeEntry: TimeEntry, errorMessage: string): void {
-		this.calendarService.Put(timeEntry, this.timeEntry.id.toString())
-			.toPromise().then(
-			() => {
-				this.calendarService.isTimerActivated = false;
-				this.timeEntry.timeValues = timeEntry.timeValues;
-				this.timeEntry.timeOptions = timeEntry.timeOptions;
-				this.form.closeTimeEntryForm();
-
-				this.notificationService.danger(errorMessage);
-				return null;
-			},
-			error => {
-				this.notificationService.danger('Error changing Timer status.');
-				return error;
-			});
-	}
-
-	private isTrackedTimeValid(): boolean {
-		let totalTrackedTimeForDay = this.getTotalTime(this.getDayInfo(), 'timeActual');
-		return totalTrackedTimeForDay + this.ticks - this.timeEntry.timeValues.timeActual < MAX_TIMER_VALUE;
-	}
-
-	private limitTimerValue(time: number): number {
-		return Math.min(Math.max(time, 0), MAX_TIMER_VALUE);
-	}
-
-	private saveTimerStatus(): Promise<any> {
-		let currentTimeEntry = new TimeEntry(this.timeEntry);
-
-		if (!this.isTimerShown) {
-			currentTimeEntry.timeOptions = {
-				isFromToShow: false,
-				timeTimerStart: DateUtils.getSecondsFromStartDay(true)
-			};
-		} else {
-			currentTimeEntry.timeOptions = {
-				isFromToShow: true,
-				timeTimerStart: -1
-			};
-            let secondsFromStartDay = this.roundTime(DateUtils.getSecondsFromStartDay(false));
-            let roundTicks = (this.ticks <60)? 60: this.roundTime(this.ticks);
-			currentTimeEntry.timeValues = {
-				timeActual: roundTicks,
-				timeEstimated: this.timeEntry.timeValues.timeEstimated,
-				timeFrom: Math.max(secondsFromStartDay - roundTicks, 0),
-				timeTo: Math.max(secondsFromStartDay - roundTicks, 0) + roundTicks
-			};
-		}
-
-		return this.calendarService.Put(currentTimeEntry, currentTimeEntry.id.toString())
-			.toPromise().then(
-				() => {
-					this.saveTimeEntry(currentTimeEntry);
-					this.notificationService.success('Timer has stopped.');
-					return null;
-				},
-				error => {
-					this.notificationService.danger('Error changing Timer status.');
-					return error;
-				});
-	}
-
-    private roundTime (time: number): number {
-        return time - time % 60;
-    }
-
 	// GENERAL
 
 	calculateCalendarTaskHeight(): number {
-		let taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, 1.5) * 95 - 42;
-		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - 25 : taskHeight;
+		const fromToHeight = 25;
+		const gap = 6; // vertical distance between timeEntries
+		const staticHeight = 66 + gap;
+		const heightOfOneHour = 65; // 520/8 // 520px - available place for timeEntries
+		const minHours = 2.5; // (staticHeight + 93)/heightOfOneHour // 93px - minHeight for description with 1 line
+		const taskHeight = Math.max(this.timeEntry.timeValues.timeActual / 3600, minHours) * heightOfOneHour - staticHeight;
+		return this.timeEntry.timeOptions.isFromToShow ? taskHeight - fromToHeight : taskHeight;
 	}
 
 	numberToHex(value: number): string {
@@ -390,12 +239,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 		}
 
 		return (('00' + h).slice(-2) + ':' + ('00' + m).slice(-2));
-	}
-
-	ngOnDestroy() {
-		if (this.timerSubscription) {
-			this.autoStopTimer();
-		}
 	}
 
 	private checkTimeEntryStatus(): void {
@@ -425,12 +268,6 @@ export class CalendarTaskComponent implements OnInit, OnDestroy {
 
 	private getTotalTime(dayInfo: CalendarDay, field: string): number {
 		return this.calendarService.getTotalTimeForDay(dayInfo, field);
-	}
-
-	private saveTimeEntry(timeEntry: TimeEntry): void {
-		for (let prop in this.timeEntry) {
-			this.timeEntry[prop] = timeEntry[prop];
-		}
 	}
 
 	// MENU DISPLAYING

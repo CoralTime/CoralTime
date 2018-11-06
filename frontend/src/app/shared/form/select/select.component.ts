@@ -34,7 +34,6 @@ export class SelectComponent implements ControlValueAccessor {
 	@Input('trackBy') trackBy: string;
 	@Input('options') options: any[];
 	@Input('defaultValue') defaultValue: string;
-	@Input('icon') icon: string;
 	@Input('canClickOverlay') canClickOverlay: boolean = false;
 	@Input('maxHeight') maxHeight: number = 168;
 	@Input('container') container: HTMLDivElement;
@@ -114,6 +113,10 @@ export class SelectComponent implements ControlValueAccessor {
 
 	getDisplayedName(option: any) {
 		return option ? (this.displayName ? option[this.displayName] : option) : '';
+	}
+
+	trackByFn(index: number, item: any) {
+		return item[this.trackBy];
 	}
 
 	/**

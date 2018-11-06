@@ -7,7 +7,7 @@
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
             <input class="ct-input-element" #gb placeholder="Search task..." [(ngModel)]="filterStr">
-            <i class="fa fa-search"></i>
+            <i class="ct-search-icon"></i>
         </div>
     </div>
 
@@ -17,7 +17,7 @@
 
     <div class="ct-grid" #grid>
         <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
-            <p-dataTable class="ct-grid-container ct-table"
+            <p-dataTable class="ct-grid-container ct-grid-row-border"
                          [value]="tasksPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"
@@ -28,7 +28,7 @@
                          (onMoreContent)="updateTasks()"
                          (onEndScrollEvent)="onEndScroll()">
 
-                <p-column field="name" header="Task" [sortable]="true" [style]="{'width':'400px'}">
+                <p-column field="name" header="Task" [sortable]="true" [style]="{'width':'400px'}" styleClass="ct-info-col">
                     <ng-template let-col let-projectTask="rowData" pTemplate="body">
                         <span class="ct-grid-link-text">{{projectTask.name}}</span>
                     </ng-template>
@@ -44,7 +44,7 @@
                 <p-column field="projectDel" header="Actions">
                     <ng-template let-col let-projectTask="rowData" pTemplate="body">
                         <a *ngIf="projectTask.projectId" #removeBtn
-                           class="ct-grid-link ct-grid-ellipse ct-grid-delete"
+                           class="ct-grid-link ct-grid-delete"
                            (click)="removeTask(projectTask, removeBtn)">
                             <i class="material-icons" aria-hidden="true">clear</i>
                         </a>
