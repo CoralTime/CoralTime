@@ -58,17 +58,16 @@ namespace CoralTime.BL.Services
             return _uow.ProjectRepository.LinkedCacheGetByName(projectName)?.Id;
         }
 
-        public VstsTasks GetTasksByProject(string projectName)
+        public List<VstsTask> GetTasksByProject(string projectName)
         {
             var projectId = GetProjectIdByProjectName(projectName);
-            var tasks = _uow.TaskTypeRepository.LinkedCacheGetList()
+            return _uow.TaskTypeRepository.LinkedCacheGetList()
                 .Where(x => (x.ProjectId == null || x.ProjectId == projectId) && x.IsActive)
-                .Select(x => x.Name)
-                .ToList();
-            return new VstsTasks
-            {
-                Tasks = tasks
-            };
+                .Select(x => new VstsTask
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList();
         }
 
         public int? GetTaskId(string taskName, string projectName)
@@ -123,7 +122,42 @@ namespace CoralTime.BL.Services
             var principal = tokenHandler.ValidateToken(issuedToken, validationParameters, out var valiadtedToken);
             return valiadtedToken as JwtSecurityToken;
         }
-        
+
+        public VstsSetup GetVstsSetupInfo(VstsSetup vstsSetup)
+        {
+            var project = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+                .SingleOrDefault(x => x.VstsProjectId == vstsSetup.VstsProjectId);
+
+            var user = _uow.VstsUserRepository.GetQuery()
+                .SingleOrDefault(x => x.VstsUserId == vstsSetup.VstsUserId)?.User;
+
+            var errors = new List<string>();
+
+            if (project != null)
+            {
+                vstsSetup.ProjectId = project.ProjectId;
+            }
+            else
+            {
+                errors.Add("Project not found");
+            }
+
+            if (user != null)
+            {
+                vstsSetup.MemberId = _uow.MemberRepository.LinkedCacheGetByUserId(user.Id).Id;
+            }
+            else
+            {
+                errors.Add("User not found");
+            }
+
+            if (errors.Count != 0)
+            {
+                vstsSetup.Errors = errors;
+            }
+            return vstsSetup;
+        }
+
         #region IVstsAdminService
 
         public void UpdateVstsProjects()

@@ -27,9 +27,9 @@ namespace CoralTime.Api.v1
             return Ok(_service.GetTasksByProject(projectName));
         }
 
-        // POST api/v1/Vsts
-        [HttpPost]
-        public IActionResult Create([FromBody] VstsTimeEntry vstsTimeEntry)
+        // POST api/v1/Vsts/TimeEntries
+        [HttpPost(Constants.Routes.TimeEntries)]
+        public IActionResult CreateTimeEntry([FromBody] VstsTimeEntry vstsTimeEntry)
         {
             if (!ValidateVstsTokenAndUser(vstsTimeEntry.UserName))
             {
@@ -41,6 +41,23 @@ namespace CoralTime.Api.v1
                 return Ok();
             }
             return BadRequest();
+        }
+
+        // POST api/v1/Vsts/Setup
+        [HttpPost(Constants.Routes.Setup)]
+        public IActionResult Setup([FromBody] VstsSetup vstsSetup)
+        {
+            if (!ValidateVstsToken())
+            {
+                return Unauthorized();
+            }
+            var result = _service.GetVstsSetupInfo(vstsSetup);
+
+            if (result.Errors!= null)
+            {
+                return new BadRequestObjectResult(result.Errors);
+            }
+            return Ok(result);
         }
 
         private bool ValidateVstsToken()

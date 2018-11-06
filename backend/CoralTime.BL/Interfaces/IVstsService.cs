@@ -1,12 +1,13 @@
 ﻿using CoralTime.DAL.Models.Member;
 using CoralTime.ViewModels.Vsts;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace CoralTime.BL.Interfaces
 {
     public interface IVstsService
     {
-        VstsTasks GetTasksByProject(string projectName);
+        List<VstsTask> GetTasksByProject(string projectName);
 
         int? GetProjectIdByProjectName(string projectName);
 
@@ -15,5 +16,7 @@ namespace CoralTime.BL.Interfaces
         bool SaveTimeEntry(VstsTimeEntry vstsTimeEnry);
 
         JwtSecurityToken ValidateToken(string issuedToken);
+
+        VstsSetup GetVstsSetupInfo(VstsSetup vstsSetup);
     }
 }

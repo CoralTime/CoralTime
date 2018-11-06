@@ -2,8 +2,9 @@
 
 namespace CoralTime.ViewModels.Vsts
 {
-    public class VstsTasks
+    public class VstsTask
     {
-        public List<string> Tasks { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
