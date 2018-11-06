@@ -506,6 +506,10 @@ namespace CoralTime.MySqlMigrations.Migrations
 
                     b.Property<int>("ProjectId");
 
+                    b.Property<string>("VstsCompanyUrl");
+
+                    b.Property<string>("VstsPat");
+
                     b.Property<string>("VstsProjectId");
 
                     b.Property<string>("VstsProjectName");
@@ -537,6 +541,8 @@ namespace CoralTime.MySqlMigrations.Migrations
                     b.Property<string>("UserId");
 
                     b.Property<string>("VstsUserId");
+
+                    b.Property<string>("VstsUserName");
 
                     b.HasKey("Id");
 

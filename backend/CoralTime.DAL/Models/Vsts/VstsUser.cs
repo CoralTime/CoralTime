@@ -15,5 +15,7 @@ namespace CoralTime.DAL.Models.Vsts
         public virtual ApplicationUser User { get; set; }
 
         public string VstsUserId { get; set; }
+
+        public string VstsUserName { get; set; }
     }
 }

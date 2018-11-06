@@ -2,12 +2,16 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CoralTime.DAL.Migrations
+namespace CoralTime.MySqlMigrations.Migrations
 {
     public partial class AddVSTStables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropIndex(
+                name: "IX_TimeEntries_MemberId",
+                table: "TimeEntries");
+
             migrationBuilder.CreateTable(
                 name: "VstsProjects",
                 columns: table => new
@@ -17,10 +21,12 @@ namespace CoralTime.DAL.Migrations
                     LastUpdateDate = table.Column<DateTime>(nullable: false),
                     LastEditorUserId = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ProjectId = table.Column<int>(nullable: false),
                     VstsProjectId = table.Column<string>(nullable: true),
-                    VstsProjectName = table.Column<string>(nullable: true)
+                    VstsProjectName = table.Column<string>(nullable: true),
+                    VstsCompanyUrl = table.Column<string>(nullable: true),
+                    VstsPat = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,9 +60,10 @@ namespace CoralTime.DAL.Migrations
                     LastUpdateDate = table.Column<DateTime>(nullable: false),
                     LastEditorUserId = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: true),
-                    VstsUserId = table.Column<string>(nullable: true)
+                    VstsUserId = table.Column<string>(nullable: true),
+                    VstsUserName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -119,6 +126,11 @@ namespace CoralTime.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "VstsUsers");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TimeEntries_MemberId",
+                table: "TimeEntries",
+                column: "MemberId");
         }
     }
 }

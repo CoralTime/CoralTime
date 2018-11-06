@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace CoralTime.MySqlMigrations.Migrations
+namespace CoralTime.DAL.Migrations
 {
     public partial class AddVSTStables : Migration
     {
@@ -17,10 +17,12 @@ namespace CoralTime.MySqlMigrations.Migrations
                     LastUpdateDate = table.Column<DateTime>(nullable: false),
                     LastEditorUserId = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ProjectId = table.Column<int>(nullable: false),
                     VstsProjectId = table.Column<string>(nullable: true),
-                    VstsProjectName = table.Column<string>(nullable: true)
+                    VstsProjectName = table.Column<string>(nullable: true),
+                    VstsCompanyUrl = table.Column<string>(nullable: true),
+                    VstsPat = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,9 +56,10 @@ namespace CoralTime.MySqlMigrations.Migrations
                     LastUpdateDate = table.Column<DateTime>(nullable: false),
                     LastEditorUserId = table.Column<string>(nullable: true),
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: true),
-                    VstsUserId = table.Column<string>(nullable: true)
+                    VstsUserId = table.Column<string>(nullable: true),
+                    VstsUserName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
