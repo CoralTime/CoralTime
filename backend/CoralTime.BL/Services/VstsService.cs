@@ -105,7 +105,7 @@ namespace CoralTime.BL.Services
             {
                 return null;
             }
-            var secret = _config["Vsts:VstsExtensionSecret"]; // your extension's secret
+            var secret = _config["VstsExtensionSecret"]; // your extension's secret
 
             var validationParameters = new TokenValidationParameters()
             {
@@ -123,78 +123,88 @@ namespace CoralTime.BL.Services
             var principal = tokenHandler.ValidateToken(issuedToken, validationParameters, out var valiadtedToken);
             return valiadtedToken as JwtSecurityToken;
         }
+        
+        #region IVstsAdminService
 
         public void UpdateVstsProjects()
         {
-            var projectUrl = GetVstsCompanyUrl() + Constants.VstsProjectsUrl;
-            var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: GetPat());
-            var projects = JsonConvert.DeserializeObject<VstsProjectList>(projectResponce);
-            foreach (var vstsProject in projects.Value)
+            var existVstsProjects = _uow.VstsProjectRepository.GetQuery(withIncludes: false, asNoTracking: true).ToList();
+            foreach (var item in existVstsProjects)
             {
-                // update existing records
-                var project = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
-                    .SingleOrDefault(x => x.VstsProjectId == vstsProject.Id || x.VstsProjectName == vstsProject.Name);
-                if (project != null)
+                var projectUrl = item.VstsCompanyUrl + Constants.VstsProjectsUrl;
+                var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: item.VstsPat);
+                var projects = JsonConvert.DeserializeObject<VstsProjectList>(projectResponce);
+                foreach (var vstsProject in projects.Value)
                 {
-                    project.VstsProjectId = vstsProject.Id;
-                    project.VstsProjectName = vstsProject.Name;
-                    continue;
-                }
-                // create new record for project with the same name
-                var existProject = _uow.ProjectRepository.GetQuery()
-                    .SingleOrDefault(x => x.Name == vstsProject.Name);
-                if (existProject != null)
-                {
-                    var newVstsProject = new DAL.Models.Vsts.VstsProject
+                    // update existing records
+                    var project = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+                        .SingleOrDefault(x => x.VstsProjectId == vstsProject.Id || x.VstsProjectName == vstsProject.Name);
+                    if (project != null)
                     {
-                        ProjectId = existProject.Id,
-                        VstsProjectId = vstsProject.Id,
-                        VstsProjectName = vstsProject.Name
-                    };
-                    _uow.VstsProjectRepository.Insert(newVstsProject);
+                        project.VstsProjectId = vstsProject.Id;
+                        project.VstsProjectName = vstsProject.Name;
+                        continue;
+                    }
+                    // create new record for project with the same name
+                    var existProject = _uow.ProjectRepository.GetQuery()
+                        .SingleOrDefault(x => x.Name == vstsProject.Name);
+                    if (existProject != null)
+                    {
+                        var newVstsProject = new DAL.Models.Vsts.VstsProject
+                        {
+                            ProjectId = existProject.Id,
+                            VstsProjectId = vstsProject.Id,
+                            VstsProjectName = vstsProject.Name,
+                            VstsCompanyUrl = item.VstsCompanyUrl,
+                            VstsPat = item.VstsPat
+                        };
+                        _uow.VstsProjectRepository.Insert(newVstsProject);
+                    }
                 }
+                _uow.Save();
             }
-            _uow.Save();
         }
 
         public void UpdateVstsUsers()
         {
             var allMembers = new List<VstsMember>();
-            var projectIds = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
-                .Select(x => x.VstsProjectId);
-            foreach (var id in projectIds)
+            var projects = _uow.VstsProjectRepository.GetQuery(withIncludes: false).ToList();
+            foreach (var project in projects)
             {
-                var teamUrl = $"{GetVstsCompanyUrl()}{Constants.VstsProjectsUrl}/{id}{Constants.VstsTeamsUrl}";
-                var teamResponce = GetVstsData(url: teamUrl, personalaccesstoken: GetPat());
+                var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
+                var teamResponce = GetVstsData(url: teamUrl, personalaccesstoken: project.VstsPat);
                 var teams = JsonConvert.DeserializeObject<VstsTeamList>(teamResponce);
                 foreach (var team in teams.Value)
                 {
                     var memberUrl = team.Url + Constants.VstsMembersUrl;
-                    var memberResponce = GetVstsData(url: memberUrl, personalaccesstoken: GetPat());
+                    var memberResponce = GetVstsData(url: memberUrl, personalaccesstoken: project.VstsPat);
                     var members = JsonConvert.DeserializeObject<VstsMemberList>(memberResponce);
                     members.Value.ForEach(x => allMembers.Add(x));
                 }
             }
 
-            foreach (var vstsMember in allMembers)
+            foreach (var vstsMember in allMembers
+                                        .Select(x=> new { x.Identity.UniqueName, x.Identity.Id })
+                                        .Distinct())
             {
                 var user = _uow.VstsUserRepository.GetQuery()
-                    .SingleOrDefault(x => x.VstsUserId == vstsMember.Identity.Id);
-                
-                if (user != null && user.User.UserName != vstsMember.Identity.UniqueName)
+                    .SingleOrDefault(x => x.VstsUserId == vstsMember.Id);
+
+                if (user != null && user.User.UserName != vstsMember.UniqueName)
                 {
                     _uow.VstsUserRepository.Delete(user);  // remove wrong records
                 }
                 else
                 {
                     var existUser = _uow.UserRepository.GetQuery(withIncludes: false)
-                        .SingleOrDefault(x => x.UserName == vstsMember.Identity.UniqueName);
+                        .SingleOrDefault(x => x.UserName == vstsMember.UniqueName);
                     if (existUser != null)
                     {
                         var newVstsUser = new VstsUser
                         {
                             UserId = existUser.Id,
-                            VstsUserId = vstsMember.Identity.Id
+                            VstsUserId = vstsMember.Id,
+                            VstsUserName = vstsMember.UniqueName
                         };
                         _uow.VstsUserRepository.Insert(newVstsUser); // create new records
                     }
@@ -202,10 +212,6 @@ namespace CoralTime.BL.Services
             }
             _uow.Save();
         }
-
-        private string GetPat()=> _config["Vsts:VstsPatToken"];
-
-        private string GetVstsCompanyUrl() => _config["Vsts:VstsCompanyUrl"];
 
         private static string GetVstsData(string url, string personalaccesstoken)
         {
@@ -225,5 +231,7 @@ namespace CoralTime.BL.Services
                 }
             }
         }
+
+        #endregion IVstsAdminService
     }
 }

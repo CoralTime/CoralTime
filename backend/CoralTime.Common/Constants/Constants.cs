@@ -51,6 +51,8 @@ namespace CoralTime.Common.Constants
             public const string ResetCacheRoute = "ResetCache";
             public const string UpdateClaimsRoute = "UpdateClaims";
             public const string RefreshDataBaseRoute = "RefreshDataBase";
+            public const string UpdateVstsProjects = "UpdateVstsProjects";
+            public const string UpdateVstsUsers = "UpdateVstsUsers";
             public const string SaveImagesFromDbToStaticFilesRoute = "SaveImagesFromDbToStaticFiles";
             public const string NotificationsByProjectSettingsRoute = "NotificationsByProjectSettings";
             public const string NotificationsWeeklyRoute = "NotificationsWeekly";
