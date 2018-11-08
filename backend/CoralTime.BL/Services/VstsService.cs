@@ -83,6 +83,45 @@ namespace CoralTime.BL.Services
             return _timeEntryService.Create(vstsTimeEnry, member) != null;
         }
 
+        public List<VstsTimeEntry> GetTimeEntriesByWorkItemId(int projectId, string workItemId)
+        {
+            if (string.IsNullOrEmpty(workItemId))
+            {
+                return new List<VstsTimeEntry>();
+            }
+
+            var timeEntries = _uow.TimeEntryRepository.GetQuery()
+                .Where(x => x.ProjectId == projectId && x.WorkItemId == workItemId)
+                .Select(x => new VstsTimeEntry
+                {
+                    Date = x.Date,
+                    Description = x.Description,
+                    MemberId = x.MemberId,
+                    MemberName = x.Member.FullName,
+                    ProjectId = x.ProjectId,
+                    TaskId = x.TaskTypesId,
+                    TaskName = x.TaskType.Name,
+                    WorkItemId = x.WorkItemId,
+                    TimeOptions = new TimeOptions
+                    {
+                        IsFromToShow = x.IsFromToShow,
+                        TimeTimerStart = x.TimeTimerStart
+                    },
+                    TimeValues = new TimeValuesView
+                    {
+                        TimeActual = x.TimeActual,
+                        TimeEstimated = x.TimeEstimated,
+                        TimeFrom = x.TimeFrom,
+                        TimeTo = x.TimeTo
+                    }
+                })
+                .OrderBy(y => y.Date)
+                .ThenBy(z=> z.MemberName)
+                .ToList();
+
+            return timeEntries;
+        }
+
         public JwtSecurityToken ValidateToken(string issuedToken)
         {
             if (issuedToken == null)

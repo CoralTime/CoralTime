@@ -19,5 +19,7 @@ namespace CoralTime.BL.Interfaces
         JwtSecurityToken ValidateToken(string issuedToken);
 
         VstsSetup GetVstsSetupInfo(VstsSetup vstsSetup);
+
+        List<VstsTimeEntry> GetTimeEntriesByWorkItemId(int projectId, string workItemId);
     }
 }

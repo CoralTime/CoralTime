@@ -14,7 +14,6 @@ namespace CoralTime.Api.v1
         public VstsController(IVstsService service, ILogger<VstsController> logger)
             : base(logger, service)
         {
-
         }
 
         // GET: api/v1/Vsts/Tasks
@@ -26,6 +25,17 @@ namespace CoralTime.Api.v1
                 return Unauthorized();
             }
             return Ok(_service.GetTasksByProject(projectId));
+        }
+
+        // GET: api/v1/Vsts/TimeEnties
+        [HttpGet(Constants.Routes.TimeEntries)]
+        public IActionResult TimeEntries(int projectId, string workItemId)
+        {
+            if (!ValidateVstsToken())
+            {
+                return Unauthorized();
+            }
+            return Ok(_service.GetTimeEntriesByWorkItemId(projectId, workItemId));
         }
 
         // POST api/v1/Vsts/TimeEntries
@@ -55,7 +65,7 @@ namespace CoralTime.Api.v1
             }
             var result = _service.GetVstsSetupInfo(vstsSetup);
 
-            if (result.Errors!= null)
+            if (result.Errors != null)
             {
                 return new BadRequestObjectResult(result.Errors);
             }
@@ -65,7 +75,6 @@ namespace CoralTime.Api.v1
         private bool ValidateVstsToken()
         {
             return _service.ValidateToken(GetToken()) != null;
-            //return true;
         }
 
         private string GetToken()
