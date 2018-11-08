@@ -15,10 +15,18 @@ import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
 export class EntryTimeFilledValidator implements Validator {
 	validate(c: AbstractControl): { [key: string]: any } {
 		let v = c.value;
-		let invalidValue = '00:00';
+		let invalidValue = '00';
 
-		if (invalidValue.indexOf(v['timeActual']) + 1 &&
-			invalidValue.indexOf(v['timeEstimated']) + 1) {
+		if ((
+			!v['timeEstimatedHours'] &&
+			invalidValue.includes(v['timeActualHours']) &&
+			invalidValue.includes(v['timeActualMinutes'])
+		) || (
+			invalidValue.includes(v['timeActualHours']) &&
+			invalidValue.includes(v['timeActualMinutes']) &&
+			invalidValue.includes(v['timeEstimatedHours']) &&
+			invalidValue.includes(v['timeEstimatedMinutes'])
+		)) {
 			return {
 				EntryTimeFilled: false
 			};

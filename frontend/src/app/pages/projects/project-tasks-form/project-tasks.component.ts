@@ -127,6 +127,6 @@ export class ProjectTasksComponent implements OnInit {
 		let grid = this.gridContainer.nativeElement;
 		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
 
-		wrappers[0].setAttribute('style', 'max-height: calc(90vh - 176px - ' + tasksNumber * 40 + 'px)');
+		wrappers[0].setAttribute('style', 'max-height: calc(100vh - 290px - ' + tasksNumber * 40 + 'px)');
 	}
 }

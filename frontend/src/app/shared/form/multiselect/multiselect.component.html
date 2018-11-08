@@ -9,7 +9,10 @@
     </div>
 
     <div class="ct-select" [title]="toString(valuesAsString)">
-        <label class="mat-select-value-text">{{toString(valuesAsString)}}</label>
+        <label class="mat-select-value-text">
+            {{toString(valuesAsString)}}
+            <i [ngClass]="overlayVisible ? 'fa fa-angle-up' : 'fa fa-angle-down'"></i>
+        </label>
     </div>
 
     <div #panel [ngClass]="['ui-multiselect-panel', panelStyleClass||'']" [ngStyle]="panelStyle"

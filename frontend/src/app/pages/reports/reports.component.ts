@@ -1,26 +1,26 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { ReportsService, } from '../../services/reposts.service';
-import {
-	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn, DateStatic
-} from '../../models/reports';
-import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
-import { ArrayUtils } from '../../core/object-utils';
-import { AuthService } from '../../core/auth/auth.service';
-import { DateUtils } from '../../models/calendar';
-import { DatePeriod, DateResponse, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
-import { User } from '../../models/user';
-import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
-import { NotificationService } from '../../core/notification.service';
-import { ImpersonationService } from '../../services/impersonation.service';
-import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
-import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
-import { ReportGridData } from './reports-data/reports-grid.component';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { ReportsService, } from '../../services/reposts.service';
+import { DateUtils } from '../../models/calendar';
+import {
+	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
+	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn
+} from '../../models/reports';
+import { User } from '../../models/user';
+import { AuthService } from '../../core/auth/auth.service';
+import { ImpersonationService } from '../../services/impersonation.service';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
+import { NotificationService } from '../../core/notification.service';
+import { DatePeriod, DateResponse, RangeDatepickerService } from './range-datepicker/range-datepicker.service';
+import { ArrayUtils } from '../../core/object-utils';
+import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
+import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
+import { ReportGridData } from './reports-data/reports-grid.component';
+import { ReportsSendComponent, SendReportsFormModel } from './reports-send/reports-send.component';
+import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 
 const ROWS_TOTAL_NUMBER = 50;
 
@@ -75,7 +75,10 @@ export class ReportsComponent implements OnInit {
 	userInfo: User;
 
 	@ViewChild('scrollContainer') private scrollContainer: ElementRef;
+	@ViewChild('slimScroll') slimScroll: any;
 
+	private chartWidthParam: number;
+	private numberOfWorkingDays: number;
 	private reportsConfirmationRef: MatDialogRef<ConfirmationComponent>;
 	private reportsQueryRef: MatDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MatDialogRef<ReportsSendComponent>;
@@ -105,15 +108,14 @@ export class ReportsComponent implements OnInit {
 			.subscribe((reportFilters: ReportDropdowns) => {
 				this.setReportDropdowns(reportFilters);
 				this.getReportGrid(!!this.reportFilters.queryId);
-			})
+				this.onResize();
+			});
 	}
 
-	// expanded panel
-
-	expandedPanelStep = 0;
-
-	setexpandedPanelStep(index: number) {
-		this.expandedPanelStep = index;
+	onResize(): void {
+		setTimeout(() => {
+			this.slimScroll.getBarHeight();
+		}, 0);
 	}
 
 	setReportDropdowns(reportDropdowns: ReportDropdowns): void {
@@ -177,6 +179,7 @@ export class ReportsComponent implements OnInit {
 			.subscribe((res: ReportGrid) => {
 					this.reportsGridData = res;
 					this.gridData = this.getNextGridDataPage(this.reportsGridData.groupedItems, []);
+					this.displayChart(this.reportFilters.groupById === 2);
 				},
 				() => {
 					this.notificationService.danger('Error loading reports grid.');
@@ -498,7 +501,12 @@ export class ReportsComponent implements OnInit {
 	}
 
 	formatDate(utcDate: Moment): string {
-		return this.dateFormat ? utcDate.format(this.dateFormat) : utcDate.toDate().toLocaleDateString();
+		if (!utcDate) {
+			return;
+		}
+
+		const date = moment(utcDate);
+		return this.dateFormat ? date.format(this.dateFormat) : date.toDate().toLocaleDateString();
 	}
 
 	resetFilters(): void {
@@ -517,6 +525,67 @@ export class ReportsComponent implements OnInit {
 	submitSettings(showColumnIds: number[]): void {
 		this.showColumnIds = showColumnIds;
 		this.getReportGrid();
+	}
+
+	// DISPLAY CHART
+
+	calcTotalActualTime(hoursPerDay: number): number {
+		return this.numberOfWorkingDays * (hoursPerDay || 8) * 3600;
+	}
+
+	calcTrackedHours(time: number): number {
+		return +(time / 3600).toFixed(0);
+	}
+
+	getChartWidth(value: number): string {
+		return (value || 8) * this.chartWidthParam + 'px';
+	}
+
+	private calcMaxTotalValue(isGroupByUser: boolean): number {
+		let arr: number[];
+
+		if (isGroupByUser) {
+			arr = this.reportsGridData.groupedItems.map(x => x.groupByType.workingHoursPerDay || 8);
+		} else {
+			arr = this.reportsGridData.groupedItems.map(x => x.timeTotalFor.timeActualTotalFor)
+		}
+
+		return Math.max.apply(Math, arr);
+	}
+
+	private calcNumberWidth(maxTotalTrackedTime: number, isGroupByUser: boolean) {
+		if (isGroupByUser) {
+			const totalTrackedTimeArr = this.reportsGridData.groupedItems
+				.filter(x => (x.groupByType.workingHoursPerDay || 8) === maxTotalTrackedTime)
+				.map(x => x.timeTotalFor.timeActualTotalFor);
+
+			maxTotalTrackedTime = Math.max.apply(Math, totalTrackedTimeArr);
+		}
+
+		return (this.calcTrackedHours(maxTotalTrackedTime) + 'h').length * 7.5;
+	}
+
+	private getNumberOfWorkingDays(period: DatePeriod): number {
+		let day = period.dateFrom.clone();
+		let result = 0;
+
+		while (DateUtils.convertMomentToUTC(day) <= DateUtils.convertMomentToUTC(period.dateTo)) {
+			if (day.day() !== 0 && day.day() !== 6) {
+				result++;
+			}
+			day.add(1, 'days');
+		}
+
+		return result;
+	}
+
+	private displayChart(isGroupByUser: boolean): void {
+		const maxTotalValue = this.calcMaxTotalValue(isGroupByUser);
+		const chartNumberWidth = this.calcNumberWidth(maxTotalValue, isGroupByUser);
+		const maxChartWidth = 240 - 61 - chartNumberWidth;
+		this.chartWidthParam = maxChartWidth / maxTotalValue;
+
+		this.numberOfWorkingDays = this.getNumberOfWorkingDays(this.dateResponse.datePeriod);
 	}
 
 	// FILTERS

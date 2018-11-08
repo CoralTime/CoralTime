@@ -6,7 +6,7 @@
     display: inline-block;
     font-family: inherit;
     font-size: 15px;
-    color: $nav-link-border;
+    color: $main-blue;
   }
 
   .ct-page-header {
@@ -36,63 +36,8 @@
   }
 
   .ct-user-settings {
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - 165px);
     margin-left: 320px;
     border-left: 3px solid #f1f1f1;
-
-    .ct-add-button {
-      float: left;
-      cursor: pointer;
-      position: relative;
-      top: -7px;
-      padding-right: 8px;
-
-      .material-icons {
-        background: #979797;
-        color: #ffffff;
-        border-radius: 4px;
-        font-size: 28px;
-      }
-    }
-
-    .ct-form-header:hover {
-      .material-icons {
-        background: #099cce;
-      }
-      .ct-link-text {
-        color: #099cce;
-      }
-    }
-
-    .ct-form-block {
-      margin-bottom: 30px;
-    }
-
-    .ct-form {
-      width: 480px;
-      margin-top: 20px;
-      padding: 10px 20px 20px;
-      background: #f1f1f1;
-
-      > div {
-        margin-bottom: 10px;
-      }
-
-      .ct-button {
-        margin-top: 10px;
-      }
-    }
-
-    .ct-form-label + div {
-      margin-bottom: 10px;
-    }
-
-    .ct-reset-password-button, .ct-reset-password-message {
-      margin-top: 10px;
-    }
-
-    .mat-checkbox {
-      display: block;
-    }
   }
 }

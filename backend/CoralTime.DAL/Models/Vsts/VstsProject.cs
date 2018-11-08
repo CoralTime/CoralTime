@@ -17,5 +17,9 @@ namespace CoralTime.DAL.Models.Vsts
         public string VstsProjectId { get; set; }
 
         public string VstsProjectName { get; set; }
+
+        public string VstsCompanyUrl { get; set; }
+
+        public string VstsPat { get; set; }
     }
 }

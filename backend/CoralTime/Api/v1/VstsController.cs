@@ -1,5 +1,6 @@
 ﻿using CoralTime.BL.Interfaces;
 using CoralTime.Common.Constants;
+using CoralTime.ViewModels.TimeEntries;
 using CoralTime.ViewModels.Vsts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,29 +14,40 @@ namespace CoralTime.Api.v1
         public VstsController(IVstsService service, ILogger<VstsController> logger)
             : base(logger, service)
         {
-
         }
 
         // GET: api/v1/Vsts/Tasks
         [HttpGet(Constants.Routes.Tasks)]
-        public IActionResult GetTasks(string projectName)
+        public IActionResult GetTasks(string projectId)
         {
             if (!ValidateVstsToken())
             {
                 return Unauthorized();
             }
-            return Ok(_service.GetTasksByProject(projectName));
+            return Ok(_service.GetTasksByProject(projectId));
         }
 
-        // POST api/v1/Vsts
-        [HttpPost]
-        public IActionResult Create([FromBody] VstsTimeEntry vstsTimeEntry)
+        // GET: api/v1/Vsts/TimeEnties
+        [HttpGet(Constants.Routes.TimeEntries)]
+        public IActionResult TimeEntries(int projectId, string workItemId)
         {
-            if (!ValidateVstsTokenAndUser(vstsTimeEntry.UserName))
+            if (!ValidateVstsToken())
             {
                 return Unauthorized();
             }
-            var result = _service.SaveTimeEntry(vstsTimeEntry);
+            return Ok(_service.GetTimeEntriesByWorkItemId(projectId, workItemId));
+        }
+
+        // POST api/v1/Vsts/TimeEntries
+        [HttpPost(Constants.Routes.TimeEntries)]
+        public IActionResult CreateTimeEntry([FromBody] TimeEntryView vstsTimeEntry)
+        {
+            if (!ValidateVstsToken())
+            {
+                return Unauthorized();
+            }
+            var member = _service.GetVstsMember(GetToken());
+            var result = _service.SaveTimeEntry(vstsTimeEntry, member);
             if (result)
             {
                 return Ok();
@@ -43,16 +55,26 @@ namespace CoralTime.Api.v1
             return BadRequest();
         }
 
-        private bool ValidateVstsToken()
+        // POST api/v1/Vsts/Setup
+        [HttpPost(Constants.Routes.Setup)]
+        public IActionResult Setup([FromBody] VstsSetup vstsSetup)
         {
-            //return _service.ValidateToken(GetToken()) != null;
-            return true;
+            if (!ValidateVstsToken())
+            {
+                return Unauthorized();
+            }
+            var result = _service.GetVstsSetupInfo(vstsSetup);
+
+            if (result.Errors != null)
+            {
+                return new BadRequestObjectResult(result.Errors);
+            }
+            return Ok(result);
         }
 
-        private bool ValidateVstsTokenAndUser(string userName)
+        private bool ValidateVstsToken()
         {
-            return true;
-            //return _service.GetVstsMember(token: GetToken(), null, userName: userName) != null;
+            return _service.ValidateToken(GetToken()) != null;
         }
 
         private string GetToken()

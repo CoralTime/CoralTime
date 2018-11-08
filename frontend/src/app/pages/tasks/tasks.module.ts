@@ -9,7 +9,10 @@ import { SharedModule } from '../../shared/shared.module';
 		SharedModule,
 		TasksRoutingModule
 	],
-	declarations: [TasksComponent, TaskFormComponent],
+	declarations: [
+		TasksComponent,
+		TaskFormComponent
+	],
 	entryComponents: [
 		TaskFormComponent
 	]

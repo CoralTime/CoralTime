@@ -131,9 +131,6 @@ namespace CoralTime.DAL
             builder.Entity<VstsProject>()
                 .HasOne(p => p.Project);
 
-            builder.Entity<VstsUser>()
-                .HasOne(p => p.User);
-
             base.OnModelCreating(builder);
         }
     }

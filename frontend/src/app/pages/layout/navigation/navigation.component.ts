@@ -22,13 +22,13 @@ const FULL_MANAGE_ITEMS = [
 		label: 'Projects',
 		icon: 'ct-projects-icon',
 		routerLink: ['/projects'],
-		permission: 'roleAssignProjectMember'
+		permission: 'roleViewProject'
 	},
 	{
 		label: 'Clients',
 		icon: 'ct-clients-icon',
 		routerLink: ['/clients'],
-		permission: 'roleAddClient'
+		permission: 'roleViewClient'
 
 	},
 	{
@@ -106,7 +106,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	}
 
 	isMobileView(): boolean {
-		return this.windowWidth <= 700;
+		return this.windowWidth < 810;
 	}
 
 	getUserInfo(): void {
@@ -141,7 +141,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		if (this.aclService.isGranted('roleAddProject')) {
 			this.showManageMenu = true;
 			this.authService.isUserAdminOrManager = true;
-			return;
 		}
 
 		this.loadingService.addLoading();

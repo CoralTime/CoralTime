@@ -33,6 +33,7 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
 
 export class MultiSelectComponent extends MultiSelect {
 	@Input() extraActionTitle: string;
+	@Input() scrollHeight: string = '306px';
 	@Input() showSubmitButton: boolean = false;
 	@Input() showFilterSearch: boolean = true;
 	@Input() showActionsPanel: boolean = true;

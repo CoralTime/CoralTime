@@ -1,3 +1,5 @@
+import { Roles } from '../core/auth/permissions';
+
 export class User {
 	dateFormat: string;
 	dateFormatId: number;
@@ -17,6 +19,7 @@ export class User {
 	urlIcon: string;
 	userName: string;
 	weekStart: number;
+	workingHoursPerDay: number;
 
 	constructor(data = null) {
 		if (data) {
@@ -38,10 +41,15 @@ export class User {
 			this.urlIcon = data.urlIcon;
 			this.userName = data.userName;
 			this.weekStart = data.weekStart;
+			this.workingHoursPerDay = data.workingHoursPerDay || 8;
 		}
 	}
 
 	getRole(): string {
 		return this.isAdmin ? 'Admin' : 'User';
+	}
+
+	getPermissionRole(): number {
+		return this.isAdmin ? Roles['admin'] : (this.isManager ? Roles['manager'] : Roles['user']);
 	}
 }

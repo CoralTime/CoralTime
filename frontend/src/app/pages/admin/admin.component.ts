@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { NotificationService } from '../../core/notification.service';
 import { AdminService } from '../../services/admin.service';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
-import { NotificationService } from '../../core/notification.service';
 
 @Component({
 	selector: 'ct-admin',
@@ -11,7 +11,7 @@ import { NotificationService } from '../../core/notification.service';
 export class AdminComponent {
 	memberId: number;
 	projectIds: number[];
-    filterStr: string = '';
+	filterStr: string = '';
 
 	constructor(private adminService: AdminService,
 	            private loadingService: LoadingMaskService,
@@ -89,5 +89,29 @@ export class AdminComponent {
 				errResponse => {
 					this.notificationService.danger('Error');
 				});
-	};
+    };
+
+    updateVstsProjects(): void {
+        this.loadingService.addLoading();
+        this.adminService.updateVstsProjects()
+            .finally(() => this.loadingService.removeLoading())
+            .subscribe(() => {
+                this.notificationService.success('Done');
+            },
+            errResponse => {
+                this.notificationService.danger('Error');
+            });
+    };
+
+    updateVstsUsers(): void {
+        this.loadingService.addLoading();
+        this.adminService.updateVstsUsers()
+            .finally(() => this.loadingService.removeLoading())
+            .subscribe(() => {
+                this.notificationService.success('Done');
+            },
+            errResponse => {
+                this.notificationService.danger('Error');
+            });
+    };
 }

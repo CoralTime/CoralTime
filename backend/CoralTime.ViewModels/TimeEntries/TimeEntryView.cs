@@ -43,5 +43,7 @@ namespace CoralTime.ViewModels.TimeEntries
         public int Color { get; set; }
 
         public bool IsLocked { get; set; } = false;
+
+        public string WorkItemId { get; set; }
     }
 }

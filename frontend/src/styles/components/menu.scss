@@ -1,28 +1,44 @@
 .ct-menu {
   position: relative;
-  font-size: $baseFont;
-  background-color: inherit;
+  font-size: 16px;
 
   > .ct-menu-content {
     position: absolute;
     top: 0;
-    min-width: 140px;
-    max-width: 306px;
-    padding: 0;
-    background-color: inherit;
-    box-shadow: none;
+    min-width: 210px;
+    max-width: 100%;
     opacity: 0;
     visibility: hidden;
     transform: scale(0.5);
-    z-index: 5;
+    background-color: $nav-background;
+    box-shadow: 0 4px 50px 0 rgba(37, 38, 94, 0.1);
+    border-radius: 5px;
+    z-index: 1;
+
+    &:before {
+      position: absolute;
+      top: -18px;
+      content: '';
+      border: 10px solid transparent;
+      border-bottom: 10px solid $nav-background;
+    }
 
     &.ct-menu-before {
       right: 0;
       transform-origin: right top;
+
+      &:before {
+        right: 10px;
+      }
     }
+
     &.ct-menu-after {
       left: 0;
       transform-origin: left top;
+
+      &:before {
+        left: 10px;
+      }
     }
   }
 
@@ -37,18 +53,19 @@
 
   .ct-menu-item {
     line-height: 36px;
-    height: 36px;
 
     a {
       position: relative;
       display: block;
-      padding: 0 20px;
+      padding: 0 30px;
+      font-weight: 700;
       cursor: pointer;
       text-align: left;
+      color: $main-grey;
     }
 
     &:hover a:not(.ct-disabled) {
-      background: rgba(0, 0, 0, 0.3);
+      color: $black;
     }
   }
 
