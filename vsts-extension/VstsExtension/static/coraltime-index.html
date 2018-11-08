@@ -9,46 +9,46 @@
     <form autocomplete="off">
         <div class="ct-date-container">
             <label>Date</label>
+            <div class="ct-date"></div>
+            <div class="ct-validation-error"></div>
         </div>
         <div class="ct-task-container">
             <label>Task</label>
+            <div class="ct-task"></div>
+            <div class="ct-validation-error"></div>
         </div>
         <div class="ct-description-container">
-            <label for="recordDescription">Description</label>
-            <textarea class="ct-textarea" id="recordDescription"
+            <label for="description">Description</label>
+            <textarea class="ct-textarea" id="description"
                       name="description"
                       maxlength="1000"
                       rows="5"></textarea>
         </div>
-        <div class="ct-time-period-container">
-            <div class="ct-actual-time">
-                <label>Actual time</label>
-                <div class="ct-actual-time-hours">h</div>
-                <div class="ct-actual-time-minutes">m</div>
-            </div>
-            <!--<button type="button" *ngIf="!isEstimatedTimeShown"-->
-            <!--class="ct-show-input ct-estimated-time-button"-->
-            <!--(click)="isEstimatedTimeShown = !isEstimatedTimeShown">Estimate-->
-            <!--</button>-->
-            <!--<div *ngIf="isEstimatedTimeShown" class="ct-estimated-time">-->
-            <!--<i class="ct-icon ct-timeestimated-icon" title="Planned time"></i>-->
-            <!--<input name="timeEstimatedHours" autocomplete="off">h-->
-            <!--<input name="timeEstimatedMinutes" autocomplete="off">m-->
-            <!--</div>-->
+        <div class="ct-actual-time-container">
+            <label>Actual time</label>
+            <div class="ct-actual-time-hours">h</div>
+            <div class="ct-actual-time-minutes">m</div>
+            <div class="ct-validation-error"></div>
+            <div class="ct-validation-error"></div>
+        </div>
+        <div class="ct-estimated-time-container">
+            <label>Estimated time</label>
+            <div class="ct-estimated-time-hours">h</div>
+            <div class="ct-estimated-time-minutes">m</div>
+            <div class="ct-validation-error"></div>
+            <div class="ct-validation-error"></div>
         </div>
         <div class="ct-form-actions-container">
-            <button type="button" class="ct-submit-button" id="recordSubmit">Submit</button>
+            <button type="button" class="ct-submit-button" id="submitButton">Submit</button>
         </div>
     </form>
 </div>
 <script src="lib/VSS.SDK.min.js"></script>
 <script type="text/javascript">
-    VSS.init(
-        {
-            explicitNotifyLoaded: true,
-            usePlatformScripts: true
-        }
-    );
+    VSS.init({
+        explicitNotifyLoaded: true,
+        usePlatformScripts: true
+    });
 
     VSS.require(["dist/timeEntryForm"], () => {
     });

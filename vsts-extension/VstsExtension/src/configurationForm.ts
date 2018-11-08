@@ -1,3 +1,4 @@
+import { ISettings } from "./models/isettings";
 import { ConfigurationService } from "./services/configurationService";
 
 export class ConfigurationForm {

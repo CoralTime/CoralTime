@@ -1,11 +1,13 @@
 import { IProjectContext } from "../models/iprojectContext";
+import { ISettings } from "../models/isettings";
+import { ISystemOptions } from "../models/isystemOptions";
 import { ITimeEntry, ITimeEntryFormValues } from "../models/itimeEntry";
 import { ConfigurationService } from "./configurationService";
 
 export class TimeEntryService {
     private configService: ConfigurationService;
-    private projectContext: IProjectContext;
     private extensionSettings: ISettings;
+    private projectContext: IProjectContext;
 
     constructor() {
         this.configService = new ConfigurationService();
@@ -16,42 +18,41 @@ export class TimeEntryService {
 
     getTasksForProject(): PromiseLike<any> {
         return this.configService.accessTokenPromise.then(() => {
-            return $.ajax({
-                dataType: "json",
-                headers: {
-                    "Content-Type": "application/json",
-                    "VSTSToken": "Bearer " + this.configService.getAccessToken(),
-                },
-                type: "get",
-                url: this.extensionSettings.siteUrl + "/api/v1/VSTS/Tasks?ProjectName=" + this.projectContext.projectName,
-            });
+            return $.get(this.extensionSettings.siteUrl + "/api/v1/VSTS/Tasks?ProjectId=" + this.projectContext.projectId);
         });
     }
 
-    saveTimeEntry(values: ITimeEntryFormValues): Promise<any> {
+    saveTimeEntry(values: ITimeEntryFormValues): JQuery.jqXHR {
+        const description = values.description ? " - " + values.description : "";
         const timeEntry: ITimeEntry = {
             date: values.date,
-            description: values.description,
-            task: values.task,
-            userEmail: this.projectContext.userEmail,
-            userName: this.projectContext.userName,
-            vstsProjectId: this.projectContext.projectId,
-            vstsProjectName: this.projectContext.projectName,
+            description: this.getSystemOptions()["System.WorkItemType"] + " #" + this.getSystemOptions()["System.Id"]
+                + " " + this.getSystemOptions()["System.Title"] + description,
+            memberId: this.configService.getUserSettings().memberId,
+            projectId: this.configService.getUserSettings().projectId,
+            taskTypesId: values.taskId,
+            timeOptions: {
+                isFromToShow: false,
+                timeTimerStart: 0,
+            },
+            timeValues: {
+                timeActual: values.timeActual,
+                timeEstimated: values.timeEstimated,
+                timeFrom: null,
+                timeTo: null,
+            },
+            workItemId: String(this.getSystemOptions()["System.Id"]),
         };
 
-        return $.ajax({
-            data: timeEntry,
-            headers: {
-                "Authorization": "Bearer " + this.configService.getAccessToken(),
-                "Content-Type": "application/json",
-            },
-            type: "post",
-            url: this.extensionSettings.siteUrl + "/api/v1/timeentires/VSTS",
-        });
+        return $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/TimeEntries", JSON.stringify(timeEntry));
+    }
+
+    private getSystemOptions(): ISystemOptions {
+        return this.configService.getSystemOptions();
     }
 
     private loadConfiguration(): void {
+        this.extensionSettings = this.configService.getExtensionSettings();
         this.projectContext = this.configService.getExtensionContext();
-        this.extensionSettings = this.configService.getSettings();
     }
 }
