@@ -133,13 +133,14 @@ namespace CoralTime.BL.Services
             //var validationParameters = new TokenValidationParameters()
             //{
             //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-            //    ValidateIssuer = false,
+            //    ValidateIssuer = true,
             //    RequireSignedTokens = false,
             //    RequireExpirationTime = true,
             //    ValidateLifetime = true,
             //    ValidateAudience = false,
             //    ValidateActor = false,
-            //    ValidateIssuerSigningKey = false
+            //    ValidateIssuerSigningKey = true,
+            //    ValidIssuer = "app.vssps.visualstudio.com"
             //};
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -248,15 +249,11 @@ namespace CoralTime.BL.Services
             {
                 var user = _uow.VstsUserRepository.GetQuery()
                     .SingleOrDefault(x => x.VstsUserId == vstsMember.Id);
+                var existUser = _uow.UserRepository.GetQuery(withIncludes: false)
+                    .SingleOrDefault(x => x.UserName == vstsMember.UniqueName);
 
-                if (user != null && user.User.UserName != vstsMember.UniqueName)
+                if (user == null)
                 {
-                    _uow.VstsUserRepository.Delete(user);  // remove wrong records
-                }
-                else
-                {
-                    var existUser = _uow.UserRepository.GetQuery(withIncludes: false)
-                        .SingleOrDefault(x => x.UserName == vstsMember.UniqueName);
                     if (existUser != null)
                     {
                         var newVstsUser = new VstsUser
@@ -267,6 +264,13 @@ namespace CoralTime.BL.Services
                         };
                         _uow.VstsUserRepository.Insert(newVstsUser); // create new records
                     }
+                }
+                else
+                {
+                    if (user != null && user.User.UserName != vstsMember.UniqueName)
+                    {
+                        _uow.VstsUserRepository.Delete(user);  // remove wrong records
+                    } 
                 }
             }
             _uow.Save();
