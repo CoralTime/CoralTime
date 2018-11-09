@@ -1,17 +1,40 @@
 export interface ITimeEntry {
-    // actualTime: number,
     date: string;
     description: string;
-    // estimatedTime: number,
-    task: string;
-    userEmail: string;
-    userName: string;
-    vstsProjectId: string;
-    vstsProjectName: string;
+    memberId: number;
+    projectId: number;
+    taskTypesId: number;
+    timeOptions: ITimeOptions;
+    timeValues: ITimeValues;
+    workItemId: string;
+}
+
+export interface ITimeOptions {
+    timeTimerStart: number;
+    isFromToShow: boolean;
+}
+
+export interface ITimeValues {
+    timeFrom: number;
+    timeTo: number;
+    timeActual: number;
+    timeEstimated: number;
+}
+
+export interface ITask {
+    id: number;
+    name: string;
 }
 
 export interface ITimeEntryFormValues {
     date: string;
     description: string;
-    task: string;
+    taskId: number;
+    timeActual: number;
+    timeEstimated: number;
+}
+
+export interface ITime {
+    hours: number;
+    minutes: number;
 }

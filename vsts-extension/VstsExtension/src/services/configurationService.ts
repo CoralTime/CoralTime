@@ -1,12 +1,17 @@
 import Q = require("q");
 import { IPromise } from "q";
+import Services = require("TFS/WorkItemTracking/Services");
 import { IProjectContext } from "../models/iprojectContext";
+import { ISettings, IUserSettings } from "../models/isettings";
+import { ISystemOptions } from "../models/isystemOptions";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
 
     private accessToken: string;
     private extensionSettings: ISettings;
+    private systemOptions: ISystemOptions;
+    private userSettings: IUserSettings;
 
     constructor() {
         this.load();
@@ -20,18 +25,23 @@ export class ConfigurationService {
         const webContext = VSS.getWebContext();
         return {
             projectId: webContext.project.id,
-            projectName: webContext.project.name,
-            userEmail: webContext.user.email,
-            userName: webContext.user.uniqueName,
+            userId: webContext.user.id,
         };
     }
 
-    getSettings(): ISettings {
+    getExtensionSettings(): ISettings {
         return this.extensionSettings;
     }
 
-    load(): void {
-        const that = this;
+    getSystemOptions(): ISystemOptions {
+        return this.systemOptions;
+    }
+
+    getUserSettings(): IUserSettings {
+        return this.userSettings;
+    }
+
+    private load(): void {
         this.extensionSettings = {
             siteUrl: "https://" + "coralteamdev.coraltime.io",
         };
@@ -40,9 +50,11 @@ export class ConfigurationService {
         //         this.extensionSettings = (JSON.parse(savedSettings).data);
         //         this.$siteUrl.val(this.extensionSettings.siteUrl);
         //     });
-        this.loadAccessToken();
-
-        // return that.WidgetHelpers.WidgetStatusHelper.Success();
+        this.loadAccessToken().then(() => {
+            this.setHeaders();
+            this.loadSetupOptions();
+        });
+        this.loadSystemOptions();
     }
 
     setKeyValueInStorage(key, value): void {
@@ -65,11 +77,42 @@ export class ConfigurationService {
         return deferred.promise;
     }
 
-    private loadAccessToken(): void {
-        this.accessTokenPromise = VSS.getAppToken().then((token) => {
+    private loadAccessToken(): PromiseLike<any> {
+        return this.accessTokenPromise = VSS.getAppToken().then((token) => {
             this.accessToken = token.token;
         });
-        // VSS.getAccessToken().then((token) => {
-        // });
+    }
+
+    loadSetupOptions(): JQuery.jqXHR {
+        const data = {
+            VstsProjectId: this.getExtensionContext().projectId,
+            VstsUserId: this.getExtensionContext().userId,
+        };
+
+        return $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
+            .done((res: IUserSettings) => {
+                this.userSettings = res;
+            })
+            .fail(() => {
+                console.log("Server error.");
+                $(".ct-coraltime").append("<div class='ct-error'>Server error.</div>");
+            });
+    }
+
+    private loadSystemOptions(): PromiseLike<void> {
+        return Services.WorkItemFormService.getService().then((service) => {
+            service.getFieldValues(["System.Id", "System.Title", "System.WorkItemType"]).then((value: any) => {
+                this.systemOptions = value;
+            });
+        });
+    }
+
+    private setHeaders(): void {
+        $.ajaxSetup({
+            headers: {
+                "Content-Type": "application/json",
+                "VSTSToken": this.getAccessToken(),
+            },
+        });
     }
 }
