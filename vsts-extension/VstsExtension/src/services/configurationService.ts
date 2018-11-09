@@ -1,20 +1,26 @@
 import Q = require("q");
 import { IPromise } from "q";
-import Services = require("TFS/WorkItemTracking/Services");
-import { IProjectContext } from "../models/iprojectContext";
-import { ISettings, IUserSettings } from "../models/isettings";
-import { ISystemOptions } from "../models/isystemOptions";
+import services = require("TFS/WorkItemTracking/Services");
+import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
+import { Notification } from "../notification";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
 
     private accessToken: string;
     private extensionSettings: ISettings;
-    private systemOptions: ISystemOptions;
     private userSettings: IUserSettings;
+    private workItemOptions: IWorkItemOptions;
 
     constructor() {
-        this.load();
+        this.setExtensionSettings();
+        this.loadWorkItemOptions();
+        this.loadAccessToken().then(() => {
+            this.setHeaders();
+            this.getSetupOptions().then((userSettings: IUserSettings) => {
+                this.userSettings = userSettings;
+            });
+        });
     }
 
     getAccessToken(): string {
@@ -33,86 +39,105 @@ export class ConfigurationService {
         return this.extensionSettings;
     }
 
-    getSystemOptions(): ISystemOptions {
-        return this.systemOptions;
-    }
-
     getUserSettings(): IUserSettings {
         return this.userSettings;
     }
 
-    private load(): void {
-        this.extensionSettings = {
-            siteUrl: "https://" + "coralteamdev.coraltime.io",
-        };
-        // this.getKeyValueFromStorage("settings")
-        //     .then((savedSettings) => {
-        //         this.extensionSettings = (JSON.parse(savedSettings).data);
-        //         this.$siteUrl.val(this.extensionSettings.siteUrl);
-        //     });
-        this.loadAccessToken().then(() => {
-            this.setHeaders();
-            this.loadSetupOptions();
-        });
-        this.loadSystemOptions();
+    getWorkItemOptions(): IWorkItemOptions {
+        return this.workItemOptions;
     }
 
-    setKeyValueInStorage(key, value): void {
-        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
-            // Set value in user scope
-            dataService.setValue(key, value, {scopeType: "User"}).then((resvalue) => {
-                alert(resvalue);
-            });
+    private getSetupOptions(): IPromise<IUserSettings> {
+        const deferred = Q.defer<IUserSettings>();
+        this.getKeyValueFromStorage("userSettings").then((res: IUserSettings) => {
+            if (res) {
+                deferred.resolve(res);
+            } else {
+                this.loadSetupOptions().then((res) => {
+                    deferred.resolve(res);
+                });
+            }
         });
+
+        return deferred.promise;
     }
 
-    private getKeyValueFromStorage(key): IPromise<string> {
-        const deferred = Q.defer<string>();
+    private getKeyValueFromStorage(key: string): IPromise<any> {
+        const deferred = Q.defer<any>();
         VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
             // Get value from user scope
             dataService.getValue(key, {scopeType: "User"}).then((value) => {
-                deferred.resolve(value as string);
+                deferred.resolve(value);
             });
         });
         return deferred.promise;
     }
 
-    private loadAccessToken(): PromiseLike<any> {
+    private loadAccessToken(): PromiseLike<void> {
         return this.accessTokenPromise = VSS.getAppToken().then((token) => {
             this.accessToken = token.token;
         });
     }
 
-    loadSetupOptions(): JQuery.jqXHR {
+    private loadSetupOptions(): IPromise<IUserSettings> {
+        const deferred = Q.defer<IUserSettings>();
         const data = {
             VstsProjectId: this.getExtensionContext().projectId,
             VstsUserId: this.getExtensionContext().userId,
         };
 
-        return $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
+        $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
             .done((res: IUserSettings) => {
-                this.userSettings = res;
+                const userSettings = {
+                    memberId: res.memberId,
+                    projectId: res.projectId,
+                };
+                this.setKeyValueInStorage("userSettings", userSettings);
+                deferred.resolve(userSettings);
             })
             .fail(() => {
-                console.log("Server error.");
-                $(".ct-coraltime").append("<div class='ct-error'>Server error.</div>");
+                Notification.showGlobalError("Error loading project settings.");
+                deferred.reject(null);
             });
+
+        return deferred.promise;
     }
 
-    private loadSystemOptions(): PromiseLike<void> {
-        return Services.WorkItemFormService.getService().then((service) => {
+    private loadWorkItemOptions(): PromiseLike<void> {
+        return services.WorkItemFormService.getService().then((service) => {
             service.getFieldValues(["System.Id", "System.Title", "System.WorkItemType"]).then((value: any) => {
-                this.systemOptions = value;
+                this.workItemOptions = value;
             });
         });
     }
 
+    private setExtensionSettings(): void {
+        const siteUrl = VSS.getConfiguration().witInputs["SiteUrl"];
+
+        if (!/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/.test(siteUrl)) {
+            Notification.showGlobalError(siteUrl + " has invalid format.");
+            return;
+        }
+
+        this.extensionSettings = {
+            siteUrl: "https://" + siteUrl,
+        };
+    }
+
     private setHeaders(): void {
+        // Set headers for all jQuery requests
         $.ajaxSetup({
             headers: {
                 "Content-Type": "application/json",
                 "VSTSToken": this.getAccessToken(),
             },
+        });
+    }
+
+    private setKeyValueInStorage(key: string, value: any): void {
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            // Set value in user scope
+            dataService.setValue(key, value, {scopeType: "User"});
         });
     }
 }

@@ -25,6 +25,7 @@
     ],
     "no-empty": false,
     "no-shadowed-variable": false,
+    "no-string-literal": false,
     "variable-name": false
   },
   "rulesDirectory": []

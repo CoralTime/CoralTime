@@ -3,6 +3,7 @@ import Controls = require("VSS/Controls");
 import Combos = require("VSS/Controls/Combos");
 import { ComboO } from "VSS/Controls/Combos";
 import { ITask, ITime, ITimeEntryFormValues } from "./models/itimeEntry";
+import { Notification } from "./notification";
 import { TimeEntryService } from "./services/timeEntryService";
 
 export class TimeEntryForm {
@@ -35,8 +36,6 @@ export class TimeEntryForm {
         this.initEstimatedMinutes();
         this.getTasksForProject();
 
-        console.log(VSS.getConfiguration().witInputs);
-
         $("#submitButton").on("click", () => {
             this.onSave();
         });
@@ -45,10 +44,10 @@ export class TimeEntryForm {
     onSave(): void {
         this.timeEntryService.saveTimeEntry(this.timeEntry)
             .done(() => {
-                console.log("Time entry saved successfully");
+                Notification.showNotification("Time entry saved successfully.", "success");
             })
             .fail(() => {
-                console.log("Time entry creation failed");
+                Notification.showNotification("Time entry creation failed.", "error");
             });
     }
 
@@ -235,6 +234,8 @@ export class TimeEntryForm {
             .then((options: ITask[]) => {
                 this.tasksOptions = options;
                 this.initTaskSelect(this.getTaskNames());
+            }, () => {
+                Notification.showGlobalError("Error loading tasks.");
             });
     }
 }
