@@ -2,7 +2,7 @@ import Q = require("q");
 import { IPromise } from "q";
 import services = require("TFS/WorkItemTracking/Services");
 import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
-import { Notification } from "../notification";
+import { Notification } from "../utils/notification";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
@@ -15,11 +15,9 @@ export class ConfigurationService {
     constructor() {
         this.setExtensionSettings();
         this.loadWorkItemOptions();
-        this.loadAccessToken().then(() => {
-            this.setHeaders();
-            this.getSetupOptions().then((userSettings: IUserSettings) => {
-                this.userSettings = userSettings;
-            });
+        this.loadAccessToken();
+        this.getSetupOptions().then((userSettings: IUserSettings) => {
+            this.userSettings = userSettings;
         });
     }
 
@@ -73,9 +71,10 @@ export class ConfigurationService {
         return deferred.promise;
     }
 
-    private loadAccessToken(): PromiseLike<void> {
-        return this.accessTokenPromise = VSS.getAppToken().then((token) => {
+    private loadAccessToken(): void {
+        this.accessTokenPromise = VSS.getAppToken().then((token) => {
             this.accessToken = token.token;
+            this.setHeaders();
         });
     }
 
@@ -86,25 +85,27 @@ export class ConfigurationService {
             VstsUserId: this.getExtensionContext().userId,
         };
 
-        $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
-            .done((res: IUserSettings) => {
-                const userSettings = {
-                    memberId: res.memberId,
-                    projectId: res.projectId,
-                };
-                this.setKeyValueInStorage("userSettings", userSettings);
-                deferred.resolve(userSettings);
-            })
-            .fail(() => {
-                Notification.showGlobalError("Error loading project settings.");
-                deferred.reject(null);
-            });
+        this.accessTokenPromise.then(() => {
+            $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
+                .done((res: IUserSettings) => {
+                    const userSettings = {
+                        memberId: res.memberId,
+                        projectId: res.projectId,
+                    };
+                    this.setKeyValueInStorage("userSettings", userSettings);
+                    deferred.resolve(userSettings);
+                })
+                .fail(() => {
+                    Notification.showGlobalError("Error loading project settings.");
+                    deferred.reject(null);
+                });
+        });
 
         return deferred.promise;
     }
 
-    private loadWorkItemOptions(): PromiseLike<void> {
-        return services.WorkItemFormService.getService().then((service) => {
+    private loadWorkItemOptions(): void {
+        services.WorkItemFormService.getService().then((service) => {
             service.getFieldValues(["System.Id", "System.Title", "System.WorkItemType"]).then((value: any) => {
                 this.workItemOptions = value;
             });
