@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.6.199",
+  "version": "0.0.7",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -56,7 +56,7 @@
         "inputs": [
           {
             "id": "SiteUrl",
-            "name": "Enter site url",
+            "name": "Enter site url (Ex: coralteamdev.coraltime.io).",
             "validation": {
               "dataType": "String",
               "isRequired": false
@@ -97,10 +97,6 @@
     {
       "addressable": true,
       "path": "src"
-    },
-    {
-      "addressable": true,
-      "path": "node_modules/moment/moment.js"
     }
   ]
 }

@@ -4,6 +4,7 @@ import Combos = require("VSS/Controls/Combos");
 import { ComboO } from "VSS/Controls/Combos";
 import { ITask, ITime, ITimeEntryFormValues } from "./models/itimeEntry";
 import { TimeEntryService } from "./services/timeEntryService";
+import { Notification } from "./utils/notification";
 
 export class TimeEntryForm {
     private tasksOptions: ITask[];
@@ -18,7 +19,14 @@ export class TimeEntryForm {
     private timeActual: ITime = {hours: 0, minutes: 0};
     private timeEstimated: ITime = {hours: 0, minutes: 0};
 
+    private dateCombo: ComboO<any>;
     private taskCombo: ComboO<any>;
+    private actHoursCombo: ComboO<any>;
+    private actMinCombo: ComboO<any>;
+    private estHoursCombo: ComboO<any>;
+    private estMinCombo: ComboO<any>;
+
+    private $submitButton = $("#submitButton");
 
     constructor() {
         this.timeEntryService = new TimeEntryService();
@@ -34,10 +42,9 @@ export class TimeEntryForm {
         this.initEstimatedHours();
         this.initEstimatedMinutes();
         this.getTasksForProject();
+        this.validateForm();
 
-        console.log(VSS.getConfiguration().witInputs);
-
-        $("#submitButton").on("click", () => {
+        this.$submitButton.on("click", () => {
             this.onSave();
         });
     }
@@ -45,10 +52,10 @@ export class TimeEntryForm {
     onSave(): void {
         this.timeEntryService.saveTimeEntry(this.timeEntry)
             .done(() => {
-                console.log("Time entry saved successfully");
+                Notification.showNotification("Time entry saved successfully.", "success");
             })
             .fail(() => {
-                console.log("Time entry creation failed");
+                Notification.showNotification("Time entry creation failed.", "error");
             });
     }
 
@@ -57,8 +64,8 @@ export class TimeEntryForm {
     private initDatePicker(): void {
         const dateTimeOptions: Combos.IDateTimeComboOptions = {
             change: () => {
-                this.timeEntry.date = dateCombo.getText();
-                this.validateDate(dateCombo);
+                this.timeEntry.date = this.dateCombo.getText();
+                this.validateDate(this.dateCombo);
             },
             dateTimeFormat: "d",
             id: "Date",
@@ -66,8 +73,8 @@ export class TimeEntryForm {
             value: new Date().toLocaleDateString("en-US"),
         };
 
-        const dateCombo = Controls.create(Combos.Combo, $(".ct-date"), dateTimeOptions);
-        this.timeEntry.date = dateCombo.getText();
+        this.dateCombo = Controls.create(Combos.Combo, $(".ct-date"), dateTimeOptions);
+        this.timeEntry.date = this.dateCombo.getText();
     }
 
     private validateDate(dateCombo: ComboO<any>): void {
@@ -81,6 +88,7 @@ export class TimeEntryForm {
         dateCombo.setInvalid(!!errorMessage);
         $dateError.text(errorMessage);
         $dateError.css("visibility", !!errorMessage ? "visible" : "hidden");
+        this.validateForm();
     }
 
     // TASK
@@ -96,6 +104,7 @@ export class TimeEntryForm {
 
         if (!tasks) {
             this.taskCombo = Controls.create(Combos.Combo, $(".ct-task"), makeOptions);
+            this.taskCombo.setInvalid(true);
         } else {
             this.taskCombo.setSource(tasks);
             this.taskCombo.setEnabled(true);
@@ -127,6 +136,7 @@ export class TimeEntryForm {
         taskCombo.setInvalid(!!errorMessage);
         $taskError.text(errorMessage);
         $taskError.css("visibility", errorMessage ? "visible" : "hidden");
+        this.validateForm();
     }
 
     // DESCRIPTION
@@ -145,14 +155,14 @@ export class TimeEntryForm {
         const makeOptions = {
             autoComplete: false,
             change: () => {
-                this.timeActual.hours = actualCombo.getValue();
+                this.timeActual.hours = this.actHoursCombo.getValue();
                 this.timeEntry.timeActual = this.convertTimeToNumber(this.timeActual);
-                this.validateTime(actualCombo, $actualTimeError, 24, "Actual hours");
+                this.validateTime(this.actHoursCombo, $actualTimeError, 24, "Actual hours");
             },
             mode: "text",
         } as Combos.IComboOptions;
 
-        const actualCombo = Controls.create(Combos.Combo, $(".ct-actual-time-hours"), makeOptions);
+        this.actHoursCombo = Controls.create(Combos.Combo, $(".ct-actual-time-hours"), makeOptions);
     }
 
     private initActualMinutes(): void {
@@ -160,15 +170,14 @@ export class TimeEntryForm {
         const makeOptions = {
             autoComplete: false,
             change: () => {
-                this.timeActual.minutes = actualCombo.getValue();
+                this.timeActual.minutes = this.actMinCombo.getValue();
                 this.timeEntry.timeActual = this.convertTimeToNumber(this.timeActual);
-                this.validateTime(actualCombo, $actualTimeError, 60, "Actual minutes");
+                this.validateTime(this.actMinCombo, $actualTimeError, 60, "Actual minutes");
             },
-            invalidCss: "ct-invalid",
             mode: "text",
         } as Combos.IComboOptions;
 
-        const actualCombo = Controls.create(Combos.Combo, $(".ct-actual-time-minutes"), makeOptions);
+        this.actMinCombo = Controls.create(Combos.Combo, $(".ct-actual-time-minutes"), makeOptions);
     }
 
     // ESTIMATED
@@ -178,14 +187,14 @@ export class TimeEntryForm {
         const makeOptions = {
             autoComplete: false,
             change: () => {
-                this.timeEstimated.hours = estimatedCombo.getValue();
+                this.timeEstimated.hours = this.estHoursCombo.getValue();
                 this.timeEntry.timeEstimated = this.convertTimeToNumber(this.timeEstimated);
-                this.validateTime(estimatedCombo, $estimatedTimeError, 24, "Estimated hours");
+                this.validateTime(this.estHoursCombo, $estimatedTimeError, 24, "Estimated hours");
             },
             mode: "text",
         } as Combos.IComboOptions;
 
-        const estimatedCombo = Controls.create(Combos.Combo, $(".ct-estimated-time-hours"), makeOptions);
+        this.estHoursCombo = Controls.create(Combos.Combo, $(".ct-estimated-time-hours"), makeOptions);
     }
 
     private initEstimatedMinutes(): void {
@@ -193,14 +202,14 @@ export class TimeEntryForm {
         const makeOptions = {
             autoComplete: false,
             change: () => {
-                this.timeEstimated.minutes = estimatedCombo.getValue();
+                this.timeEstimated.minutes = this.estMinCombo.getValue();
                 this.timeEntry.timeEstimated = this.convertTimeToNumber(this.timeEstimated);
-                this.validateTime(estimatedCombo, $estimatedTimeError, 60, "Estimated minutes");
+                this.validateTime(this.estMinCombo, $estimatedTimeError, 60, "Estimated minutes");
             },
             mode: "text",
         } as Combos.IComboOptions;
 
-        const estimatedCombo = Controls.create(Combos.Combo, $(".ct-estimated-time-minutes"), makeOptions);
+        this.estMinCombo = Controls.create(Combos.Combo, $(".ct-estimated-time-minutes"), makeOptions);
     }
 
     private validateTime(timeCombo: ComboO<any>, errorContainer: JQuery, maxValue: number, label: string): void {
@@ -222,6 +231,7 @@ export class TimeEntryForm {
         timeCombo.setInvalid(!!errorMessage);
         errorContainer.text(errorMessage);
         errorContainer.css("visibility", errorMessage ? "visible" : "hidden");
+        this.validateForm();
     }
 
     private convertTimeToNumber(time: ITime): number {
@@ -235,7 +245,21 @@ export class TimeEntryForm {
             .then((options: ITask[]) => {
                 this.tasksOptions = options;
                 this.initTaskSelect(this.getTaskNames());
+            }, () => {
+                Notification.showGlobalError("Error loading tasks.");
             });
+    }
+
+    private validateForm(): void {
+        const isDateValid = this.dateCombo.isValid();
+        const isTaskValid = this.taskCombo.isValid();
+        const isActHoursValid = this.actHoursCombo.isValid();
+        const isActMinValid = this.actMinCombo.isValid();
+        const isEstHoursValid = this.estHoursCombo.isValid();
+        const isEstMinValid = this.estMinCombo.isValid();
+        const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
+            && isEstHoursValid && isEstMinValid;
+        this.$submitButton.prop("disabled", !isFormValid);
     }
 }
 

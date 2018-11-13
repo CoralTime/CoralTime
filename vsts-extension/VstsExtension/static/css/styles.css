@@ -2,11 +2,17 @@
   --main-blue: rgba(0, 120, 212, 1);
   --main-gray: rgba(234, 234, 234, 1);
   --error-color: rgba(218, 10, 0, 1);
+  --success-color: rgba(24, 185, 158, 1);
 }
 
 .ct-coraltime {
   max-width: 350px;
   padding: 20px;
+}
+
+.ct-coraltime form {
+  display: inline-block;
+  width: 100%;
 }
 
 [class*="-container"] {
@@ -78,24 +84,56 @@
   opacity: .7;
 }
 
-.ct-validation-error, .ct-error {
+/* NOTIFICATION STYLES */
+
+.ct-message {
   font-size: 12px;
-  color: var(--error-color);
-  visibility: hidden;
 }
 
-.ct-validation-error:before, .ct-error:before {
+.ct-message:not(.ct-validation-error) {
+  margin: 10px 0;
+  padding: 8px;
+  color: rgba(0, 0, 0, .9);
+}
+
+.ct-message:before {
   display: inline-block;
   margin-right: 5px;
-  content: "\ea02 ";
   font-family: "Bowtie";
   font-size: 14px;
-  color: var(--error-color);
   speak: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ct-validation-error:empty, .ct-error:empty {
+.ct-message.ct-validation-error {
+  color: var(--error-color);
+  visibility: hidden;
+}
+
+.ct-message.ct-error {
+  background: rgba(218, 10, 0, .2);
+}
+
+.ct-message.ct-success {
+  background: rgba(24, 185, 158, .2);
+}
+
+.ct-message.ct-validation-error:before, .ct-message.ct-error:before {
+  color: var(--error-color);
+  content: "\ea02";
+}
+
+.ct-message.ct-success:before {
+  color: var(--success-color);
+  content: "\ea12";
+}
+
+.ct-message:empty {
   display: none;
+}
+
+.ct-coraltime > .ct-error + form {
+  opacity: .3;
+  pointer-events: none;
 }
