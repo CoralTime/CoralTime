@@ -2,12 +2,16 @@ import $ = require("jquery");
 import Controls = require("VSS/Controls");
 import Combos = require("VSS/Controls/Combos");
 import { ComboO } from "VSS/Controls/Combos";
-import { ITask, ITime, ITimeEntryFormValues } from "./models/itimeEntry";
+import { Grid } from "VSS/Controls/Grids";
+import Grids = require("VSS/Controls/Grids");
+import { IGridColumn, IGridRowInfo } from "VSS/Controls/Grids";
+import { ITask, ITime, ITimeEntryFormValues, ITimeEntryRow, ITimeValues } from "./models/timeEntry";
 import { TimeEntryService } from "./services/timeEntryService";
 import { Notification } from "./utils/notification";
 
 export class TimeEntryForm {
     private tasksOptions: ITask[];
+    private timeEntryRows: ITimeEntryRow[];
     private timeEntryService: TimeEntryService;
     private timeEntry: ITimeEntryFormValues = {
         date: "",
@@ -25,7 +29,9 @@ export class TimeEntryForm {
     private actMinCombo: ComboO<any>;
     private estHoursCombo: ComboO<any>;
     private estMinCombo: ComboO<any>;
+    private gridControl: Grid;
 
+    private $description = $("#description");
     private $submitButton = $("#submitButton");
 
     constructor() {
@@ -42,6 +48,7 @@ export class TimeEntryForm {
         this.initEstimatedHours();
         this.initEstimatedMinutes();
         this.getTasksForProject();
+        this.getTimeEntries();
         this.validateForm();
 
         this.$submitButton.on("click", () => {
@@ -53,10 +60,35 @@ export class TimeEntryForm {
         this.timeEntryService.saveTimeEntry(this.timeEntry)
             .done(() => {
                 Notification.showNotification("Time entry saved successfully.", "success");
+                this.resetForm();
+                this.getTimeEntries();
             })
             .fail(() => {
                 Notification.showNotification("Time entry creation failed.", "error");
             });
+    }
+
+    resetForm(): void {
+        this.$description.val("");
+        this.actHoursCombo.setText("");
+        this.actMinCombo.setText("");
+        this.estHoursCombo.setText("");
+        this.estMinCombo.setText("");
+        this.timeEntry.description = "";
+        this.timeEntry.timeActual = 0;
+        this.timeEntry.timeEstimated = 0;
+    }
+
+    private validateForm(): void {
+        const isDateValid = this.dateCombo.isValid();
+        const isTaskValid = this.taskCombo.isValid();
+        const isActHoursValid = this.actHoursCombo.isValid();
+        const isActMinValid = this.actMinCombo.isValid();
+        const isEstHoursValid = this.estHoursCombo.isValid();
+        const isEstMinValid = this.estMinCombo.isValid();
+        const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
+            && isEstHoursValid && isEstMinValid;
+        this.$submitButton.prop("disabled", !isFormValid);
     }
 
     // DATE
@@ -111,6 +143,16 @@ export class TimeEntryForm {
         }
     }
 
+    private getTasksForProject(): void {
+        this.timeEntryService.getTasksForProject()
+            .then((options: ITask[]) => {
+                this.tasksOptions = options;
+                this.initTaskSelect(this.getTaskNames());
+            }, () => {
+                Notification.showGlobalError("Error loading tasks.");
+            });
+    }
+
     private getTaskNames(): string[] {
         return this.tasksOptions.map((x) => x.name);
     }
@@ -142,9 +184,8 @@ export class TimeEntryForm {
     // DESCRIPTION
 
     private initDescription(): void {
-        const $description = $("#description");
-        $description.on("change", () => {
-            this.timeEntry.description = String($description.val());
+        this.$description.on("change", () => {
+            this.timeEntry.description = String(this.$description.val());
         });
     }
 
@@ -238,28 +279,117 @@ export class TimeEntryForm {
         return time.hours * 3600 + time.minutes * 60;
     }
 
-    // GENERAL
-
-    private getTasksForProject(): void {
-        this.timeEntryService.getTasksForProject()
-            .then((options: ITask[]) => {
-                this.tasksOptions = options;
-                this.initTaskSelect(this.getTaskNames());
-            }, () => {
-                Notification.showGlobalError("Error loading tasks.");
-            });
+    private convertNumberToTime(time: number): ITime {
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor(time / 60) - hours * 60;
+        return {hours, minutes};
     }
 
-    private validateForm(): void {
-        const isDateValid = this.dateCombo.isValid();
-        const isTaskValid = this.taskCombo.isValid();
-        const isActHoursValid = this.actHoursCombo.isValid();
-        const isActMinValid = this.actMinCombo.isValid();
-        const isEstHoursValid = this.estHoursCombo.isValid();
-        const isEstMinValid = this.estMinCombo.isValid();
-        const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
-            && isEstHoursValid && isEstMinValid;
-        this.$submitButton.prop("disabled", !isFormValid);
+    // GRID
+
+    private initGrid(): void {
+        const container = $(".ct-grid");
+        const gridOptions: Grids.IGridOptions = {
+            columns: [
+                {
+                    index: "memberName",
+                    text: "User",
+                    width: 150,
+                },
+                {
+                    getCellContents: (
+                        rowInfo: IGridRowInfo,
+                        dataIndex: number,
+                        expandedState: number,
+                        level: number,
+                        column: IGridColumn,
+                        indentIndex: number,
+                        columnOrder: number) => {
+                        const date: string = this.timeEntryRows[dataIndex][column.index];
+
+                        return $("<div class='grid-cell'/>")
+                            .width(column.width)
+                            .text(new Date(date).toLocaleDateString("en-US"));
+                    },
+                    index: "date",
+                    text: "Date",
+                    width: 100,
+                },
+                {
+                    index: "taskName",
+                    text: "Task",
+                    width: 130,
+                },
+                {
+                    canSortBy: false,
+                    index: "description",
+                    text: "Description",
+                    width: 500,
+                },
+                {
+                    canSortBy: false,
+                    getCellContents: (
+                        rowInfo: IGridRowInfo,
+                        dataIndex: number,
+                        expandedState: number,
+                        level: number,
+                        column: IGridColumn,
+                        indentIndex: number,
+                        columnOrder: number) => {
+                        const timeValues: ITimeValues = this.timeEntryRows[dataIndex][column.index];
+
+                        return $("<div class='grid-cell'/>")
+                            .width(column.width)
+                            .text(this.convertNumberToTime(timeValues.timeActual).hours + "h "
+                                + this.convertNumberToTime(timeValues.timeActual).minutes + "m");
+                    },
+                    index: "timeValues",
+                    text: "Actual Time",
+                    width: 100,
+                },
+                {
+                    canSortBy: false,
+                    getCellContents: (
+                        rowInfo: IGridRowInfo,
+                        dataIndex: number,
+                        expandedState: number,
+                        level: number,
+                        column: IGridColumn,
+                        indentIndex: number,
+                        columnOrder: number) => {
+                        const timeValues: ITimeValues = this.timeEntryRows[dataIndex][column.index];
+
+                        return $("<div class='grid-cell'/>")
+                            .width(column.width)
+                            .text(this.convertNumberToTime(timeValues.timeEstimated).hours + "h "
+                                + this.convertNumberToTime(timeValues.timeEstimated).minutes + "m");
+                    },
+                    index: "timeValues",
+                    text: "Estimated Time",
+                    width: 100,
+                },
+            ],
+            height: "100%",
+            source: this.timeEntryRows,
+            width: "100%",
+        };
+
+        if (!this.gridControl) {
+            this.gridControl = Controls.create(Grids.Grid, container, gridOptions);
+        } else {
+            this.gridControl.setDataSource(this.timeEntryRows);
+        }
+
+    }
+
+    private getTimeEntries(): void {
+        this.timeEntryService.getTimeEntries()
+            .then((rows: ITimeEntryRow[]) => {
+                this.timeEntryRows = rows;
+                this.initGrid();
+            }, () => {
+                Notification.showGlobalError("Error loading Time entries.", "grid");
+            });
     }
 }
 
