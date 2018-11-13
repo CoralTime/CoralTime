@@ -2,9 +2,10 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { saveAs as importedSaveAs } from 'file-saver';
+import { DateUtils } from '../models/calendar';
+import { ReportDropdowns, ReportFiltersRequest, ReportGrid } from '../models/reports';
 import { ConstantService } from '../core/constant.service';
 import { SendReportsFormModel } from '../pages/reports/reports-send/reports-send.component';
-import { ReportDropdowns, ReportGrid } from '../models/reports';
 
 @Injectable()
 export class ReportsService {
@@ -21,15 +22,16 @@ export class ReportsService {
 	}
 
 	getReportDropdowns(): Observable<ReportDropdowns> {
-		return this.http.get(this.constantService.reportsApi).map((res) => <ReportDropdowns>res);
+		const date = DateUtils.formatDateToString(new Date());
+		return this.http.get(this.constantService.reportsApi + '?date=' + date).map((res) => <ReportDropdowns>res);
 	}
 
-	getReportGrid(filters: any): Observable<ReportGrid> {
+	getReportGrid(filters: ReportFiltersRequest): Observable<ReportGrid> {
 		return this.http.post(this.constantService.reportsApi, filters).map((res) => <ReportGrid>res);
 	}
 
-	exportAs(filters: any): Observable<void> {
-		let options = {
+	exportAs(filters: ReportFiltersRequest): Observable<void> {
+		const options = {
 			observe: 'response' as 'response',
 			responseType: 'blob' as 'blob'
 		};
