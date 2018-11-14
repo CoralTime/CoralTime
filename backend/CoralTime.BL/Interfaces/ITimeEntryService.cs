@@ -16,6 +16,6 @@ namespace CoralTime.BL.Interfaces
 
         void Delete(int timeEntryId);
 
-        TimeEntryView GetTimeEntryTimer();
+        TimerView GetTimeEntryTimer(DateTime? date);
     }
 }

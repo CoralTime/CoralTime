@@ -53,14 +53,31 @@ namespace CoralTime.BL.Services
             return timeEntryById.GetView(BaseMemberImpersonated.User.UserName, Mapper);
         }
 
-        public TimeEntryView GetTimeEntryTimer()
+        public TimerView GetTimeEntryTimer(DateTime? date)
         {
             var timeEntryTimer = Uow.TimeEntryRepository.GetQuery()
                 .FirstOrDefault(tEntry => tEntry.MemberId == BaseMemberImpersonated.Id && tEntry.TimeTimerStart > 0);
 
-            return timeEntryTimer.GetView(BaseMemberImpersonated.User.UserName, Mapper);
+            if (timeEntryTimer == null)
+            {
+                return (date == null) ?
+                     null :
+                     new TimerView
+                     {
+                         TrackedTime = GetTrackedTime(date ?? DateTime.Now.Date, BaseMemberImpersonated.Id)
+                     };
+            }
+
+            var timeEntry = timeEntryTimer.GetView(BaseMemberImpersonated.User.UserName, Mapper);
+            var trackedTime = GetTrackedTime(timeEntry.Date, timeEntry.MemberId);
+
+            return new TimerView
+            {
+                TimeEntry = timeEntry,
+                TrackedTime = trackedTime
+            };
         }
-        
+               
         public TimeEntryView Create(TimeEntryView timeEntryView)
         {
             var timeEntry = new TimeEntry();
@@ -437,6 +454,13 @@ namespace CoralTime.BL.Services
         private static int RoundTime(int time)
         {
             return time - time % Constants.SecondsInMinute;
+        }
+
+        private int GetTrackedTime(DateTime date, int memberId)
+        {
+            return Uow.TimeEntryRepository.GetQuery(withIncludes: false)
+                .Where(x => x.Date == date && x.MemberId == memberId)
+                .Sum(x => x.TimeActual);
         }
 
         #endregion

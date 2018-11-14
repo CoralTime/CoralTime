@@ -61,6 +61,9 @@ namespace CoralTime.DAL
             builder.Entity<TimeEntry>()
                 .HasOne(p => p.TaskType);
 
+            builder.Entity<TimeEntry>()
+                .HasIndex(t => new { t.MemberId, t.Date });
+
             builder.Entity<Member>()
                 .HasOne(p => p.User);
 

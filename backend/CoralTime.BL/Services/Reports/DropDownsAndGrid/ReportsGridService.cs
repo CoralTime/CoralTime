@@ -75,26 +75,35 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 }
             }
 
-            AddMemberIcons(reportTotalView); 
+            SetupReport(reportTotalView, (ReportsGroupByIds)reportsGridView.CurrentQuery.GroupById);
             return reportTotalView;
+        }
+
+        private void SetupReport(ReportTotalView report, ReportsGroupByIds reportsGroup)
+        {
+            report.Items = null;
+            report.GroupByType = null;
+            if (reportsGroup == ReportsGroupByIds.User)
+            {
+                foreach (var item in report.GroupedItems)
+                {
+                    item.GroupByType.WorkingHoursPerDay = ReportMemberImpersonated.WorkingHoursPerDay;
+                    item.GroupByType.MemberUrlIcon = _imageService.GetUrlIcon(ReportMemberImpersonated.Id);
+                }
+            }
+            else
+            {
+                AddMemberIcons(report);
+            }
         }
 
         private void AddMemberIcons(ReportTotalView report)
         {
             var iconUrl = _imageService.GetUrlIcon(report.MemberId);
             report.MemberUrlIcon = iconUrl;
-            
+
             var iconUrls = new Dictionary<int, string>();
             iconUrls.Add(report.MemberId, iconUrl);
-            foreach (var item in report.Items)
-            {
-                if (!iconUrls.ContainsKey(item.MemberId))
-                {
-                    iconUrls.Add(item.MemberId, _imageService.GetUrlIcon(item.MemberId));
-                }
-                item.MemberUrlIcon = iconUrls.GetValueOrDefault(item.MemberId);
-            }
-            
             foreach (var item in report.GroupedItems)
             {
                 if (!iconUrls.ContainsKey(item.MemberId))

@@ -473,11 +473,11 @@ namespace CoralTime.DAL.Migrations
 
                     b.HasIndex("LastEditorUserId");
 
-                    b.HasIndex("MemberId");
-
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("TaskTypesId");
+
+                    b.HasIndex("MemberId", "Date");
 
                     b.ToTable("TimeEntries");
                 });
