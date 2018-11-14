@@ -10,7 +10,6 @@ import {
 	CalendarModule
 } from 'primeng/primeng';
 import { ReadMoreComponent } from './read-more/read-more.component';
-import { TranslateModule } from '@ngx-translate/core';
 import { DirectivesModule } from './directives/directives.module';
 import { DatepickerModule } from './form/datepicker/datepicker.module';
 import { MenuModule } from './menu/menu.module';
@@ -18,6 +17,7 @@ import { SharedFormModule } from './form/shared-form.module';
 import { UserPicComponent } from './user-pic/user-pic.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { ChartComponent } from './chart/chart.component';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 @NgModule({
 	imports: [
@@ -33,6 +33,17 @@ import { ChartComponent } from './chart/chart.component';
 		DataTableModule,
 		MenuModule,
 		SharedFormModule,
+		MarkdownModule.forRoot({
+			markedOptions: {
+				provide: MarkedOptions,
+				useValue: {
+					breaks: true,
+					headerIds: false,
+					pedantic: true,
+					sanitize: true,
+				},
+			},
+		})
 	],
 	declarations: [
 		ReadMoreComponent,
@@ -49,8 +60,6 @@ import { ChartComponent } from './chart/chart.component';
 		DropdownModule,
 		CalendarModule,
 		ReadMoreComponent,
-		TranslateModule,
-		TranslateModule,
 		DirectivesModule,
 		DatepickerModule,
 		DataTableModule,
@@ -58,7 +67,8 @@ import { ChartComponent } from './chart/chart.component';
 		SharedFormModule,
 		UserPicComponent,
 		ConfirmationComponent,
-		ChartComponent
+		ChartComponent,
+		MarkdownModule,
 	]
 })
 
