@@ -49,7 +49,7 @@ export class ConfigurationService {
     private getSetupOptions(): IPromise<IUserSettings> {
         const deferred = Q.defer<IUserSettings>();
         this.getKeyValueFromStorage("userSettings").then((res: IUserSettings) => {
-            if (res) {
+            if (res && res.expirationDate > new Date().getTime()) {
                 deferred.resolve(res);
             } else {
                 this.loadSetupOptions().then((res) => {
@@ -90,6 +90,7 @@ export class ConfigurationService {
             $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
                 .done((res: IUserSettings) => {
                     const userSettings = {
+                        expirationDate: new Date().getTime() + 24 * 3600 * 1000,
                         memberId: res.memberId,
                         projectId: res.projectId,
                     };

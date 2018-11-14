@@ -86,8 +86,9 @@ export class TimeEntryForm {
         const isActMinValid = this.actMinCombo.isValid();
         const isEstHoursValid = this.estHoursCombo.isValid();
         const isEstMinValid = this.estMinCombo.isValid();
+        const isTimeValuesValid = !!this.timeEntry.timeActual || !!this.timeEntry.timeEstimated;
         const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
-            && isEstHoursValid && isEstMinValid;
+            && isEstHoursValid && isEstMinValid && isTimeValuesValid;
         this.$submitButton.prop("disabled", !isFormValid);
     }
 
