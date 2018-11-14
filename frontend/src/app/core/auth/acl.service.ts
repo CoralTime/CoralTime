@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
 import { Permissions } from './permissions';
+import { ImpersonationService } from '../../services/impersonation.service';
 
 @Injectable()
 export class AclService {
-	constructor(private authService: AuthService) {
+	constructor(private authService: AuthService,
+	            private impersonationService: ImpersonationService) {
 	}
 
 	isGranted(role: string): boolean {
@@ -16,10 +18,10 @@ export class AclService {
 			throw new Error('Role "' + role + '" doesn\'t exists.');
 		}
 
-		if (role === 'roleAssignProjectMember') {
-			return this.authService.isUserAdminOrManager;
+		if (this.impersonationService.impersonationUser) {
+			return !(Permissions[role] % this.impersonationService.impersonationUser.getPermissionRole());
+		} else {
+			return !(Permissions[role] % this.authService.authUser.role);
 		}
-
-		return !!(Permissions[role] & this.authService.authUser.role);
 	}
 }

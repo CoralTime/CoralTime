@@ -1,11 +1,9 @@
 <form class="ct-form ct-projects-tasks-form" [formGroup]="form">
     <ul formArrayName="tasks">
         <li *ngFor="let control of tasks.controls; let i = index">
-            <div class="ct-required-field-container">
-                <input class="ct-input" formControlName="{{i}}"
-                       pattern=".*[^\s]+.*" maxlength="200"
-                       [ctTaskEqualValidator]="projectTasks">
-            </div>
+            <input class="ct-input" formControlName="{{i}}"
+                   pattern=".*[^\s]+.*" maxlength="200"
+                   [ctTaskEqualValidator]="projectTasks">
 
             <div class="ct-buttons-block" mat-dialog-actions>
                 <button mat-raised-button class="ct-button ct-blue-button" #btn="matButton"

@@ -1,0 +1,21 @@
+<div class="ct-total-tracked-time">
+    <button *ngIf="!getImpersonationUser()" class="ct-round-button"
+            [class.ct-timer-play-icon]="!isTimerActivated()"
+            [class.ct-timer-pause-icon]="isTimerActivated()"
+            [class.ct-loading]="isTimerLoading"
+            [title]="getButtonTitle()"
+            [disabled]="isTimerLoading"
+            (click)="toggleTimer()"></button>
+    <button *ngIf="isTimerExist()" title="Stop timer"
+            class="ct-round-button ct-timer-stop-icon"
+            [class.ct-loading]="isTimerLoading2"
+            [disabled]="isTimerLoading2"
+            (click)="stopTimer(true)"></button>
+    <span *ngIf="isTimerExist()" class="ct-hours-tracked ct-timer-exist"
+          title="Timer value"
+          [class.ct-timer-activated]="isTimerActivated()">
+        {{timerValue?.hours}}<i class="ct-divider">:</i>{{timerValue?.minutes}}
+    </span>
+    <span *ngIf="!isTimerExist()" class="ct-hours-tracked" title="Total tracked time">{{getTotalTime('timeActual')}}</span>
+    <span class="ct-hours-planned" title="Total planned time">{{getTotalTime('timeEstimated')}}</span>
+</div>

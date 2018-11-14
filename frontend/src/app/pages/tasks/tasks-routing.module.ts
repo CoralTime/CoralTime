@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { TasksComponent } from './tasks.component';
 import { AuthGuard } from '../../core/auth/auth-guard.service';
+import { TasksComponent } from './tasks.component';
 
 const routes: Routes = [
 	{
@@ -10,7 +9,6 @@ const routes: Routes = [
 		component: TasksComponent,
 		canActivate: [AuthGuard],
 		data: {
-			title: 'Tasks',
 			role: 'roleViewTask'
 		}
 	}

@@ -1,6 +1,6 @@
 .ct-input {
   background: #ffffff;
-  border: 1px solid $gray;
+  border: 1px solid $form-border;
   padding: 5px 10px;
   width: auto;
   box-sizing: border-box;
@@ -8,7 +8,7 @@
   height: $selectHeight;
   font-size: 14px;
   font-family: inherit;
-  color: $nav-background;
+  color: #374456;
 
   &[disabled] {
     background-color: #ececec;
@@ -18,7 +18,7 @@
 }
 
 .ct-input:focus {
-  border: 1px solid $nav-link-border;
+  border: 1px solid $main-blue;
 }
 
 .ct-required-field-container {
@@ -40,7 +40,7 @@
     content: '';
     height: 100%;
     width: 2px;
-    background: $nav-link-border;
+    background: $main-blue;
     z-index: 1;
   }
 }

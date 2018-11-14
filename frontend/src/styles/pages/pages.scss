@@ -18,65 +18,88 @@ html, body {
 }
 
 .ct-content {
-  //box-sizing: border-box;
-  //height: 100%;
-  padding: 70px 20px 0;
+  padding: $nav-height 20px 0;
   background: $gray-page-background;
-  //overflow-x: hidden;
-  //overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .ct-page-container {
   position: relative;
   min-height: 100%;
+}
 
-  .ct-page-header {
-    position: relative;
-    height: 30px;
+.ct-page-header {
+  position: relative;
+  line-height: 35px;
+  margin: 23px 0;
+  font-size: 14px;
+  font-weight: 700;
 
-    .ct-page-tabs {
-      display: inline-block;
-      position: relative;
-      top: 8px;
+  .ct-add-link {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 200px;
+    background: #fff;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+  }
+}
 
-      > a {
-        display: inline-block;
-        text-transform: capitalize;
-        border-bottom: 2px solid transparent;
-        font-size: 15px;
-        cursor: pointer;
-        color: rgba(0, 0, 0, 0.5);
-        font-family: $robotoRegular;
-        padding: 0 2px 4px 2px;
-      }
+.ct-page-tabs {
+  display: inline-block;
+  position: relative;
+  background: #fff;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  line-height: 31px;
 
-      > a:nth-child(1) {
-        margin-right: 10px;
-      }
+  > a {
+    display: inline-block;
+    padding: 0 20px;
+    font-weight: 700;
+    color: $main-grey;
+    text-transform: capitalize;
+    cursor: pointer;
+
+    &:last-child {
+      margin-left: -1px;
     }
 
-    .ct-page-tabs:not(.ct-calendar-periods) > a:hover, .ct-page-tabs:not(.ct-calendar-periods) .ct-active-tab {
-      border-bottom: 2px solid $nav-link-border !important;
-    }
-
-    .ct-page-tabs > a:hover, .ct-active-tab {
-      color: $nav-background !important;
-    }
-
-    .ct-add-link {
-      position: absolute;
-      font-family: inherit;
-      right: 0;
-      top: 3px;
-      width: 200px;
-      text-align: right;
+    &:hover, &.ct-active-tab {
+      color: #353a4e;
+      background: $gray-page-background;
     }
   }
+}
 
-  .ct-data-table-wrapper {
-    margin-top: 5px;
-    margin-left: -20px;
-    margin-right: -20px;
+.ct-manage-add {
+  display: inline-block;
+  position: relative;
+  padding-left: 25px;
+  color: #353a4e;
+  cursor: pointer;
+
+  &:before, &:after {
+    position: absolute;
+    content: '';
+    left: 7px;
+    top: 10px;
+    width: 2px;
+    height: 16px;
+    background: $main-blue;
+  }
+
+  &:after {
+    height: 2px;
+    width: 16px;
+    left: 0;
+    top: 17px;
+  }
+
+  :hover > & {
+    color: $main-blue;
   }
 }
 
@@ -106,26 +129,33 @@ html, body {
   padding-top: 50px;
   height: calc(100% - 50px);
 
-  .ct-calendar-weekly-view .ct-calendar {
-    .ct-calendar-day-title {
-      top: 160px;
+  .ct-calendar-page {
+    .ct-page-header {
+      top: 113px;
     }
 
-    .ct-calendar-day {
-      min-height: calc(100vh - 160px);
+    .ct-calendar-day-title {
+      top: 195px;
     }
+
+    .ct-calendar-day-container {
+      min-height: calc(100vh - 200px);
+    }
+  }
+
+  .ct-reports-sidebar {
+    top: 114px;
   }
 
   .ct-grid-container .ui-datatable-scrollable-body {
-    max-height: calc(100vh - 196px);
+    max-height: calc(100vh - 304px);
   }
 
   .ct-profile .ct-user-settings {
-    min-height: calc(100vh - 190px);
+    min-height: calc(100vh - 215px);
   }
 }
 
 .ct-admin-page button {
-  margin-right: 15px;
-  margin-bottom: 15px;
+  margin: 20px 15px 20px 0;
 }

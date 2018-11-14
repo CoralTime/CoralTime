@@ -2,12 +2,10 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 
-const IMPERSONATION_USER_STORAGE_KEY = 'IMPERSONATION_USER';
-
 @Injectable()
 export class ImpersonationService {
-	impersonationMember: string = null;
 	impersonationId: number;
+	impersonationMember: string = null;
 	impersonationUser: User;
 
 	onChange: EventEmitter<any> = new EventEmitter();
@@ -16,13 +14,15 @@ export class ImpersonationService {
 		this.getStorage();
 	}
 
-	impersonateMember(user: User): void {
+	impersonateMember(user: User, navigate?: boolean): void {
 		this.impersonationMember = user.userName;
 		this.impersonationId = user.id;
 		this.impersonationUser = user;
 		this.onChange.emit(user.isAdmin ? 2 : user.isManager ? 1 : 0);
 		this.setStorage(user);
-		this.router.navigate(['/calendar']);
+		if (navigate) {
+			this.router.navigate(['/calendar']);
+		}
 	}
 
 	stopImpersonation(isLogOut?: boolean): void {
@@ -37,32 +37,16 @@ export class ImpersonationService {
 	}
 
 	getStorage(): void {
-		if (localStorage.hasOwnProperty(IMPERSONATION_USER_STORAGE_KEY)) {
-			this.impersonateMember(JSON.parse(localStorage.getItem(IMPERSONATION_USER_STORAGE_KEY)));
+		if (sessionStorage.hasOwnProperty('IMPERSONATION_USER')) {
+			this.impersonateMember(new User(JSON.parse(sessionStorage.getItem('IMPERSONATION_USER'))));
 		}
 	}
 
 	setStorage(user: User): void {
-		localStorage.setItem(IMPERSONATION_USER_STORAGE_KEY, JSON.stringify(user));
+		sessionStorage.setItem('IMPERSONATION_USER', JSON.stringify(user));
 	}
 
 	clearStorage(): void {
-		localStorage.removeItem(IMPERSONATION_USER_STORAGE_KEY);
-	}
-
-	isNotAdmin(): boolean {
-		return !!this.impersonationUser && !this.impersonationUser.isAdmin;
-	}
-
-	isNotManager(): boolean {
-		return !!this.impersonationUser && !this.impersonationUser.isManager;
-	}
-
-	checkImpersonationRole(page: string): void {
-		let adminPages = ['clients', 'users', 'tasks', 'admins'];
-		let managerPages = ['projects'];
-		if ((managerPages.indexOf(page) && this.isNotManager()) && (adminPages.indexOf(page) && this.isNotAdmin())) {
-			this.router.navigate(['/']);
-		}
+		sessionStorage.removeItem('IMPERSONATION_USER');
 	}
 }

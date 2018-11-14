@@ -11,6 +11,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { CalendarProjectsService } from './calendar-projects.service';
 import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
 import { DragDropModule } from 'primeng/primeng';
+import { TimerComponent } from './timer/timer.component';
 
 @NgModule({
 	imports: [
@@ -24,7 +25,8 @@ import { DragDropModule } from 'primeng/primeng';
 		CalendarDayComponent,
 		CalendarTaskComponent,
 		CalendarDailyViewComponent,
-		CalendarWeeklyViewComponent
+		CalendarWeeklyViewComponent,
+		TimerComponent
 	],
 	entryComponents: [
 		ConfirmationComponent

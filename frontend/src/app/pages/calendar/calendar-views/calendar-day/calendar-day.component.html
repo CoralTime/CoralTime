@@ -1,14 +1,18 @@
 <div pDroppable="calendarTask" (onDrop)="drop()" (dragover)="onDragOver()" (onDragLeave)="onDragLeave()"
      class="ct-calendar-day-container" [class.ct-drag-enter]="isDragEnter" [class.ct-calendar-day-active]="isToday(dayInfo.date)">
-    <div class="ct-calendar-day-title" >
+    <div class="ct-calendar-day-title">
         <div class="ct-calendar-date">
-            {{getDateNumber(dayInfo.date)}}
-            <span>{{getDateString(dayInfo.date)}}</span>
+            <span class="ct-date-number">{{getDateNumber(dayInfo.date)}}</span>
+            <span *ngIf="isToday(dayInfo.date)" class="ct-today">Today</span>
+            <span class="ct-date-value">{{getDateString(dayInfo.date)}}</span>
         </div>
 
+        <ct-chart [totalValue]="user.workingHoursPerDay"
+                  [value]="getGeneralTime('timeActual')/3600"></ct-chart>
+
         <div class="ct-calendar-day-hours">
-            <div class="ct-calendar-day-hours-tracked" title="Tracked time">{{calcTime('timeActual')}}</div>
-            <div class="ct-calendar-day-hours-planned" title="Planned time">{{calcTime('timeEstimated')}}</div>
+            <div class="ct-calendar-hours-tracked" title="Tracked time">{{calcTime('timeActual')}}</div>
+            <div class="ct-calendar-hours-planned" title="Planned time">{{calcTime('timeEstimated')}}</div>
         </div>
     </div>
 
@@ -19,14 +23,14 @@
                           class="ct-calendar-task" #calendarTask
                           pDraggable="calendarTask"
                           [timeEntry]="timeEntry"
-                          [draggable]="!isTimeEntryFormOpened()"  [dragEffect]="dragEffect()"
+                          [draggable]="!isTimeEntryFormOpened()" [dragEffect]="dragEffect()"
                           (onDragStart)="dragStart(timeEntry, $event.target)"
                           (onDragEnd)="dragEnd($event.target)"
                           (timeEntryDeleted)="deleteTimeEntry(i)">
         </ct-calendar-task>
         <div class="ct-calendar-add-task"
              [class.ct-form-opened]="isEntryFormOpened">
-            <div (click)="addNewTimeEntry(dayInfo.date)"></div>
+            <div (click)="addNewTimeEntry(dayInfo.date)">Add task</div>
             <ct-entry-time *ngIf="isEntryFormOpened" #entryForm
                            [timeEntry]="newTimeEntry"
                            (deleted)="deleteTimeEntry()"></ct-entry-time>

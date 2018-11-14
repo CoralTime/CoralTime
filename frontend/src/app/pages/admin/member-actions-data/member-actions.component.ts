@@ -32,7 +32,6 @@ export class MemberActionsComponent implements OnInit {
                 private impersonationService: ImpersonationService,
                 private notificationService: NotificationService,
                 private memberActionsService: MemberActionsService) {
-        this.impersonationService.checkImpersonationRole('admins');
     }
 
     ngOnInit() {

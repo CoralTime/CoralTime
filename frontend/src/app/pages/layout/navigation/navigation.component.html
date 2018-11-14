@@ -3,65 +3,70 @@
         <div class="ct-nav-col">
             <div class="ct-nav-logo" [routerLink]="['/']"></div>
             <div class="ct-nav-menu">
-                <ul>
+                <ul *ngIf="!isMobileView()">
                     <li *ngFor="let item of items" [routerLink]="item.routerLink" routerLinkActive="active">
                         <a [routerLink]="item.routerLink">
-                            <mat-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></mat-icon>
+                            <i class="ct-icon {{item.icon}}" aria-hidden="true"></i>
                             <span>{{item.label}}</span>
                         </a>
                     </li>
-
-                    <li class="ct-nav-manage-item"
-                        [ngClass]="{'ct-nav-manage-item-show': showManageMenu, active: manageMenu.isOpen || manageLinkActive.isActive}"
-                        (click)="manageMenu.toggleMenu()">
-                        <a>
-                            <mat-icon><i class="ct-nav-icon ct-manage-icon" aria-hidden="true"></i></mat-icon>
-                            <span>Manage</span>
-                        </a>
-                    </li>
                 </ul>
-                <ct-menu #manageMenu class="ct-nav-drop-menu ct-nav-manage-menu" xPosition="after">
-                    <ul #manageLinkActive="routerLinkActive" routerLinkActive [routerLinkActiveOptions]="{exact:true}"
-                        (window:resize)="onResize()">
-                        <ng-template ngFor let-item [ngForOf]="items">
-                            <li *ngIf="isMobileView()" class="ct-menu-item ct-only-mobile" routerLinkActive="active">
-                                <a [routerLink]="item.routerLink">
-                                    <mat-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></mat-icon>
-                                    <span>{{item.label}}</span>
-                                </a>
-                            </li>
-                        </ng-template>
-                        <ng-template ngFor let-item [ngForOf]="manageItems">
-                            <li class="ct-menu-item" *ctIsGranted="item.permission" routerLinkActive="active"
-                                (click)="manageMenu.closeMenu()">
-                                <a [routerLink]="item.routerLink">
-                                    <mat-icon><i class="ct-nav-icon {{item.icon}}" aria-hidden="true"></i></mat-icon>
-                                    <span>{{item.label}}</span>
-                                </a>
-                            </li>
-                        </ng-template>
-                    </ul>
-                </ct-menu>
             </div>
         </div>
         <div class="ct-nav-col">
             <div class="ct-profile-block">
                 <div class="ct-nav-droplink">
-                    <div class="ct-nav-username">
-                        <a title="View Profile" [routerLink]="['/profile']">{{impersonationUser?.fullName || userInfo?.fullName}}</a>
-                    </div>
-                    <a [routerLink]="['/profile']" title="View Profile" class="ct-userpic">
+                    <i *ngIf="showManageMenu && !isMobileView()" class="ct-icon ct-settings-icon" aria-hidden="true"
+                       [ngClass]="{active: manageMenu.isOpen || manageLinkActive.isActive}"
+                       (click)="manageMenu.toggleMenu()"></i>
+                    <a *ngIf="!isMobileView()" class="ct-userpic" title="View Profile" [routerLink]="['/profile']">
                         <ct-user-pic [urlIcon]="impersonationUser?.urlIcon || userInfo?.urlIcon"></ct-user-pic>
                     </a>
-                    <i class="fa" [ngClass]="profileNavMenu.isOpen ? 'fa-caret-up' : 'fa-caret-down'"
+                    <a *ngIf="!isMobileView()" class="ct-nav-username" title="View Profile" [routerLink]="['/profile']">
+                        {{impersonationUser?.fullName || userInfo?.fullName}}
+                    </a>
+                    <i *ngIf="!isMobileView()"
+                       [ngClass]="profileNavMenu.isOpen ? 'fa fa-angle-up' : 'fa fa-angle-down'"
+                       (click)="profileNavMenu.toggleMenu()"></i>
+                    <i *ngIf="isMobileView()"
+                       [ngClass]="profileNavMenu.isOpen ? 'ct-icon ct-menu-blue-icon' : 'ct-icon ct-menu-icon'"
                        (click)="profileNavMenu.toggleMenu()"></i>
                 </div>
 
+                <ct-menu #manageMenu class="ct-nav-drop-menu ct-nav-manage-menu" [xPosition]="!isMobileView() ? 'after' : 'before'">
+                    <ul #manageLinkActive="routerLinkActive" routerLinkActive [routerLinkActiveOptions]="{exact:true}"
+                        (window:resize)="onResize()">
+                        <ng-template ngFor let-item [ngForOf]="manageItems">
+                            <ct-menu-item *ctIsGranted="item.permission" routerLinkActive="active"
+                                (click)="manageMenu.closeMenu()">
+                                <a [routerLink]="item.routerLink">
+                                    <i class="ct-icon {{item.icon}}" aria-hidden="true"></i>
+                                    <span>{{item.label}}</span>
+                                </a>
+                            </ct-menu-item>
+                        </ng-template>
+                    </ul>
+                </ct-menu>
+
                 <ct-menu #profileNavMenu class="ct-nav-drop-menu" xPosition="before">
-                    <ct-menu-item class="ct-menu-item">
-                        <a [routerLink]="['/profile/settings']" title="Profile Settings">
-                            <mat-icon>settings</mat-icon>
-                            <span>Settings</span>
+                    <ct-menu-item *ngIf="isMobileView()" class="ct-userpic" routerLinkActive="active">
+                        <a title="View Profile" [routerLink]="['/profile']">
+                            <ct-user-pic [urlIcon]="impersonationUser?.urlIcon || userInfo?.urlIcon"></ct-user-pic>
+                            {{impersonationUser?.fullName || userInfo?.fullName}}
+                        </a>
+                    </ct-menu-item>
+                    <ng-template ngFor let-item [ngForOf]="items">
+                        <ct-menu-item *ngIf="isMobileView()" [routerLink]="item.routerLink" routerLinkActive="active">
+                            <a [routerLink]="item.routerLink">
+                                <i class="ct-icon {{item.icon}}" aria-hidden="true"></i>
+                                <span>{{item.label}}</span>
+                            </a>
+                        </ct-menu-item>
+                    </ng-template>
+                    <ct-menu-item routerLinkActive="active">
+                        <a [routerLink]="['/profile/settings']" title="Preferences">
+                            <i class="ct-icon ct-settings-icon" aria-hidden="true"></i>
+                            <span>Preferences</span>
                         </a>
                     </ct-menu-item>
                     <!--<ct-menu-item class="ct-menu-item">-->
@@ -70,7 +75,7 @@
                     <!--<span>Help</span>-->
                     <!--</a>-->
                     <!--</ct-menu-item>-->
-                    <ct-menu-item class="ct-menu-item" (click)="signOut()">
+                    <ct-menu-item class="ct-logout" routerLinkActive="active" (click)="signOut()">
                         <a>
                             <mat-icon>power_settings_new</mat-icon>
                             <span>Logout</span>

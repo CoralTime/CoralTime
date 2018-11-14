@@ -2,6 +2,7 @@
   font-family: inherit;
 
   .ct-grid {
+    margin: 0 -30px;
     overflow: hidden;
   }
 
@@ -11,13 +12,13 @@
 
   .ct-popup-table-wrapper {
     .ui-datatable-scrollable-body {
-      max-height: calc((90vh - 180px) / 2);
+      max-height: calc((100vh - 325px) / 2);
       overflow: hidden;
     }
 
     .ct-grid-container:only-child {
       .ui-datatable-scrollable-body {
-        max-height: calc(90vh - 150px);
+        max-height: calc(100vh - 290px);
       }
     }
   }
@@ -32,20 +33,19 @@
   }
 
   .ct-search-container {
-    height: 30px;
-
     .ct-grid-search-filter {
-      width: 100%;
+      left: 0;
       top: 0;
-      right: 0;
+      float: none;
+      width: 100%;
     }
 
     input {
-      height: 30px;
-      background: #f7f5f5;
-      padding-left: 10px;
+      padding-left: 30px;
       font-size: inherit;
-      color: #222;
+      font-weight: 700;
+      color: $formInputColor;
+      border-bottom: 2px solid $gray-page-background;
 
       &::-webkit-input-placeholder {
         color: $grid-text;
@@ -64,12 +64,10 @@
       }
     }
 
-    .fa-search {
-      color: $gray-text;
-      left: auto;
-      right: 8px;
-      top: 6px;
-      opacity: .6;
+    .ct-search-icon {
+      position: absolute;
+      left: 0;
+      top: 10px;
     }
   }
 
@@ -110,7 +108,7 @@
 
   .mat-input-container {
     margin: 0;
-    color: $nav-link-border;
+    color: $main-blue;
   }
 
   .mat-select {
@@ -135,52 +133,44 @@
     .mat-select-arrow {
       position: absolute;
       right: 0;
-      color: $nav-link-border;
+      color: $main-blue;
     }
 
     .mat-select-value-text {
-      color: $nav-link-border;
+      color: $main-blue;
       line-height: 25px;
     }
   }
 
   .ct-color-picker mat-icon {
-    color: $nav-link-border;
+    color: $main-blue;
   }
 
   .ct-dialog-title {
     position: relative;
-    color: $nav-background;
-    font-family: inherit;
-    font-size: 18px;
-    border-bottom: 1px solid $form-border;
-    top: -3px;
-    margin: -20px 0 0;
-    padding: 20px 0 10px;
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 700;
+    color: $dark-blue;
 
     .ct-dialog-close {
-      right: -8px;
-      top: 13px;
-      width: 17px;
-      height: 17px;
+      right: -15px;
+      top: -15px;
+      width: 13px;
+      height: 13px;
     }
 
     > span {
-      text-transform: none;
       display: inline-block;
-      font-family: inherit;
-      font-size: 19px;
+      text-transform: none;
       vertical-align: top;
-      height: 26px;
     }
 
     > span:nth-child(2) {
-      font-weight: 700;
       margin-left: 5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      letter-spacing: 0.2px;
     }
   }
 
@@ -199,7 +189,6 @@
     > .ct-cancel-button {
       margin-top: 9px;
       border-bottom: none;
-      font-size: 16px;
       line-height: 21px;
       font-family: inherit;
       padding: 0;
@@ -210,7 +199,7 @@
       border-left: 0;
       outline: none;
       transition-duration: .3s;
-      color: $nav-link-border;
+      color: $main-blue;
       margin-right: 25px;
       position: relative;
       top: 0.5px;
@@ -246,7 +235,7 @@
 
     .ct-form-container .ct-grid-container {
       padding: 0 15px 20px 36px;
-      background: $border-сolor;
+      background: $border-color;
       position: relative;
       top: -3px;
       margin-top: 20px;
@@ -303,12 +292,12 @@
       position: relative;
       top: 3px;
       font-size: 22px;
-      color: $nav-background;
+      color: #374456;
       transition-duration: .3s;
 
       &:hover, &:focus {
         cursor: pointer;
-        color: $nav-link-border;
+        color: $main-blue;
       }
 
       &[disabled] {
@@ -343,7 +332,7 @@
     }
 
     .ct-add-button:hover .material-icons {
-      background: $nav-link-border;
+      background: $main-blue;
     }
 
     .ct-form-header-text {
@@ -389,34 +378,49 @@
   .ui-datatable-emptymessage {
     padding-top: 11px !important;
   }
-
 }
 
 .ct-data-dialog {
   width: 900px;
-  height: 90vh;
+  height: calc(100vh - 100px);
 
   &.ct-small-data-dialog {
     width: 600px;
 
     &:before {
-      width: 640px;
+      width: 660px;
+    }
+
+    .ct-grid-row-border tbody td:first-child:after {
+      width: 600px;
     }
   }
 
   &:before {
     position: absolute;
     content: '';
-    width: 940px;
+    width: 960px;
     height: 100%;
     top: 0;
     left: 0;
     background: #fff;
   }
 
-  .ct-dialog-title {
-    border: none;
+  .ct-grid-row-border tbody tr:not(.ct-loading-block) td:first-child {
+    &:before, &:after {
+      width: 900px !important;
+    }
+  }
 
+  &.ct-small-data-dialog {
+    .ct-grid-row-border tbody tr:not(.ct-loading-block) td:first-child {
+      &:before, &:after {
+        width: 600px !important;
+      }
+    }
+  }
+
+  .ct-dialog-title {
     > span:nth-child(2) {
       max-width: 480px;
     }
@@ -426,15 +430,98 @@
     background-color: transparent !important;
   }
 
-  .ui-widget-content > tr:hover, .ui-datatable-odd:hover {
-    background-color: #f7f5f5 !important;
-  }
-
   .ui-paginator-bottom {
     padding-left: 0 !important;
 
     .ui-paginator-rpp-options {
       margin-left: 0 !important;
+    }
+  }
+
+  $selectHeight: 35px;
+
+  .ct-select-ellipse {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 15px;
+    width: 150px;
+
+    .ct-select {
+      background-color: inherit;
+      border: none;
+    }
+
+    .ct-select-selected-options-text {
+      padding: 0 20px 0 15px;
+      border-radius: 17.5px;
+      border: 2px solid transparent;
+      line-height: 31px;
+    }
+
+    [class*="fa-angle"] {
+      color: transparent;
+    }
+  }
+
+  .ct-grid-delete {
+    display: inline-block;
+    height: 25px;
+    vertical-align: middle;
+    color: $grid-text;
+  }
+
+  tr:hover .ct-grid-delete {
+    color: $main-blue;
+  }
+
+  .ct-grid-blue {
+    .ui-datatable {
+      background: $main-blue;
+    }
+
+    .ui-column-title,
+    .ui-sortable-column-icon,
+    .ct-select-selected-options-text {
+      color: #fff;
+    }
+
+    .ct-select-option {
+      &:before {
+        right: 15px !important;
+      }
+
+      .mat-list-item-content {
+        padding-right: 30px !important;
+      }
+    }
+
+    tr:not(.ct-loading-block) td:first-child {
+      &:before, &:after {
+        background-color: $gray-page-background;
+      }
+    }
+
+    td, .ct-grid-delete {
+      color: #fff;
+    }
+
+    tr:hover {
+      td {
+        color: $grid-text;
+      }
+
+      & + tr td:first-child:after {
+        background-color: $main-blue !important;
+      }
+
+      .ct-select-selected-options-text {
+        border-color: rgba(127, 207, 238, .5);
+        color: $main-blue
+      }
+
+      [class*="fa-angle"], .ct-grid-link, .ct-grid-delete {
+        color: $main-blue;
+      }
     }
   }
 
@@ -448,35 +535,9 @@
     }
 
     .ui-datatable-tablewrapper, .ui-datatable-scrollable-wrapper {
-      table {
-        tr > td {
-          overflow: visible;
-        }
-
-        thead {
-          &:before {
-            position: absolute;
-            content: '';
-            width: calc(100% - 40px);
-            top: 0;
-            left: 20px;
-          }
-
-          &:before, &:after {
-            background: #f7f5f5;
-            height: 2px;
-          }
-
-          th {
-            padding: 8px 8px;
-          }
-        }
+      th {
+        padding: 15px 8px;
       }
-    }
-
-    .ct-select-selected-options-text {
-      text-decoration: none;
-      display: inline-block;
     }
   }
 }
@@ -522,7 +583,7 @@
     .mat-input-placeholder {
       top: 0;
       text-align: center;
-      color: $nav-link-border;
+      color: $main-blue;
     }
 
     &.mat-form-field-disabled {
@@ -540,7 +601,7 @@
 
   .mat-input-underline {
     border: none;
-    border-top: 1px solid $nav-link-border;
+    border-top: 1px solid $main-blue;
     bottom: 0;
     left: 0;
 
@@ -601,7 +662,7 @@
       .ct-select-selected-options-text {
         font-size: $formControlFontSize;
         line-height: 26px;
-        color: $nav-link-border;
+        color: $main-blue;
       }
     }
 
@@ -628,7 +689,7 @@
           color: rgba(0, 0, 0, .38);
 
           &:after {
-            border-top-color: $nav-link-border;
+            border-top-color: $main-blue;
           }
         }
       }

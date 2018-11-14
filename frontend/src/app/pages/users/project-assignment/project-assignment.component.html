@@ -7,13 +7,13 @@
     <div class="ct-search-container">
         <div class="ct-grid-search-filter">
             <input class="ct-input-element" #gb placeholder="Search to add or remove projects" [(ngModel)]="filterStr">
-            <i class="fa fa-search"></i>
+            <i class="ct-search-icon"></i>
         </div>
     </div>
 
     <div class="ct-grid" #grid>
         <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
-            <p-dataTable class="ct-grid-container ct-table" #tableWrapper
+            <p-dataTable class="ct-grid-container ct-grid-row-border ct-grid-blue" #tableWrapper
                          [value]="assignedProjectsPagedResult?.data"
                          scrollable="true" [sortField]="'projectName'"
                          [responsive]="true" [lazy]="true"
@@ -31,7 +31,6 @@
                         <ct-select *ngIf="userProject.id" [name]="'role'" #select1
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [displayName]="'name'" [trackBy]="'id'"
-                                   [icon]="'chevron-down'"
                                    [container]="tableWrapper.el.nativeElement"
                                    [(ngModel)]="userProject.role"
                                    (change)="changeRole(userProject, select1.el.nativeElement)"
@@ -40,7 +39,6 @@
                         <ct-select *ngIf="!userProject.id" [name]="'role'" #select2
                                    class="ct-users-project-edit-role ct-select-ellipse"
                                    [displayName]="'name'" [trackBy]="'id'"
-                                   [icon]="'chevron-down'"
                                    [container]="tableWrapper.el.nativeElement"
                                    [(ngModel)]="userProject.role"
                                    (change)="assignToPublic(userProject, select2.el.nativeElement)"
@@ -49,10 +47,10 @@
                     </ng-template>
                 </p-column>
 
-                <p-column header="Actions" styleClass="ct-user-actions-col">
+                <p-column header="Actions">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <a *ngIf="userProject.isProjectPrivate" #removeBtn
-                           class="ct-grid-link ct-grid-ellipse ct-grid-delete"
+                           class="ct-grid-link ct-grid-delete"
                            (click)="removeFromUser(userProject, removeBtn)">
                             <i class="material-icons">clear</i>
                         </a>
@@ -61,7 +59,7 @@
                 </p-column>
             </p-dataTable>
 
-            <p-dataTable class="ct-grid-container ct-table"
+            <p-dataTable class="ct-grid-container ct-grid-row-border"
                          [value]="notAssignedProjectsPagedResult?.data"
                          scrollable="true" [sortField]="'name'"
                          [responsive]="true" [lazy]="true"

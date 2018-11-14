@@ -1,645 +1,466 @@
-$fieldHeight: 30px;
+$fieldHeight: 42px;
 
-.ui-multiselect-panel.ct-reports-multiselect > div {
-  z-index: 996 !important;
-  position: fixed;
+.ct-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: $dark-blue;
+
+  .ct-page-header & {
+    float: left;
+    margin-right: 40px;
+  }
 }
 
-.ui-multiselect-panel.ct-reports-settings-multiselect {
-  z-index: 996 !important;
+.ct-report-filters-block {
+  margin-top: 20px;
+
+  label {
+    display: block;
+  }
+
+  > div {
+    margin-bottom: 15px;
+  }
+
+  .mat-select-value-text {
+    line-height: $fieldHeight;
+    font-weight: 700;
+    color: #8994b3;
+  }
+
+  [class*="fa-angle"] {
+    position: absolute;
+    right: 0;
+    top: 10px;
+  }
+
+  .ct-select-selected-options-text, .ct-select-component {
+    height: $fieldHeight;
+  }
+
+  .ct-select {
+    height: $fieldHeight;
+    background: none;
+    border: none;
+    border-bottom: 2px solid $gray-page-background !important;
+  }
+
+  .ct-filter-label {
+    position: relative;
+    bottom: -5px;
+    display: block;
+    height: 15px;
+    font-size: 12px;
+    color: $grid-text;
+  }
+
+  .ct-select-selected-options-text {
+    padding-left: 0;
+    line-height: $fieldHeight;
+    color: $formInputColor;
+  }
+}
+
+.ct-reports-time-period-block {
+  position: relative;
+}
+
+.ct-reports-time-period {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 35px;
+  font-weight: 700;
+  color: #8994b3;
+  line-height: 35px;
+
+  > div {
+    box-sizing: border-box;
+    position: relative;
+    width: 170px;
+    padding: 0 20px;
+    background-color: $gray-page-background;
+    border-radius: 5px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+
+    span {
+      display: block;
+    }
+  }
+
+  > a {
+    position: relative;
+    width: 25px;
+    text-align: center;
+    cursor: pointer;
+
+    &:before {
+      top: -2.5px;
+      left: 0;
+      right: 0;
+    }
+  }
+
+  .fa {
+    width: 15px;
+  }
+
+  .fa-angle-down, .fa-times {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    line-height: 35px;
+  }
+}
+
+.ct-reports-sidebar {
   position: fixed;
-  //top: 101px !important;
+  top: $nav-height;
+  left: 0;
+  width: 300px;
+  height: calc(100% - 66px);
+  background-color: $nav-background;
+  border-top: 1px solid $gray-page-background;
+  box-sizing: border-box;
+  box-shadow: $box-shadow;
+  z-index: 1;
+
+  .ct-header {
+    margin-bottom: 25px;
+  }
+
+  .ct-reports-sidebar-container {
+    height: calc(100vh - 66px);
+  }
+}
+
+.ct-sidebar-block {
+  padding: 25px 30px 40px;
+  border-top: 1px solid $gray-page-background;
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.ct-reports-multiselect {
+  .ui-multiselect-panel {
+    position: fixed;
+    margin-left: -11px;
+  }
+
+  &.ct-clients .ui-multiselect-panel {
+    top: 234px;
+  }
+
+  &.ct-projects .ui-multiselect-panel {
+    top: 293px;
+  }
+
+  &.ct-users .ui-multiselect-panel {
+    top: 352px;
+  }
+}
+
+.ct-report-query-links {
+  margin: 30px 0 20px;
+
+  button {
+    height: 26px;
+    line-height: 22px;
+    padding: 0 10px;
+    background: none;
+    border-radius: 13px;
+    border: solid 2px #f3f4f6;
+    font-size: 11px;
+    color: $main-grey;
+
+    i {
+      position: relative;
+      top: 2px;
+      font-size: 13px;
+      margin-right: 2px;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      color: $main-blue;
+    }
+  }
+
+  .ct-query-add-box {
+    float: right;
+  }
+}
+
+.ct-query-block {
+  position: relative;
+
+  .ct-select {
+    background-color: $gray-page-background;
+    border-color: $gray-page-background !important;
+    border-radius: 5px;
+
+    .ct-select-default-text {
+      color: $main-grey;
+    }
+  }
+
+  .ct-delete-icon {
+    position: absolute;
+    bottom: 6px;
+    right: 3px;
+    background-color: $gray-page-background;
+    font-size: 20px;
+    color: $main-grey;
+    cursor: pointer;
+  }
+}
+
+.ct-reports-chart-block {
+  ct-user-pic {
+    float: left;
+    margin-right: 20px;
+  }
+
+  li {
+    margin-bottom: 25px;
+  }
+}
+
+.ct-reports-chart-title {
+  margin-bottom: 5px;
+  font-weight: 700;
+  color: $black;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.ct-reports-chart-value {
+  display: flex;
+  align-items: baseline;
+}
+
+.ct-reports-chart-number {
+  margin-left: 9px;
+  font-size: 12px;
+  color: $grid-text;
 }
 
 .ct-reports-page {
-
   .ct-screen-mode {
     line-height: 16px;
   }
 
-  .ct-actual-label {
-    background: $label-background;
-  }
-
-  .ct-estimated-label {
-    background: $form-border;
-  }
-
-  .ct-actual-label, .ct-estimated-label {
-    color: #ffffff;
-    padding: 4px;
-    border-radius: 5px;
-    display: inline-block;
-    margin-bottom: 5px;
-  }
-
-  .ct-menu-item {
-    line-height: 36px;
-    height: 36px;
-
-    a {
-      position: relative;
-      display: block;
-      padding: 0 20px;
-      cursor: pointer;
-      text-align: left;
-    }
-
-    &:hover a:not(.ct-disabled) {
-      background: #e9f8fc;
-    }
-  }
-
-  .ct-total-footer {
-    //margin: 0 20px 40px 0 !important;
-    //-webkit-box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    //box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    border: none !important;
-    background: #e9f8fc;
-
-    label {
-      font-weight: 700;
-    }
-    .ct-total-hours-tracked {
-      padding-left: 24px;
-    }
-  }
-
-  .ct-grid-container.ct-total-time-container {
-    position: relative;
-    border-top: 2px solid #f1f1f1;
-    border-bottom: 2px solid #f1f1f1;
-    margin-top: 0;
-    padding: 20px;
-
-    .ct-actual-label, .ct-estimated-label {
-      position: relative;
-      top: -5px;
-    }
-
-
-    label {
-         font-size: 14px;
-      color: $main-blue;
-      text-transform: uppercase;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    div {
-      display: inline-block;
-      float: right;
-    }
-  }
-
-  .ct-reports-grid {
-    .ui-datatable-tablewrapper table {
-      margin-bottom: 0 !important;
-    }
-
-    .ui-cell-data {
-      line-height: 15px !important;
-      font-size: 13px !important;
-    }
-  }
-
-  .ct-page-container .ct-page-header {
-    height: auto;
-    border-bottom: 1px solid #e1e6ed;
-    min-height: 46px;
-    //position: fixed;
-    z-index: 995;
-    background: $nav-background;
-    width: 100%;
-  }
-
-  .ct-grid-container .ui-cell-data {
-    top: 0;
-  }
-
-  .ct-white-button {
-    background: #ffffff;
-    color: $nav-background !important;
-    border: 1px solid #dfdfdf;
-  }
-
-  .ct-gray-button {
-    background: #dfdfdf;
-    border: 1px solid #dfdfdf;
-  }
-
-  .ct-reports-settings {
-    position: relative;
-    height: 30px;
-    line-height: 30px;
-    display: block;
-
-    .ct-datepicker-container {
-      margin-top: 15px;
-    }
-
-    .ct-reports-actions-block {
-      position: relative;
-      height: 30px;
-      line-height: 30px;
-
-      > * {
-        display: inline-block;
-      }
-
-      .ct-prev, .ct-next {
-        position: absolute;
-      }
-
-      .ct-prev {
-        left: 0;
-      }
-
-      .ct-next {
-        right: 0;
-      }
-
-      .ct-prev, .ct-next, .fa-sort-desc:before {
-        color: $nav-link-border;
-      }
-    }
-  }
-
-  .ct-query-add-box, .ct-reports-reset-link {
-    display: inline-block;
-  }
-
-  .ct-query-add-box {
+  .ct-columns-multiselect {
+    width: 18px;
     cursor: pointer;
-    color: $main-blue;
 
-    i {
-      top: 5px;
-      left: -6px;
-      position: relative;
-      font-size: 20px;
-    }
-
-    span {
-      border-bottom: 1px dotted;
-      position: relative;
-      left: -7px;
-    }
-  }
-
-  .ct-query-block {
-    position: relative;
-    display: inline-block;
-    //margin-bottom: 20px;
-    width: 100%;
-
-    > * {
-      vertical-align: middle;
+    .ct-multiselect {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: none;
+      border: 0;
     }
 
     .ct-select {
       display: none;
     }
-
-    .ct-select-component {
-      margin: 0;
-      position: absolute;
-      left: 0;
-      top: 35px;
-      right: 0;
-    }
-
-    .ct-query-text {
-      box-sizing: border-box;
-      display: inline-block;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      text-align: center;
-      cursor: pointer;
-      background-color: $main-blue;
-      color: #fff;
-      //border-radius: 4px;
-      padding: 7px 35px 7px 12px;
-      width: 100%;
-      position: relative;
-
-      i {
-        position: absolute;
-        right: 7px;
-        top: 5px;
-      }
-    }
-
-    .ct-select-open-button {
-      background: none;
-      border: none;
-      padding: 0;
-      outline: none;
-      cursor: pointer;
-
-      i {
-        vertical-align: middle;
-        font-size: 29px;
-        position: absolute;
-        right: -35px;
-        top: -3px;
-      }
-
-      &:hover i {
-        background-color: #ddd;
-      }
-
-      &.ct-disabled {
-        opacity: 0.5;
-      }
-    }
-
-    .ct-clear-icon {
-      margin-left: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 24px !important;
-      line-height: 0 !important;
-      color: #ffffff;
-      right: 5px;
-      position: absolute;
-      top: 17px;
-    }
   }
 
-  .ct-collapsed-menu-footer {
-    margin-bottom: 18px;
-  }
-
-  .ct-reports-reset-link {
-    position: absolute;
-    right: 20px;
-    height: 30px;
-    display: inline-block;
+  .ct-icon:not(.ct-settings-icon) {
+    top: -2px;
+    height: 33px;
+    margin: 0;
+    padding: 0 20px;
+    border-left: 2px solid #fff;
     cursor: pointer;
-    padding: 0;
-    text-align: right;
-    margin: 3px 0 0 0;
 
-    span {
-      text-decoration: none;
-      color: $nav-background;
-      border-bottom: 1px dotted;
+    &:first-child {
+      border: none;
     }
 
-    i {
-      top: 4px;
-      position: relative;
-      font-size: 17px;
-      right: 2px;
+    &:hover {
+      background-color: #fff;
     }
-  }
-
-  .ct-reports-time-period {
-    position: relative;
-    height: 35px;
-    line-height: 35px;
-    width: 100%;
-    padding: 0;
-
-    > div {
-      cursor: pointer;
-
-      > span {
-        font-weight: 400;
-      }
-    }
-
-    > a {
-      display: inline-block;
-      position: relative;
-      //margin-top: -5px;
-      width: 25px;
-      height: 30px;
-      vertical-align: middle;
-      text-align: center;
-      cursor: pointer;
-
-      &:before {
-        top: -2.5px;
-        left: 0;
-        right: 0;
-      }
-    }
-
-    > div {
-      display: inline-block;
-      padding: 0 13px 0 11px;
-    }
-
-    .fa {
-      width: 15px;
-      height: 20px;
-      text-align: center;
-      color: $nav-background;
-    }
-
-    .fa-sort-desc {
-      position: relative;
-      top: -3px;
-    }
-
-    .fa-sort-desc:before {
-      color: $nav-background !important;
-    }
-  }
-
-  .ct-reports-chart-title {
-    background: #ffffff;
-    padding: 20px;
-    font-size: 22px;
   }
 
   .ct-btn-block {
-    height: 24px;
-    width: 49%;
-    display: inline-block;
     position: relative;
-    top: 9px;
-
-    [class *="-button"] {
-      position: relative;
-      top: 4px;
-      display: inline-block;
-      margin: 0 8px;
-      cursor: pointer;
-
-      &:before {
-        display: inline-block;
-        content: '';
-        height: 20px;
-        width: 18px;
-      }
-    }
-
-    .ct-columns-multiselect {
-      position: relative;
-      left: 5px;
-
-      .ct-multiselect {
-        position: absolute;
-        left: 0;
-        top: 3px;
-        height: 100%;
-        background: none;
-        border: 0;
-      }
-
-      .ct-select {
-        display: none;
-      }
-    }
-
-    .ct-export-as {
-      position: relative;
-      display: inline-block;
-
-      .ct-actions-drop-menu {
-        top: 16px;
-        background: #fff;
-      }
-    }
+    height: 35px;
+    box-sizing: border-box;
+    float: right;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    font-size: 0;
   }
 
-  .ct-report-filters-block {
-    .ct-filter-label {
-      margin-left: 0;
-      font-family: inherit;
-      font-size: 12px;
-      text-transform: uppercase;
-      color: $main-blue;
-      height: 18px;
-      display: block;
-    }
-  }
-
-  .ct-report-filters {
-    > .ct-btn-block:nth-child(2) {
-      text-align: right;
-    }
-
-    .ct-report-filters-block {
-      &:first-child {
-        margin: 0;
-      }
-
-      .ct-multiselect {
-        background: none;
-
-        .ct-select {
-          margin-bottom: 2px;
-        }
-      }
-    }
-
-    .ui-multiselect {
-      vertical-align: middle;
-      width: 170px !important;
-      margin-right: 8px;
-      border: none;
-
-      .ct-select {
-        padding: 0 15px 0 10px;
-      }
-    }
-
-    .ct-select {
-      width: 170px;
-      height: $fieldHeight;
-      border-color: transparent;
-      line-height: $fieldHeight;
-
-      .ct-select-selected-options-text {
-        font-size: $baseFont;
-      }
-    }
-
-    .ct-select-component {
-      display: inline-block;
-      margin: -2px 8px 0 -3px;
-      vertical-align: middle;
-      height: $fieldHeight;
-      line-height: $fieldHeight;
-
-      .mat-list-item-content {
-        font-size: $baseFont;
-      }
-    }
-
-    .ct-close {
-      float: right;
-      line-height: 50px;
-      margin-right: 20px;
-    }
-  }
-
-  .ct-button.ct-white-button {
-    background: white;
-    color: $nav-background;
+  .ct-actions-drop-menu {
+    right: -12px;
   }
 
   .ct-reports-grid {
     display: inline-block;
-    background-color: #ffffff;
+    background-color: #fff;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    overflow: hidden;
 
-    .ui-datatable-thead:after {
-      width: 100%;
-      left: 0;
-      bottom: 0;
-      height: 2px;
+    .ui-datatable-tablewrapper table {
+      margin-bottom: 0 !important;
     }
+  }
 
-    .ui-datatable-thead {
-      display: none;
+  .ct-reports-grid-header {
+    max-width: 400px;
+    font-size: 24px;
+    font-weight: 700;
+    color: $dark-blue;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+
+    ct-user-pic {
+      vertical-align: middle;
     }
   }
 
   .ct-grid-header {
-    padding: 0 20px;
-    height: 42px;
-    line-height: 42px;
-    font-size: 15px;
-    text-transform: uppercase;
-    background: #e9f8fc !important;
-    border-bottom: 1px solid #e1e6ed;
+    padding: 0 25px;
+    height: 100px;
+    line-height: 100px;
+    font-weight: 700;
 
     > div {
       display: inline-block;
-
-      &:not(.ct-report-header-right) {
-        float: left;
-      }
-
-      span {
-        display: inline-block;
-        overflow: hidden;
-        vertical-align: bottom;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 400px;
-        color: $nav-link-border;
-        font-weight: 700;
-      }
     }
 
-    .ct-report-header-right {
+    .ct-total-time-container {
       float: right;
-
-      > div {
-        display: inline-block;
-      }
-    }
-
-    .ct-total-hours-tracked, .ct-total-hours-planned {
-      position: relative;
-      margin-left: 63px;
-
-      &:before {
-        position: absolute;
-        content: '';
-        width: 30px;
-        height: 30px;
-        top: -8px;
-        left: -30px;
-      }
+      color: $main-grey;
     }
 
     .ct-total-hours-tracked {
-      &:before {
-        background: url(./assets/icons/tasktile.time.actual.svg) no-repeat center center;
-        background-size: 23px 23px;
-      }
-    }
-
-    .ct-total-hours-planned {
-      &:before {
-        background: url(./assets/icons/tasktile.time.estimated.svg) no-repeat center center;
-        background-size: 23px 23px;
-      }
+      margin-left: 10px;
+      font-size: 24px;
+      color: $main-blue;
     }
   }
 
   .ct-grid-container {
     margin-top: 40px;
-    h3 {
-      font-weight: 400;
-      margin-bottom: 3px;
-      line-height: 18px;
+
+    .ui-datatable {
+      padding-bottom: 0;
     }
 
-    .ui-datatable-tablewrapper table {
+    .ui-datatable-thead {
+      display: none;
+    }
 
-      thead {
-        border-top: 0;
-        border-bottom: 2px solid $border-сolor;
+    .ui-datatable-even {
+      background-color: #f7f9fc;
+    }
 
-        th {
-          padding: 10px 8px;
-        }
+    tr:hover {
+      background: $gray-page-background !important;
+    }
+
+    h3 {
+      margin-bottom: 5px;
+      color: $black;
+    }
+
+    .ct-cell-project {
+      width: 200px;
+    }
+
+    .ct-cell-project, .ct-cell-task {
+      vertical-align: top;
+    }
+
+    .ct-cell-user {
+      width: 200px;
+      font-weight: 700;
+      vertical-align: middle;
+
+      ct-user-pic {
+        margin-right: 5px;
+        vertical-align: middle;
       }
 
-      td:last-child {
-        text-align: right;
+      span {
+        vertical-align: middle;
       }
     }
 
     .ct-cell-date {
-      width: 110px;
-    }
-    .ct-cell-client {
-      width: 150px;
-    }
-    .ct-cell-user {
-      width: 150px;
-
-      .ui-cell-data {
-        color: $black;
-      }
-    }
-    .ct-cell-task {
-      width: 360px;
-    }
-    .ct-cell-start {
-      width: 170px;
+      width: 100px;
     }
 
-    .ct-cell-actual {
-      .ct-total-hours-tracked {
-        padding-left: 10px;
+    .ct-cell-time {
+      width: 220px;
+      text-align: right;
+
+      div {
+        font-size: 12px;
+
+        &:not(:only-child) {
+          margin-top: 7px;
+        }
       }
+    }
+  }
+
+  .ct-calendar-hours-tracked, .ct-calendar-hours-planned {
+    float: none;
+    margin-left: 15px;
+    font-weight: 700;
+  }
+
+  .ct-total-footer {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 25px;
+
+    > * {
+      height: 30px;
+      line-height: 30px;
+    }
+
+    .ct-total-time-container {
+      float: right;
     }
   }
 
   ct-range-datepicker {
     position: absolute;
-    top: 31px;
-    right: 0;
-    left: 0;
-    width: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
+    top: 36px;
+    right: -10px;
+    left: -10px;
     box-sizing: border-box;
+    padding: 5px 0 20px;
     text-align: center;
     background: #fff;
-    box-shadow: none;
-    border: 1px solid $form-border;
+    border-radius: 5px;
+    box-shadow: $box-shadow;
     opacity: 0;
     z-index: 1;
     transition: opacity .3s;
-    //padding: 0 10px;
 
     &.ct-datepicker-opened {
       opacity: 1;
-    }
-
-    #datepicker {
-      border: 1px solid transparent !important;
     }
   }
 
@@ -661,7 +482,7 @@ $fieldHeight: 30px;
       }
 
       &:hover {
-        color: $nav-link-border;
+        color: $main-blue;
       }
     }
   }
@@ -698,67 +519,8 @@ $fieldHeight: 30px;
   }
 }
 
-.ct-report-query-links {
-  margin-top: 10px;
-}
-
-.ct-report-filters-block {
-  margin-bottom: 0;
-
-  label {
-    display: block;
-  }
-  > div {
-    display: inline-block;
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .ct-select {
-    line-height: 35px;
-    padding-left: 5px;
-  }
-
-}
-
-.ct-reports-chart-container {
-  width: 300px;
-  position: fixed;
-  //position: absolute;
-  display: inline-block;
-  right: 20px;
-  z-index: 994;
-  box-sizing: border-box;
-
-  .mat-expansion-panel-header {
-    height: 46px !important;
-    background: $nav-background !important;
-    border-bottom: 1px solid #e1e6ed;
-    color: #ffffff;
-  }
-
-  .mat-expansion-panel-body {
-    margin-top: 20px;
-
-    > .ct-report-filters-block:nth-child(1) {
-      > label {
-        position: relative;
-        top: -4px;
-      }
-    }
-  }
-
-  img {
-    max-width: 100%;
-    width: 100%;
-    margin: 20px 0;
-  }
-}
-
 .ct-reports-grid-container {
-  display: inline-block;
   width: calc(100% - 325px);
+  margin-left: 325px;
   margin-bottom: 20px;
-  background: #fff;
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 }

@@ -6,7 +6,7 @@ import { Component, Input, OnChanges } from '@angular/core';
 			<div *ngIf="text">
 				<div class="ct-screen-mode" [innerHTML]="currentText"></div>
 				<div class="ct-print-mode" [innerHTML]="text"></div>
-        		<a *ngIf='showButton' (click)="showText()" class="ct-see-more">{{ linkText }}</a>
+        		<span *ngIf='showButton' (click)="showText()" class="ct-see-more">{{linkText}}</span>
         	</div>
 	`
 })
