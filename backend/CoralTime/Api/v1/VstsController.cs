@@ -29,13 +29,19 @@ namespace CoralTime.Api.v1
 
         // GET: api/v1/Vsts/TimeEnties
         [HttpGet(Constants.Routes.TimeEntries)]
-        public IActionResult TimeEntries(int projectId, string workItemId)
+        public IActionResult TimeEntries(string projectId, string workItemId)
         {
             if (!ValidateVstsToken())
             {
                 return Unauthorized();
             }
-            return Ok(_service.GetTimeEntriesByWorkItemId(projectId, workItemId));
+            var timeEntries = _service.GetTimeEntriesByWorkItemId(projectId, workItemId);
+
+            if (timeEntries == null)
+            {
+                return BadRequest();
+            }
+            return Ok(timeEntries);
         }
 
         // POST api/v1/Vsts/TimeEntries

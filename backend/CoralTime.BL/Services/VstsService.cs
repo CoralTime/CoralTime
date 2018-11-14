@@ -83,11 +83,18 @@ namespace CoralTime.BL.Services
             return _timeEntryService.Create(vstsTimeEnry, member) != null;
         }
 
-        public List<VstsTimeEntry> GetTimeEntriesByWorkItemId(int projectId, string workItemId)
+        public List<VstsTimeEntry> GetTimeEntriesByWorkItemId(string vstsProjectId, string workItemId)
         {
-            if (string.IsNullOrEmpty(workItemId))
+            if (string.IsNullOrEmpty(workItemId) || string.IsNullOrEmpty(vstsProjectId))
             {
-                return new List<VstsTimeEntry>();
+                return null;
+            }
+            var projectId = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+                .FirstOrDefault(x => x.VstsProjectId == vstsProjectId)?.ProjectId;
+
+            if (projectId == null)
+            {
+                return null;
             }
 
             var timeEntries = _uow.TimeEntryRepository.GetQuery()

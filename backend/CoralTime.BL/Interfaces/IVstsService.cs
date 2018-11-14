@@ -20,6 +20,6 @@ namespace CoralTime.BL.Interfaces
 
         VstsSetup GetVstsSetupInfo(VstsSetup vstsSetup);
 
-        List<VstsTimeEntry> GetTimeEntriesByWorkItemId(int projectId, string workItemId);
+        List<VstsTimeEntry> GetTimeEntriesByWorkItemId(string projectId, string workItemId);
     }
 }
