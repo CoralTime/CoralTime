@@ -82,7 +82,7 @@ export class ProfileSettingsComponent implements OnInit {
 			this.userModel = new User(this.impersonationService.impersonationUser || data.user);
 		});
 
-		this.avatarUrl = this.userModel.urlIcon.replace('Icons', 'Avatars');
+		this.avatarUrl = this.userModel.urlIcon && this.userModel.urlIcon.replace('Icons', 'Avatars');
 		this.timeFormatModel = this.userModel.timeFormat ? new TimeFormat(this.userModel.timeFormat) : this.timeFormats[1];
 		this.weekStartDayModel = this.weekStartDays[this.userModel.weekStart];
 
