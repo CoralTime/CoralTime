@@ -17,6 +17,7 @@ import { SharedFormModule } from './form/shared-form.module';
 import { UserPicComponent } from './user-pic/user-pic.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { ChartComponent } from './chart/chart.component';
+import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 @NgModule({
@@ -43,13 +44,13 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 					sanitize: true,
 				},
 			},
-		})
+		}),
 	],
 	declarations: [
 		ReadMoreComponent,
 		ConfirmationComponent,
 		UserPicComponent,
-		ChartComponent
+		ChartComponent,
 	],
 	exports: [
 		CommonModule,
@@ -68,6 +69,7 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 		UserPicComponent,
 		ConfirmationComponent,
 		ChartComponent,
+		TranslateModule,
 		MarkdownModule,
 	]
 })
