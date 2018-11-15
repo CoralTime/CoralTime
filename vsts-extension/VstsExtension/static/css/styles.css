@@ -1,0 +1,139 @@
+﻿:root {
+  --main-blue: rgba(0, 120, 212, 1);
+  --main-gray: rgba(234, 234, 234, 1);
+  --error-color: rgba(218, 10, 0, 1);
+  --success-color: rgba(24, 185, 158, 1);
+}
+
+.ct-coraltime {
+  max-width: 350px;
+  padding: 20px;
+}
+
+.ct-coraltime form {
+  display: inline-block;
+  width: 100%;
+}
+
+[class*="-container"] {
+  margin-bottom: 5px;
+}
+
+.ct-textarea {
+  width: 100%;
+  border: 1px solid transparent;
+  box-shadow: none;
+  font-size: 14px;
+}
+
+.ct-textarea:hover {
+  border-color: var(--main-gray);
+}
+
+.ct-textarea:focus {
+  outline: 0;
+  border-color: var(--main-blue);
+}
+
+.ct-textarea {
+  border-color: var(--main-gray);
+  resize: none;
+}
+
+.ct-coraltime label {
+  padding: 0 5px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  color: rgba(0, 0, 0, .55);
+}
+
+.ct-actual-time-container,
+.ct-estimated-time-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  line-height: 20px;
+}
+
+[class*="time-hours"],
+[class*="time-minutes"] {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 48%;
+}
+
+.ct-actual-time-container .combo,
+.ct-estimated-time-container .combo {
+  margin-right: 5px;
+  line-height: initial;
+}
+
+.ct-submit-button {
+  float: right;
+  margin-top: 10px;
+  background-color: var(--main-blue);
+  border: none;
+  color: #fff;
+}
+
+.ct-submit-button[disabled] {
+  background-color: #728096;
+  opacity: .7;
+}
+
+/* NOTIFICATION STYLES */
+
+.ct-message {
+  font-size: 12px;
+}
+
+.ct-message:not(.ct-validation-error) {
+  margin: 10px 0;
+  padding: 8px;
+  color: rgba(0, 0, 0, .9);
+}
+
+.ct-message:before {
+  display: inline-block;
+  margin-right: 5px;
+  font-family: "Bowtie";
+  font-size: 14px;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ct-message.ct-validation-error {
+  color: var(--error-color);
+  visibility: hidden;
+}
+
+.ct-message.ct-error {
+  background: rgba(218, 10, 0, .2);
+}
+
+.ct-message.ct-success {
+  background: rgba(24, 185, 158, .2);
+}
+
+.ct-message.ct-validation-error:before, .ct-message.ct-error:before {
+  color: var(--error-color);
+  content: "\ea02";
+}
+
+.ct-message.ct-success:before {
+  color: var(--success-color);
+  content: "\ea12";
+}
+
+.ct-message:empty {
+  display: none;
+}
+
+.ct-coraltime > .ct-error + form {
+  opacity: .3;
+  pointer-events: none;
+}

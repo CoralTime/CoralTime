@@ -465,6 +465,8 @@ namespace CoralTime.MySqlMigrations.Migrations
 
                     b.HasIndex("TaskTypesId");
 
+                    b.HasIndex("MemberId");
+
                     b.HasIndex("MemberId", "Date");
 
                     b.ToTable("TimeEntries");

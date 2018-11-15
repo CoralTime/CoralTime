@@ -1,0 +1,102 @@
+{
+  "manifestVersion": 1,
+  "id": "CoralTimeTracker",
+  "version": "0.0.7",
+  "publisher": "CoralTimeExtDev",
+  "name": "CoralTime tracker",
+  "description": "Track your time in CoralTime",
+  "public": false,
+  "icons": {
+    "default": "static/img/logo.png"
+  },
+  "categories": [
+    "Plan and track"
+  ],
+  "tags": [
+    "work",
+    "track time"
+  ],
+  "content": {
+    "details": {
+      "path": "overview.md"
+    }
+  },
+  "links": {
+    "repository": {
+      "uri": "https://github.com/CoralTime/CoralTime"
+    },
+    "issues": {
+      "uri": "https://github.com/CoralTime/CoralTime/issues"
+    },
+    "support": {
+      "uri": "https://coralteq.com"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/CoralTime/CoralTime"
+  },
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "scopes": [
+    "vso.work"
+  ],
+  "contributions": [
+    {
+      "id": "CoralTime",
+      "type": "ms.vss-work-web.work-item-form-control",
+      "description": "Track your time in CoralTime",
+      "targets": [
+        "ms.vss-work-web.work-item-form"
+      ],
+      "properties": {
+        "inputs": [
+          {
+            "id": "SiteUrl",
+            "name": "Enter site url (Ex: coralteamdev.coraltime.io).",
+            "validation": {
+              "dataType": "String",
+              "isRequired": false
+            }
+          }
+        ],
+        "height": 700,
+        "name": "CoralTime Tracker",
+        "uri": "static/coraltime-index.html"
+      }
+    }
+  ],
+  "files": [
+    {
+      "addressable": true,
+      "path": "static/coraltime-index.html"
+    },
+    {
+      "addressable": true,
+      "path": "static/coraltime-configuration.html"
+    },
+    {
+      "addressable": true,
+      "path": "static/css"
+    },
+    {
+      "addressable": true,
+      "path": "static/img"
+    },
+    {
+      "addressable": true,
+      "path": "static/lib"
+    },
+    {
+      "path": "dist",
+      "addressable": true
+    },
+    {
+      "addressable": true,
+      "path": "src"
+    }
+  ]
+}

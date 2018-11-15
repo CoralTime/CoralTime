@@ -6,8 +6,8 @@ $smallFont: 12px;
 
 $button-font-size: 17px;
 
-$baseFontFamily: $latoFont;
-$navFontFamily: $latoFont;
+$baseFontFamily: $kohoFont;
+$navFontFamily: $kohoFont;
 
 body, html {
   margin: 0;
@@ -245,7 +245,7 @@ h5 {
     width: 100%;
     height: 42px;
     padding: 0 10px 0 30px;
-    font-family: $latoFont;
+    font-family: $kohoFont;
     font-weight: 300;
     background: none;
     border: 0;

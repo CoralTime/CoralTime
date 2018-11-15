@@ -49,5 +49,7 @@ namespace CoralTime.DAL.Models
         public string Description { get; set; }
 
         public bool IsFromToShow { get; set; }
+
+        public string WorkItemId { get; set; }
     }
 }

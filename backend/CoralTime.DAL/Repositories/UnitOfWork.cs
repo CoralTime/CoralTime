@@ -15,6 +15,7 @@ using CoralTime.DAL.Repositories.User;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using MemberActionTypes = CoralTime.Common.Constants.Constants.MemberActionTypes;
+using CoralTime.DAL.Repositories.Vsts;
 
 namespace CoralTime.DAL.Repositories
 {
@@ -57,6 +58,12 @@ namespace CoralTime.DAL.Repositories
         
         private MemberActionRepository _memberActionRepository;
         public MemberActionRepository MemberActionRepository => _memberActionRepository ?? (_memberActionRepository = new MemberActionRepository(AppDbContext, MemoryCache, UserId));
+
+        private VstsProjectRepository _vstsProjectRepository;
+        public VstsProjectRepository VstsProjectRepository => _vstsProjectRepository ?? (_vstsProjectRepository = new VstsProjectRepository(AppDbContext, MemoryCache, UserId));
+
+        private VstsUserRepository _vstsUserRepository;
+        public VstsUserRepository VstsUserRepository => _vstsUserRepository ?? (_vstsUserRepository = new VstsUserRepository(AppDbContext, MemoryCache, UserId));
 
         #endregion
 
@@ -137,14 +144,14 @@ namespace CoralTime.DAL.Repositories
 
         #endregion
 
-        public int Save(bool isAnonymousRequest = false)
+        public int Save(bool isAnonymousRequest = false, int? memberId = null)
         {
             try
             {
                 var actions = new List<MemberAction>();
                 if (!isAnonymousRequest)
                 {
-                    actions = CreateMemberActions();
+                    actions = CreateMemberActions(memberId);
                 }
                 
                 var changesCount = AppDbContext.SaveChanges();
@@ -174,7 +181,7 @@ namespace CoralTime.DAL.Repositories
 
         #region Save MemberActions
 
-        private List<MemberAction> CreateMemberActions()
+        private List<MemberAction> CreateMemberActions(int? memberId = null)
         {
             var jsonSettings = new JsonSerializerSettings()
             {
@@ -200,7 +207,7 @@ namespace CoralTime.DAL.Repositories
 
                 var action = new MemberAction
                 {
-                    MemberId = MemberCurrent.Id,
+                    MemberId = memberId ?? MemberCurrent.Id,
                     ChangedObject = JsonConvert.SerializeObject(newValue, jsonSettings),
                     Entity = entry.Entity.GetType().Name,
                     ChangedFields = JsonConvert.SerializeObject(DetailedCompare(newValue: newValue, oldValue: oldValue), jsonSettings),

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CoralTime tracker</title>
+    <link href="css/styles.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="ct-coraltime">
+    <form autocomplete="off">
+        <div class="ct-date-container">
+            <label>Date</label>
+            <div class="ct-date"></div>
+            <div class="ct-message ct-validation-error"></div>
+        </div>
+        <div class="ct-task-container">
+            <label>Task</label>
+            <div class="ct-task"></div>
+            <div class="ct-message ct-validation-error"></div>
+        </div>
+        <div class="ct-description-container">
+            <label for="description">Description</label>
+            <textarea class="ct-textarea" id="description"
+                      name="description"
+                      maxlength="1000"
+                      rows="5"></textarea>
+        </div>
+        <div class="ct-actual-time-container">
+            <label>Actual time</label>
+            <div class="ct-actual-time-hours">h</div>
+            <div class="ct-actual-time-minutes">m</div>
+            <div class="ct-message ct-validation-error"></div>
+            <div class="ct-message ct-validation-error"></div>
+        </div>
+        <div class="ct-estimated-time-container">
+            <label>Estimated time</label>
+            <div class="ct-estimated-time-hours">h</div>
+            <div class="ct-estimated-time-minutes">m</div>
+            <div class="ct-message ct-validation-error"></div>
+            <div class="ct-message ct-validation-error"></div>
+        </div>
+        <div class="ct-form-actions-container">
+            <button type="button" class="ct-submit-button" id="submitButton">Submit</button>
+        </div>
+    </form>
+</div>
+<script src="lib/VSS.SDK.min.js"></script>
+<script type="text/javascript">
+    VSS.init({
+        explicitNotifyLoaded: true,
+        usePlatformScripts: true
+    });
+
+    VSS.require(["dist/timeEntryForm"], () => {
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "indent": [
+      true,
+      "spaces",
+      4
+    ],
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "max-classes-per-file": false,
+    "max-line-length": [
+      150
+    ],
+    "member-access": false,
+    "member-ordering": false,
+    "no-console": [
+      false
+    ],
+    "no-empty": false,
+    "no-shadowed-variable": false,
+    "no-string-literal": false,
+    "variable-name": false
+  },
+  "rulesDirectory": []
+}

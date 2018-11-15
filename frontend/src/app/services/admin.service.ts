@@ -37,5 +37,15 @@ export class AdminService {
 	sendNotificationsWeekly(): Observable<any> {
 		let url = '/api/v1/Admin/NotificationsByProjectSettings/';
 			return this.http.get(url);
-	};
+    };
+
+    updateVstsProjects(): Observable<any> {
+        let url = '/api/v1/Admin/UpdateVstsProjects/';
+        return this.http.get(url);
+    };
+
+    updateVstsUsers(): Observable<any> {
+        let url = '/api/v1/Admin/UpdateVstsUsers/';
+        return this.http.get(url);
+    };
 }
