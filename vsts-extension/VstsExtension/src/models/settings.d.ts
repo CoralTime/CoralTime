@@ -8,6 +8,7 @@ export interface ISettings {
 }
 
 export interface IUserSettings {
+    expirationDate: number;
     memberId: number;
     projectId: number;
 }

@@ -6,6 +6,7 @@ import { Notification } from "../utils/notification";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
+    workItemFormPromise: PromiseLike<void>;
 
     private accessToken: string;
     private extensionSettings: ISettings;
@@ -48,7 +49,7 @@ export class ConfigurationService {
     private getSetupOptions(): IPromise<IUserSettings> {
         const deferred = Q.defer<IUserSettings>();
         this.getKeyValueFromStorage("userSettings").then((res: IUserSettings) => {
-            if (res) {
+            if (res && res.expirationDate > new Date().getTime()) {
                 deferred.resolve(res);
             } else {
                 this.loadSetupOptions().then((res) => {
@@ -89,6 +90,7 @@ export class ConfigurationService {
             $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
                 .done((res: IUserSettings) => {
                     const userSettings = {
+                        expirationDate: new Date().getTime() + 24 * 3600 * 1000,
                         memberId: res.memberId,
                         projectId: res.projectId,
                     };
@@ -105,9 +107,9 @@ export class ConfigurationService {
     }
 
     private loadWorkItemOptions(): void {
-        services.WorkItemFormService.getService().then((service) => {
-            service.getFieldValues(["System.Id", "System.Title", "System.WorkItemType"]).then((value: any) => {
-                this.workItemOptions = value;
+        this.workItemFormPromise = services.WorkItemFormService.getService().then((service) => {
+            return service.getFieldValues(["System.Id", "System.Title", "System.WorkItemType"]).then((value: any) => {
+                return this.workItemOptions = value;
             });
         });
     }

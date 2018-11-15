@@ -38,3 +38,16 @@ export interface ITime {
     hours: number;
     minutes: number;
 }
+
+export interface ITimeEntryRow {
+    date: string;
+    description: string;
+    memberId?: number;
+    memberName: string;
+    projectId?: number;
+    taskId?: number;
+    taskName: string;
+    timeOptions?: ITimeOptions;
+    timeValues: ITimeValues;
+    workItemId?: string;
+}

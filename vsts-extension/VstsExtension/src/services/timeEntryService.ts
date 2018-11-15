@@ -1,5 +1,5 @@
-import { ITimeEntry, ITimeEntryFormValues } from "../models/itimeEntry";
 import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
+import { ITimeEntry, ITimeEntryFormValues } from "../models/timeEntry";
 import { ConfigurationService } from "./configurationService";
 
 export class TimeEntryService {
@@ -15,9 +15,14 @@ export class TimeEntryService {
     }
 
     getTasksForProject(): PromiseLike<any> {
-        return this.configService.accessTokenPromise.then(() => {
-            return $.get(this.extensionSettings.siteUrl + "/api/v1/VSTS/Tasks?ProjectId=" + this.projectContext.projectId);
-        });
+        return this.configService.accessTokenPromise.then(() => $.get(this.extensionSettings.siteUrl
+            + "/api/v1/VSTS/Tasks?ProjectId=" + this.projectContext.projectId));
+    }
+
+    getTimeEntries(): PromiseLike<any> {
+        return Promise.all([this.configService.accessTokenPromise, this.configService.workItemFormPromise])
+            .then(() => $.get(this.extensionSettings.siteUrl + "/api/v1/VSTS/TimeEntries?ProjectId="
+                + this.projectContext.projectId + "&WorkItemId=" + this.getWorkItemOptions()["System.Id"]));
     }
 
     saveTimeEntry(values: ITimeEntryFormValues): JQuery.jqXHR {
