@@ -6,7 +6,6 @@ using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.TimeEntries;
 using CoralTime.ViewModels.Vsts;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -33,7 +32,7 @@ namespace CoralTime.BL.Services
 
         public int? GetProjectIdByVstsProjectId(string projectId)
         {
-            return _uow.VstsProjectRepository.GetQuery().Single(x=> x.VstsProjectId == projectId)?.ProjectId;
+            return _uow.VstsProjectRepository.GetQuery().Single(x => x.VstsProjectId == projectId)?.ProjectId;
         }
 
         public List<VstsTask> GetTasksByProject(string projectName)
@@ -70,7 +69,7 @@ namespace CoralTime.BL.Services
                 {
                     var member = _uow.MemberRepository.LinkedCacheGetByUserName(user.UserName);
                     return member;
-                }                
+                }
             }
             return null;
         }
@@ -123,7 +122,7 @@ namespace CoralTime.BL.Services
                     }
                 })
                 .OrderBy(y => y.Date)
-                .ThenBy(z=> z.MemberName)
+                .ThenBy(z => z.MemberName)
                 .ToList();
 
             return timeEntries;
@@ -135,6 +134,7 @@ namespace CoralTime.BL.Services
             {
                 return null;
             }
+
             //var secret = _config["VstsExtensionSecret"]; // your extension's secret
 
             //var validationParameters = new TokenValidationParameters()
@@ -151,6 +151,7 @@ namespace CoralTime.BL.Services
             //};
 
             var tokenHandler = new JwtSecurityTokenHandler();
+
             //var principal = tokenHandler.ValidateToken(issuedToken, validationParameters, out var valiadtedToken);
             //return valiadtedToken as JwtSecurityToken;
             return tokenHandler.ReadJwtToken(issuedToken);
@@ -212,6 +213,7 @@ namespace CoralTime.BL.Services
                         project.VstsProjectName = vstsProject.Name;
                         continue;
                     }
+
                     // create new record for project with the same name
                     var existProject = _uow.ProjectRepository.GetQuery()
                         .SingleOrDefault(x => x.Name == vstsProject.Name);
@@ -251,7 +253,7 @@ namespace CoralTime.BL.Services
             }
 
             foreach (var vstsMember in allMembers
-                                        .Select(x=> new { x.Identity.UniqueName, x.Identity.Id })
+                                        .Select(x => new { x.Identity.UniqueName, x.Identity.Id })
                                         .Distinct())
             {
                 var user = _uow.VstsUserRepository.GetQuery()
@@ -277,7 +279,7 @@ namespace CoralTime.BL.Services
                     if (user != null && user.User.UserName != vstsMember.UniqueName)
                     {
                         _uow.VstsUserRepository.Delete(user);  // remove wrong records
-                    } 
+                    }
                 }
             }
             _uow.Save();
@@ -303,5 +305,79 @@ namespace CoralTime.BL.Services
         }
 
         #endregion IVstsAdminService
+
+        #region VSTS Project Integration
+
+        public IQueryable<VstsProjectIntegrationView> Get()
+        {
+            return _uow.VstsProjectRepository.GetQuery()
+                    .Select(x => VstsProjectMapToView(x));
+        }
+
+        public bool Delete(int id)
+        {
+            var item = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+                .SingleOrDefault(x => x.Id == id);
+            _uow.VstsProjectRepository.Delete(item);
+            return _uow.Save() > 0;
+        }
+
+        public VstsProjectIntegrationView Create(VstsProjectIntegrationView view)
+        {
+            var vstsProject = new DAL.Models.Vsts.VstsProject
+            {
+                ProjectId = view.ProjectId,
+                VstsCompanyUrl = view.VstsCompanyUrl,
+                VstsPat = view.VstsPat,
+                VstsProjectId = view.VstsProjectId,
+                VstsProjectName = view.VstsProjectName
+            };
+
+            _uow.VstsProjectRepository.Insert(vstsProject);
+            var res = _uow.Save();
+            if (res > 0)
+            {
+                return VstsProjectMapToView(
+                    _uow.VstsProjectRepository.GetQuery()
+                    .FirstOrDefault(x => x.Id == vstsProject.Id));
+            }
+            return null;
+        }
+
+        private VstsProjectIntegrationView VstsProjectMapToView(DAL.Models.Vsts.VstsProject x)
+        {
+            return new VstsProjectIntegrationView
+            {
+                Id = x.Id,
+                ProjectId = x.ProjectId,
+                ProjectName = x.Project.Name,
+                VstsCompanyUrl = x.VstsCompanyUrl,
+                VstsPat = string.IsNullOrEmpty(x.VstsPat) ? null : x.VstsPat.Substring(0, 3) + "..." + x.VstsPat.Substring(x.VstsPat.Length - 3, 3),
+                VstsProjectId = x.VstsProjectId,
+                VstsProjectName = x.VstsProjectName
+            };
+        }
+
+        public VstsProjectIntegrationView Update(VstsProjectIntegrationView view)
+        {
+            var item = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+                .SingleOrDefault(x => x.Id == view.Id);
+
+            item.ProjectId = view.ProjectId;
+            item.VstsCompanyUrl = view.VstsCompanyUrl;
+            item.VstsProjectName = view.VstsProjectName;
+            item.VstsPat = string.IsNullOrEmpty(view.VstsPat) ? item.VstsPat : view.VstsPat;
+
+            var res = _uow.Save();
+            if (res > 0)
+            {
+                return VstsProjectMapToView(
+                    _uow.VstsProjectRepository.GetQuery()
+                    .FirstOrDefault(x => x.Id == view.Id));
+            }
+            return null;
+        }
+
+        #endregion VSTS Project Integration
     }
 }

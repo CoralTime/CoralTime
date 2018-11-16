@@ -6,13 +6,13 @@
 }
 
 .ct-coraltime {
-  max-width: 350px;
+  display: flex;
   padding: 20px;
 }
 
-.ct-coraltime form {
+.ct-form {
   display: inline-block;
-  width: 100%;
+  width: 350px;
 }
 
 [class*="-container"] {
@@ -133,7 +133,18 @@
   display: none;
 }
 
-.ct-coraltime > .ct-error + form {
+.ct-error + .ct-form {
   opacity: .3;
   pointer-events: none;
+}
+
+/* GRID */
+
+.ct-grid-container {
+  flex-grow: 1;
+  margin-left: 50px;
+}
+
+.ct-grid {
+  height: 100%;
 }

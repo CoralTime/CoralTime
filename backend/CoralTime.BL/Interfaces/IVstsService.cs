@@ -3,6 +3,7 @@ using CoralTime.ViewModels.TimeEntries;
 using CoralTime.ViewModels.Vsts;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace CoralTime.BL.Interfaces
 {
@@ -21,5 +22,13 @@ namespace CoralTime.BL.Interfaces
         VstsSetup GetVstsSetupInfo(VstsSetup vstsSetup);
 
         List<VstsTimeEntry> GetTimeEntriesByWorkItemId(string projectId, string workItemId);
+
+        IQueryable<VstsProjectIntegrationView> Get();
+
+        VstsProjectIntegrationView Create(VstsProjectIntegrationView vstsProjectIntegrationView);
+
+        VstsProjectIntegrationView Update(VstsProjectIntegrationView vstsProjectIntegrationView);
+
+        bool Delete(int id);
     }
 }
