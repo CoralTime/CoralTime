@@ -49,6 +49,7 @@ using CoralTime.ViewModels.MemberActions;
 using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
 using Microsoft.IdentityModel.Logging;
+using CoralTime.ViewModels.Vsts;
 
 namespace CoralTime
 {
@@ -361,6 +362,7 @@ namespace CoralTime
             builder.EntitySet<ManagerProjectsView>("ManagerProjects");
             builder.EntitySet<ProjectNameView>("ProjectsNames");
             builder.EntitySet<MemberActionView>("MemberActions");
+            builder.EntitySet<VstsProjectIntegrationView>("VstsProjectIntegration");
             builder.EnableLowerCamelCase();
             return builder.GetEdmModel();
         }
