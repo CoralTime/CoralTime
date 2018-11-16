@@ -47,7 +47,8 @@
         <div class="ct-calendar-time-entry-type">
             {{timeEntry.taskName}}
         </div>
-        <pre class="ct-calendar-time-entry-description" *ngIf="timeEntry.description">{{ timeEntry.description }}</pre>
+        <pre *ngIf="timeEntry.description" class="ct-calendar-time-entry-description"
+             markdown [data]="timeEntry.description"></pre>
     </div>
     <div class="ct-calendar-time-entry-time" (click)="openEntryTimeForm()">
         <div class="ct-calendar-hours-tracked" title="Tracked time">
