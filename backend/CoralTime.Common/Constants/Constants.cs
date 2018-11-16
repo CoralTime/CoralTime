@@ -51,6 +51,8 @@ namespace CoralTime.Common.Constants
             public const string ResetCacheRoute = "ResetCache";
             public const string UpdateClaimsRoute = "UpdateClaims";
             public const string RefreshDataBaseRoute = "RefreshDataBase";
+            public const string UpdateVstsProjects = "UpdateVstsProjects";
+            public const string UpdateVstsUsers = "UpdateVstsUsers";
             public const string SaveImagesFromDbToStaticFilesRoute = "SaveImagesFromDbToStaticFiles";
             public const string NotificationsByProjectSettingsRoute = "NotificationsByProjectSettings";
             public const string NotificationsWeeklyRoute = "NotificationsWeekly";
@@ -79,7 +81,10 @@ namespace CoralTime.Common.Constants
             public const string PingRoute = "ping";
             public const string PingdatabaseRoute = "pingdatabase";
             public const string TimeEntryTimer = "TimeEntryTimer";
-            
+            public const string Tasks = "Tasks";
+            public const string TimeEntries = "TimeEntries";
+            public const string Setup = "Setup";
+
             private const string WithMembers = "/members";
             private const string WithProjects = "/projects";
             private const string WithNotifications = "/Notifications";
@@ -102,6 +107,7 @@ namespace CoralTime.Common.Constants
                 public const string MemberProjectRolesWithIdRoute = "MemberProjectRoles(" + IdRoute + ")";
                 public const string MemberProjectRolesRouteWithProjects = MemberProjectRolesWithIdRoute + WithProjects;
                 public const string MemberProjectRolesRouteWithMembers = MemberProjectRolesWithIdRoute + WithMembers;
+                public const string VstsProjectIntegrationWithIdRoute = "VstsProjectIntegration(" + IdRoute + ")";
             }
         }
 
@@ -299,5 +305,14 @@ namespace CoralTime.Common.Constants
 
         public const string CertificateKeys = "CertificateKeys";
         public const string CertificateKeysTime = "CertificateKeysTime";
+
+        #region VSTS 
+
+        public const string VstsProjectsUrl = "/_apis/projects";
+        public const string VstsTeamsUrl = "/teams";
+        public const string VstsMembersUrl = "/members";
+
+        #endregion VSTS
+
     }
 }

@@ -48,6 +48,8 @@ using CoralTime.BL.Services.Notifications;
 using CoralTime.ViewModels.MemberActions;
 using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
+using Microsoft.IdentityModel.Logging;
+using CoralTime.ViewModels.Vsts;
 
 namespace CoralTime
 {
@@ -75,7 +77,8 @@ namespace CoralTime
                 // Sql Server
                 services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             }
-            
+
+            IdentityModelEventSource.ShowPII = true; 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
@@ -172,6 +175,9 @@ namespace CoralTime
             // Add OData
             var edmModel = SetupODataEntities(app.ApplicationServices);
 
+            //Make sure you add app.UseCors before app.UseMvc otherwise the request will be finished before the CORS middleware is applied
+            app.UseCors("AllowAllOrigins");
+
             app.UseMvc();
 
             app.UseMvc(routeBuilder =>
@@ -180,8 +186,6 @@ namespace CoralTime
                 routeBuilder.MapODataServiceRoute("ODataRoute", BaseODataRoute, edmModel);
                 routeBuilder.EnableDependencyInjection();
             });
-
-            app.UseCors("AllowAllOrigins");
 
             app.UseSwagger();
 
@@ -230,6 +234,8 @@ namespace CoralTime
             services.AddScoped<CheckSecureHeaderNotificationFilter>();
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IMemberActionService, MemberActionService>();
+            services.AddScoped<IVstsService, VstsService>();
+            services.AddScoped<IVstsAdminService, VstsService>();
         }
 
         private static void SetupAngularRouting(IApplicationBuilder app)
@@ -356,6 +362,7 @@ namespace CoralTime
             builder.EntitySet<ManagerProjectsView>("ManagerProjects");
             builder.EntitySet<ProjectNameView>("ProjectsNames");
             builder.EntitySet<MemberActionView>("MemberActions");
+            builder.EntitySet<VstsProjectIntegrationView>("VstsProjectIntegration");
             builder.EnableLowerCamelCase();
             return builder.GetEdmModel();
         }

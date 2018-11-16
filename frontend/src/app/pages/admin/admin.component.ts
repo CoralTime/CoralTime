@@ -89,5 +89,29 @@ export class AdminComponent {
 				errResponse => {
 					this.notificationService.danger('Error');
 				});
-	};
+    };
+
+    updateVstsProjects(): void {
+        this.loadingService.addLoading();
+        this.adminService.updateVstsProjects()
+            .finally(() => this.loadingService.removeLoading())
+            .subscribe(() => {
+                this.notificationService.success('Done');
+            },
+            errResponse => {
+                this.notificationService.danger('Error');
+            });
+    };
+
+    updateVstsUsers(): void {
+        this.loadingService.addLoading();
+        this.adminService.updateVstsUsers()
+            .finally(() => this.loadingService.removeLoading())
+            .subscribe(() => {
+                this.notificationService.success('Done');
+            },
+            errResponse => {
+                this.notificationService.danger('Error');
+            });
+    };
 }

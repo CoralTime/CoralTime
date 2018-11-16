@@ -1,0 +1,19 @@
+{
+  "name": "coraltime-tracker",
+  "homepage": "https://github.com/CoralTime/CoralTime",
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vss-web-extension-sdk": "5.141.0"
+  }
+}

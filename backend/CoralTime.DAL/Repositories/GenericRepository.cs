@@ -121,12 +121,12 @@ namespace CoralTime.DAL.Repositories
 
         public virtual TEntity GetById(object id) =>  _dbSet.Find(id);
 
-        public virtual void Insert(TEntity entity)
+        public virtual void Insert(TEntity entity, string userId = null)
         {
             if (entity is ILogChanges entityILogChange)
             {
-                SetInfoAboutUserThatCratedEntity(entityILogChange);
-                SetInfoAboutUserThatUpdatedEntity(entityILogChange);
+                SetInfoAboutUserThatCratedEntity(entityILogChange, userId);
+                SetInfoAboutUserThatUpdatedEntity(entityILogChange, userId);
 
                 entity = (TEntity)entityILogChange;
             }
@@ -134,14 +134,14 @@ namespace CoralTime.DAL.Repositories
             _dbSet.Add(entity);
         }
 
-        public virtual void InsertRange(IEnumerable<TEntity> entities)
+        public virtual void InsertRange(IEnumerable<TEntity> entities, string userId = null)
         {
             if (entities is IEnumerable<ILogChanges> entitiesILogChange)
             {
                 foreach (var entityILogChange in entitiesILogChange)
                 {
-                    SetInfoAboutUserThatCratedEntity(entityILogChange);
-                    SetInfoAboutUserThatUpdatedEntity(entityILogChange);
+                    SetInfoAboutUserThatCratedEntity(entityILogChange, userId);
+                    SetInfoAboutUserThatUpdatedEntity(entityILogChange, userId);
                 }
 
                 entities = (IEnumerable<TEntity>)entitiesILogChange;
@@ -150,11 +150,11 @@ namespace CoralTime.DAL.Repositories
             _dbSet.AddRange(entities);
         }
 
-        public virtual void Update(TEntity entity)
+        public virtual void Update(TEntity entity, string userId = null)
         {
             if (entity is ILogChanges entityILogChange)
             {
-                SetInfoAboutUserThatUpdatedEntity(entityILogChange);
+                SetInfoAboutUserThatUpdatedEntity(entityILogChange, userId);
 
                 entity = (TEntity)entityILogChange;
             }
@@ -162,13 +162,13 @@ namespace CoralTime.DAL.Repositories
             _dbSet.Update(entity);
         }
 
-        public virtual void UpdateRange(IEnumerable<TEntity> entities)
+        public virtual void UpdateRange(IEnumerable<TEntity> entities, string userId = null)
         {
             if (entities is IEnumerable<ILogChanges> entitiesILogChange)
             {
                 foreach (var entityILogChange in entitiesILogChange)
                 {
-                    SetInfoAboutUserThatUpdatedEntity(entityILogChange);
+                    SetInfoAboutUserThatUpdatedEntity(entityILogChange, userId);
                 }
 
                 entities = (IEnumerable<TEntity>)entitiesILogChange;
@@ -210,16 +210,16 @@ namespace CoralTime.DAL.Repositories
 
         public int ExecuteSqlCommand(string command, params object[] parameters) => _dbContext.Database.ExecuteSqlCommand(command, parameters);
 
-        private void SetInfoAboutUserThatCratedEntity(ILogChanges entityILogChange)
+        private void SetInfoAboutUserThatCratedEntity(ILogChanges entityILogChange, string userId = null)
         {
-            entityILogChange.CreatorId = _userId;
+            entityILogChange.CreatorId = userId ?? _userId;
             entityILogChange.CreationDate = DateTime.Now;
         }
 
-        private void SetInfoAboutUserThatUpdatedEntity(ILogChanges entityILogChange)
+        private void SetInfoAboutUserThatUpdatedEntity(ILogChanges entityILogChange, string userId = null)
         {
             entityILogChange.LastUpdateDate = DateTime.Now;
-            entityILogChange.LastEditorUserId = _userId;
+            entityILogChange.LastEditorUserId = userId ?? _userId;
         }
     }
 }

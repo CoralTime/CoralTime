@@ -1,0 +1,33 @@
+{
+  "name": "coraltime-tracker",
+  "version": "1.0.0",
+  "description": "CoralTime tracker extension",
+  "keywords": [
+    "vsts",
+    "tfs"
+  ],
+  "scripts": {
+    "build": "tsc -p .",
+    "postbuild": "npm run package",
+    "package": "tfx extension create",
+    "clean": "rimraf ./dist && rimraf ./*.vsix"
+  },
+  "author": "CoralTeam",
+  "license": "MIT",
+  "devDependencies": {
+    "ncp": "2.0.0",
+    "rimraf": "2.6.2",
+    "tfx-cli": "0.6.3",
+    "tslint": "5.11.0",
+    "typescript": "2.4.0"
+  },
+  "dependencies": {
+    "@types/jquery": "3.3.17",
+    "@types/q": "0.0.32",
+    "jquery": "3.3.1",
+    "q": "1.5.1",
+    "requirejs": "2.3.6",
+    "telemetryclient-team-services-extension": "*",
+    "vss-web-extension-sdk": "5.141.0"
+  }
+}
