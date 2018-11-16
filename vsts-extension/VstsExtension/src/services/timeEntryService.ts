@@ -58,8 +58,9 @@ export class TimeEntryService {
 
     private formatDescription(description: string): string {
         const des = description ? " - " + description : "";
-        return this.getWorkItemOptions()["System.WorkItemType"] + " #" + this.getWorkItemOptions()["System.Id"]
-            + " " + this.getWorkItemOptions()["System.Title"] + des;
+        const link = "[" + this.getWorkItemOptions()["System.WorkItemType"] + " #"
+            + this.getWorkItemOptions()["System.Id"] + "](" + document.referrer + ")";
+        return link + " " + this.getWorkItemOptions()["System.Title"] + des;
     }
 
     private formatDate(date: string): string {
