@@ -24,7 +24,7 @@ namespace CoralTime.Api.v1.Odata
 
         // GET: api/v1/odata/VstsProjectIntegration
         [HttpGet]
-        public IActionResult Get() => Ok(_service.Get());
+        public IActionResult Get() => new ObjectResult(_service.Get());
 
         // POST api/v1/odata/VstsProjectIntegration
         [HttpPost]
