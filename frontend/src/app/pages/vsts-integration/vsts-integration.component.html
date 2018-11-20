@@ -1,1 +1,47 @@
-VSTS Integration
+<div class="ct-grid-search-filter">
+    <input class="ct-input-element" #gb placeholder="Search connection..." [(ngModel)]="filterStr">
+    <i class="fa fa-search"></i>
+</div>
+
+<div #pageContainer class="ct-page-container ct-projects-page">
+    <div class="ct-page-header">
+        <h3 class="ct-header">Connections</h3>
+
+        <div (click)="openConnectionDialog()" class="ct-add-link">
+            <a class="ct-manage-add">Create New Connection</a>
+        </div>
+    </div>
+
+    <div class="ct-data-table-wrapper" (window:resize)="onResize()">
+        <p-dataTable class="ct-grid-container ct-grid-row-border"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'projectName'"
+                     [responsive]="true" [lazy]="true"
+                     [loading]="!isAllConnections"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column field="projectName" header="Project" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-connetion="rowData" pTemplate="body">
+                    <span (click)="openConnectionDialog(connetion)" class="ct-grid-link-text" title="{{ connetion.projectName }}">{{ connetion.projectName }}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="vstsProjectName" header="VSTS Project" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-connetion="rowData" pTemplate="body">
+                    <span>{{ connetion.vstsProjectName }}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="vstsCompanyUrl" header="VSTS Company Url">
+                <ng-template let-col let-connetion="rowData" pTemplate="body">
+                    <div markdown [data]="connetion.vstsCompanyUrl"></div>
+                </ng-template>
+            </p-column>
+
+            <p-column field="vstsPat" header="VSTS Pat"></p-column>
+        </p-dataTable>
+    </div>
+</div>

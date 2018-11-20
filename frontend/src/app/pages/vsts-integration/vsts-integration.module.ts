@@ -5,6 +5,7 @@ import { VstsIntegrationFormComponent } from './form/vsts-integration-form.compo
 import { VstsIntegrationRoutingModule } from './vsts-integration-routing.module';
 import { VstsIntegrationComponent } from './vsts-integration.component';
 import { ProjectUsersFormComponent } from './project-users-form/project-users-form.component';
+import { VstsIntegrationService } from '../../services/vsts-integration.service';
 
 @NgModule({
 	imports: [
@@ -19,6 +20,9 @@ import { ProjectUsersFormComponent } from './project-users-form/project-users-fo
 	entryComponents: [
 		VstsIntegrationFormComponent,
 		ProjectUsersFormComponent
+	],
+	providers: [
+		VstsIntegrationService
 	],
 	exports: [
 		VstsIntegrationComponent

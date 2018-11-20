@@ -93,6 +93,10 @@
       margin-top: 5px;
     }
 
+    .ct-error-text + .ct-error-text {
+      display: none;
+    }
+
     .mat-input-wrapper {
       margin: 0;
       padding: 0;

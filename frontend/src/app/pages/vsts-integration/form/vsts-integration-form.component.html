@@ -1,1 +1,71 @@
-VstsIntegrationFormComponent
+<div class="ct-dialog ct-dialog-add ct-project-dialog">
+    <div class="ct-dialog-title">
+        <span>{{dialogHeader}}</span><span *ngIf="connection.id">{{ connection.projectName }}</span>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
+    </div>
+
+    <form #connectionForm="ngForm" class="ct-form-add" autocomplete="off">
+        <div class="ct-form-block">
+            <div>
+                <label class="ct-form-label">Project</label>
+                <ct-select [name]="'project'" required
+                           [class.ct-loading]="isProjectsLoading"
+                           [displayName]="'name'" [trackBy]="'id'"
+                           [defaultValue]="defaultProjectName"
+                           [(ngModel)]="projectModel"
+                           (ngModelChange)="projectOnChange()"
+                           [options]="projects"
+                           [disabled]="isProjectSelectDisabled">
+                </ct-select>
+                <div *ngIf="showErrors[0] && !projectModel" class="ct-error-text">Project is required!</div>
+            </div>
+
+            <div>
+                <label class="ct-form-label">Project Name</label>
+                <div class="ct-required-field-container">
+                    <input class="ct-input ct-full-width" name="vstsProjectName"
+                           [(ngModel)]="model.vstsProjectName"
+                           (ngModelChange)="vstsProjectNameOnChange()"
+                           maxlength="200" required/>
+                </div>
+                <div *ngIf="showErrors[1] && !model.vstsProjectName" class="ct-error-text">VSTS project name is required!</div>
+                <div *ngIf="showErrors[1] && model.vstsProjectName" class="ct-error-text">Connection with this VSTS project name is already exist.</div>
+            </div>
+
+            <div>
+                <label class="ct-form-label">Company Url</label>
+                <div class="ct-required-field-container">
+                    <input class="ct-input ct-full-width" name="vstsCompanyUrl" #vstsCompanyUrl="ngModel"
+                           [(ngModel)]="model.vstsCompanyUrl"
+                           (ngModelChange)="showErrors[2] = false"
+                           maxlength="200" required/>
+                </div>
+                <div *ngIf="showErrors[2] && vstsCompanyUrl.errors.required" class="ct-error-text">Company url is required!</div>
+            </div>
+
+            <div>
+                <label class="ct-form-label">VSTS Pat</label>
+                <div class="ct-required-field-container">
+                    <input class="ct-input ct-full-width" name="vstsPat" #vstsPat="ngModel"
+                           [(ngModel)]="model.vstsPat"
+                           (ngModelChange)="showErrors[3] = false"
+                           [pattern]="patPattern"
+                           maxlength="200" minlength="10" required/>
+                </div>
+                <div *ngIf="showErrors[3] && vstsPat.errors.required" class="ct-error-text">VSTS Pat is required!</div>
+                <div *ngIf="showErrors[3] && vstsPat.errors.minlength" class="ct-error-text">VSTS Pat is too short.</div>
+                <div *ngIf="showErrors[3] && vstsPat.errors.pattern" class="ct-error-text">VSTS Pat format is invalid.</div>
+            </div>
+        </div>
+
+        <div class="ct-buttons-block" mat-dialog-actions>
+            <button mat-raised-button class="ct-button ct-blue-button"
+                    [class.ct-loading]="isValidateLoading"
+                    [disabled]="isValidateLoading || isRequestLoading"
+                    (click)="validateAndSubmit(connectionForm)">
+                {{submitButtonText}}
+            </button>
+            <button mat-dialog-close class="ct-cancel-button">Cancel</button>
+        </div>
+    </form>
+</div>
