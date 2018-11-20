@@ -343,27 +343,28 @@ namespace CoralTime.BL.Services
             };
 
             _uow.VstsProjectRepository.Insert(vstsProject);
-            return SaveAndGetVstsProjectView(view.Id);
+            return SaveAndGetVstsProjectView(vstsProject);
         }
 
-        private VstsProjectIntegrationView SaveAndGetVstsProjectView(int id)
+        private VstsProjectIntegrationView SaveAndGetVstsProjectView(DAL.Models.Vsts.VstsProject vstsProject )
         {
             var res = _uow.Save();
             if (res > 0)
             {
-                var x = _uow.VstsProjectRepository.GetQuery(withIncludes: true)
-                        .FirstOrDefault(z => z.Id == id);
+                var view = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+                        .Where(z => z.Id == vstsProject.Id)
+                        .Select(x=> new VstsProjectIntegrationView
+                        {
+                            Id = x.Id,
+                            ProjectId = x.ProjectId,
+                            ProjectName = x.Project.Name,
+                            VstsCompanyUrl = x.VstsCompanyUrl,
+                            VstsPat = string.IsNullOrEmpty(x.VstsPat) ? null : x.VstsPat.Substring(0, 3) + "..." + x.VstsPat.Substring(x.VstsPat.Length - 3, 3),
+                            VstsProjectId = x.VstsProjectId,
+                            VstsProjectName = x.VstsProjectName
+                        }).First();
 
-                return new VstsProjectIntegrationView
-                {
-                    Id = x.Id,
-                    ProjectId = x.ProjectId,
-                    ProjectName = x.Project.Name,
-                    VstsCompanyUrl = x.VstsCompanyUrl,
-                    VstsPat = string.IsNullOrEmpty(x.VstsPat) ? null : x.VstsPat.Substring(0, 3) + "..." + x.VstsPat.Substring(x.VstsPat.Length - 3, 3),
-                    VstsProjectId = x.VstsProjectId,
-                    VstsProjectName = x.VstsProjectName
-                };
+                return view ;
             }
             return null;
         }
@@ -378,7 +379,7 @@ namespace CoralTime.BL.Services
             item.VstsProjectName = view.VstsProjectName;
             item.VstsPat = string.IsNullOrEmpty(view.VstsPat) ? item.VstsPat : view.VstsPat;
 
-            return SaveAndGetVstsProjectView(view.Id);
+            return SaveAndGetVstsProjectView(item);
         }
 
         #endregion VSTS Project Integration
