@@ -67,7 +67,7 @@
     .ct-search-icon {
       position: absolute;
       left: 0;
-      top: 10px;
+      top: 6px;
     }
   }
 
@@ -467,17 +467,6 @@
     }
   }
 
-  .ct-grid-delete {
-    display: inline-block;
-    height: 25px;
-    vertical-align: middle;
-    color: $grid-text;
-  }
-
-  tr:hover .ct-grid-delete {
-    color: $main-blue;
-  }
-
   .ct-grid-blue {
     .ui-datatable {
       background: $main-blue;
@@ -532,11 +521,6 @@
   .ct-grid-container {
     display: block;
     margin-top: 20px;
-
-    .ui-cell-data {
-      top: 0 !important;
-      line-height: 25px;
-    }
 
     .ui-datatable-tablewrapper, .ui-datatable-scrollable-wrapper {
       th {

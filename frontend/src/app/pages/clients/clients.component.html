@@ -48,7 +48,7 @@
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'130px'}" header="Projects" styleClass="ct-info-col">
+            <p-column [style]="{'width':'130px'}" header="Projects" styleClass="ct-info-col ct-small-padding">
                 <ng-template let-col let-client="rowData" pTemplate="body">
                     <a (click)="openProjectAssignmentDialog(client)" class="ct-grid-link ct-grid-count">
                         {{client.projectsCount}}

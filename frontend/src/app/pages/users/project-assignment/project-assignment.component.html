@@ -26,7 +26,7 @@
                 <p-column field="projectName" header="{{assignedProjectsPagedResult?.count}} projects"
                           [style]="{'width':'600px'}" [sortable]="true"></p-column>
 
-                <p-column header="Access Level" [style]="{'width':'180px'}">
+                <p-column header="Access Level" [style]="{'width':'180px'}" styleClass="ct-access-level">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <ct-select *ngIf="userProject.id" [name]="'role'" #select1
                                    class="ct-users-project-edit-role ct-select-ellipse"
@@ -47,7 +47,7 @@
                     </ng-template>
                 </p-column>
 
-                <p-column header="Actions">
+                <p-column header="Actions" styleClass="ct-small-padding">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <a *ngIf="userProject.isProjectPrivate" #removeBtn
                            class="ct-grid-link ct-grid-delete"
@@ -72,7 +72,7 @@
                 <p-column field="name" header="{{notAssignedProjectsPagedResult?.count}} Unassigned"
                           [style]="{'width':'780px'}" [sortable]="true"></p-column>
 
-                <p-column header="Actions">
+                <p-column header="Actions" styleClass="ct-small-padding">
                     <ng-template let-col let-project="rowData" pTemplate="body">
                         <span class="ct-grid-button" (click)="addToUser(project, $event.target)">Assign to User</span>
                     </ng-template>
