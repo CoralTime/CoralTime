@@ -24,24 +24,33 @@
                      (onMoreContent)="loadLazy()"
                      (onEndScrollEvent)="onEndScroll()">
             <p-column field="projectName" header="Project" [sortable]="true" styleClass="ct-info-col">
-                <ng-template let-col let-connetion="rowData" pTemplate="body">
-                    <span (click)="openConnectionDialog(connetion)" class="ct-grid-link-text" title="{{ connetion.projectName }}">{{ connetion.projectName }}</span>
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <span (click)="openConnectionDialog(connection)" class="ct-grid-link-text" title="{{ connection.projectName }}">{{ connection.projectName }}</span>
                 </ng-template>
             </p-column>
 
             <p-column field="vstsProjectName" header="VSTS Project" [sortable]="true" styleClass="ct-info-col">
-                <ng-template let-col let-connetion="rowData" pTemplate="body">
-                    <span>{{ connetion.vstsProjectName }}</span>
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <span>{{ connection.vstsProjectName }}</span>
                 </ng-template>
             </p-column>
 
             <p-column field="vstsCompanyUrl" header="VSTS Company Url">
-                <ng-template let-col let-connetion="rowData" pTemplate="body">
-                    <div markdown [data]="connetion.vstsCompanyUrl"></div>
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <div markdown [data]="connection.vstsCompanyUrl"></div>
                 </ng-template>
             </p-column>
 
             <p-column field="vstsPat" header="VSTS Pat"></p-column>
+
+            <p-column header="Actions" styleClass="ct-small-padding">
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <a #removeBtn class="ct-grid-link ct-grid-delete"
+                       (click)="removeConnection(connection, removeBtn)">
+                        <i class="material-icons">clear</i>
+                    </a>
+                </ng-template>
+            </p-column>
         </p-dataTable>
     </div>
 </div>

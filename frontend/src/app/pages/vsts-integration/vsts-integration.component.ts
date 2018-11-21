@@ -75,6 +75,20 @@ export class VstsIntegrationComponent implements OnInit {
 		}
 	}
 
+	removeConnection(connection: VstsProjectConnection, target: HTMLElement): void {
+		target.classList.add('ct-loading');
+		this.vstsIntegrationService.odata.Delete(connection.id + '')
+			.subscribe(() => {
+					this.notificationService.success('Connection was deleted.');
+					this.loadLazy(null, true);
+				},
+				() => {
+					target.classList.remove('ct-loading');
+					this.notificationService.danger('Error deleting connection.');
+				}
+			);
+	}
+
 	private checkIsAllUsers(): void {
 		if (this.pagedResult && this.pagedResult.data.length >= this.pagedResult.count) {
 			this.isAllConnections = true;

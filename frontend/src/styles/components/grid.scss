@@ -39,19 +39,12 @@
     padding-bottom: 20px;
   }
 
-  tr {
+  td {
+    position: relative;
+    color: $grid-text;
     vertical-align: top;
-
-    td {
-      position: relative;
-      color: $grid-text;
-      word-break: break-all;
-      word-break: break-word;
-
-      &.ct-column-description {
-        vertical-align: top;
-      }
-    }
+    word-break: break-all;
+    word-break: break-word;
   }
 
   .ui-cell-data {
@@ -138,16 +131,20 @@
     }
 
     tbody td {
-      padding: 0.9em .5em;
+      padding: 17px 7px;
+
+      &.ct-small-padding {
+        padding: 11px 7px;
+      }
+
+      &.ct-access-level {
+        padding: 7px 7px;
+      }
     }
   }
 
   .ui-sortable-column:focus {
     outline: none;
-  }
-
-  .ct-description-col {
-    vertical-align: middle;
   }
 
   .ct-grid-description {
@@ -165,7 +162,7 @@
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    top: -2px;
+    top: -1px;
 
     & + .ct-grid-link-text {
       display: inline-block;
@@ -248,6 +245,16 @@
     color: $black;
   }
 
+  .ct-grid-delete {
+    display: inline-block;
+    color: $grid-text;
+
+    i {
+      position: relative;
+      top: 2px;
+    }
+  }
+
   tr:hover {
     .ct-grid-link-text {
       color: $main-blue;
@@ -260,6 +267,10 @@
       span {
         color: $main-blue;
       }
+    }
+
+    .ct-grid-delete {
+      color: $main-blue;
     }
   }
 
