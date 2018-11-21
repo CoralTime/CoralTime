@@ -6,6 +6,7 @@ export const EMAIL_PATTERN = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+
 @Injectable()
 export class ConstantService {
 	apiBaseUrl = '/api/v1';
+	adminApi = '/api/v1/Admin/';
 	profileApi: string = '/api/v1/Profile';
 	reportsApi: string = '/api/v1/Reports';
 	timeEntriesApi: string = '/api/v1/TimeEntries/';

@@ -3,13 +3,16 @@
     <i class="fa fa-search"></i>
 </div>
 
-<div #pageContainer class="ct-page-container ct-projects-page">
+<div #pageContainer class="ct-page-container ct-integration-page">
     <div class="ct-page-header">
         <h3 class="ct-header">Connections</h3>
 
         <div (click)="openConnectionDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New Connection</a>
         </div>
+        <button mat-raised-button class="ct-blue-button" (click)="updateVstsUsers()">
+            Update VSTS Users
+        </button>
     </div>
 
     <div class="ct-data-table-wrapper" (window:resize)="onResize()">

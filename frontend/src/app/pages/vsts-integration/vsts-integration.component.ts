@@ -1,15 +1,16 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
-import { User } from '../../models/user';
 import { PagedResult } from '../../services/odata';
+import { User } from '../../models/user';
+import { VstsProjectConnection } from '../../models/vsts-project-connection';
+import { ROWS_ON_PAGE } from '../../core/constant.service';
 import { AclService } from '../../core/auth/acl.service';
 import { AuthService } from '../../core/auth/auth.service';
-import { ROWS_ON_PAGE } from '../../core/constant.service';
 import { NotificationService } from '../../core/notification.service';
-import { VstsProjectConnection } from '../../models/vsts-project-connection';
 import { VstsIntegrationService } from '../../services/vsts-integration.service';
 import { VstsIntegrationFormComponent } from './form/vsts-integration-form.component';
+import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	selector: 'ct-vsts-integration',
@@ -34,6 +35,7 @@ export class VstsIntegrationComponent implements OnInit {
 	constructor(private aclService: AclService,
 	            private authService: AuthService,
 	            private dialog: MatDialog,
+	            private loadingService: LoadingMaskService,
 	            private notificationService: NotificationService,
 	            private vstsIntegrationService: VstsIntegrationService
 	) {
@@ -136,7 +138,7 @@ export class VstsIntegrationComponent implements OnInit {
 			return;
 		}
 
-		if (response.isNewUser) {
+		if (response.isNewConnection) {
 			this.notificationService.success('New connection has been successfully created.');
 		} else {
 			this.notificationService.success('Connection has been successfully changed.');
@@ -150,4 +152,16 @@ export class VstsIntegrationComponent implements OnInit {
 	onResize(): void {
 		this.resizeObservable.next();
 	}
+
+	updateVstsUsers(): void {
+		this.loadingService.addLoading();
+		this.vstsIntegrationService.updateVstsUsers()
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe(() => {
+					this.notificationService.success('Done');
+				},
+				() => {
+					this.notificationService.danger('Error');
+				});
+	};
 }

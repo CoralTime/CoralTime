@@ -51,7 +51,7 @@ const FULL_MANAGE_ITEMS = [
 	},
 	{
 		label: 'VSTS Integration',
-		icon: 'ct-admin-icon',
+		icon: 'ct-integration-icon',
 		routerLink: ['/vsts-integration'],
 		permission: 'roleViewIntegrationPage'
 	}

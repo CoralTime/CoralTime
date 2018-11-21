@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { Project } from '../../../models/project';
 import { VstsProjectConnection } from '../../../models/vsts-project-connection';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 import { ProjectsService } from '../../../services/projects.service';
 import { VstsIntegrationService } from '../../../services/vsts-integration.service';
-import { Project } from '../../../models/project';
-import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
 
 export class FormConnection {
 	id: number;
@@ -88,6 +88,11 @@ export class VstsIntegrationFormComponent implements OnInit {
 			.subscribe((projects) => {
 				this.projects = projects;
 				this.projectModel = this.projects.filter((project) => project.id === this.connection.projectId)[0];
+
+				if (this.model.projectName && !this.projectModel) {
+					this.defaultProjectName = this.model.projectName + ' (archived)';
+					this.isProjectSelectDisabled = true;
+				}
 			});
 	}
 
@@ -171,7 +176,6 @@ export class VstsIntegrationFormComponent implements OnInit {
 			isCompanyUrlValidObservable,
 			isVstsPatValidObservable
 		).map((response: boolean[]) => {
-				console.log(response);
 				return response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
 					.every((showError) => showError === false)
 			}
