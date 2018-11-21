@@ -652,6 +652,15 @@
         line-height: 26px;
         color: $main-blue;
       }
+
+      .ct-select-option:before {
+        left: 5px;
+        right: 5px;
+      }
+
+      .mat-list-item-content {
+        padding: 10px !important;
+      }
     }
 
     .ct-select-options {

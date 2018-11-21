@@ -10,6 +10,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/notification.service';
 import { VstsIntegrationService } from '../../services/vsts-integration.service';
 import { VstsIntegrationFormComponent } from './form/vsts-integration-form.component';
+import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 
 @Component({
 	selector: 'ct-vsts-integration',
@@ -34,6 +35,7 @@ export class VstsIntegrationComponent implements OnInit {
 	constructor(private aclService: AclService,
 	            private authService: AuthService,
 	            private dialog: MatDialog,
+	            private loadingService: LoadingMaskService,
 	            private notificationService: NotificationService,
 	            private vstsIntegrationService: VstsIntegrationService
 	) {
@@ -150,4 +152,16 @@ export class VstsIntegrationComponent implements OnInit {
 	onResize(): void {
 		this.resizeObservable.next();
 	}
+
+	updateVstsUsers(): void {
+		this.loadingService.addLoading();
+		this.vstsIntegrationService.updateVstsUsers()
+			.finally(() => this.loadingService.removeLoading())
+			.subscribe(() => {
+					this.notificationService.success('Done');
+				},
+				() => {
+					this.notificationService.danger('Error');
+				});
+	};
 }

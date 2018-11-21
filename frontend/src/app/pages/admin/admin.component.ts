@@ -9,8 +9,6 @@ import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.
 })
 
 export class AdminComponent {
-	memberId: number;
-	projectIds: number[];
 	filterStr: string = '';
 
 	constructor(private adminService: AdminService,
@@ -26,7 +24,7 @@ export class AdminComponent {
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
-				errResponse => {
+				() => {
 					this.notificationService.danger('Error');
 				});
 	};
@@ -38,7 +36,7 @@ export class AdminComponent {
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
-				errResponse => {
+				() => {
 					this.notificationService.danger('Error');
 				});
 	};
@@ -50,7 +48,7 @@ export class AdminComponent {
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
-				errResponse => {
+				() => {
 					this.notificationService.danger('Error');
 				});
 	};
@@ -62,7 +60,7 @@ export class AdminComponent {
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
-				errResponse => {
+				() => {
 					this.notificationService.danger('Error');
 				});
 	};
@@ -74,7 +72,7 @@ export class AdminComponent {
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
-				errResponse => {
+				() => {
 					this.notificationService.danger('Error');
 				});
 	};
@@ -86,32 +84,8 @@ export class AdminComponent {
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
-				errResponse => {
+				() => {
 					this.notificationService.danger('Error');
 				});
-    };
-
-    updateVstsProjects(): void {
-        this.loadingService.addLoading();
-        this.adminService.updateVstsProjects()
-            .finally(() => this.loadingService.removeLoading())
-            .subscribe(() => {
-                this.notificationService.success('Done');
-            },
-            errResponse => {
-                this.notificationService.danger('Error');
-            });
-    };
-
-    updateVstsUsers(): void {
-        this.loadingService.addLoading();
-        this.adminService.updateVstsUsers()
-            .finally(() => this.loadingService.removeLoading())
-            .subscribe(() => {
-                this.notificationService.success('Done');
-            },
-            errResponse => {
-                this.notificationService.danger('Error');
-            });
     };
 }

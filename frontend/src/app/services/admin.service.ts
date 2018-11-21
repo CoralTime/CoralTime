@@ -1,51 +1,35 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ODataConfiguration } from './odata/config';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { ConstantService } from '../core/constant.service';
 
 @Injectable()
 export class AdminService {
-	constructor(protected config: ODataConfiguration,
+	constructor(private constantService: ConstantService,
 	            private http: HttpClient) {
 	}
 
 	resetCache(): Observable<any> {
-		let url = '/api/v1/Admin/ResetCache/';
-		return this.http.get(url);
+		return this.http.get(this.constantService.adminApi + 'ResetCache');
 	};
 
 	updateManagersRoles(): Observable<any> {
-		let url = '/api/v1/Admin/UpdateManagerRoles/';
-		return this.http.get(url);
+		return this.http.get(this.constantService.adminApi + 'UpdateManagerRoles');
 	};
 
 	updateClaims(): Observable<any> {
-		let url = '/api/v1/Admin/UpdateClaims/';
-		return this.http.get(url);
+		return this.http.get(this.constantService.adminApi + 'UpdateClaims');
 	};
 
 	updateAvatars(): Observable<any> {
-		let url = '/api/v1/Admin/SaveImagesFromDbToStaticFiles/';
-		return this.http.get(url);
+		return this.http.get(this.constantService.adminApi + 'SaveImagesFromDbToStaticFiles');
 	};
 
 	sendNotificationFromProject(): Observable<any> {
-		let url = '/api/v1/Admin/NotificationsByProjectSettings/';
-		return this.http.get(url);
+		return this.http.get(this.constantService.adminApi + 'NotificationsByProjectSettings');
 	};
 
 	sendNotificationsWeekly(): Observable<any> {
-		let url = '/api/v1/Admin/NotificationsByProjectSettings/';
-			return this.http.get(url);
-    };
-
-    updateVstsProjects(): Observable<any> {
-        let url = '/api/v1/Admin/UpdateVstsProjects/';
-        return this.http.get(url);
-    };
-
-    updateVstsUsers(): Observable<any> {
-        let url = '/api/v1/Admin/UpdateVstsUsers/';
-        return this.http.get(url);
-    };
+		return this.http.get(this.constantService.adminApi + 'NotificationsByProjectSettings');
+	};
 }

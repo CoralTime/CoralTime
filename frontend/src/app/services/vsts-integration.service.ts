@@ -3,12 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { VstsProjectConnection } from '../models/vsts-project-connection';
+import { ConstantService } from '../core/constant.service';
 
 @Injectable()
 export class VstsIntegrationService {
 	readonly odata: ODataService<VstsProjectConnection>;
 
-	constructor(private http: HttpClient,
+	constructor(private constantService: ConstantService,
+	            private http: HttpClient,
 	            private odataFactory: ODataServiceFactory) {
 		this.odata = this.odataFactory.CreateService<VstsProjectConnection>('VstsProjectIntegration');
 	}
@@ -59,4 +61,8 @@ export class VstsIntegrationService {
 				return Observable.of(project);
 			});
 	}
+
+	updateVstsUsers(): Observable<any> {
+		return this.http.get(this.constantService.adminApi + 'UpdateVstsUsers');
+	};
 }
