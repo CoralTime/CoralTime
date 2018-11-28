@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace CoralTime.ViewModels.Vsts
 {
@@ -18,5 +19,9 @@ namespace CoralTime.ViewModels.Vsts
         public string VstsCompanyUrl { get; set; }
 
         public string VstsPat { get; set; }
+
+        public IEnumerable<VstsMemberView> Members { get; set; }
+
+        public int MembersCount { get; set; }
     }
 }

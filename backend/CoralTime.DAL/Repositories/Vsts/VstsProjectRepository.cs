@@ -10,6 +10,8 @@ namespace CoralTime.DAL.Repositories.Vsts
         public VstsProjectRepository(AppDbContext context, IMemoryCache memoryCache, string userId)
             : base(context, memoryCache, userId) { }
 
-        protected override IQueryable<VstsProject> GetIncludes(IQueryable<VstsProject> query) => query.Include(x => x.Project);
+        protected override IQueryable<VstsProject> GetIncludes(IQueryable<VstsProject> query) => query
+            .Include(x => x.Project)
+            .Include(x=> x.VstsProjectUsers);
     }
 }

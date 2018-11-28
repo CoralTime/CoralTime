@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models.Vsts
@@ -21,5 +22,7 @@ namespace CoralTime.DAL.Models.Vsts
         public string VstsCompanyUrl { get; set; }
 
         public string VstsPat { get; set; }
+
+        public List<VstsProjectUser> VstsProjectUsers { get; set; }
     }
 }

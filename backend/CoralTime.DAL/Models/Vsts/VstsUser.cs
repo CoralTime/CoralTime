@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoralTime.DAL.Models.Vsts
@@ -9,13 +10,15 @@ namespace CoralTime.DAL.Models.Vsts
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public string UserId { get; set; }
+        public int MemberId { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; }
+        [ForeignKey("MemberId")]
+        public Member.Member Member { get; set; }
 
         public string VstsUserId { get; set; }
 
         public string VstsUserName { get; set; }
+
+        public List<VstsProjectUser> VstsProjectUsers { get; set; }
     }
 }
