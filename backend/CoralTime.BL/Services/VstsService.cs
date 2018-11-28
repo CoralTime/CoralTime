@@ -201,7 +201,7 @@ namespace CoralTime.BL.Services
             foreach (var item in existVstsProjects)
             {
                 var projectUrl = item.VstsCompanyUrl + Constants.VstsProjectsUrl;
-                var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: item.VstsPat, out bool isSuccessStatusCode);
+                var projectResponce = GetVstsData(projectUrl, item.VstsPat, out bool isSuccessStatusCode);
                 var projects = JsonConvert.DeserializeObject<VstsProjectList>(projectResponce);
                 foreach (var vstsProject in projects.Value)
                 {
@@ -242,7 +242,7 @@ namespace CoralTime.BL.Services
                 .FirstOrDefault(x => x.Id == projectId);
 
             var projectUrl = existVstsProject.VstsCompanyUrl + Constants.VstsProjectsUrl;
-            var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: existVstsProject.VstsPat, out bool isSuccessStatusCode);
+            var projectResponce = GetVstsData(projectUrl, existVstsProject.VstsPat, out bool isSuccessStatusCode);
 
             if (!isSuccessStatusCode)
                 return isSuccessStatusCode;
@@ -270,7 +270,7 @@ namespace CoralTime.BL.Services
             var allMembers = new List<VstsMember>();
 
             var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
-            var teamResponce = GetVstsData(url: teamUrl, personalaccesstoken: project.VstsPat, out bool isSuccessStatusCode);
+            var teamResponce = GetVstsData(teamUrl, project.VstsPat, out bool isSuccessStatusCode);
             if (!isSuccessStatusCode)
                 return isSuccessStatusCode;
 
@@ -278,7 +278,7 @@ namespace CoralTime.BL.Services
             foreach (var team in teams.Value)
             {
                 var memberUrl = team.Url + Constants.VstsMembersUrl;
-                var memberResponce = GetVstsData(url: memberUrl, personalaccesstoken: project.VstsPat, out isSuccessStatusCode);
+                var memberResponce = GetVstsData(memberUrl, project.VstsPat, out isSuccessStatusCode);
 
                 if (!isSuccessStatusCode)
                     return isSuccessStatusCode;
@@ -342,12 +342,12 @@ namespace CoralTime.BL.Services
             foreach (var project in projects)
             {
                 var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
-                var teamResponce = GetVstsData(url: teamUrl, personalaccesstoken: project.VstsPat, out bool isSuccessStatusCode);
+                var teamResponce = GetVstsData(teamUrl, project.VstsPat, out bool isSuccessStatusCode);
                 var teams = JsonConvert.DeserializeObject<VstsTeamList>(teamResponce);
                 foreach (var team in teams.Value)
                 {
                     var memberUrl = team.Url + Constants.VstsMembersUrl;
-                    var memberResponce = GetVstsData(url: memberUrl, personalaccesstoken: project.VstsPat, out isSuccessStatusCode);
+                    var memberResponce = GetVstsData(memberUrl, project.VstsPat, out isSuccessStatusCode);
                     var members = JsonConvert.DeserializeObject<VstsMemberList>(memberResponce);
                     members.Value.ForEach(x => allMembers.Add(x));
                 }
