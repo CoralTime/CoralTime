@@ -8,8 +8,7 @@ using CoralTime.ViewModels.TimeEntries;
 using CoralTime.ViewModels.Vsts;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using NLog;
-using NLog.Fluent;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -28,7 +27,7 @@ namespace CoralTime.BL.Services
         private readonly ILogger _logger;
         private readonly IImageService _imageService;
 
-        public VstsService(UnitOfWork uow, IConfiguration config, ITimeEntryService timeEntryService, ILogger logger, IImageService imageService)
+        public VstsService(UnitOfWork uow, IConfiguration config, ITimeEntryService timeEntryService, ILogger<VstsService> logger, IImageService imageService)
         {
             _uow = uow;
             _config = config;
@@ -240,7 +239,7 @@ namespace CoralTime.BL.Services
         {
             var existVstsProject = _uow.VstsProjectRepository
                 .GetQuery(withIncludes: false, asNoTracking: true)
-                .FirstOrDefault(x => x.ProjectId == projectId);
+                .FirstOrDefault(x => x.Id == projectId);
 
             var projectUrl = existVstsProject.VstsCompanyUrl + Constants.VstsProjectsUrl;
             var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: existVstsProject.VstsPat, out bool isSuccessStatusCode);
@@ -267,7 +266,7 @@ namespace CoralTime.BL.Services
         {
             var project = _uow.VstsProjectRepository
                 .GetQuery(withIncludes: false)
-                .FirstOrDefault(x => x.ProjectId == projectId);
+                .FirstOrDefault(x => x.Id == projectId);
             var allMembers = new List<VstsMember>();
 
             var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
@@ -404,7 +403,7 @@ namespace CoralTime.BL.Services
                     var res = response.Content.ReadAsStringAsync().Result;
                     if (!isSuccessStatusCode)
                     {
-                        _logger.Warn($"Server {url} returned response with status {response.StatusCode}. Content: {res}");
+                        _logger.LogWarning($"Server {url} returned response with status {response.StatusCode}. Content: {res}");
                     }                    
                     return res;
                 }
@@ -418,7 +417,17 @@ namespace CoralTime.BL.Services
         public IQueryable<VstsProjectIntegrationView> Get()
         {
             return _uow.VstsProjectRepository.GetQuery()
-                    .Select(x => VstsProjectMapToView(x));
+                .Select(x=> new VstsProjectIntegrationView
+                {
+                    Id = x.Id,
+                    ProjectId = x.ProjectId,
+                    ProjectName = x.Project.Name,
+                    VstsCompanyUrl = x.VstsCompanyUrl,
+                    VstsPat = string.IsNullOrEmpty(x.VstsPat) ? null : x.VstsPat.Substring(0, 3) + "..." + x.VstsPat.Substring(x.VstsPat.Length - 3, 3),
+                    VstsProjectId = x.VstsProjectId,
+                    VstsProjectName = x.VstsProjectName,
+                    MembersCount = x.VstsProjectUsers.Count
+                });             
         }
 
         public bool Delete(int id)

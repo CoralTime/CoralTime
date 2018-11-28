@@ -38,6 +38,7 @@ namespace CoralTime.Common.Constants
             "/help",
             "/signin-oidc",
             "/admin",
+            "/vsts-integration",
             UrlSetPassword
         };
 
