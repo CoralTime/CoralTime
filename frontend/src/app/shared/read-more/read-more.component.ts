@@ -3,17 +3,17 @@ import { Component, Input, OnChanges } from '@angular/core';
 @Component({
 	selector: 'ct-read-more',
 	template: `
-			<div *ngIf="text">
-				<div class="ct-screen-mode" [innerHTML]="currentText"></div>
-				<div class="ct-print-mode" [innerHTML]="text"></div>
-        		<span *ngIf='showButton' (click)="showText()" class="ct-see-more">{{linkText}}</span>
-        	</div>
+        <div *ngIf="text">
+            <div class="ct-screen-mode" markdown [data]="currentText"></div>
+            <div class="ct-print-mode" markdown [data]="text"></div>
+            <span *ngIf='showButton' (click)="showText()" class="ct-see-more">{{linkText}}</span>
+        </div>
 	`
 })
 
 export class ReadMoreComponent implements OnChanges {
 	@Input('text') text: string;
-	@Input() maxLength: number = 250;
+	@Input() maxLength: number = 300;
 
 	currentText: string;
 	isCollapsed: boolean = true;

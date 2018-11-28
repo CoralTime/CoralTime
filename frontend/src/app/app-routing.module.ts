@@ -63,6 +63,10 @@ export const appRoutes: Routes = [
 		loadChildren: 'app/pages/reports/reports.module#ReportsModule'
 	},
 	{
+		path: 'vsts-integration',
+		loadChildren: 'app/pages/vsts-integration/vsts-integration.module#VstsIntegrationModule'
+	},
+	{
 		path: 'error',
 		component: ServerErrorComponent
 	},

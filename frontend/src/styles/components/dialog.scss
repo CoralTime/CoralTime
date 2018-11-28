@@ -67,7 +67,7 @@
     .ct-search-icon {
       position: absolute;
       left: 0;
-      top: 10px;
+      top: 6px;
     }
   }
 
@@ -91,6 +91,10 @@
 
     .ct-error-text, .ct-hint-text {
       margin-top: 5px;
+    }
+
+    .ct-error-text + .ct-error-text {
+      display: none;
     }
 
     .mat-input-wrapper {
@@ -463,17 +467,6 @@
     }
   }
 
-  .ct-grid-delete {
-    display: inline-block;
-    height: 25px;
-    vertical-align: middle;
-    color: $grid-text;
-  }
-
-  tr:hover .ct-grid-delete {
-    color: $main-blue;
-  }
-
   .ct-grid-blue {
     .ui-datatable {
       background: $main-blue;
@@ -528,11 +521,6 @@
   .ct-grid-container {
     display: block;
     margin-top: 20px;
-
-    .ui-cell-data {
-      top: 0 !important;
-      line-height: 25px;
-    }
 
     .ui-datatable-tablewrapper, .ui-datatable-scrollable-wrapper {
       th {
@@ -663,6 +651,15 @@
         font-size: $formControlFontSize;
         line-height: 26px;
         color: $main-blue;
+      }
+
+      .ct-select-option:before {
+        left: 5px;
+        right: 5px;
+      }
+
+      .mat-list-item-content {
+        padding: 10px !important;
       }
     }
 

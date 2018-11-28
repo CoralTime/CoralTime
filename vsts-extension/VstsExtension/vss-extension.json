@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.7.41",
+  "version": "0.0.7.94",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -47,24 +47,13 @@
   "contributions": [
     {
       "id": "CoralTime",
-      "type": "ms.vss-work-web.work-item-form-control",
+      "type": "ms.vss-work-web.work-item-form-page",
       "description": "Track your time in CoralTime",
       "targets": [
         "ms.vss-work-web.work-item-form"
       ],
       "properties": {
-        "inputs": [
-          {
-            "id": "SiteUrl",
-            "name": "Enter site url (Ex: coralteamdev.coraltime.io).",
-            "validation": {
-              "dataType": "String",
-              "isRequired": false
-            }
-          }
-        ],
-        "height": 700,
-        "name": "CoralTime Tracker",
+        "name": "CoralTime",
         "uri": "static/coraltime-index.html"
       }
     }

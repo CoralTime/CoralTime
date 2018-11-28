@@ -76,6 +76,14 @@
   background-size: 20px;
 }
 
+.ct-integration-icon {
+  background-image: url(./assets/icons/ct.sync1.svg);
+}
+
+.ct-preferences-icon {
+  background-image: url(./assets/icons/preferences.svg);
+}
+
 .ct-nav-menu li:hover, .ct-menu-item:hover, .active {
   .ct-timetracker-icon {
     background-image: url(./assets/icons/clock-copy-blue.svg);
@@ -107,6 +115,14 @@
 
   .ct-users-icon {
     background-image: url(./assets/icons/ct.users2.svg);
+  }
+
+  .ct-integration-icon {
+    background-image: url(./assets/icons/ct.sync2.svg);
+  }
+
+  .ct-preferences-icon {
+    background-image: url(./assets/icons/preferences-blue.svg);
   }
 }
 

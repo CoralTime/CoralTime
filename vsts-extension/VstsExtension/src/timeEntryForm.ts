@@ -5,23 +5,27 @@ import { ComboO } from "VSS/Controls/Combos";
 import { Grid } from "VSS/Controls/Grids";
 import Grids = require("VSS/Controls/Grids");
 import { IGridColumn, IGridRowInfo } from "VSS/Controls/Grids";
+import { ISettings } from "./models/settings";
 import { ITask, ITime, ITimeEntryFormValues, ITimeEntryRow, ITimeValues } from "./models/timeEntry";
 import { TimeEntryService } from "./services/timeEntryService";
 import { Notification } from "./utils/notification";
 
 export class TimeEntryForm {
-    private tasksOptions: ITask[];
-    private timeEntryRows: ITimeEntryRow[];
-    private timeEntryService: TimeEntryService;
-    private timeEntry: ITimeEntryFormValues = {
+    siteUrl: string;
+    timeEntry: ITimeEntryFormValues = {
         date: "",
         description: "",
         taskId: 0,
         timeActual: 0,
         timeEstimated: 0,
     };
-    private timeActual: ITime = {hours: 0, minutes: 0};
-    private timeEstimated: ITime = {hours: 0, minutes: 0};
+    timeActual: ITime = {hours: 0, minutes: 0};
+    timeEstimated: ITime = {hours: 0, minutes: 0};
+
+    private isConfigurationOpened: boolean;
+    private tasksOptions: ITask[];
+    private timeEntryRows: ITimeEntryRow[];
+    private timeEntryService: TimeEntryService;
 
     private dateCombo: ComboO<any>;
     private taskCombo: ComboO<any>;
@@ -29,17 +33,34 @@ export class TimeEntryForm {
     private actMinCombo: ComboO<any>;
     private estHoursCombo: ComboO<any>;
     private estMinCombo: ComboO<any>;
+    private urlCombo: ComboO<any>;
     private gridControl: Grid;
 
     private $description = $("#description");
     private $submitButton = $("#submitButton");
+    private $submitButton2 = $("#submitButton2");
 
     constructor() {
-        this.timeEntryService = new TimeEntryService();
-        this.initialize();
+        this.checkExtensionSettings();
+        $(".ct-toggle-page-button").on("click", () => {
+            this.togglePage(!this.isConfigurationOpened);
+        });
     }
 
-    initialize(): void {
+    private checkExtensionSettings(): void {
+        this.timeEntryService = new TimeEntryService();
+        this.timeEntryService.loadExtensionSettings().then((data: ISettings) => {
+            this.initConfigurationForm();
+            this.initCoralTimeForm();
+            if (data) {
+                this.togglePage(false);
+            } else {
+                this.togglePage(true);
+            }
+        });
+    }
+
+    initCoralTimeForm(): void {
         this.initDatePicker();
         this.initTaskSelect();
         this.initDescription();
@@ -51,20 +72,25 @@ export class TimeEntryForm {
         this.getTimeEntries();
         this.validateForm();
 
-        this.$submitButton.on("click", () => {
-            this.onSave();
+        this.$submitButton2.on("click", () => {
+            this.saveForm();
         });
     }
 
-    onSave(): void {
+    initConfigurationForm(): void {
+        this.initSiteUrlInput();
+        this.$submitButton.on("click", () => this.saveUrl());
+    }
+
+    saveForm(): void {
         this.timeEntryService.saveTimeEntry(this.timeEntry)
             .done(() => {
-                Notification.showNotification("Time entry saved successfully.", "success");
+                Notification.showNotification("Time entry saved successfully.", "success", "form");
                 this.resetForm();
                 this.getTimeEntries();
             })
             .fail(() => {
-                Notification.showNotification("Time entry creation failed.", "error");
+                Notification.showNotification("Time entry creation failed.", "error", "form");
             });
     }
 
@@ -79,6 +105,32 @@ export class TimeEntryForm {
         this.timeEntry.timeEstimated = 0;
     }
 
+    saveUrl(): void {
+        this.timeEntryService.setExtensionSettings(this.siteUrl).then(() => {
+            Notification.showNotification("Site url changed.", "success", "configuration");
+
+            setTimeout(() => {
+                Notification.removeGlobalErrors();
+                this.getTasksForProject();
+                this.getTimeEntries();
+                this.timeEntryService.updateUserSettings();
+                this.togglePage(false);
+            }, 5000);
+        });
+    }
+
+    togglePage(isConfigurationPage: boolean): void {
+        this.isConfigurationOpened = isConfigurationPage;
+        $(".ct-toggle-page-button").toggleClass("ct-configuration-opened", isConfigurationPage);
+        if (isConfigurationPage) {
+            $(".ct-coraltime-configuration").show();
+            $(".ct-coraltime").hide();
+        } else {
+            $(".ct-coraltime-configuration").hide();
+            $(".ct-coraltime").css("display", "flex");
+        }
+    }
+
     private validateForm(): void {
         const isDateValid = this.dateCombo.isValid();
         const isTaskValid = this.taskCombo.isValid();
@@ -89,7 +141,43 @@ export class TimeEntryForm {
         const isTimeValuesValid = !!this.timeEntry.timeActual || !!this.timeEntry.timeEstimated;
         const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
             && isEstHoursValid && isEstMinValid && isTimeValuesValid;
-        this.$submitButton.prop("disabled", !isFormValid);
+        this.$submitButton2.prop("disabled", !isFormValid);
+    }
+
+    // SITE URL
+
+    private initSiteUrlInput(): void {
+        this.siteUrl = this.timeEntryService.getExtensionSettings()
+            && this.timeEntryService.getExtensionSettings().siteUrl.substr(8);
+        const urlOptions: Combos.IDateTimeComboOptions = {
+            change: () => {
+                this.siteUrl = this.urlCombo.getValue();
+                this.validateUrl(this.urlCombo);
+            },
+            mode: "text",
+            value: this.siteUrl,
+        };
+
+        this.urlCombo = Controls.create(Combos.Combo, $(".ct-url"), urlOptions);
+        this.validateUrl(this.urlCombo);
+    }
+
+    private validateUrl(urlCombo: ComboO<any>): void {
+        const $urlError = $(".ct-url-container .ct-validation-error");
+        let errorMessage: string = "";
+
+        if (!urlCombo.getValue()) {
+            errorMessage = "Site url is required.";
+        }
+
+        if (!/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/.test(urlCombo.getValue())) {
+            errorMessage = "Invalid url.";
+        }
+
+        urlCombo.setInvalid(!!errorMessage);
+        $urlError.text(errorMessage);
+        $urlError.css("visibility", !!errorMessage ? "visible" : "hidden");
+        this.$submitButton.prop("disabled", !!errorMessage);
     }
 
     // DATE
@@ -150,7 +238,7 @@ export class TimeEntryForm {
                 this.tasksOptions = options;
                 this.initTaskSelect(this.getTaskNames());
             }, () => {
-                Notification.showGlobalError("Error loading tasks.");
+                Notification.showGlobalError("Error loading tasks.", "form");
             });
     }
 

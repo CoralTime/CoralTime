@@ -60,7 +60,7 @@
                     </ng-template>
                 </p-column>
 
-                <p-column header="Actions">
+                <p-column header="Actions" styleClass="ct-small-padding">
                     <ng-template let-col let-userProject="rowData" pTemplate="body">
                         <a *ngIf="userProject.memberName !== authUser.nickname
                                 && userProject.id
@@ -101,7 +101,7 @@
 
                 <p-column field="email" header="Email" [style]="{'width':'470px'}"></p-column>
 
-                <p-column header="Actions">
+                <p-column header="Actions" styleClass="ct-small-padding">
                     <ng-template let-col let-user="rowData" pTemplate="body" *ctIsGranted="'roleAssignProjectMember'">
                         <span class="ct-grid-button" (click)="addToProject(user, $event.target)">Add to Team</span>
                     </ng-template>

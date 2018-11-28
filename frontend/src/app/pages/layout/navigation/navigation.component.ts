@@ -48,6 +48,12 @@ const FULL_MANAGE_ITEMS = [
 		icon: 'ct-admin-icon',
 		routerLink: ['/admin'],
 		permission: 'roleViewAdminPanel'
+	},
+	{
+		label: 'VSTS Integration',
+		icon: 'ct-integration-icon',
+		routerLink: ['/vsts-integration'],
+		permission: 'roleViewIntegrationPage'
 	}
 ];
 

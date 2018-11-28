@@ -1,0 +1,59 @@
+<div class="ct-grid-search-filter">
+    <input class="ct-input-element" #gb placeholder="Search connection..." [(ngModel)]="filterStr">
+    <i class="fa fa-search"></i>
+</div>
+
+<div #pageContainer class="ct-page-container ct-integration-page">
+    <div class="ct-page-header">
+        <h3 class="ct-header">Connections</h3>
+
+        <div (click)="openConnectionDialog()" class="ct-add-link">
+            <a class="ct-manage-add">Create New Connection</a>
+        </div>
+        <button mat-raised-button class="ct-blue-button" (click)="updateVstsUsers()">
+            Update VSTS Users
+        </button>
+    </div>
+
+    <div class="ct-data-table-wrapper" (window:resize)="onResize()">
+        <p-dataTable class="ct-grid-container ct-grid-row-border"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'projectName'"
+                     [responsive]="true" [lazy]="true"
+                     [loading]="!isAllConnections"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column field="projectName" header="Project" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <span (click)="openConnectionDialog(connection)" class="ct-grid-link-text" title="{{ connection.projectName }}">{{ connection.projectName }}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="vstsProjectName" header="VSTS Project" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <span>{{ connection.vstsProjectName }}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="vstsCompanyUrl" header="VSTS Company Url">
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <div markdown [data]="connection.vstsCompanyUrl"></div>
+                </ng-template>
+            </p-column>
+
+            <p-column field="vstsPat" header="VSTS Pat"></p-column>
+
+            <p-column header="Actions" styleClass="ct-small-padding">
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <a #removeBtn class="ct-grid-link ct-grid-delete"
+                       (click)="removeConnection(connection, removeBtn)">
+                        <i class="material-icons">clear</i>
+                    </a>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
+</div>

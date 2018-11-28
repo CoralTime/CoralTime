@@ -49,7 +49,7 @@
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'140px'}" header="Team" styleClass="ct-info-col">
+            <p-column [style]="{'width':'140px'}" header="Team" styleClass="ct-info-col ct-small-padding">
                 <ng-template let-col let-project="rowData" pTemplate="body">
                     <span class="ct-user-circle-icon"></span>
                     <a (click)="openProjectUsersDialog(project)" class="ct-grid-link ct-grid-count">
@@ -59,7 +59,7 @@
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'130px'}" header="Tasks" styleClass="ct-info-col">
+            <p-column [style]="{'width':'130px'}" header="Tasks" styleClass="ct-info-col ct-small-padding">
                 <ng-template let-col let-project="rowData" pTemplate="body">
                     <a (click)="openProjectTasksDialog(project)" class="ct-grid-link ct-grid-count">
                         {{project.tasksCount}}
@@ -68,7 +68,7 @@
                 </ng-template>
             </p-column>
 
-            <p-column [style]="{'width':'90px'}" header="Settings">
+            <p-column [style]="{'width':'90px'}" header="Settings" styleClass="ct-small-padding">
                 <ng-template let-col let-project="rowData" pTemplate="body">
                     <a (click)="openProjectSettingsDialog(project)" class="ct-grid-settings-icon"></a>
                 </ng-template>

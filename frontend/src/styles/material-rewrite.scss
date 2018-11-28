@@ -73,11 +73,11 @@
 }
 
 .ui-widget-content a {
-  color: $nav-background;
-}
-
-.ui-widget-content a:hover {
   color: $main-blue;
+
+  &:hover {
+    color: $dark-blue;
+  }
 }
 
 .ui-datatable, .ui-cell-data {

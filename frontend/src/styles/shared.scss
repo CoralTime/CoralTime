@@ -6,8 +6,8 @@ $smallFont: 12px;
 
 $button-font-size: 17px;
 
-$baseFontFamily: $latoFont;
-$navFontFamily: $latoFont;
+$baseFontFamily: $kohoFont;
+$navFontFamily: $kohoFont;
 
 body, html {
   margin: 0;
@@ -218,37 +218,36 @@ h5 {
 }
 
 .ct-grid-search-filter {
-  $placeholderColor: hsla(0, 0%, 100%, .86);
+  $placeholderColor: hsla(0, 0%, 0%, .86);
 
   position: relative;
-  top: -59px;
-  right: 250px;
-  z-index: 1001;
-  float: right;
-
   box-sizing: border-box;
+  float: right;
+  top: -50px;
+  right: 250px;
   width: 180px;
-  height: 42px;
-  background: hsla(0, 0%, 100%, .23);
+  z-index: 1001;
 
   .fa-search {
     position: absolute;
-    left: 10px;
-    top: 5px;
+    left: 7px;
+    top: 9px;
     font-size: 16px;
-    color: rgba(255, 255, 255, 0.86);
+    color: $main-grey;
   }
 
   .ct-input-element {
     box-sizing: border-box;
-    color: #fff;
     width: 100%;
-    height: 42px;
+    height: 35px;
     padding: 0 10px 0 30px;
-    font-family: $latoFont;
-    font-weight: 300;
     background: none;
     border: 0;
+    border-bottom: 1px solid $gray-page-background;
+
+    &:focus {
+      border-color: $main-blue;
+    }
 
     &::-webkit-input-placeholder {
       color: $placeholderColor;
@@ -383,7 +382,7 @@ h5 {
 
   &.ct-grid-link:after {
     background-image: url(./assets/rolling-blue.gif);
-    top: 3px;
+    top: 5px;
     right: -20px;
   }
 

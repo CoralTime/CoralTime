@@ -197,10 +197,6 @@ ct-navigation {
       left: -8px;
     }
 
-    .ct-menu-item {
-      line-height: 52px;
-    }
-
     .ct-userpic .ct-menu-item {
       line-height: 70px;
       border-bottom: 1px solid $gray-page-background;
@@ -226,6 +222,11 @@ ct-navigation {
     }
 
     .ct-menu-item {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 52px;
+
       .mat-icon {
         width: 22px;
         height: 28px;

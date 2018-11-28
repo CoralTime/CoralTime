@@ -41,7 +41,7 @@
                     </ng-template>
                 </p-column>
 
-                <p-column field="projectDel" header="Actions">
+                <p-column field="projectDel" header="Actions" styleClass="ct-small-padding">
                     <ng-template let-col let-projectTask="rowData" pTemplate="body">
                         <a *ngIf="projectTask.projectId" #removeBtn
                            class="ct-grid-link ct-grid-delete"
