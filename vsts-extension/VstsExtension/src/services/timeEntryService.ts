@@ -1,27 +1,20 @@
-import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
-import { ITimeEntry, ITimeEntryFormValues } from "../models/timeEntry";
+import { ITask, ITimeEntry, ITimeEntryFormValues, ITimeEntryRow } from "../models/timeEntry";
 import { ConfigurationService } from "./configurationService";
 
-export class TimeEntryService {
-    private configService: ConfigurationService;
-    private extensionSettings: ISettings;
-    private projectContext: IProjectContext;
-
+export class TimeEntryService extends ConfigurationService {
     constructor() {
-        this.configService = new ConfigurationService();
-        this.configService.accessTokenPromise.then(() => {
-            this.loadConfiguration();
-        });
+        super();
     }
 
-    getTasksForProject(): PromiseLike<any> {
-        return this.configService.accessTokenPromise.then(() => $.get(this.extensionSettings.siteUrl
-            + "/api/v1/VSTS/Tasks?ProjectId=" + this.projectContext.projectId));
+    getTasksForProject(): Promise<ITask[]> {
+        return Promise.all([this.accessTokenPromise, this.extensionSettingsPromise])
+            .then(() => $.get(this.getExtensionSettings().siteUrl
+                + "/api/v1/VSTS/Tasks?ProjectId=" + this.projectContext.projectId));
     }
 
-    getTimeEntries(): PromiseLike<any> {
-        return Promise.all([this.configService.accessTokenPromise, this.configService.workItemFormPromise])
-            .then(() => $.get(this.extensionSettings.siteUrl + "/api/v1/VSTS/TimeEntries?ProjectId="
+    getTimeEntries(): Promise<ITimeEntryRow[]> {
+        return Promise.all([this.accessTokenPromise, this.extensionSettingsPromise, this.workItemFormPromise])
+            .then(() => $.get(this.getExtensionSettings().siteUrl + "/api/v1/VSTS/TimeEntries?ProjectId="
                 + this.projectContext.projectId + "&WorkItemId=" + this.getWorkItemOptions()["System.Id"]));
     }
 
@@ -45,15 +38,7 @@ export class TimeEntryService {
             workItemId: String(this.getWorkItemOptions()["System.Id"]),
         };
 
-        return $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/TimeEntries", JSON.stringify(timeEntry));
-    }
-
-    private getUserSettings(): IUserSettings {
-        return this.configService.getUserSettings();
-    }
-
-    private getWorkItemOptions(): IWorkItemOptions {
-        return this.configService.getWorkItemOptions();
+        return $.post(this.getExtensionSettings().siteUrl + "/api/v1/VSTS/TimeEntries", JSON.stringify(timeEntry));
     }
 
     private formatDescription(description: string): string {
@@ -65,10 +50,5 @@ export class TimeEntryService {
 
     private formatDate(date: string): string {
         return date.split("/").join("-");
-    }
-
-    private loadConfiguration(): void {
-        this.extensionSettings = this.configService.getExtensionSettings();
-        this.projectContext = this.configService.getExtensionContext();
     }
 }

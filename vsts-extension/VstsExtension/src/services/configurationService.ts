@@ -1,23 +1,24 @@
 import Q = require("q");
 import { IPromise } from "q";
-import services = require("TFS/WorkItemTracking/Services");
+import Services = require("TFS/WorkItemTracking/Services");
 import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
 import { Notification } from "../utils/notification";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
+    extensionSettingsPromise: IPromise<ISettings>;
     workItemFormPromise: PromiseLike<void>;
 
+    protected projectContext: IProjectContext = this.getExtensionContext();
+    protected userSettings: IUserSettings;
     private accessToken: string;
     private extensionSettings: ISettings;
-    private userSettings: IUserSettings;
     private workItemOptions: IWorkItemOptions;
 
     constructor() {
-        this.setExtensionSettings();
         this.loadWorkItemOptions();
         this.loadAccessToken();
-        this.getSetupOptions().then((userSettings: IUserSettings) => {
+        this.loadUserSettings().then((userSettings: IUserSettings) => {
             this.userSettings = userSettings;
         });
     }
@@ -38,38 +39,26 @@ export class ConfigurationService {
         return this.extensionSettings;
     }
 
-    getUserSettings(): IUserSettings {
-        return this.userSettings;
-    }
-
     getWorkItemOptions(): IWorkItemOptions {
         return this.workItemOptions;
     }
 
-    private getSetupOptions(): IPromise<IUserSettings> {
-        const deferred = Q.defer<IUserSettings>();
-        this.getKeyValueFromStorage("userSettings").then((res: IUserSettings) => {
-            if (res && res.expirationDate > new Date().getTime()) {
-                deferred.resolve(res);
-            } else {
-                this.loadSetupOptions().then((res) => {
-                    deferred.resolve(res);
-                });
-            }
-        });
-
-        return deferred.promise;
-    }
-
-    private getKeyValueFromStorage(key: string): IPromise<any> {
+    getKeyValueFromStorage(key: string, scopeType: "User" | null): IPromise<any> {
         const deferred = Q.defer<any>();
         VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
-            // Get value from user scope
-            dataService.getValue(key, {scopeType: "User"}).then((value) => {
+            // Get value from scope
+            dataService.getValue(key, scopeType ? {scopeType: "User"} : null).then((value) => {
                 deferred.resolve(value);
             });
         });
         return deferred.promise;
+    }
+
+    setKeyValueInStorage(key: string, value: any, scopeType: "User" | null): PromiseLike<void> {
+        return VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            // Set value in scope
+            dataService.setValue(key, value, scopeType ? {scopeType: "User"} : null);
+        });
     }
 
     private loadAccessToken(): void {
@@ -79,52 +68,12 @@ export class ConfigurationService {
         });
     }
 
-    private loadSetupOptions(): IPromise<IUserSettings> {
-        const deferred = Q.defer<IUserSettings>();
-        const data = {
-            VstsProjectId: this.getExtensionContext().projectId,
-            VstsUserId: this.getExtensionContext().userId,
-        };
-
-        this.accessTokenPromise.then(() => {
-            $.post(this.extensionSettings.siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
-                .done((res: IUserSettings) => {
-                    const userSettings = {
-                        expirationDate: new Date().getTime() + 24 * 3600 * 1000,
-                        memberId: res.memberId,
-                        projectId: res.projectId,
-                    };
-                    this.setKeyValueInStorage("userSettings", userSettings);
-                    deferred.resolve(userSettings);
-                })
-                .fail(() => {
-                    Notification.showGlobalError("Error loading project settings.");
-                    deferred.reject(null);
-                });
-        });
-
-        return deferred.promise;
-    }
-
     private loadWorkItemOptions(): void {
-        this.workItemFormPromise = services.WorkItemFormService.getService().then((service) => {
+        this.workItemFormPromise = Services.WorkItemFormService.getService().then((service) => {
             return service.getFieldValues(["System.Id", "System.Title", "System.WorkItemType"]).then((value: any) => {
                 return this.workItemOptions = value;
             });
         });
-    }
-
-    private setExtensionSettings(): void {
-        const siteUrl = VSS.getConfiguration().witInputs["SiteUrl"];
-
-        if (!/^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/.test(siteUrl)) {
-            Notification.showGlobalError(siteUrl + " has invalid format.");
-            return;
-        }
-
-        this.extensionSettings = {
-            siteUrl: "https://" + siteUrl,
-        };
     }
 
     private setHeaders(): void {
@@ -137,10 +86,79 @@ export class ConfigurationService {
         });
     }
 
-    private setKeyValueInStorage(key: string, value: any): void {
-        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
-            // Set value in user scope
-            dataService.setValue(key, value, {scopeType: "User"});
+    // EXTENSION SETTINGS
+
+    getUserSettings(): IUserSettings {
+        return this.userSettings;
+    }
+
+    loadUserSettings(): IPromise<IUserSettings> {
+        const deferred = Q.defer<IUserSettings>();
+        this.getKeyValueFromStorage("userSettings", "User").then((res: IUserSettings) => {
+            if (res && res.expirationDate > new Date().getTime()) {
+                deferred.resolve(res);
+            } else {
+                this.updateUserSettings().then((res: IUserSettings) => {
+                    deferred.resolve(res);
+                });
+            }
         });
+
+        return deferred.promise;
+    }
+
+    updateUserSettings(): IPromise<IUserSettings> {
+        const deferred = Q.defer<IUserSettings>();
+        const data = {
+            VstsProjectId: this.getExtensionContext().projectId,
+            VstsUserId: this.getExtensionContext().userId,
+        };
+
+        Promise.all([this.accessTokenPromise, this.extensionSettingsPromise]).then(() => {
+            $.post(this.getExtensionSettings().siteUrl + "/api/v1/VSTS/Setup", JSON.stringify(data))
+                .done((res: IUserSettings) => {
+                    const userSettings = {
+                        expirationDate: new Date().getTime() + 24 * 3600 * 1000,
+                        memberId: res.memberId,
+                        projectId: res.projectId,
+                    };
+                    this.setKeyValueInStorage("userSettings", userSettings, "User");
+                    deferred.resolve(userSettings);
+                })
+                .fail(() => {
+                    Notification.showGlobalError("Error loading project settings.", "form");
+                    deferred.reject(null);
+                });
+        });
+
+        return deferred.promise;
+    }
+
+    // USER SETTINGS
+
+    loadExtensionSettings(): IPromise<ISettings> {
+        const deferred = Q.defer<ISettings>();
+        this.getKeyValueFromStorage("extensionSettings", null).then((res: ISettings) => {
+            this.extensionSettings = {
+                siteUrl: "https://" + res.siteUrl,
+            };
+
+            deferred.resolve(this.extensionSettings);
+        });
+
+        return this.extensionSettingsPromise = deferred.promise;
+    }
+
+    setExtensionSettings(siteUrl: string): IPromise<any> {
+        const deferred = Q.defer();
+        this.setKeyValueInStorage("extensionSettings", {siteUrl}, null).then(() => {
+            this.extensionSettings = {
+                siteUrl: "https://" + siteUrl,
+            };
+
+            deferred.resolve();
+        });
+
+        return deferred.promise;
     }
 }

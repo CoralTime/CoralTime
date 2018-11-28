@@ -5,8 +5,19 @@
   --success-color: rgba(24, 185, 158, 1);
 }
 
+.ct-coraltime-configuration {
+  display: none;
+  padding: 20px;
+  width: 390px;
+}
+
+.ct-configuration {
+  display: inline-block;
+  width: 100%;
+}
+
 .ct-coraltime {
-  display: flex;
+  display: none;
   padding: 20px;
 }
 
@@ -40,7 +51,7 @@
   resize: none;
 }
 
-.ct-coraltime label {
+label {
   padding: 0 5px;
   width: 100%;
   overflow: hidden;
@@ -147,4 +158,30 @@
 
 .ct-grid {
   height: 100%;
+}
+
+/* TOGGLE PAGE */
+
+.ct-toggle-page-button {
+  position: absolute;
+  top: 8px;
+  left: 350px;
+  width: auto;
+  height: auto;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.ct-toggle-page-button:before {
+  display: inline-block;
+  content: "\E990";
+  font-family: "Bowtie";
+  font-size: 14px;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ct-toggle-page-button.ct-configuration-opened:before {
+  content: "\E98F";
 }
