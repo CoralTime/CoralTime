@@ -330,6 +330,21 @@ namespace CoralTime.BL.Services
                         _uow.VstsUserRepository.Delete(user);  
                         _uow.Save();
                     }
+                    else
+                    {
+                        var item = _uow.VstsProjectUserRepository.GetQuery()
+                            .FirstOrDefault(x => x.VstsProjectId == project.Id && x.VstsUserId == user.Id);
+                        if (item == null)
+                        {
+                            var vstsProjectUser = new VstsProjectUser
+                            {
+                                VstsProjectId = project.Id,
+                                VstsUserId = user.Id
+                            };
+                            _uow.VstsProjectUserRepository.Insert(vstsProjectUser);
+                            _uow.Save();
+                        }
+                    }
                 }
             }
             return isSuccessStatusCode;
