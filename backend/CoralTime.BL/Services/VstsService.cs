@@ -238,7 +238,7 @@ namespace CoralTime.BL.Services
         public bool UpdateVstsProject(int projectId)
         {
             var existVstsProject = _uow.VstsProjectRepository
-                .GetQuery(withIncludes: false, asNoTracking: true)
+                .GetQuery(withIncludes: false)
                 .FirstOrDefault(x => x.Id == projectId);
 
             var projectUrl = existVstsProject.VstsCompanyUrl + Constants.VstsProjectsUrl;
@@ -432,9 +432,17 @@ namespace CoralTime.BL.Services
 
         public bool Delete(int id)
         {
-            var item = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+            var projectToDelete = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
                 .SingleOrDefault(x => x.Id == id);
-            _uow.VstsProjectRepository.Delete(item);
+
+            var linksToDelete = _uow.VstsProjectUserRepository.GetQuery()
+                .Where(x => x.VstsProjectId == projectToDelete.Id).ToList();
+            var vstsUsersToDelete = _uow.VstsUserRepository.GetQuery()
+                .Where(x => x.VstsProjectUsers.Count == 0)
+                .ToList();
+            _uow.VstsProjectUserRepository.DeleteRange(linksToDelete);
+            _uow.VstsProjectRepository.Delete(projectToDelete);
+            _uow.VstsUserRepository.DeleteRange(vstsUsersToDelete);
             return _uow.Save() > 0;
         }
 
@@ -486,13 +494,13 @@ namespace CoralTime.BL.Services
             item.VstsPat = string.IsNullOrEmpty(view.VstsPat) ? item.VstsPat : view.VstsPat;
 
             var res = _uow.Save();
-            if (res > 0)
-            {
+            //if (res > 0)
+            //{
                 return VstsProjectMapToView(
                     _uow.VstsProjectRepository.GetQuery()
                     .FirstOrDefault(x => x.Id == view.Id));
-            }
-            return null;
+            //}
+            //return null;
         }
 
         public IEnumerable<VstsMemberView> GetMembersByProjectId(int id)
