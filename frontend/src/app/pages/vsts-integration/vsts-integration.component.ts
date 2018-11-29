@@ -140,14 +140,18 @@ export class VstsIntegrationComponent implements OnInit {
 
 		if (response.isNewConnection) {
 			this.notificationService.success('New connection has been successfully created.');
+			this.loadLazy(null, true);
 		} else {
 			this.notificationService.success('Connection has been successfully changed.');
+			this.loadLazy(null);
 		}
-
-		this.loadLazy(null, true);
 	}
 
 	// GENERAL
+
+	formatUrlForMarkdown(url: string): string {
+		return '<' + url + '>';
+	}
 
 	onResize(): void {
 		this.resizeObservable.next();

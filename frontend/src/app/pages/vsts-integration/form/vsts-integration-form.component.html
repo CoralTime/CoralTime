@@ -33,14 +33,16 @@
             </div>
 
             <div>
-                <label class="ct-form-label">Company Url</label>
+                <label class="ct-form-label">Company Url (Ex. https://organisation.domain.com)</label>
                 <div class="ct-required-field-container">
                     <input class="ct-input ct-full-width" name="vstsCompanyUrl" #vstsCompanyUrl="ngModel"
                            [(ngModel)]="model.vstsCompanyUrl"
                            (ngModelChange)="showErrors[2] = false"
+                           [pattern]="urlPattern"
                            maxlength="200" required/>
                 </div>
                 <div *ngIf="showErrors[2] && vstsCompanyUrl.errors.required" class="ct-error-text">Company url is required!</div>
+                <div *ngIf="showErrors[2] && vstsCompanyUrl.errors.pattern" class="ct-error-text">Company url is invalid.</div>
             </div>
 
             <div>

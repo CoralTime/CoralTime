@@ -3,12 +3,14 @@ import { NgForm } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Project } from '../../../models/project';
 import { VstsProjectConnection } from '../../../models/vsts-project-connection';
+import { URL_PATTERN } from '../../../core/constant.service';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 import { ProjectsService } from '../../../services/projects.service';
 import { VstsIntegrationService } from '../../../services/vsts-integration.service';
 
 export class FormConnection {
 	id: number;
+	membersCount: number;
 	projectId: number;
 	projectName: string;
 	vstsProjectId: number;
@@ -19,6 +21,7 @@ export class FormConnection {
 	static formConnection(connection: VstsProjectConnection) {
 		let instance = new this;
 		instance.id = connection.id;
+		instance.membersCount = connection.membersCount;
 		instance.projectId = connection.projectId;
 		instance.projectName = connection.projectName;
 		instance.vstsProjectId = connection.vstsProjectId;
@@ -30,15 +33,16 @@ export class FormConnection {
 	}
 
 	toConnection(connection: VstsProjectConnection, isPatChanged: boolean = false) {
-		connection.id = this.id;
-		connection.projectId = this.projectId;
-		connection.projectName = this.projectName;
-		connection.vstsProjectId = this.vstsProjectId;
-		connection.vstsProjectName = this.vstsProjectName;
-		connection.vstsCompanyUrl = this.vstsCompanyUrl;
-		connection.vstsPat = this.id && !isPatChanged ? null : this.vstsPat;
-
-		return connection;
+		return new VstsProjectConnection({
+			id: connection.id,
+			membersCount: connection.membersCount,
+			projectId: this.projectId,
+			projectName: this.projectName,
+			vstsProjectId: this.vstsProjectId,
+			vstsProjectName: this.vstsProjectName,
+			vstsCompanyUrl: this.vstsCompanyUrl,
+			vstsPat: connection.id && !isPatChanged ? null : this.vstsPat,
+		})
 	}
 }
 
@@ -62,6 +66,7 @@ export class VstsIntegrationFormComponent implements OnInit {
 	isValidateLoading: boolean;
 	model: FormConnection;
 	patPattern = /^[a-zA-Z0-9]+$/;
+	urlPattern = URL_PATTERN;
 	showErrors: boolean[] = []; // [showCoraltimeProjectError, showVstsProjectError, showCompanyUrlError, showVstsPatError]
 	submitButtonText: string;
 
@@ -120,14 +125,13 @@ export class VstsIntegrationFormComponent implements OnInit {
 
 	private submit(form: NgForm): void {
 		const isVstsPatChanged: boolean = !form.controls['vstsPat'].pristine;
+		const updatedConnection = this.model.toConnection(this.connection, isVstsPatChanged);
 		let submitObservable: Observable<any>;
 
-		this.connection = this.model.toConnection(this.connection, isVstsPatChanged);
-
-		if (this.connection.id) {
-			submitObservable = this.vstsIntegrationService.odata.Put(this.connection, this.connection.id.toString());
+		if (updatedConnection.id) {
+			submitObservable = this.vstsIntegrationService.odata.Put(updatedConnection, updatedConnection.id.toString());
 		} else {
-			submitObservable = this.vstsIntegrationService.odata.Post(this.connection);
+			submitObservable = this.vstsIntegrationService.odata.Post(updatedConnection);
 		}
 
 		this.isRequestLoading = true;
@@ -136,7 +140,8 @@ export class VstsIntegrationFormComponent implements OnInit {
 			this.isRequestLoading = false;
 			this.loadingService.removeLoading();
 		})
-			.subscribe(() => {
+			.subscribe((res: VstsProjectConnection) => {
+					this.connection = new VstsProjectConnection(res);
 					this.onSubmit.emit({
 						isNewConnection: this.isNewConnection
 					});
