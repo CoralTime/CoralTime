@@ -46,6 +46,8 @@ namespace CoralTime.DAL
 
         public DbSet<VstsProject> VstsProjects { get; set; }
 
+        public DbSet<VstsProjectUser> VstsProjectUsers { get; set; }
+
         public Task<int> SaveChangesAsync()
         {
             return base.SaveChangesAsync();
@@ -130,6 +132,24 @@ namespace CoralTime.DAL
 
             builder.Entity<VstsProject>()
                 .HasOne(p => p.Project);
+
+            builder.Entity<VstsUser>()
+                .HasOne(u => u.Member);
+
+            builder.Entity<VstsProjectUser>()
+                .HasIndex(t => new
+                {
+                    t.VstsUserId,
+                    t.VstsProjectId
+                }).IsUnique();
+
+            builder.Entity<VstsProjectUser>()
+                .HasOne(pu=> pu.VstsProject)
+                .WithMany(p=> p.VstsProjectUsers).HasForeignKey(k=> k.VstsProjectId).OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<VstsProjectUser>()
+                .HasOne(pu => pu.VstsUser)
+                .WithMany(p => p.VstsProjectUsers).HasForeignKey(k => k.VstsUserId).OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(builder);
         }

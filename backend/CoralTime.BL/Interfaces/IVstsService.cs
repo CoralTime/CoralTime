@@ -30,5 +30,6 @@ namespace CoralTime.BL.Interfaces
         VstsProjectIntegrationView Update(VstsProjectIntegrationView vstsProjectIntegrationView);
 
         bool Delete(int id);
+        IEnumerable<VstsMemberView> GetMembersByProjectId(int id);
     }
 }

@@ -5,5 +5,9 @@
         void UpdateVstsProjects();
 
         void UpdateVstsUsers();
+
+        bool UpdateVstsUsersByProject(int projectId);
+
+        bool UpdateVstsProject(int projectId);
     }
 }

@@ -1,77 +1,33 @@
 ﻿using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
+using CoralTime.DAL.Models.LogChanges;
+using CoralTime.DAL.Repositories.Member;
+using CoralTime.DAL.Repositories.User;
 using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CoralTime.DAL.Models.LogChanges;
-using CoralTime.DAL.Repositories.Member;
-using CoralTime.DAL.Repositories.User;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using MemberActionTypes = CoralTime.Common.Constants.Constants.MemberActionTypes;
-using CoralTime.DAL.Repositories.Vsts;
 
 namespace CoralTime.DAL.Repositories
 {
-    public class UnitOfWork
+    public partial class UnitOfWork
     {
-        #region List of Repositories 
-
-        private ProjectRepository _projectRepository;
-        public ProjectRepository ProjectRepository => _projectRepository ?? (_projectRepository = new ProjectRepository(AppDbContext, MemoryCache, UserId));
-
-        private ProjectRoleRepository _projectRoleRepository;
-        public ProjectRoleRepository ProjectRoleRepository => _projectRoleRepository ?? (_projectRoleRepository = new ProjectRoleRepository(AppDbContext, MemoryCache, UserId));
-
-        private TimeEntryRepository _timeEntryRepository;
-        public TimeEntryRepository TimeEntryRepository => _timeEntryRepository ?? (_timeEntryRepository = new TimeEntryRepository(AppDbContext, MemoryCache, UserId));
-
-        private ClientRepository _clientRepository;
-        public ClientRepository ClientRepository => _clientRepository ?? (_clientRepository = new ClientRepository(AppDbContext, MemoryCache, UserId));
-
-        private TaskTypeRepository _taskTypeRepository;
-        public TaskTypeRepository TaskTypeRepository => _taskTypeRepository ?? (_taskTypeRepository = new TaskTypeRepository(AppDbContext, MemoryCache, UserId));
-
-        private MemberRepository _memberRepository;
-        public MemberRepository MemberRepository => _memberRepository ?? (_memberRepository = new MemberRepository(AppDbContext, MemoryCache, UserId));
-
-        private UserRepository _userRepository;
-        public UserRepository UserRepository => _userRepository ?? (_userRepository = new UserRepository(AppDbContext, MemoryCache, UserId));
-
-        private MemberProjectRoleRepository _memberProjectRoleRepository;
-        public MemberProjectRoleRepository MemberProjectRoleRepository => _memberProjectRoleRepository ?? (_memberProjectRoleRepository = new MemberProjectRoleRepository(AppDbContext, MemoryCache, UserId));
-
-        private UserForgotPassRequestRepository _userForgotPassRequestRepository;
-        public UserForgotPassRequestRepository UserForgotPassRequestRepository => _userForgotPassRequestRepository ?? (_userForgotPassRequestRepository = new UserForgotPassRequestRepository(AppDbContext, MemoryCache, UserId));
-
-        private MemberImageRepository _memberImageRepository;
-        public MemberImageRepository MemberImageRepository => _memberImageRepository ?? (_memberImageRepository = new MemberImageRepository(AppDbContext, MemoryCache, UserId));
-
-        private ReportsSettingsRepository _reportsSettingsRepository;
-        public ReportsSettingsRepository ReportsSettingsRepository => _reportsSettingsRepository ?? (_reportsSettingsRepository = new ReportsSettingsRepository(AppDbContext, MemoryCache, UserId));
-        
-        private MemberActionRepository _memberActionRepository;
-        public MemberActionRepository MemberActionRepository => _memberActionRepository ?? (_memberActionRepository = new MemberActionRepository(AppDbContext, MemoryCache, UserId));
-
-        private VstsProjectRepository _vstsProjectRepository;
-        public VstsProjectRepository VstsProjectRepository => _vstsProjectRepository ?? (_vstsProjectRepository = new VstsProjectRepository(AppDbContext, MemoryCache, UserId));
-
-        private VstsUserRepository _vstsUserRepository;
-        public VstsUserRepository VstsUserRepository => _vstsUserRepository ?? (_vstsUserRepository = new VstsUserRepository(AppDbContext, MemoryCache, UserId));
-
-        #endregion
-
         private AppDbContext AppDbContext { get; }
+
         private IMemoryCache MemoryCache { get; }
+
         private string UserId { get; }
 
         public Models.Member.Member MemberCurrent { get; }
+
         public Models.Member.Member MemberImpersonated { get; }
 
         public UnitOfWork(AppDbContext appDbContext, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
@@ -97,17 +53,17 @@ namespace CoralTime.DAL.Repositories
             UserRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
             UserRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
         }
-        
+
         #region Get User Names from Http Context from Headers
 
         private string GetUserIdFromHttpContext(IHttpContextAccessor httpContextAccessor) =>
             httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Properties.FirstOrDefault().Value == JwtClaimTypes.Subject)?.Value;
 
-        private string GetUserNameCurrentFromHttpContext(IHttpContextAccessor httpContextAccessor) => 
+        private string GetUserNameCurrentFromHttpContext(IHttpContextAccessor httpContextAccessor) =>
             httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value;
 
-        #endregion
-        
+        #endregion Get User Names from Http Context from Headers
+
         #region Get Impersonated UserName From HttpContext
 
         private string GetUserNameImpersonatedFromHttpContext(IHttpContextAccessor httpContextAccessor)
@@ -133,16 +89,16 @@ namespace CoralTime.DAL.Repositories
             return userNameCurrentFromHeader;
         }
 
-        private bool HasAuthorizationHeader(IHttpContextAccessor httpContextAccessor) => 
+        private bool HasAuthorizationHeader(IHttpContextAccessor httpContextAccessor) =>
             GetHeaderValue(httpContextAccessor, Constants.HeaderNameAuthorization, out var headerAuthorizationValue);
 
-        private bool HasImpersonationHeader(IHttpContextAccessor httpContextAccessor, out StringValues headerImpersonatedUserValue) => 
+        private bool HasImpersonationHeader(IHttpContextAccessor httpContextAccessor, out StringValues headerImpersonatedUserValue) =>
             GetHeaderValue(httpContextAccessor, Constants.ImpersonatedUserNameHeader, out headerImpersonatedUserValue);
 
-        private bool GetHeaderValue(IHttpContextAccessor httpContextAccessor, string headerName, out StringValues headerValue) => 
+        private bool GetHeaderValue(IHttpContextAccessor httpContextAccessor, string headerName, out StringValues headerValue) =>
             httpContextAccessor?.HttpContext?.Request?.Headers?.TryGetValue(headerName, out headerValue) ?? false;
 
-        #endregion
+        #endregion Get Impersonated UserName From HttpContext
 
         public int Save(bool isAnonymousRequest = false, int? memberId = null)
         {
@@ -153,10 +109,10 @@ namespace CoralTime.DAL.Repositories
                 {
                     actions = CreateMemberActions(memberId);
                 }
-                
+
                 var changesCount = AppDbContext.SaveChanges();
 
-                if (actions.Count>0)
+                if (actions.Count > 0)
                 {
                     SaveMemberActions(actions);
                 }
@@ -193,11 +149,11 @@ namespace CoralTime.DAL.Repositories
             var modifiedEntries = AppDbContext.ChangeTracker
                 .Entries()
                 .Where(x => x.State != EntityState.Unchanged)
-                .Select(x => new {x.Entity, x.State, x.CurrentValues, x.OriginalValues})
+                .Select(x => new { x.Entity, x.State, x.CurrentValues, x.OriginalValues })
                 .ToList();
-            
+
             var actions = new List<MemberAction>();
-            
+
             foreach (var entry in modifiedEntries)
             {
                 var pkName = $"<{(entry.CurrentValues.Properties.SingleOrDefault(x => x.IsPrimaryKey())?.Name)}>";
@@ -230,7 +186,7 @@ namespace CoralTime.DAL.Repositories
         {
             if (actionType == MemberActionTypes.Add)
                 return null;
-            
+
             var fields = item.GetType()
                 .GetFields(BindingFlags.Instance |
                            BindingFlags.Static |
@@ -240,17 +196,17 @@ namespace CoralTime.DAL.Repositories
             var val = field?.GetValue(item);
             return val?.ToString();
         }
-        
+
         private static List<Variance> DetailedCompare<T>(T newValue, T oldValue)
         {
             var propertyInfo = newValue.GetType().GetProperties();
             return propertyInfo.Select(f => new Variance
-                {
-                    Field = f.Name,
-                    NewValue = f.GetValue(newValue),
-                    OldValue = f.GetValue(oldValue)
-                })
-                .Where(v => (v.OldValue != null  && !v.OldValue.Equals(v.NewValue))|| (v.NewValue != null  && !v.NewValue.Equals(v.OldValue)))
+            {
+                Field = f.Name,
+                NewValue = f.GetValue(newValue),
+                OldValue = f.GetValue(oldValue)
+            })
+                .Where(v => (v.OldValue != null && !v.OldValue.Equals(v.NewValue)) || (v.NewValue != null && !v.NewValue.Equals(v.OldValue)))
                 .ToList();
         }
 
@@ -260,10 +216,13 @@ namespace CoralTime.DAL.Repositories
             {
                 case EntityState.Deleted:
                     return MemberActionTypes.Delete;
+
                 case EntityState.Modified:
                     return MemberActionTypes.Change;
+
                 case EntityState.Added:
                     return MemberActionTypes.Add;
+
                 default:
                     return MemberActionTypes.None;
             }
@@ -272,7 +231,9 @@ namespace CoralTime.DAL.Repositories
         private class Variance
         {
             public string Field { get; set; }
+
             public object OldValue { get; set; }
+
             public object NewValue { get; set; }
         }
 

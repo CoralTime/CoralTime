@@ -543,6 +543,38 @@ namespace CoralTime.DAL.Migrations
                     b.ToTable("VstsProjects");
                 });
 
+            modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsProjectUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("CreatorId");
+
+                    b.Property<string>("LastEditorUserId");
+
+                    b.Property<DateTime>("LastUpdateDate");
+
+                    b.Property<int>("VstsProjectId");
+
+                    b.Property<int>("VstsUserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("LastEditorUserId");
+
+                    b.HasIndex("VstsProjectId");
+
+                    b.HasIndex("VstsUserId", "VstsProjectId")
+                        .IsUnique();
+
+                    b.ToTable("VstsProjectUsers");
+                });
+
             modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsUser", b =>
                 {
                     b.Property<int>("Id")
@@ -557,7 +589,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.Property<DateTime>("LastUpdateDate");
 
-                    b.Property<string>("UserId");
+                    b.Property<int>("MemberId");
 
                     b.Property<string>("VstsUserId");
 
@@ -569,7 +601,7 @@ namespace CoralTime.DAL.Migrations
 
                     b.HasIndex("LastEditorUserId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("MemberId");
 
                     b.ToTable("VstsUsers");
                 });
@@ -870,6 +902,27 @@ namespace CoralTime.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsProjectUser", b =>
+                {
+                    b.HasOne("CoralTime.DAL.Models.ApplicationUser", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("CoralTime.DAL.Models.ApplicationUser", "LastEditor")
+                        .WithMany()
+                        .HasForeignKey("LastEditorUserId");
+
+                    b.HasOne("CoralTime.DAL.Models.Vsts.VstsProject", "VstsProject")
+                        .WithMany("VstsProjectUsers")
+                        .HasForeignKey("VstsProjectId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("CoralTime.DAL.Models.Vsts.VstsUser", "VstsUser")
+                        .WithMany("VstsProjectUsers")
+                        .HasForeignKey("VstsUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsUser", b =>
                 {
                     b.HasOne("CoralTime.DAL.Models.ApplicationUser", "Creator")
@@ -880,9 +933,10 @@ namespace CoralTime.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("LastEditorUserId");
 
-                    b.HasOne("CoralTime.DAL.Models.ApplicationUser", "User")
+                    b.HasOne("CoralTime.DAL.Models.Member.Member", "Member")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

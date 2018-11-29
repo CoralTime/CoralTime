@@ -38,6 +38,7 @@ namespace CoralTime.Common.Constants
             "/help",
             "/signin-oidc",
             "/admin",
+            "/vsts-integration",
             UrlSetPassword
         };
 
@@ -108,6 +109,7 @@ namespace CoralTime.Common.Constants
                 public const string MemberProjectRolesRouteWithProjects = MemberProjectRolesWithIdRoute + WithProjects;
                 public const string MemberProjectRolesRouteWithMembers = MemberProjectRolesWithIdRoute + WithMembers;
                 public const string VstsProjectIntegrationWithIdRoute = "VstsProjectIntegration(" + IdRoute + ")";
+                public const string VstsProjectIntegrationMembersByProject = "VstsProjectIntegration(" + IdRoute + ")" + WithMembers;
             }
         }
 

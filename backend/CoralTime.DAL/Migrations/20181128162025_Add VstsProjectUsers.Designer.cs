@@ -3,19 +3,23 @@ using System;
 using CoralTime.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace CoralTime.MySqlMigrations.Migrations
+namespace CoralTime.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181128162025_Add VstsProjectUsers")]
+    partial class AddVstsProjectUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("CoralTime.DAL.Models.ApplicationUser", b =>
                 {
@@ -68,7 +72,8 @@ namespace CoralTime.MySqlMigrations.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -76,7 +81,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Client", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -113,7 +119,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.LogChanges.MemberAction", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Action");
 
@@ -139,7 +146,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Member.Member", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -187,7 +195,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Member.MemberImage", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<byte[]>("ByteArrayAvatar");
 
@@ -221,7 +230,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Member.MemberProjectRole", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -256,7 +266,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Project", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("ClientId");
 
@@ -310,7 +321,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.ProjectRole", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -324,7 +336,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.ReportsSettings.ReportsSettings", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -363,7 +376,8 @@ namespace CoralTime.MySqlMigrations.Migrations
                     b.HasIndex("LastEditorUserId");
 
                     b.HasIndex("MemberId", "QueryName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[QueryName] IS NOT NULL");
 
                     b.ToTable("ReportsSettings");
                 });
@@ -383,7 +397,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.TaskType", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Color");
 
@@ -420,7 +435,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.TimeEntry", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -473,7 +489,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.UserForgotPassRequest", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("DateFrom");
 
@@ -496,7 +513,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsProject", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -530,7 +548,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsProjectUser", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -561,7 +580,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("CoralTime.DAL.Models.Vsts.VstsUser", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -628,7 +648,8 @@ namespace CoralTime.MySqlMigrations.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex");
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -636,7 +657,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType");
 
@@ -655,7 +677,8 @@ namespace CoralTime.MySqlMigrations.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ClaimType");
 
