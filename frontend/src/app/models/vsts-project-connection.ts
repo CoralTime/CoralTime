@@ -1,5 +1,6 @@
 export class VstsProjectConnection {
 	id: number;
+	membersCount: number;
 	projectId: number;
 	projectName: string;
 	vstsProjectId: number;
@@ -10,6 +11,7 @@ export class VstsProjectConnection {
 
 	constructor(data?: any) {
 		this.id = data && data.id;
+		this.membersCount = data && data.membersCount;
 		this.projectId = data && data.projectId;
 		this.projectName = data && data.projectName;
 		this.vstsProjectId = data && data.vstsProjectId;

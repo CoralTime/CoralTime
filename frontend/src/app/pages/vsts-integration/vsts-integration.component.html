@@ -40,7 +40,7 @@
 
             <p-column field="vstsCompanyUrl" header="VSTS Company Url">
                 <ng-template let-col let-connection="rowData" pTemplate="body">
-                    <div markdown [data]="connection.vstsCompanyUrl"></div>
+                    <div markdown [data]="formatUrlForMarkdown(connection.vstsCompanyUrl)"></div>
                 </ng-template>
             </p-column>
 
