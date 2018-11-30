@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ReportFilters } from '../../../models/reports';
+import { ReportQuery } from '../../../models/reports';
 import { ReportsService } from '../../../services/reposts.service';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 
@@ -11,7 +11,7 @@ import { LoadingMaskService } from '../../../shared/loading-indicator/loading-ma
 
 export class ReportsQueryFormComponent {
 	isRequestLoading: boolean = false;
-	model: ReportFilters;
+	model: ReportQuery;
 
 	@Output() onSubmit = new EventEmitter();
 

@@ -9,7 +9,7 @@
         <div *ngIf="reportDropdowns">
             <div class="ct-reports-chart-container">
                 <mat-accordion>
-                    <mat-expansion-panel [expanded]="expandedPanelStep === 0" (opened)="setexpandedPanelStep(0)" hideToggle="true">
+                    <mat-expansion-panel [expanded]="expandedPanelStep === 0" (opened)="setExpandedPanelStep(0)" hideToggle="true">
 
                         <mat-expansion-panel-header [expandedHeight]="'46px'" [collapsedHeight]="'46px'">
                             Filters
@@ -81,8 +81,8 @@
                             <div>
                                 <ct-multiselect
                                         [styleClass]="'ct-reports-multiselect'"
-                                        [(ngModel)]="reportFilters.clientIds"
-                                        (onSubmitAction)="toggleClient(reportFilters.clientIds)"
+                                        [(ngModel)]="reportQuery.clientIds"
+                                        (onSubmitAction)="toggleClient(reportQuery.clientIds)"
                                         [showSubmitButton]="true"
                                         [appendTo]="'body'"
                                         [defaultLabel]="'All Clients'"
@@ -96,8 +96,8 @@
                             <div>
                                 <ct-multiselect
                                         [styleClass]="'ct-reports-multiselect'"
-                                        [(ngModel)]="reportFilters.projectIds"
-                                        (onSubmitAction)="toggleProject(reportFilters.projectIds)"
+                                        [(ngModel)]="reportQuery.projectIds"
+                                        (onSubmitAction)="toggleProject(reportQuery.projectIds)"
                                         [showSubmitButton]="true"
                                         [appendTo]="'body'"
                                         [defaultLabel]="'All Projects'"
@@ -112,7 +112,7 @@
                                 <ct-multiselect
                                         *ngIf="isUsersFilterShown"
                                         [styleClass]="'ct-reports-multiselect'"
-                                        [(ngModel)]="reportFilters.memberIds"
+                                        [(ngModel)]="reportQuery.memberIds"
                                         (onSubmitAction)="toggleUser()"
                                         [showSubmitButton]="true"
                                         [appendTo]="'body'"
@@ -163,8 +163,8 @@
                         <div class="ct-btn-settings-block ct-btn-block">
                             <ct-multiselect class="ct-columns-multiselect ct-columns-button" title="Columns settings"
                                             [styleClass]="'ct-reports-settings-multiselect'"
-                                            [(ngModel)]="reportFilters.showColumnIds"
-                                            (onSubmitAction)="submitSettings(reportFilters.showColumnIds)"
+                                            [(ngModel)]="reportQuery.showColumnIds"
+                                            (onSubmitAction)="submitSettings(reportQuery.showColumnIds)"
                                             [showSubmitButton]="true"
                                             [showActionsPanel]="false"
                                             [showFilterSearch]="false"
@@ -202,17 +202,17 @@
                                      [rowsNumber]="grid.rows"
                                      [showColumnIds]="showColumnIds"></ct-reports-grid>
 
-                    <div *ngIf="reportsGridData?.groupedItems.length == 0" class="ct-nodata">
+                    <div *ngIf="reportGridData?.groupedItems.length == 0" class="ct-nodata">
                         Sorry, you don't have any reports at this time period.
                     </div>
                 </div>
 
-                <div *ngIf="reportsGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">
+                <div *ngIf="reportGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">
                     <label>Total Hours</label>
 
                     <div class="ct-total-hours-tracked">
-                        <span *ngIf="reportsGridData.timeTotal.timeEstimatedTotal > 0" class="ct-estimated-label">&nbsp;&nbsp;Estimated: {{getTimeString(reportsGridData?.timeTotal.timeEstimatedTotal)}}</span>
-                        <span *ngIf="getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)" class="ct-actual-label">Actual: {{getTimeString(reportsGridData?.timeTotal.timeActualTotal, true)}}</span>
+                        <span *ngIf="reportGridData.timeTotal.timeEstimatedTotal > 0" class="ct-estimated-label">&nbsp;&nbsp;Estimated: {{getTimeString(reportGridData?.timeTotal.timeEstimatedTotal)}}</span>
+                        <span *ngIf="getTimeString(reportGridData?.timeTotal.timeActualTotal, true)" class="ct-actual-label">Actual: {{getTimeString(reportGridData?.timeTotal.timeActualTotal, true)}}</span>
                     </div>
                 </div>
             </div>
