@@ -89,7 +89,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 CustomQueries = GetCustomQueries(today).OrderBy(x => x.QueryName).ToList(),
                 GroupBy = groupByInfo,
                 ShowColumns = showColumnsInfo,
-                DateStatic = GetDatesStaticInfo()
+                DateStatic = GetDatesStaticInfo(today)
             };
         }
 
