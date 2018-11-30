@@ -2,7 +2,7 @@ import { Directive, forwardRef } from '@angular/core';
 import { Validator, AbstractControl, NG_VALIDATORS } from '@angular/forms';
 
 @Directive({
-	selector: 'form[entryTimeFilled]',
+	selector: 'form[ctEntryTimeFilled]',
 	providers: [
 		{
 			provide: NG_VALIDATORS,
@@ -33,5 +33,14 @@ export class EntryTimeFilledValidator implements Validator {
 		}
 
 		return null;
+	}
+
+	private convertTimeStringToNumber(time: string): number {
+		if (!time) {
+			return 0;
+		}
+
+		const timeArray = time.split(':');
+		return Number(timeArray[0]) * 60 + Number(timeArray[1] || 0)
 	}
 }
