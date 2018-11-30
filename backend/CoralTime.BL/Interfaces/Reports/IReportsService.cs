@@ -2,6 +2,7 @@
 using CoralTime.ViewModels.Reports.Request.Grid;
 using CoralTime.ViewModels.Reports.Responce.DropDowns;
 using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal;
+using System;
 
 namespace CoralTime.BL.Interfaces.Reports
 {
@@ -9,7 +10,7 @@ namespace CoralTime.BL.Interfaces.Reports
     {
         string SingleFilteredProjectName { get; }
 
-        ReportDropDownView GetReportsDropDowns();
+        ReportDropDownView GetReportsDropDowns(DateTime? date);
 
         ReportTotalView GetReportsGrid(ReportsGridView reportsGridView, Member memberFromNotification = null);
 

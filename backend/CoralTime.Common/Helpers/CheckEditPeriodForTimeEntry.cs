@@ -13,7 +13,7 @@ namespace CoralTime.Common.Helpers
             {
                 case LockTimePeriod.Week:
                 {
-                    var thisWeek = GetRangeOfThisWeek();
+                    var thisWeek = GetRangeOfThisWeek(today);
 
                     var lockDateLastDate = thisWeek.DateFrom.AddDays(daysAfterLock);
 
@@ -31,7 +31,7 @@ namespace CoralTime.Common.Helpers
 
                 case LockTimePeriod.Month:
                 {
-                    var thisMonth = GetRangeOfThisMonth();
+                    var thisMonth = GetRangeOfThisMonth(today);
 
                     var lockDateLastDate = thisMonth.DateFrom.AddDays(daysAfterLock);
 

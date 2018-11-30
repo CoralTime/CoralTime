@@ -24,7 +24,7 @@ namespace CoralTime.DAL.ConvertModelToView
             return reportsSettingsView;
         }
 
-        public static ReportsSettingsView GetView(this ReportsSettings reportsSettings, DayOfWeek startOfWeek)
+        public static ReportsSettingsView GetView(this ReportsSettings reportsSettings, DayOfWeek startOfWeek, DateTime? today)
         {
             var settings = new ReportsSettingsView
             {
@@ -48,7 +48,7 @@ namespace CoralTime.DAL.ConvertModelToView
             }
             else
             {
-                var period = CommonHelpers.GetPeriod(settings.DateStaticId ?? 1, startOfWeek);
+                var period = CommonHelpers.GetPeriod(settings.DateStaticId ?? 1, today, startOfWeek);
                 settings.DateFrom = period.DateFrom;
                 settings.DateTo = period.DateTo;
             }

@@ -5,35 +5,35 @@ namespace CoralTime.Common.Helpers
 {
     public partial class CommonHelpers
     {
-        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisWeek(DayOfWeek startOfWeek = DayOfWeek.Monday)
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisWeek(DateTime today, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            return GetRangeOfWeekByDate(DateTime.Today, startOfWeek);
+            return GetRangeOfWeekByDate(today, startOfWeek);
         }
 
-        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisMonth()
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisMonth(DateTime today)
         {
-            return GetRangeOfMonthByDate(DateTime.Today);
+            return GetRangeOfMonthByDate(today);
         }
 
-        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisYear() 
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfThisYear(DateTime today) 
         {
-            return GetRangeOfYearByDate(DateTime.Today);
+            return GetRangeOfYearByDate(today);
         }
 
-        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastWeek(DayOfWeek startOfWeek = DayOfWeek.Monday)
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastWeek(DateTime today, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            var thisWeek = GetRangeOfThisWeek(startOfWeek);
+            var thisWeek = GetRangeOfThisWeek(today, startOfWeek);
             return (thisWeek.DateFrom.AddDays(-7).Date, thisWeek.DateTo.AddDays(-7).Date);
         }
 
-        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastMonth()
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastMonth(DateTime today)
         {
-            return GetRangeOfMonthByDate(DateTime.Today.AddMonths(-1));
+            return GetRangeOfMonthByDate(today.AddMonths(-1));
         }
 
-        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastYear()
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastYear(DateTime today)
         {
-            return GetRangeOfYearByDate(DateTime.Today.AddYears(-1));
+            return GetRangeOfYearByDate(today.AddYears(-1));
         }
 
         private static (DateTime DateFrom, DateTime DateTo) GetRangeOfWeekByDate(DateTime date, DayOfWeek startOfWeek = DayOfWeek.Monday)
@@ -63,21 +63,22 @@ namespace CoralTime.Common.Helpers
             return (firstDay, lastDay);
         }
         
-        public static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastWorkWeekByDate(DayOfWeek startOfWeek = DayOfWeek.Monday)
+        public static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastWorkWeekByDate(DateTime today, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            var lastWeek = GetRangeOfLastWeek(startOfWeek);
+            var lastWeek = GetRangeOfLastWeek(today, startOfWeek);
             return (lastWeek.DateFrom, lastWeek.DateTo.AddDays(-2).Date);
         }
 
-        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(int dayStaticId, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(int dayStaticId, DateTime? todayDate, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            return GetPeriod((DatesStaticIds) dayStaticId, startOfWeek);
+            return GetPeriod((DatesStaticIds) dayStaticId, todayDate, startOfWeek);
         }
 
-        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(DatesStaticIds dayStaticId, DayOfWeek startOfWeek = DayOfWeek.Monday)
+        public static (DateTime DateFrom, DateTime DateTo) GetPeriod(DatesStaticIds dayStaticId, DateTime? todayDate, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
-            var today = DateTime.Today.Date;
-            var yesterday = DateTime.Today.AddDays(-1).Date;
+            var date = (todayDate == null)? DateTime.Today : todayDate.Value.Date;
+            var today = new DateTime(date.Year, date.Month, date.Day);
+            var yesterday = today.AddDays(-1).Date;
             switch (dayStaticId)
             {
                 case DatesStaticIds.Today:
@@ -87,22 +88,22 @@ namespace CoralTime.Common.Helpers
                     return (yesterday, yesterday);
                 
                 case DatesStaticIds.ThisWeek:
-                    return GetRangeOfThisWeek(startOfWeek);
+                    return GetRangeOfThisWeek(today, startOfWeek);
   
                 case DatesStaticIds.ThisMonth:
-                    return GetRangeOfThisMonth();
+                    return GetRangeOfThisMonth(today);
                 
                 case DatesStaticIds.ThisYear:
-                    return GetRangeOfThisYear();
+                    return GetRangeOfThisYear(today);
                 
                 case DatesStaticIds.LastWeek:
-                    return GetRangeOfLastWeek(startOfWeek);
+                    return GetRangeOfLastWeek(today, startOfWeek);
                 
                 case DatesStaticIds.LastMonth:
-                    return GetRangeOfLastMonth();  
+                    return GetRangeOfLastMonth(today);  
 
                 case DatesStaticIds.LastYear:
-                    return GetRangeOfLastYear();  
+                    return GetRangeOfLastYear(today);  
                 
                 default:
                     return (today, today);
