@@ -235,9 +235,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek), today)).ToList();
         }
 
-        private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
+        private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId, DateTime? today)
         {
-            var datesStaticInfo = GetDatesStaticInfo();
+            var datesStaticInfo = GetDatesStaticInfo(today);
             var dateStaticPeriod = datesStaticInfo.FirstOrDefault(x => x.Id == dateStaticId);
             
             if (dateStaticPeriod == null) 
@@ -259,7 +259,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private static DayOfWeek GetDayOfWeek(Constants.WeekStart day) => 
             (day == Constants.WeekStart.Monday)? DayOfWeek.Monday : DayOfWeek.Sunday;
         
-        private ReportDropDownsDateStaticView[] GetDatesStaticInfo(DateTime? todayDate = null)
+        private ReportDropDownsDateStaticView[] GetDatesStaticInfo(DateTime? todayDate)
         {
             var companyReportStratOfWeek = GetCompanyReportStartOfWeek();
             var today = CommonHelpers.GetPeriod(DatesStaticIds.Today, todayDate);
@@ -352,7 +352,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var reportsSettingsView = new ReportsSettingsView().GetViewWithDefaultValues();
 
-            var dateStaticExtend = CreateDateStaticExtend(reportsSettingsView.DateStaticId);
+            var dateStaticExtend = CreateDateStaticExtend(reportsSettingsView.DateStaticId, today);
             reportsSettingsView.DateFrom = dateStaticExtend.DateFrom;
             reportsSettingsView.DateTo = dateStaticExtend.DateTo;
 
