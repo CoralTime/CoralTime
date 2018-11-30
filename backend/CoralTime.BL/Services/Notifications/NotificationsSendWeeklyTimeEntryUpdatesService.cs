@@ -34,7 +34,7 @@ namespace CoralTime.BL.Services.Notifications
 
         private async Task SendWeeklyNotificationsForMembers(string baseUrl, int [] membersIds = null)
         {
-            var lastworkWeek = CommonHelpers.GetRangeOfLastWorkWeekByDate();
+            var lastworkWeek = CommonHelpers.GetRangeOfLastWorkWeekByDate(DateTime.Today);
             var diffDates = (lastworkWeek.DateTo - lastworkWeek.DateFrom).TotalDays;
             var editionPeriodDays = GetRangeNotificationDaysForLastWeek(lastworkWeek.DateTo, diffDates);
 

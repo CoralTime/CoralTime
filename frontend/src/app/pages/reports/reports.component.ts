@@ -1,10 +1,12 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import * as moment from 'moment';
+import Moment = moment.Moment;
 import { ReportsService, } from '../../services/reposts.service';
 import {
 	ProjectDetail, ReportDropdowns, UserDetail, ReportGrid,
-	GroupByItem, ClientDetail, ReportFilters, ReportGridView, ShowColumn, DateStatic
+	GroupByItem, ClientDetail, ReportQuery, ReportGridView, ShowColumn, DateStatic, ReportFiltersRequest
 } from '../../models/reports';
 import { CustomSelectItem } from '../../shared/form/multiselect/multiselect.component';
 import { ArrayUtils } from '../../core/object-utils';
@@ -18,8 +20,6 @@ import { ImpersonationService } from '../../services/impersonation.service';
 import { ReportsQueryFormComponent } from './reports-query-form/reports-query-form.component';
 import { ConfirmationComponent } from '../../shared/confirmation/confirmation.component';
 import { ReportGridData } from './reports-data/reports-grid.component';
-import * as moment from 'moment';
-import Moment = moment.Moment;
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 
 const ROWS_TOTAL_NUMBER = 50;
@@ -31,8 +31,8 @@ const ROWS_TOTAL_NUMBER = 50;
 
 export class ReportsComponent implements OnInit {
 	reportDropdowns: ReportDropdowns;
-	reportsGridData: ReportGrid;
-	reportFilters: ReportFilters;
+	reportGridData: ReportGrid;
+	reportQuery: ReportQuery;
 
 	isGridLoading: boolean = false;
 	gridData: ReportGridData[] = [];
@@ -51,8 +51,8 @@ export class ReportsComponent implements OnInit {
 	groupByItems: GroupByItem[] = [];
 	groupModel: GroupByItem;
 
-	queryItems: ReportFilters[] = [];
-	queryModel: ReportFilters;
+	queryItems: ReportQuery[] = [];
+	queryModel: ReportQuery;
 
 	isUsersFilterShown: boolean = false;
 	showOnlyActiveClients: boolean = true;
@@ -104,7 +104,7 @@ export class ReportsComponent implements OnInit {
 			.finally(() => this.loadingService.removeLoading())
 			.subscribe((reportFilters: ReportDropdowns) => {
 				this.setReportDropdowns(reportFilters);
-				this.getReportGrid(!!this.reportFilters.queryId);
+				this.getReportGrid(!!this.reportQuery.queryId);
 			})
 	}
 
@@ -112,7 +112,7 @@ export class ReportsComponent implements OnInit {
 
 	expandedPanelStep = 0;
 
-	setexpandedPanelStep(index: number) {
+	setExpandedPanelStep(index: number) {
 		this.expandedPanelStep = index;
 	}
 
@@ -121,8 +121,8 @@ export class ReportsComponent implements OnInit {
 		this.rangeDatepickerService.dateStaticList = reportDropdowns.values.dateStatic;
 
 		this.setReportFilters(reportDropdowns.currentQuery);
-		this.setReportsGroupBy(reportDropdowns.values.groupBy);
-		this.setReportsQueryItems(reportDropdowns);
+		this.setReportGroupBy(reportDropdowns.values.groupBy);
+		this.setReportQueryItems(reportDropdowns);
 		this.setShowColumnItems(reportDropdowns.values.showColumns);
 
 		this.getClientItems(reportDropdowns.values.filters);
@@ -130,14 +130,14 @@ export class ReportsComponent implements OnInit {
 		this.getUserItems(this.projects);
 	}
 
-	private setReportsGroupBy(groupByArray: GroupByItem[]): void {
+	private setReportGroupBy(groupByArray: GroupByItem[]): void {
 		this.groupByItems = groupByArray;
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportFilters.groupById);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportQuery.groupById);
 	}
 
-	private setReportFilters(reportFilters: ReportFilters): void {
-		this.reportFilters = new ReportFilters(reportFilters);
-		this.showColumnIds = this.reportFilters.showColumnIds || [];
+	private setReportFilters(reportFilters: ReportQuery): void {
+		this.reportQuery = new ReportQuery(reportFilters);
+		this.showColumnIds = this.reportQuery.showColumnIds || [];
 
 		this.datePeriodOnChange({
 			datePeriod: new DatePeriod(moment(reportFilters.dateFrom), moment(reportFilters.dateTo)),
@@ -145,7 +145,7 @@ export class ReportsComponent implements OnInit {
 		});
 	}
 
-	private setReportsQueryItems(reportDropdowns: ReportDropdowns): void {
+	private setReportQueryItems(reportDropdowns: ReportDropdowns): void {
 		this.queryItems = reportDropdowns.values.customQueries;
 		this.queryModel = ArrayUtils.findByProperty(this.queryItems, 'queryId', reportDropdowns.currentQuery.queryId);
 	}
@@ -157,26 +157,27 @@ export class ReportsComponent implements OnInit {
 	// GRID DISPLAYING
 
 	getReportGrid(isCustomQuery?: boolean): void {
-		this.reportFilters.dateFrom = this.convertMomentToString(this.dateResponse.datePeriod.dateFrom);
-		this.reportFilters.dateTo = this.convertMomentToString(this.dateResponse.datePeriod.dateTo);
-		this.reportFilters.dateStaticId = this.dateResponse.dateStaticId;
+		this.reportQuery.dateFrom = this.convertMomentToString(this.dateResponse.datePeriod.dateFrom);
+		this.reportQuery.dateTo = this.convertMomentToString(this.dateResponse.datePeriod.dateTo);
+		this.reportQuery.dateStaticId = this.dateResponse.dateStaticId;
 
 		if (!isCustomQuery) {
-			this.reportFilters.queryId = null;
-			this.reportFilters.queryName = null;
+			this.reportQuery.queryId = null;
+			this.reportQuery.queryName = null;
 			this.queryModel = null;
 		}
 
-		let filters = {
-			currentQuery: this.reportFilters
+		const filters: ReportFiltersRequest = {
+			currentQuery: this.reportQuery,
+			date: DateUtils.formatDateToString(new Date()),
 		};
 
 		this.loadingService.addLoading();
 		this.reportsService.getReportGrid(filters)
 			.finally(() => this.loadingService.removeLoading())
 			.subscribe((res: ReportGrid) => {
-					this.reportsGridData = res;
-					this.gridData = this.getNextGridDataPage(this.reportsGridData.groupedItems, []);
+					this.reportGridData = res;
+					this.gridData = this.getNextGridDataPage(this.reportGridData.groupedItems, []);
 				},
 				() => {
 					this.notificationService.danger('Error loading reports grid.');
@@ -196,7 +197,7 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private isAllGridRowsShown(gridDataShown: ReportGridData[]): boolean {
-		let gridData = this.reportsGridData.groupedItems;
+		const gridData = this.reportGridData.groupedItems;
 		return gridDataShown.length === gridData.length
 			&& gridDataShown[gridDataShown.length - 1].rows === this.getRowsNumberFromGrid([gridData[gridData.length - 1]]);
 	}
@@ -256,7 +257,7 @@ export class ReportsComponent implements OnInit {
 			return this.gridData;
 		}
 
-		let gridDataToShow = [];
+		const gridDataToShow = [];
 		gridData.forEach((grid: ReportGridView) => {
 			gridDataToShow.push({
 				gridData: grid,
@@ -274,7 +275,7 @@ export class ReportsComponent implements OnInit {
 			this.isGridLoading = true;
 
 			setTimeout(() => {
-				this.getNextGridDataPage(this.reportsGridData.groupedItems, this.gridData);
+				this.getNextGridDataPage(this.reportGridData.groupedItems, this.gridData);
 				this.isGridLoading = false;
 			}, 0);
 		}
@@ -284,7 +285,7 @@ export class ReportsComponent implements OnInit {
 
 	openQueryDialog(): void {
 		this.reportsQueryRef = this.dialog.open(ReportsQueryFormComponent);
-		this.reportsQueryRef.componentInstance.model = this.reportFilters;
+		this.reportsQueryRef.componentInstance.model = this.reportQuery;
 
 		this.reportsQueryRef.componentInstance.onSubmit.subscribe((response) => {
 			this.reportsQueryRef.close();
@@ -301,7 +302,7 @@ export class ReportsComponent implements OnInit {
 		}
 	}
 
-	deleteQuery(queryModel: ReportFilters): void {
+	deleteQuery(queryModel: ReportQuery): void {
 		this.loadingService.addLoading();
 		this.reportsService.deleteQuery(queryModel.queryId)
 			.finally(() => this.loadingService.removeLoading())
@@ -312,9 +313,9 @@ export class ReportsComponent implements OnInit {
 				() => this.notificationService.danger('Error deleting report query.'));
 	}
 
-	queryOnChange(queryModel: ReportFilters): void {
+	queryOnChange(queryModel: ReportQuery): void {
 		this.setReportFilters(queryModel);
-		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportFilters.groupById);
+		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === this.reportQuery.groupById);
 
 		this.getReportGrid(true);
 	}
@@ -324,7 +325,7 @@ export class ReportsComponent implements OnInit {
 		this.reportsService.getReportDropdowns()
 			.finally(() => this.loadingService.removeLoading())
 			.subscribe((reportDropdowns: ReportDropdowns) => {
-				this.setReportsQueryItems(reportDropdowns);
+				this.setReportQueryItems(reportDropdowns);
 			});
 	}
 
@@ -369,8 +370,8 @@ export class ReportsComponent implements OnInit {
 	}
 
 	getNewPeriod(isNext: boolean = true): void {
-		let dateFrom = this.dateResponse.datePeriod.dateFrom;
-		let dateTo = this.dateResponse.datePeriod.dateTo;
+		const dateFrom = this.dateResponse.datePeriod.dateFrom;
+		const dateTo = this.dateResponse.datePeriod.dateTo;
 
 		if (this.rangeDatepickerService.isIntegerNumberOfMonths(this.dateResponse.datePeriod)) {
 			let monthInPeriod = isNext ? dateTo.diff(dateFrom, 'month') + 1 : -(dateTo.diff(dateFrom, 'month') + 1);
@@ -387,6 +388,7 @@ export class ReportsComponent implements OnInit {
 		}
 
 		this.setDateString(this.dateResponse.datePeriod);
+		this.dateResponse.dateStaticId = null;
 		this.getReportGrid();
 	}
 
@@ -395,25 +397,19 @@ export class ReportsComponent implements OnInit {
 		setTimeout(() => this.canToggleDatepicker = true, 300);
 	}
 
-	private checkIsFromStaticDates(): void {
-		let dateStatic = this.reportDropdowns.values.dateStatic.find((dateStatic) => dateStatic.description === this.dateString);
-		this.dateResponse.dateStaticId = dateStatic ? dateStatic.id : null;
-	}
-
 	private convertMomentToString(moment: Moment): string {
-		return moment ? DateUtils.convertMomentToUTC(moment).toISOString() : null;
+		return moment ? DateUtils.formatDateToString(moment) : null;
 	}
 
 	private setDateString(period: DatePeriod): void {
 		let selectedRange = new DatePeriod(period.dateFrom, period.dateTo);
 		this.dateString = this.rangeDatepickerService.setDateStringPeriod(selectedRange);
-		this.checkIsFromStaticDates();
 	}
 
 	// SEND REPORTS
 
 	openSendReportsDialog(): void {
-		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
+		if (this.reportGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
@@ -421,14 +417,14 @@ export class ReportsComponent implements OnInit {
 		this.reportsSendRef = this.dialog.open(ReportsSendComponent);
 		this.reportsSendRef.componentInstance.model = new SendReportsFormModel({
 			dateFormatId: this.dateFormatId,
-			currentQuery: this.reportFilters
+			currentQuery: this.reportQuery
 		});
 		this.reportsSendRef.componentInstance.dateFormat = this.dateFormat;
 		this.reportsSendRef.componentInstance.userInfo = this.userInfo;
 
-		if (this.reportFilters.projectIds.length === 1) {
+		if (this.reportQuery.projectIds.length === 1) {
 			this.reportsSendRef.componentInstance.projectName
-				= ArrayUtils.findByProperty(this.projectItems, 'value', this.reportFilters.projectIds[0]).label;
+				= ArrayUtils.findByProperty(this.projectItems, 'value', this.reportQuery.projectIds[0]).label;
 		}
 
 		this.reportsSendRef.componentInstance.onSubmit.subscribe((event) => {
@@ -449,12 +445,12 @@ export class ReportsComponent implements OnInit {
 	// GENERAL
 
 	checkDataAndPrintPage(): void {
-		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
+		if (this.reportGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to print.');
 			return;
 		}
 
-		if (this.getRowsNumberFromGrid(this.reportsGridData.groupedItems) > 300) {
+		if (this.getRowsNumberFromGrid(this.reportGridData.groupedItems) > 300) {
 			this.openConfirmationDialog();
 		} else {
 			this.printPage();
@@ -475,20 +471,21 @@ export class ReportsComponent implements OnInit {
 	}
 
 	private printPage(): void {
-		this.gridData = this.showAllReportsGrid(this.reportsGridData.groupedItems);
+		this.gridData = this.showAllReportsGrid(this.reportGridData.groupedItems);
 		setTimeout(() => window.print(), 300);
 	}
 
 	exportAs(fileTypeId: number): void {
-		if (this.reportsGridData.timeTotal.timeActualTotal === 0) {
+		if (this.reportGridData.timeTotal.timeActualTotal === 0) {
 			this.notificationService.danger('There is no data to export.');
 			return;
 		}
 
-		let filters = {
+		const filters: ReportFiltersRequest = {
+			currentQuery: this.reportQuery,
+			date: DateUtils.formatDateToString(new Date()),
 			dateFormatId: this.userInfo.dateFormatId,
 			fileTypeId: fileTypeId,
-			currentQuery: this.reportFilters
 		};
 
 		this.loadingService.addLoading();
@@ -497,21 +494,17 @@ export class ReportsComponent implements OnInit {
 			.subscribe();
 	}
 
-	formatDate(utcDate: Moment): string {
-		return this.dateFormat ? utcDate.format(this.dateFormat) : utcDate.toDate().toLocaleDateString();
-	}
-
 	resetFilters(): void {
 		this.queryModel = null;
-		this.reportFilters = new ReportFilters({});
-		let period = this.reportDropdowns.values.dateStatic[1];
-		let dateResponse = {
+		this.reportQuery = new ReportQuery({});
+		const period = this.reportDropdowns.values.dateStatic[1];
+		const dateResponse = {
 			datePeriod: new DatePeriod(moment(period.dateFrom), moment(period.dateTo)),
 			dateStaticId: 2
 		};
 		this.datePeriodOnChange(dateResponse);
 		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
-		this.toggleClient(this.reportFilters.clientIds);
+		this.toggleClient(this.reportQuery.clientIds);
 	}
 
 	submitSettings(showColumnIds: number[]): void {
@@ -522,7 +515,7 @@ export class ReportsComponent implements OnInit {
 	// FILTERS
 
 	groupByChange(): void {
-		this.reportFilters.groupById = this.groupModel.id;
+		this.reportQuery.groupById = this.groupModel.id;
 		this.getReportGrid();
 	}
 
@@ -535,11 +528,11 @@ export class ReportsComponent implements OnInit {
 
 		this.getProjectItems(this.selectedClients.length ? this.selectedClients : this.clients);
 
-		this.reportFilters.projectIds = this.reportFilters.projectIds.filter((projectId: number) => {
+		this.reportQuery.projectIds = this.reportQuery.projectIds.filter((projectId: number) => {
 			return this.projects.find((project: ProjectDetail) => project.projectId === projectId);
 		});
 
-		this.toggleProject(this.reportFilters.projectIds);
+		this.toggleProject(this.reportQuery.projectIds);
 	}
 
 	toggleArchivedClients(): void {
@@ -556,7 +549,7 @@ export class ReportsComponent implements OnInit {
 
 		this.getUserItems(this.selectedProjects.length ? this.selectedProjects : this.projects);
 
-		this.reportFilters.memberIds = this.reportFilters.memberIds.filter((userId: number) => {
+		this.reportQuery.memberIds = this.reportQuery.memberIds.filter((userId: number) => {
 			return this.users.find((user: UserDetail) => user.userId === userId);
 		});
 

@@ -147,7 +147,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
             if (dateStaticId != null)
             {
-                var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
+                var dateStaticExtend = CreateDateStaticExtend(dateStaticId, reportsGridView.GetTodayDate);
                 var calculateByStaticIdDateFrom = dateStaticExtend.DateFrom;
                 var calculateByStaticIdDateTo = dateStaticExtend.DateTo;
 
@@ -210,7 +210,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             
             if (isFilledDateStaticIdAndDateFromDateTo)
             {
-                var dateStaticExtend = CreateDateStaticExtend(dateStaticId);
+                var dateStaticExtend = CreateDateStaticExtend(dateStaticId, reportsGridView.GetTodayDate);
 
                 dateFrom = dateStaticExtend.DateFrom;
                 dateTo = dateStaticExtend.DateTo;

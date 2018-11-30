@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
-import { DateUtils } from '../../../models/calendar';
-import { DateStatic } from '../../../models/reports';
-import { DatePeriod, DateResponse } from './range-datepicker.service';
 import * as moment from 'moment';
 import Moment = moment.Moment;
+import { DateStatic } from '../../../models/reports';
+import { DatePeriod, DateResponse } from './range-datepicker.service';
 
 @Component({
 	selector: 'ct-range-datepicker',
@@ -20,8 +19,8 @@ export class RangeDatepickerComponent {
 	@Input('dateResponse')
 	set assignedDatePeriod(dateResponse: DateResponse) {
 		this.oldDateResponse = dateResponse;
-		this.dateFrom = DateUtils.convertMomentToUTCMoment(dateResponse.datePeriod.dateFrom);
-		this.dateTo = DateUtils.convertMomentToUTCMoment(dateResponse.datePeriod.dateTo);
+		this.dateFrom = dateResponse.datePeriod.dateFrom;
+		this.dateTo = dateResponse.datePeriod.dateTo;
 		this.displayDate = this.dateFrom;
 		this.selectedRange = this.getRangeBetweenDates(this.dateFrom.toDate(), this.dateTo.toDate());
 	}
@@ -90,8 +89,8 @@ export class RangeDatepickerComponent {
 	}
 
 	private getRangeBetweenDates(dateFrom: Date, dateTo: Date): Moment[] {
-		let listDate = [];
-		let dateMove = dateFrom;
+		const listDate = [];
+		const dateMove = dateFrom;
 		let strDate = dateFrom;
 
 		while (strDate.getTime() <= dateTo.getTime()) {
