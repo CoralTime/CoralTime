@@ -71,6 +71,7 @@ export class EntryTimeFormComponent implements OnInit {
 		});
 
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
+		this.isEstimatedTimeShown = this.timeEntry.timeValues.timeEstimated > 0;
 		this.timeActual = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
 		this.timeEstimated = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeEstimated);
 
