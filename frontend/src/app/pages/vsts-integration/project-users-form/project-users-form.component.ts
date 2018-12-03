@@ -3,10 +3,6 @@ import { Subject } from 'rxjs';
 import { PagedResult } from '../../../services/odata';
 import { UserProject } from '../../../models/user-project';
 import { NotificationService } from '../../../core/notification.service';
-import { ProjectRolesService } from '../../../services/project-roles.service';
-import { SettingsService } from '../../../services/settings.service';
-import { UsersService } from '../../../services/users.service';
-import { ArrayUtils } from '../../../core/object-utils';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
 import { VstsProjectConnection } from '../../../models/vsts-project-connection';
 import { VstsIntegrationService } from '../../../services/vsts-integration.service';
@@ -31,8 +27,6 @@ export class ProjectUsersFormComponent implements OnInit {
 	private assignedUsersLastEvent: any;
 
 	constructor(private notificationService: NotificationService,
-	            private projectRolesService: ProjectRolesService,
-	            private settingsService: SettingsService,
 	            private vstsIntegrationService: VstsIntegrationService) {
 	}
 
@@ -40,7 +34,6 @@ export class ProjectUsersFormComponent implements OnInit {
 		this.loadAssignedUsers();
 
 		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
-			this.changeScrollableContainer();
 			this.resizeObservable.next();
 		});
 	}
@@ -52,7 +45,6 @@ export class ProjectUsersFormComponent implements OnInit {
 			return this.vstsIntegrationService.getConnectionsMembersWithCount(this.assignedUsersLastEvent, this.filterStr, this.connection.id);
 		})
 			.subscribe((res: PagedResult<UserProject>) => {
-					console.log(res);
 					if (!this.assignedUsersPagedResult || !this.assignedUsersLastEvent.first || this.updatingAssignedUsersGrid) {
 						this.assignedUsersPagedResult = res;
 					} else {
@@ -112,25 +104,5 @@ export class ProjectUsersFormComponent implements OnInit {
 
 	onResize(): void {
 		this.resizeObservable.next();
-	}
-
-	private changeScrollableContainer(): void {
-		const HEIGHT = 325;
-		let grid = this.gridContainer.nativeElement;
-		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
-
-		if (wrappers.length === 1) {
-			return;
-		}
-
-		wrappers[0].setAttribute('style', 'max-height: calc((100vh - ' + HEIGHT + 'px)/2)');
-		wrappers[1].setAttribute('style', 'max-height: calc((100vh - ' + HEIGHT + 'px)/2)');
-
-		if (wrappers[0].scrollHeight < (window.innerHeight - HEIGHT) / 2) {
-			wrappers[1].setAttribute('style', 'max-height: calc(100vh - ' + HEIGHT + 'px - ' + wrappers[0].scrollHeight + 'px)');
-		}
-		if (wrappers[1].scrollHeight < (window.innerHeight - HEIGHT) / 2) {
-			wrappers[0].setAttribute('style', 'max-height: calc(100vh - ' + HEIGHT + 'px - ' + wrappers[1].scrollHeight + 'px)');
-		}
 	}
 }

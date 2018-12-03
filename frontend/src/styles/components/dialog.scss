@@ -18,7 +18,7 @@
 
     .ct-grid-container:only-child {
       .ui-datatable-scrollable-body {
-        max-height: calc(100vh - 290px);
+        max-height: calc(100vh - 250px);
       }
     }
   }
@@ -426,7 +426,7 @@
 
   .ct-dialog-title {
     > span:nth-child(2) {
-      max-width: 480px;
+      max-width: 350px;
     }
   }
 
