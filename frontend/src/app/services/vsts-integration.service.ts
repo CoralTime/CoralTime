@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
-import { VstsProjectConnection } from '../models/vsts-project-connection';
+import { VstsProjectConnection, VstsUser } from '../models/vsts-project-connection';
 import { ConstantService } from '../core/constant.service';
 
 @Injectable()
@@ -16,8 +16,8 @@ export class VstsIntegrationService {
 	}
 
 	getConnectionsWithCount(event, filterStr = ''): Observable<PagedResult<VstsProjectConnection>> {
-		let filters = [];
-		let query = this.odata
+		const filters = [];
+		const query = this.odata
 			.Query()
 			.Top(event.rows)
 			.Skip(event.first);
@@ -49,7 +49,7 @@ export class VstsIntegrationService {
 			throw new Error('Please, specify project name');
 		}
 
-		let query = this.odata
+		const query = this.odata
 			.Query()
 			.Top(1);
 
@@ -60,6 +60,33 @@ export class VstsIntegrationService {
 				let project = result[0] ? new VstsProjectConnection(result[0]) : null;
 				return Observable.of(project);
 			});
+	}
+
+	getConnectionsMembersWithCount(event, filterStr = '', connectionId: number): Observable<PagedResult<any>> {
+		const odata = this.odataFactory.CreateService<VstsUser>('VstsProjectIntegration(' + connectionId + ')/members');
+
+		const filters = [];
+		const query = odata
+			.Query()
+			.Top(event.rows)
+			.Skip(event.first);
+
+		if (event.sortField) {
+			query.OrderBy(event.sortField + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
+		} else {
+			query.OrderBy('fullName' + ' ' + (event.sortOrder === 1 ? 'asc' : 'desc'));
+		}
+
+		if (filterStr) {
+			filters.push('contains(tolower(fullName),\'' + filterStr.trim().toLowerCase() + '\')');
+		}
+
+		query.Filter(filters.join(' and '));
+
+		return query.ExecWithCount().map(res => {
+			res.data = res.data.map((x: Object) => new VstsUser(x));
+			return res;
+		});
 	}
 
 	updateVstsUsers(): Observable<any> {

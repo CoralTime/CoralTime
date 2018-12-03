@@ -11,6 +11,7 @@ import { NotificationService } from '../../core/notification.service';
 import { VstsIntegrationService } from '../../services/vsts-integration.service';
 import { VstsIntegrationFormComponent } from './form/vsts-integration-form.component';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
+import { ProjectUsersFormComponent } from './project-users-form/project-users-form.component';
 
 @Component({
 	selector: 'ct-vsts-integration',
@@ -30,7 +31,7 @@ export class VstsIntegrationComponent implements OnInit {
 	private lastEvent: any;
 
 	private dialogRef: MatDialogRef<VstsIntegrationFormComponent>;
-	private dialogProjectAssignmentRef: MatDialogRef<any>;
+	private dialogProjectAssignmentRef: MatDialogRef<ProjectUsersFormComponent>;
 
 	constructor(private aclService: AclService,
 	            private authService: AuthService,
@@ -127,9 +128,9 @@ export class VstsIntegrationComponent implements OnInit {
 		});
 	}
 
-	openProjectAssignmentDialog(user: User = null): void {
-		// this.dialogProjectAssignmentRef = this.dialog.open(UserProjectAssignmentComponent);
-		this.dialogProjectAssignmentRef.componentInstance.user = user;
+	openProjectAssignmentDialog(connection: VstsProjectConnection = null): void {
+		this.dialogProjectAssignmentRef = this.dialog.open(ProjectUsersFormComponent);
+		this.dialogProjectAssignmentRef.componentInstance.connection = connection;
 	}
 
 	private onSubmit(response: any): void {
