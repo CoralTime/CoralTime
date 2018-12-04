@@ -27,6 +27,7 @@ export class TimeEntryForm {
     private timeEntryRows: ITimeEntryRow[];
     private timeEntryService: TimeEntryService;
 
+    // FORM
     private dateCombo: ComboO<any>;
     private taskCombo: ComboO<any>;
     private actHoursCombo: ComboO<any>;
@@ -36,9 +37,22 @@ export class TimeEntryForm {
     private urlCombo: ComboO<any>;
     private gridControl: Grid;
 
+    // BUTTONS
+    private $configurationPage = $(".ct-coraltime-configuration");
+    private $coraltimeFormPage = $(".ct-coraltime");
     private $description = $("#description");
     private $submitButton = $("#submitButton");
     private $submitButton2 = $("#submitButton2");
+    private $toggleButton = $(".ct-toggle-page-button");
+
+    // ERRORS
+    private $actualHoursError = $(".ct-actual-time-container .ct-validation-error").first();
+    private $actualMinutesError = this.$actualHoursError.next();
+    private $estimatedHoursError = $(".ct-estimated-time-container .ct-validation-error").first();
+    private $estimatedMinutesError = this.$estimatedHoursError.next();
+    private $dateError = $(".ct-date-container .ct-validation-error");
+    private $taskError = $(".ct-task-container .ct-validation-error");
+    private $urlError = $(".ct-url-container .ct-validation-error");
 
     constructor() {
         this.checkExtensionSettings();
@@ -121,13 +135,13 @@ export class TimeEntryForm {
 
     togglePage(isConfigurationPage: boolean): void {
         this.isConfigurationOpened = isConfigurationPage;
-        $(".ct-toggle-page-button").toggleClass("ct-configuration-opened", isConfigurationPage);
+        this.$toggleButton.toggleClass("ct-configuration-opened", isConfigurationPage);
         if (isConfigurationPage) {
-            $(".ct-coraltime-configuration").show();
-            $(".ct-coraltime").hide();
+            this.$configurationPage.show();
+            this.$coraltimeFormPage.hide();
         } else {
-            $(".ct-coraltime-configuration").hide();
-            $(".ct-coraltime").css("display", "flex");
+            this.$configurationPage.hide();
+            this.$coraltimeFormPage.css("display", "flex");
         }
     }
 
@@ -163,7 +177,6 @@ export class TimeEntryForm {
     }
 
     private validateUrl(urlCombo: ComboO<any>): void {
-        const $urlError = $(".ct-url-container .ct-validation-error");
         let errorMessage: string = "";
 
         if (!urlCombo.getValue()) {
@@ -175,8 +188,8 @@ export class TimeEntryForm {
         }
 
         urlCombo.setInvalid(!!errorMessage);
-        $urlError.text(errorMessage);
-        $urlError.css("visibility", !!errorMessage ? "visible" : "hidden");
+        this.$urlError.text(errorMessage);
+        this.$urlError.css("visibility", !!errorMessage ? "visible" : "hidden");
         this.$submitButton.prop("disabled", !!errorMessage);
     }
 
@@ -199,7 +212,6 @@ export class TimeEntryForm {
     }
 
     private validateDate(dateCombo: ComboO<any>): void {
-        const $dateError = $(".ct-date-container .ct-validation-error");
         let errorMessage: string = "";
 
         if (!dateCombo.getValue()) {
@@ -207,8 +219,8 @@ export class TimeEntryForm {
         }
 
         dateCombo.setInvalid(!!errorMessage);
-        $dateError.text(errorMessage);
-        $dateError.css("visibility", !!errorMessage ? "visible" : "hidden");
+        this.$dateError.text(errorMessage);
+        this.$dateError.css("visibility", !!errorMessage ? "visible" : "hidden");
         this.validateForm();
     }
 
@@ -252,7 +264,6 @@ export class TimeEntryForm {
     }
 
     private validateTask(taskCombo: ComboO<any>): void {
-        const $taskError = $(".ct-task-container .ct-validation-error");
         const value: string = taskCombo.getValue();
         let errorMessage: string = "";
 
@@ -265,8 +276,8 @@ export class TimeEntryForm {
         }
 
         taskCombo.setInvalid(!!errorMessage);
-        $taskError.text(errorMessage);
-        $taskError.css("visibility", errorMessage ? "visible" : "hidden");
+        this.$taskError.text(errorMessage);
+        this.$taskError.css("visibility", errorMessage ? "visible" : "hidden");
         this.validateForm();
     }
 
@@ -281,13 +292,12 @@ export class TimeEntryForm {
     // ACTUAL
 
     private initActualHours(): void {
-        const $actualTimeError = $(".ct-actual-time-container .ct-validation-error").first();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeActual.hours = this.actHoursCombo.getValue();
                 this.timeEntry.timeActual = this.convertTimeToNumber(this.timeActual);
-                this.validateTime(this.actHoursCombo, $actualTimeError, 24, "Actual hours");
+                this.validateTime(this.actHoursCombo, this.$actualHoursError, 24, "Actual hours");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -296,13 +306,12 @@ export class TimeEntryForm {
     }
 
     private initActualMinutes(): void {
-        const $actualTimeError = $(".ct-actual-time-container .ct-validation-error").last();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeActual.minutes = this.actMinCombo.getValue();
                 this.timeEntry.timeActual = this.convertTimeToNumber(this.timeActual);
-                this.validateTime(this.actMinCombo, $actualTimeError, 60, "Actual minutes");
+                this.validateTime(this.actMinCombo, this.$actualMinutesError, 60, "Actual minutes");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -313,13 +322,12 @@ export class TimeEntryForm {
     // ESTIMATED
 
     private initEstimatedHours(): void {
-        const $estimatedTimeError = $(".ct-estimated-time-container .ct-validation-error").first();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeEstimated.hours = this.estHoursCombo.getValue();
                 this.timeEntry.timeEstimated = this.convertTimeToNumber(this.timeEstimated);
-                this.validateTime(this.estHoursCombo, $estimatedTimeError, 24, "Estimated hours");
+                this.validateTime(this.estHoursCombo, this.$estimatedHoursError, 24, "Estimated hours");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -328,13 +336,12 @@ export class TimeEntryForm {
     }
 
     private initEstimatedMinutes(): void {
-        const $estimatedTimeError = $(".ct-estimated-time-container .ct-validation-error").last();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeEstimated.minutes = this.estMinCombo.getValue();
                 this.timeEntry.timeEstimated = this.convertTimeToNumber(this.timeEstimated);
-                this.validateTime(this.estMinCombo, $estimatedTimeError, 60, "Estimated minutes");
+                this.validateTime(this.estMinCombo, this.$estimatedMinutesError, 60, "Estimated minutes");
             },
             mode: "text",
         } as Combos.IComboOptions;
