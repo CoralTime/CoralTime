@@ -518,11 +518,11 @@ namespace CoralTime.BL.Services
             //return null;
         }
 
-        public IEnumerable<VstsMemberView> GetMembersByProjectId(int id)
+        public IEnumerable<VstsMemberView> GetMembersByProjectId(int vstsProjectId)
         {
             var members =_uow.VstsProjectUserRepository
                 .GetQuery()
-                .Where(x => x.Id == id)
+                .Where(x => x.VstsProjectId == vstsProjectId)
                 .Select(x => new VstsMemberView
                 {
                     Id = x.Id,
