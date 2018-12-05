@@ -17,7 +17,7 @@
 }
 
 .ct-coraltime {
-  display: none;
+  display: flex;
   padding: 20px;
 }
 

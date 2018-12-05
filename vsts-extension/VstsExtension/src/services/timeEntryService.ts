@@ -9,13 +9,13 @@ export class TimeEntryService extends ConfigurationService {
     getTasksForProject(): Promise<ITask[]> {
         return Promise.all([this.accessTokenPromise, this.extensionSettingsPromise])
             .then(() => $.get(this.getExtensionSettings().siteUrl
-                + "/api/v1/VSTS/Tasks?ProjectId=" + this.projectContext.projectId));
+                + "/api/v1/VSTS/Tasks?ProjectId=" + this.getProjectContext().projectId));
     }
 
     getTimeEntries(): Promise<ITimeEntryRow[]> {
         return Promise.all([this.accessTokenPromise, this.extensionSettingsPromise, this.workItemFormPromise])
             .then(() => $.get(this.getExtensionSettings().siteUrl + "/api/v1/VSTS/TimeEntries?ProjectId="
-                + this.projectContext.projectId + "&WorkItemId=" + this.getWorkItemOptions()["System.Id"]));
+                + this.getProjectContext().projectId + "&WorkItemId=" + this.getWorkItemOptions()["System.Id"]));
     }
 
     saveTimeEntry(values: ITimeEntryFormValues): JQuery.jqXHR {

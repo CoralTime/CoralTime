@@ -55,22 +55,26 @@ export class TimeEntryForm {
     private $urlError = $(".ct-url-container .ct-validation-error");
 
     constructor() {
+        this.timeEntryService = new TimeEntryService();
+        this.initConfigurationForm();
+        this.initCoralTimeForm();
         this.checkExtensionSettings();
+        this.getTasksForProject();
+        this.getTimeEntries();
         $(".ct-toggle-page-button").on("click", () => {
             this.togglePage(!this.isConfigurationOpened);
         });
     }
 
-    private checkExtensionSettings(): void {
-        this.timeEntryService = new TimeEntryService();
+    checkExtensionSettings(): void {
         this.timeEntryService.loadExtensionSettings().then((data: ISettings) => {
-            this.initConfigurationForm();
-            this.initCoralTimeForm();
-            if (data) {
-                this.togglePage(false);
+            if (data && data.siteUrl) {
+                this.urlCombo.setInputText(this.getSiteUrl(data), true);
             } else {
                 this.togglePage(true);
             }
+        }, () => {
+            this.togglePage(true);
         });
     }
 
@@ -82,8 +86,6 @@ export class TimeEntryForm {
         this.initActualMinutes();
         this.initEstimatedHours();
         this.initEstimatedMinutes();
-        this.getTasksForProject();
-        this.getTimeEntries();
         this.validateForm();
 
         this.$submitButton2.on("click", () => {
@@ -161,8 +163,6 @@ export class TimeEntryForm {
     // SITE URL
 
     private initSiteUrlInput(): void {
-        this.siteUrl = this.timeEntryService.getExtensionSettings()
-            && this.timeEntryService.getExtensionSettings().siteUrl.substr(8);
         const urlOptions: Combos.IDateTimeComboOptions = {
             change: () => {
                 this.siteUrl = this.urlCombo.getValue();
@@ -174,6 +174,10 @@ export class TimeEntryForm {
 
         this.urlCombo = Controls.create(Combos.Combo, $(".ct-url"), urlOptions);
         this.validateUrl(this.urlCombo);
+    }
+
+    private getSiteUrl(settings: ISettings): string {
+        return settings && settings.siteUrl.substr(8);
     }
 
     private validateUrl(urlCombo: ComboO<any>): void {

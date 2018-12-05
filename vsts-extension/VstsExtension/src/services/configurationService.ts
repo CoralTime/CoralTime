@@ -9,10 +9,9 @@ export class ConfigurationService {
     extensionSettingsPromise: IPromise<ISettings>;
     workItemFormPromise: PromiseLike<void>;
 
-    protected projectContext: IProjectContext = this.getExtensionContext();
-    protected userSettings: IUserSettings;
     private accessToken: string;
     private extensionSettings: ISettings;
+    private userSettings: IUserSettings;
     private workItemOptions: IWorkItemOptions;
 
     constructor() {
@@ -23,20 +22,16 @@ export class ConfigurationService {
         });
     }
 
-    getAccessToken(): string {
-        return this.accessToken;
+    getExtensionSettings(): ISettings {
+        return this.extensionSettings;
     }
 
-    getExtensionContext(): IProjectContext {
+    getProjectContext(): IProjectContext {
         const webContext = VSS.getWebContext();
         return {
             projectId: webContext.project.id,
             userId: webContext.user.id,
         };
-    }
-
-    getExtensionSettings(): ISettings {
-        return this.extensionSettings;
     }
 
     getWorkItemOptions(): IWorkItemOptions {
@@ -81,12 +76,12 @@ export class ConfigurationService {
         $.ajaxSetup({
             headers: {
                 "Content-Type": "application/json",
-                "VSTSToken": this.getAccessToken(),
+                "VSTSToken": this.accessToken,
             },
         });
     }
 
-    // EXTENSION SETTINGS
+    // USER SETTINGS
 
     getUserSettings(): IUserSettings {
         return this.userSettings;
@@ -110,8 +105,8 @@ export class ConfigurationService {
     updateUserSettings(): IPromise<IUserSettings> {
         const deferred = Q.defer<IUserSettings>();
         const data = {
-            VstsProjectId: this.getExtensionContext().projectId,
-            VstsUserId: this.getExtensionContext().userId,
+            VstsProjectId: this.getProjectContext().projectId,
+            VstsUserId: this.getProjectContext().userId,
         };
 
         Promise.all([this.accessTokenPromise, this.extensionSettingsPromise]).then(() => {
@@ -134,16 +129,21 @@ export class ConfigurationService {
         return deferred.promise;
     }
 
-    // USER SETTINGS
+    // EXTENSION SETTINGS
 
     loadExtensionSettings(): IPromise<ISettings> {
         const deferred = Q.defer<ISettings>();
-        this.getKeyValueFromStorage("extensionSettings", null).then((res: ISettings) => {
-            this.extensionSettings = {
-                siteUrl: "https://" + res.siteUrl,
-            };
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            dataService.getDocument("extensionSettings", this.getProjectContext().projectId).then((res: ISettings) => {
+                this.extensionSettings = {
+                    id: res.id,
+                    siteUrl: "https://" + res.siteUrl,
+                };
 
-            deferred.resolve(this.extensionSettings);
+                deferred.resolve(this.extensionSettings);
+            }, () => {
+                deferred.reject(null);
+            });
         });
 
         return this.extensionSettingsPromise = deferred.promise;
@@ -151,12 +151,19 @@ export class ConfigurationService {
 
     setExtensionSettings(siteUrl: string): IPromise<any> {
         const deferred = Q.defer();
-        this.setKeyValueInStorage("extensionSettings", {siteUrl}, null).then(() => {
-            this.extensionSettings = {
-                siteUrl: "https://" + siteUrl,
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            const settings: ISettings = {
+                id: this.getProjectContext().projectId,
+                siteUrl,
             };
 
-            deferred.resolve();
+            dataService.setDocument("extensionSettings", settings).then(() => {
+                this.extensionSettings = {
+                    id: this.getProjectContext().projectId,
+                    siteUrl: "https://" + siteUrl,
+                };
+                deferred.resolve();
+            });
         });
 
         return deferred.promise;

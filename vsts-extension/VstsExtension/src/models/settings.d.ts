@@ -4,6 +4,7 @@
 }
 
 export interface ISettings {
+    id: string;
     siteUrl: string;
 }
 
