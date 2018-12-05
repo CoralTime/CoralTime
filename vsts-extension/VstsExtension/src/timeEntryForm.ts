@@ -59,23 +59,27 @@ export class TimeEntryForm {
         this.initConfigurationForm();
         this.initCoralTimeForm();
         this.checkExtensionSettings();
-        this.getTasksForProject();
-        this.getTimeEntries();
         $(".ct-toggle-page-button").on("click", () => {
             this.togglePage(!this.isConfigurationOpened);
         });
     }
 
     checkExtensionSettings(): void {
-        this.timeEntryService.loadExtensionSettings().then((data: ISettings) => {
-            if (data && data.siteUrl) {
-                this.urlCombo.setInputText(this.getSiteUrl(data), true);
-            } else {
-                this.togglePage(true);
-            }
-        }, () => {
-            this.togglePage(true);
-        });
+        Promise.all([this.timeEntryService.extensionSettingsPromise, this.timeEntryService.userDetailsPromise])
+            .then(([settings, isUserTeamAdmin]) => {
+                if (!settings || !settings.siteUrl) {
+                    if (isUserTeamAdmin) {
+                        this.togglePage(true);
+                    } else {
+                        Notification.showGlobalError("Settings is not defined.", "form");
+                    }
+                    return;
+                }
+
+                this.getTasksForProject();
+                this.getTimeEntries();
+                this.urlCombo.setInputText(this.getSiteUrl(settings), true);
+            });
     }
 
     initCoralTimeForm(): void {
@@ -122,6 +126,10 @@ export class TimeEntryForm {
     }
 
     saveUrl(): void {
+        if (!this.timeEntryService.isUserTeamAdmin()) {
+            Notification.showNotification("You haven't access to change configuration.", "error", "configuration");
+            return;
+        }
         this.timeEntryService.setExtensionSettings(this.siteUrl).then(() => {
             Notification.showNotification("Site url changed.", "success", "configuration");
 
@@ -136,6 +144,9 @@ export class TimeEntryForm {
     }
 
     togglePage(isConfigurationPage: boolean): void {
+        if (!this.timeEntryService.isUserTeamAdmin()) {
+            return;
+        }
         this.isConfigurationOpened = isConfigurationPage;
         this.$toggleButton.toggleClass("ct-configuration-opened", isConfigurationPage);
         if (isConfigurationPage) {

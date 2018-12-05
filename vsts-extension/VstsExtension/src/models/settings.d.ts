@@ -1,5 +1,6 @@
 ﻿export interface IProjectContext {
     projectId: string;
+    teamId: string;
     userId: string;
 }
 

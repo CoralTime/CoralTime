@@ -1,25 +1,35 @@
 import Q = require("q");
 import { IPromise } from "q";
+import RestClient = require("TFS/Core/RestClient");
 import Services = require("TFS/WorkItemTracking/Services");
+import Contracts = require("VSS/WebApi/Contracts");
 import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
 import { Notification } from "../utils/notification";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
     extensionSettingsPromise: IPromise<ISettings>;
+    userDetailsPromise: PromiseLike<boolean>;
     workItemFormPromise: PromiseLike<void>;
 
     private accessToken: string;
     private extensionSettings: ISettings;
+    private isTeamAdmin: boolean;
     private userSettings: IUserSettings;
     private workItemOptions: IWorkItemOptions;
 
     constructor() {
+        this.getUserRole();
+        this.loadExtensionSettings();
         this.loadWorkItemOptions();
         this.loadAccessToken();
         this.loadUserSettings().then((userSettings: IUserSettings) => {
             this.userSettings = userSettings;
         });
+    }
+
+    isUserTeamAdmin(): boolean {
+        return this.isTeamAdmin;
     }
 
     getExtensionSettings(): ISettings {
@@ -30,8 +40,13 @@ export class ConfigurationService {
         const webContext = VSS.getWebContext();
         return {
             projectId: webContext.project.id,
+            teamId: webContext.team.id,
             userId: webContext.user.id,
         };
+    }
+
+    getUserSettings(): IUserSettings {
+        return this.userSettings;
     }
 
     getWorkItemOptions(): IWorkItemOptions {
@@ -83,11 +98,16 @@ export class ConfigurationService {
 
     // USER SETTINGS
 
-    getUserSettings(): IUserSettings {
-        return this.userSettings;
+    private getUserRole() {
+        const client = RestClient.getClient();
+        this.userDetailsPromise = client.getTeamMembersWithExtendedProperties(this.getProjectContext().projectId, this.getProjectContext().teamId)
+            .then((teamMembers: Contracts.TeamMember[]) => {
+                const user = teamMembers.find((member) => member.identity.id === this.getProjectContext().userId);
+                return this.isTeamAdmin = !!user && user.isTeamAdmin === true;
+            });
     }
 
-    loadUserSettings(): IPromise<IUserSettings> {
+    private loadUserSettings(): IPromise<IUserSettings> {
         const deferred = Q.defer<IUserSettings>();
         this.getKeyValueFromStorage("userSettings", "User").then((res: IUserSettings) => {
             if (res && res.expirationDate > new Date().getTime()) {
@@ -137,7 +157,7 @@ export class ConfigurationService {
             dataService.getDocument("extensionSettings", this.getProjectContext().projectId).then((res: ISettings) => {
                 this.extensionSettings = {
                     id: res.id,
-                    siteUrl: "https://" + res.siteUrl,
+                    siteUrl: res.siteUrl ? "https://" + res.siteUrl : "",
                 };
 
                 deferred.resolve(this.extensionSettings);
@@ -150,9 +170,10 @@ export class ConfigurationService {
     }
 
     setExtensionSettings(siteUrl: string): IPromise<any> {
-        const deferred = Q.defer();
+        const deferred = Q.defer<void>();
         VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
-            const settings: ISettings = {
+            const settings = {
+                __etag: -1,
                 id: this.getProjectContext().projectId,
                 siteUrl,
             };
