@@ -27,7 +27,7 @@ export class TimeEntryForm {
     private timeEntryRows: ITimeEntryRow[];
     private timeEntryService: TimeEntryService;
 
-    // FORM
+    // FORM CONTROLS
     private dateCombo: ComboO<any>;
     private taskCombo: ComboO<any>;
     private actHoursCombo: ComboO<any>;
@@ -37,14 +37,13 @@ export class TimeEntryForm {
     private urlCombo: ComboO<any>;
     private gridControl: Grid;
 
-    // BUTTONS
     private $configurationPage = $(".ct-coraltime-configuration");
     private $coraltimeFormPage = $(".ct-coraltime");
+    // BUTTONS
     private $description = $("#description");
-    private $submitButton = $("#submitButton");
-    private $submitButton2 = $("#submitButton2");
+    private $submitButton = this.$configurationPage.find(".ct-submit-button");
+    private $submitButton2 = this.$coraltimeFormPage.find(".ct-submit-button");
     private $toggleButton = $(".ct-toggle-page-button");
-
     // ERRORS
     private $actualHoursError = $(".ct-actual-time-container .ct-validation-error").first();
     private $actualMinutesError = this.$actualHoursError.next();
@@ -59,7 +58,8 @@ export class TimeEntryForm {
         this.initConfigurationForm();
         this.initCoralTimeForm();
         this.checkExtensionSettings();
-        $(".ct-toggle-page-button").on("click", () => {
+
+        this.$toggleButton.on("click", () => {
             this.togglePage(!this.isConfigurationOpened);
         });
     }
@@ -67,6 +67,9 @@ export class TimeEntryForm {
     checkExtensionSettings(): void {
         Promise.all([this.timeEntryService.extensionSettingsPromise, this.timeEntryService.userDetailsPromise])
             .then(([settings, isUserTeamAdmin]) => {
+                if (isUserTeamAdmin) {
+                    this.$toggleButton.show();
+                }
                 if (!settings || !settings.siteUrl) {
                     if (isUserTeamAdmin) {
                         this.togglePage(true);
@@ -147,8 +150,6 @@ export class TimeEntryForm {
         if (!this.timeEntryService.isUserTeamAdmin()) {
             return;
         }
-        this.isConfigurationOpened = isConfigurationPage;
-        this.$toggleButton.toggleClass("ct-configuration-opened", isConfigurationPage);
         if (isConfigurationPage) {
             this.$configurationPage.show();
             this.$coraltimeFormPage.hide();
@@ -156,6 +157,9 @@ export class TimeEntryForm {
             this.$configurationPage.hide();
             this.$coraltimeFormPage.css("display", "flex");
         }
+
+        this.isConfigurationOpened = isConfigurationPage;
+        this.$toggleButton.toggleClass("ct-configuration-opened", isConfigurationPage);
     }
 
     private validateForm(): void {
@@ -171,7 +175,7 @@ export class TimeEntryForm {
         this.$submitButton2.prop("disabled", !isFormValid);
     }
 
-    // SITE URL
+    // SITE URL CONTROL
 
     private initSiteUrlInput(): void {
         const urlOptions: Combos.IDateTimeComboOptions = {
@@ -208,7 +212,7 @@ export class TimeEntryForm {
         this.$submitButton.prop("disabled", !!errorMessage);
     }
 
-    // DATE
+    // DATE CONTROL
 
     private initDatePicker(): void {
         const dateTimeOptions: Combos.IDateTimeComboOptions = {
@@ -239,7 +243,7 @@ export class TimeEntryForm {
         this.validateForm();
     }
 
-    // TASK
+    // TASK CONTROL
 
     private initTaskSelect(tasks?: string[]): void {
         const makeOptions = {
@@ -296,7 +300,7 @@ export class TimeEntryForm {
         this.validateForm();
     }
 
-    // DESCRIPTION
+    // DESCRIPTION CONTROL
 
     private initDescription(): void {
         this.$description.on("change", () => {
@@ -304,7 +308,7 @@ export class TimeEntryForm {
         });
     }
 
-    // ACTUAL
+    // ACTUAL CONTROL
 
     private initActualHours(): void {
         const makeOptions = {
@@ -334,7 +338,7 @@ export class TimeEntryForm {
         this.actMinCombo = Controls.create(Combos.Combo, $(".ct-actual-time-minutes"), makeOptions);
     }
 
-    // ESTIMATED
+    // ESTIMATED CONTROL
 
     private initEstimatedHours(): void {
         const makeOptions = {

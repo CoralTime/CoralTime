@@ -163,6 +163,7 @@ label {
 /* TOGGLE PAGE */
 
 .ct-toggle-page-button {
+  display: none;
   position: absolute;
   top: 8px;
   left: 350px;

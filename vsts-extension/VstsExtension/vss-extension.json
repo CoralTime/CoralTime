@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.7.139",
+  "version": "0.0.8.0",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime tracker",
   "description": "Track your time in CoralTime",
@@ -62,10 +62,6 @@
     {
       "addressable": true,
       "path": "static/coraltime-index.html"
-    },
-    {
-      "addressable": true,
-      "path": "static/coraltime-configuration.html"
     },
     {
       "addressable": true,
