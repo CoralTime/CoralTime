@@ -1,6 +1,6 @@
 # CoralTime Extension for VSTS
 
-<img src="./static/img/example.jpg" />
+![CoralTime Tracker](static/img/example.jpg)
 
 ### Quick steps to get started ###
 
@@ -14,8 +14,10 @@
 4. Choose a work item to start your work and click in <strong>CoralTime</strong> tab.
 Enter domain of your CoraTime website (you need to do this only once per project).
 <img src="./static/img/enter-url.png" />
-    > You have to be Team Administrator, to change this field. It can be configured in <code>project settings -> teams</code>.
+<blockquote>
+    You have to be Team Administrator, to change this field. It can be configured in <code>project settings -> teams</code>.
     <img src="./static/img/administrator.jpg" />
+</blockquote>
 
 
 5. Go to <code>vsts-integration page</code> in CoralTime site. Create new connection. Paste token in VSTS pat field.
