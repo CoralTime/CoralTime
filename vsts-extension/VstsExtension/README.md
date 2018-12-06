@@ -7,21 +7,24 @@
 1. Install [CoralTime](https://github.com/CoralTime/CoralTime).
 
 2. Install extension. Configure your projects and clients in <code>[account].visualstudio.com website</code>.
-<img src="./static/img/install-extension.png" />
+
+![Install extension](static/img/install-extension.png)
 
 3. Go to <code>user settings -> Personal access tokens</code>, create new API token.
 
 4. Choose a work item to start your work and click in <strong>CoralTime</strong> tab.
 Enter domain of your CoraTime website (you need to do this only once per project).
-<img src="./static/img/enter-url.png" />
-<blockquote>
-    You have to be Team Administrator, to change this field. It can be configured in <code>project settings -> teams</code>.
-    <img src="./static/img/administrator.jpg" />
-</blockquote>
+
+![Enter url](static/img/enter-url.png)
+
+<blockquote>You have to be Team Administrator, to change this field. It can be configured in <code>project settings -> teams</code>.</blockquote>
+
+![administrator](static/img/administrator.jpg)
 
 
 5. Go to <code>vsts-integration page</code> in CoralTime site. Create new connection. Paste token in VSTS pat field.
-<img src="./static/img/vsts-integration.jpg" />
+
+![VSTS Integration page](static/img/vsts-integration.jpg)
 
 ## Contributors
 
