@@ -1,9 +1,9 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.8.0",
+  "version": "0.0.8.1",
   "publisher": "CoralTimeExtDev",
-  "name": "CoralTime tracker",
+  "name": "CoralTime Tracker",
   "description": "Track your time in CoralTime",
   "public": false,
   "icons": {
@@ -18,7 +18,7 @@
   ],
   "content": {
     "details": {
-      "path": "overview.md"
+      "path": "README.md"
     }
   },
   "links": {
