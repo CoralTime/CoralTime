@@ -8,6 +8,7 @@ import { IGridColumn, IGridRowInfo } from "VSS/Controls/Grids";
 import { ISettings } from "./models/settings";
 import { ITask, ITime, ITimeEntryFormValues, ITimeEntryRow, ITimeValues } from "./models/timeEntry";
 import { TimeEntryService } from "./services/timeEntryService";
+import { Loading } from "./utils/loading";
 import { Notification } from "./utils/notification";
 
 export class TimeEntryForm {
@@ -39,11 +40,12 @@ export class TimeEntryForm {
 
     private $configurationPage = $(".ct-coraltime-configuration");
     private $coraltimeFormPage = $(".ct-coraltime");
+    private $gridContainer = $(".ct-grid");
     // BUTTONS
     private $description = $("#description");
-    private $submitButton = this.$configurationPage.find(".ct-submit-button");
-    private $submitButton2 = this.$coraltimeFormPage.find(".ct-submit-button");
-    private $toggleButton = $(".ct-toggle-page-button");
+    private $configFormButton = this.$configurationPage.find(".ct-submit-button");
+    private $timeEntryFormButton = this.$coraltimeFormPage.find(".ct-submit-button");
+    private $toggleButton: JQuery;
     // ERRORS
     private $actualHoursError = $(".ct-actual-time-container .ct-validation-error").first();
     private $actualMinutesError = this.$actualHoursError.next();
@@ -58,17 +60,13 @@ export class TimeEntryForm {
         this.initConfigurationForm();
         this.initCoralTimeForm();
         this.checkExtensionSettings();
-
-        this.$toggleButton.on("click", () => {
-            this.togglePage(!this.isConfigurationOpened);
-        });
     }
 
     checkExtensionSettings(): void {
         Promise.all([this.timeEntryService.extensionSettingsPromise, this.timeEntryService.userDetailsPromise])
             .then(([settings, isUserTeamAdmin]) => {
                 if (isUserTeamAdmin) {
-                    this.$toggleButton.show();
+                    this.initTogglePageButton();
                 }
                 if (!settings || !settings.siteUrl) {
                     if (isUserTeamAdmin) {
@@ -95,26 +93,26 @@ export class TimeEntryForm {
         this.initEstimatedMinutes();
         this.validateForm();
 
-        this.$submitButton2.on("click", () => {
+        this.$timeEntryFormButton.on("click", () => {
             this.saveForm();
         });
     }
 
     initConfigurationForm(): void {
         this.initSiteUrlInput();
-        this.$submitButton.on("click", () => this.saveUrl());
+        this.$configFormButton.on("click", () => this.saveUrl());
     }
 
-    saveForm(): void {
-        this.timeEntryService.saveTimeEntry(this.timeEntry)
-            .done(() => {
-                Notification.showNotification("Time entry saved successfully.", "success", "form");
-                this.resetForm();
-                this.getTimeEntries();
-            })
-            .fail(() => {
-                Notification.showNotification("Time entry creation failed.", "error", "form");
-            });
+    initTogglePageButton(): void {
+        this.$configurationPage.before($("<button/>", {
+            class: "ct-toggle-page-button",
+            title: "Configuration form",
+            type: "button",
+        }));
+        this.$toggleButton = $(".ct-toggle-page-button");
+        this.$toggleButton.on("click", () => {
+            this.togglePage(!this.isConfigurationOpened);
+        });
     }
 
     resetForm(): void {
@@ -128,13 +126,35 @@ export class TimeEntryForm {
         this.timeEntry.timeEstimated = 0;
     }
 
+    saveForm(): void {
+        Loading.addLoading(this.$timeEntryFormButton);
+        this.$timeEntryFormButton.prop("disabled", true);
+        this.timeEntryService.saveTimeEntry(this.timeEntry)
+            .done(() => {
+                Notification.showNotification("Time entry saved successfully.", "success", "form");
+                this.resetForm();
+                this.getTimeEntries();
+            })
+            .fail(() => {
+                Notification.showNotification("Time entry creation failed.", "error", "form");
+            })
+            .always(() => {
+                Loading.removeLoading(this.$timeEntryFormButton);
+            });
+    }
+
     saveUrl(): void {
         if (!this.timeEntryService.isUserTeamAdmin()) {
             Notification.showNotification("You haven't access to change configuration.", "error", "configuration");
             return;
         }
+
+        Loading.addLoading(this.$configFormButton);
+        this.$configFormButton.prop("disabled", true);
         this.timeEntryService.setExtensionSettings(this.siteUrl).then(() => {
+            Loading.removeLoading(this.$configFormButton);
             Notification.showNotification("Site url changed.", "success", "configuration");
+            this.$configFormButton.prop("disabled", false);
 
             setTimeout(() => {
                 Notification.removeGlobalErrors();
@@ -142,7 +162,7 @@ export class TimeEntryForm {
                 this.getTimeEntries();
                 this.timeEntryService.updateUserSettings();
                 this.togglePage(false);
-            }, 5000);
+            }, 3000);
         });
     }
 
@@ -172,7 +192,7 @@ export class TimeEntryForm {
         const isTimeValuesValid = !!this.timeEntry.timeActual || !!this.timeEntry.timeEstimated;
         const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
             && isEstHoursValid && isEstMinValid && isTimeValuesValid;
-        this.$submitButton2.prop("disabled", !isFormValid);
+        this.$timeEntryFormButton.prop("disabled", !isFormValid);
     }
 
     // SITE URL CONTROL
@@ -209,7 +229,7 @@ export class TimeEntryForm {
         urlCombo.setInvalid(!!errorMessage);
         this.$urlError.text(errorMessage);
         this.$urlError.css("visibility", !!errorMessage ? "visible" : "hidden");
-        this.$submitButton.prop("disabled", !!errorMessage);
+        this.$configFormButton.prop("disabled", !!errorMessage);
     }
 
     // DATE CONTROL
@@ -268,7 +288,8 @@ export class TimeEntryForm {
             .then((options: ITask[]) => {
                 this.tasksOptions = options;
                 this.initTaskSelect(this.getTaskNames());
-            }, () => {
+            })
+            .catch(() => {
                 Notification.showGlobalError("Error loading tasks.", "form");
             });
     }
@@ -403,7 +424,6 @@ export class TimeEntryForm {
     // GRID
 
     private initGrid(): void {
-        const container = $(".ct-grid");
         const gridOptions: Grids.IGridOptions = {
             columns: [
                 {
@@ -490,7 +510,7 @@ export class TimeEntryForm {
         };
 
         if (!this.gridControl) {
-            this.gridControl = Controls.create(Grids.Grid, container, gridOptions);
+            this.gridControl = Controls.create(Grids.Grid, this.$gridContainer, gridOptions);
         } else {
             this.gridControl.setDataSource(this.timeEntryRows);
         }
@@ -498,12 +518,17 @@ export class TimeEntryForm {
     }
 
     private getTimeEntries(): void {
+        Loading.addLoading(this.$gridContainer);
         this.timeEntryService.getTimeEntries()
             .then((rows: ITimeEntryRow[]) => {
                 this.timeEntryRows = rows;
                 this.initGrid();
-            }, () => {
+            })
+            .catch(() => {
                 Notification.showGlobalError("Error loading Time entries.", "grid");
+            })
+            .then(() => {
+                Loading.removeLoading(this.$gridContainer);
             });
     }
 }

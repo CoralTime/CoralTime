@@ -4,6 +4,7 @@ import RestClient = require("TFS/Core/RestClient");
 import Services = require("TFS/WorkItemTracking/Services");
 import Contracts = require("VSS/WebApi/Contracts");
 import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
+import { Loading } from "../utils/loading";
 import { Notification } from "../utils/notification";
 
 export class ConfigurationService {
@@ -20,12 +21,10 @@ export class ConfigurationService {
 
     constructor() {
         this.getUserRole();
-        this.loadExtensionSettings();
-        this.loadWorkItemOptions();
         this.loadAccessToken();
-        this.loadUserSettings().then((userSettings: IUserSettings) => {
-            this.userSettings = userSettings;
-        });
+        this.loadExtensionSettings();
+        this.loadUserSettings();
+        this.loadWorkItemOptions();
     }
 
     isUserTeamAdmin(): boolean {
@@ -98,7 +97,7 @@ export class ConfigurationService {
 
     // USER SETTINGS
 
-    private getUserRole() {
+    getUserRole(): void {
         const client = RestClient.getClient();
         this.userDetailsPromise = client.getTeamMembersWithExtendedProperties(this.getProjectContext().projectId, this.getProjectContext().teamId)
             .then((teamMembers: Contracts.TeamMember[]) => {
@@ -107,8 +106,10 @@ export class ConfigurationService {
             });
     }
 
-    private loadUserSettings(): IPromise<IUserSettings> {
+    loadUserSettings(): void {
         const deferred = Q.defer<IUserSettings>();
+        const $form = $(".ct-form");
+        Loading.addLoading($form);
         this.getKeyValueFromStorage("userSettings", "User").then((res: IUserSettings) => {
             if (res && res.expirationDate > new Date().getTime()) {
                 deferred.resolve(res);
@@ -119,7 +120,10 @@ export class ConfigurationService {
             }
         });
 
-        return deferred.promise;
+        deferred.promise.then((userSettings: IUserSettings) => {
+            Loading.removeLoading($form);
+            this.userSettings = userSettings;
+        });
     }
 
     updateUserSettings(): IPromise<IUserSettings> {

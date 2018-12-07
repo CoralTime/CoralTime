@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "id": "CoralTimeTracker",
-  "version": "0.0.8.7",
+  "version": "0.0.8.25",
   "publisher": "CoralTimeExtDev",
   "name": "CoralTime Tracker",
   "description": "Track your time in CoralTime",
