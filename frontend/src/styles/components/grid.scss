@@ -328,8 +328,9 @@
       background-color: #f7f9fc !important;
     }
 
-    & + tr td:first-child:after {
-      background-color: transparent;
+    & + tr td:first-child:after,
+    &:last-child td:first-child:before {
+      background-color: transparent !important;
     }
   }
 }

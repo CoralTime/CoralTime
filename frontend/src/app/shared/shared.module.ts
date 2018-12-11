@@ -14,7 +14,6 @@ import { DirectivesModule } from './directives/directives.module';
 import { DatepickerModule } from './form/datepicker/datepicker.module';
 import { MenuModule } from './menu/menu.module';
 import { SharedFormModule } from './form/shared-form.module';
-import { UserPicComponent } from './user-pic/user-pic.component';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { ChartComponent } from './chart/chart.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -49,7 +48,6 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 	declarations: [
 		ReadMoreComponent,
 		ConfirmationComponent,
-		UserPicComponent,
 		ChartComponent,
 	],
 	exports: [
@@ -66,7 +64,6 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 		DataTableModule,
 		MenuModule,
 		SharedFormModule,
-		UserPicComponent,
 		ConfirmationComponent,
 		ChartComponent,
 		TranslateModule,

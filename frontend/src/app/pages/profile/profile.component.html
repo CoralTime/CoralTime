@@ -19,7 +19,7 @@
                 <h3 class="ct-header">My Projects</h3>
 
 
-                <p-dataTable class="ct-grid-container ct-grid-row-border"
+                <p-dataTable class="ct-grid-container ct-grid-row-border" #tableWrapper
                              [emptyMessage]="'You haven\'t assigned to any project yet.'"
                              [value]="projects"
                              [resizeObservable]="resizeObservable"
@@ -50,7 +50,10 @@
                             </span>
                             <ct-select class="ct-project-members-select" #select
                                        [displayName]="'memberName'" [trackBy]="'memberId'"
-                                       [options]="project.memberList">
+                                       [container]="tableWrapper.el.nativeElement"
+                                       [iconField]="'urlIcon'"
+                                       [options]="project.memberList"
+                                       (selectToggled)="resizeObservable.next()">
                             </ct-select>
                         </ng-template>
                     </p-column>

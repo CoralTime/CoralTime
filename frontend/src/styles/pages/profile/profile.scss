@@ -23,19 +23,15 @@
     }
   }
 
-  .ct-grid-row-border tbody tr:not(.ct-loading-block) td:first-child:after,
-  .ct-grid-row-border tbody tr:not(.ct-loading-block):last-child td:first-child:before {
-    width: calc(50vw - 90px);
+  .ct-grid-row-border tbody tr:not(.ct-loading-block) td:first-child {
+    &:before, &:after {
+      width: calc(50vw - 90px);
+    }
   }
 
   .ct-grid-count {
     background: none;
-
-    &.ct-loading:after {
-      right: auto;
-      left: -50px;
-      top: 3px;
-    }
+    width: 35px;
   }
 
   .ct-view-members {
@@ -54,7 +50,7 @@
   .ct-project-members-select {
     position: absolute;
     right: 0;
-    top: 30px;
+    top: 0;
 
     .ct-select {
       display: none;
@@ -62,6 +58,20 @@
 
     .ct-select-options-list {
       width: 230px;
+      top: 30px;
+    }
+
+    ct-user-pic {
+      margin-right: 5px;
+      top: -2px;
+      vertical-align: middle;
+    }
+
+    .ct-show-to-top .ct-select-options-list {
+      position: absolute;
+      top: auto;
+      bottom: calc(100% + 12px);
+      right: 0;
     }
   }
 

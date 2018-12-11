@@ -10,6 +10,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { NgSlimScrollModule } from 'ngx-slimscroll';
 import { MaterialModule } from '../material.module';
 import { ColorPickerModule } from './color-picker/color-picker.module';
+import { UserPicComponent } from '../user-pic/user-pic.component';
 
 @NgModule({
 	imports: [
@@ -26,6 +27,7 @@ import { ColorPickerModule } from './color-picker/color-picker.module';
 		InputListComponent,
 		MultiSelectComponent,
 		SelectComponent,
+		UserPicComponent,
 		TextareaComponent
 	],
 	exports: [
@@ -38,7 +40,8 @@ import { ColorPickerModule } from './color-picker/color-picker.module';
 		TextareaComponent,
 		TextMaskModule,
 		ColorPickerModule,
-		NgSlimScrollModule
+		NgSlimScrollModule,
+		UserPicComponent,
 	]
 })
 

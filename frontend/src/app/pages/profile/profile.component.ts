@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
 import { User } from '../../models/user';
+import { ArrayUtils } from '../../core/object-utils';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
 import { UserPicService } from '../../services/user-pic.service';
 import { numberToHex } from '../../shared/form/color-picker/color-picker.component';
-import { Subject } from 'rxjs';
-import { ArrayUtils } from '../../core/object-utils';
 import { SelectComponent } from '../../shared/form/select/select.component';
 
 @Component({
@@ -18,8 +18,8 @@ export class ProfileComponent implements OnInit {
 	avatarUrl: string;
 	impersonationUser: User;
 	projects: ProfileProjects[];
-	userInfo: User = new User();
 	resizeObservable: Subject<any> = new Subject();
+	userInfo: User;
 
 	constructor(private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
@@ -59,7 +59,7 @@ export class ProfileComponent implements OnInit {
 			project.isMemberLoading = true;
 			this.getProjectMembers(this.projects[index].id, index).then(() => {
 				project.isMemberLoading = false;
-				setTimeout(() => select.toggleSelect(), 100);
+				select.toggleSelect();
 			});
 		} else {
 			select.toggleSelect();

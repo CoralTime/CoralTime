@@ -29,15 +29,17 @@ export class SelectChange {
 })
 
 export class SelectComponent implements ControlValueAccessor {
-	@Input('name') name: string;
-	@Input('displayName') displayName: string;
-	@Input('trackBy') trackBy: string;
-	@Input('options') options: any[];
-	@Input('defaultValue') defaultValue: string;
-	@Input('canClickOverlay') canClickOverlay: boolean = false;
-	@Input('maxHeight') maxHeight: number = 168;
-	@Input('container') container: HTMLDivElement;
+	@Input() name: string;
+	@Input() iconField: string;
+	@Input() displayName: string;
+	@Input() trackBy: string;
+	@Input() options: any[];
+	@Input() defaultValue: string;
+	@Input() canClickOverlay: boolean = false;
+	@Input() maxHeight: number = 168;
+	@Input() container: HTMLDivElement;
 	@Output() change: EventEmitter<SelectChange> = new EventEmitter<SelectChange>();
+	@Output() selectToggled: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	isOpen: boolean = false;
 	isAnimate: boolean = false;
@@ -154,10 +156,12 @@ export class SelectComponent implements ControlValueAccessor {
 	closeSelect(): void {
 		this.isOpen = false;
 		this.isAnimate = false;
+		this.selectToggled.emit(this.isOpen);
 	}
 
 	openSelect(): void {
 		this.isOpen = true;
+		this.selectToggled.emit(this.isOpen);
 		this.oldSelectedObject = this.selectedObject;
 		setTimeout(() => {
 			this.canShowList();

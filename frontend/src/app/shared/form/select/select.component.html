@@ -16,7 +16,10 @@
                 <mat-list-item *ngFor="let option of options; trackBy: trackByFn" class="ct-select-option" role="option"
                                [ngClass]="{ 'ct-select-option-selected': isOptionSelected(option), 'ct-select-option-disabled': option?.disabled }"
                                (click)="selectOption(option)">
-                    <label class="ct-label-item">{{getDisplayedName(option)}}</label>
+                    <label class="ct-label-item">
+                        <ct-user-pic *ngIf="iconField" [urlIcon]="option[iconField]"></ct-user-pic>
+                        {{getDisplayedName(option)}}
+                    </label>
                 </mat-list-item>
             </div>
         </mat-list>
