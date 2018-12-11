@@ -1,27 +1,67 @@
 @import 'profile-page';
 @import 'profile-settings';
 
-.ct-profile {
-  h2 {
-    display: inline-block;
-    font-family: inherit;
-    font-size: 15px;
-    color: $main-blue;
-  }
-
-  .ct-page-header {
-    position: relative;
-    height: 30px;
-    line-height: 30px;
-    border-bottom: 3px solid #f1f1f1;
-  }
-
+.ct-profile-page {
   .ct-page-content {
-    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
 
     > div {
-      padding: 20px;
-      box-sizing: border-box;
+      width: calc(50% - 15px);
+    }
+  }
+
+  .ct-profile-block {
+    background: #fff;
+    border-radius: 5px;
+    margin-bottom: 30px;
+
+    .ct-header {
+      position: relative;
+      padding: 40px 25px 0;
+      z-index: 1;
+    }
+  }
+
+  .ct-grid-row-border tbody tr:not(.ct-loading-block) td:first-child:after,
+  .ct-grid-row-border tbody tr:not(.ct-loading-block):last-child td:first-child:before {
+    width: calc(50vw - 90px);
+  }
+
+  .ct-grid-count {
+    background: none;
+
+    &.ct-loading:after {
+      right: auto;
+      left: -50px;
+      top: 3px;
+    }
+  }
+
+  .ct-view-members {
+    margin-left: 25px;
+    padding: 9px 18px;
+    background-color: #fff;
+    border-radius: 18px;
+    cursor: pointer;
+
+    &:hover, &.ct-select-opened {
+      background-color: $main-blue;
+      color: #fff;
+    }
+  }
+
+  .ct-project-members-select {
+    position: absolute;
+    right: 0;
+    top: 30px;
+
+    .ct-select {
+      display: none;
+    }
+
+    .ct-select-options-list {
+      width: 230px;
     }
   }
 
@@ -40,4 +80,13 @@
     margin-left: 320px;
     border-left: 3px solid #f1f1f1;
   }
+}
+
+.ct-profile-projects {
+  display: flex;
+  flex-direction: column;
+}
+
+.ct-profile-settings .ct-profile-block {
+  height: 300px;
 }

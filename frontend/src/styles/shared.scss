@@ -386,6 +386,21 @@ h5 {
     right: -20px;
   }
 
+  &.ct-view-members {
+    position: relative;
+
+    &:after {
+      position: absolute;
+      top: 9px;
+      left: -25px;
+      height: 20px;
+      width: 20px;
+      content: "";
+      background-image: url(./assets/rolling-blue.gif);
+      background-size: 20px;
+    }
+  }
+
   .ct-select .fa:before {
     display: block;
     content: '';

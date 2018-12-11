@@ -5,6 +5,9 @@ import { ImpersonationService } from '../../services/impersonation.service';
 import { ProfileProjectMember, ProfileProjects, ProfileService } from '../../services/profile.service';
 import { UserPicService } from '../../services/user-pic.service';
 import { numberToHex } from '../../shared/form/color-picker/color-picker.component';
+import { Subject } from 'rxjs';
+import { ArrayUtils } from '../../core/object-utils';
+import { SelectComponent } from '../../shared/form/select/select.component';
 
 @Component({
 	selector: 'ct-profile',
@@ -16,6 +19,7 @@ export class ProfileComponent implements OnInit {
 	impersonationUser: User;
 	projects: ProfileProjects[];
 	userInfo: User = new User();
+	resizeObservable: Subject<any> = new Subject();
 
 	constructor(private impersonationService: ImpersonationService,
 	            private profileService: ProfileService,
@@ -26,9 +30,8 @@ export class ProfileComponent implements OnInit {
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
-		});		
+		});
 		this.getAvatar();
-		this.getProjects();
 	}
 
 	getAvatar(): void {
@@ -37,47 +40,51 @@ export class ProfileComponent implements OnInit {
 		});
 	}
 
-	getProjects(): void {
+	loadLazy(event = null): void {
 		this.profileService.getProjects().subscribe((projects: ProfileProjects[]) => {
-			this.projects = this.sortList(projects, 'name');
+			this.projects = [...ArrayUtils.sortByField(projects, event.sortField, event.sortOrder)];
 		});
 	}
 
-	sortList(list: any[], sortingField: string): any[] {
+	setManagersString(managersList: string[]): string {
+		if (managersList.length) {
+			return managersList.join(', ');
+		}
+
+		return '';
+	}
+
+	toggleMembersShown(select: SelectComponent, project: ProfileProjects, index: number): void {
+		if (!this.projects[index].memberList.length) {
+			project.isMemberLoading = true;
+			this.getProjectMembers(this.projects[index].id, index).then(() => {
+				project.isMemberLoading = false;
+				setTimeout(() => select.toggleSelect(), 100);
+			});
+		} else {
+			select.toggleSelect();
+		}
+	}
+
+	private getProjectMembers(projectId: number, index: number): Promise<void> {
+		return this.profileService.getProjectMembers(projectId)
+			.toPromise()
+			.then((members: ProfileProjectMember[]) => {
+				this.projects[index].memberList = this.sortList(members, 'memberName');
+			});
+	}
+
+	private sortList(list: any[], sortingField: string): any[] {
 		return list.sort((a, b) => a[sortingField].toLowerCase() < b[sortingField].toLowerCase() ? -1 : 1);
 	}
 
-	getProjectMembers(projectId: number, index: number): void {
-		this.profileService.getProjectMembers(projectId).subscribe((members: ProfileProjectMember[]) => {
-			this.projects[index].memberList = this.sortList(members, 'memberName');
-		});
-	}
+	// GENERAL
 
 	numberToHex(value: number): string {
 		return numberToHex(value);
 	}
 
-	setManagersString(managersList: string[]): string {
-		if (managersList.length) {
-			let plural = managersList.length - 1 ? 's are ' : ' is ';
-			return 'Your manager' + plural + managersList.join(', ');
-		} else {
-			return '';
-		}
-	}
-
-	setMemberCountString(memberCount: number): string {
-		if (memberCount === 1) {
-			return 'You are the only one member on the project';
-		} else {
-			return memberCount + ' members on the project';
-		}
-	}
-
-	toggleMembersShown(index: number): void {
-		if (!this.projects[index].memberList.length) {
-			this.getProjectMembers(this.projects[index].id, index);
-		}
-		this.projects[index].isMemberListShown = !this.projects[index].isMemberListShown;
+	onResize(): void {
+		this.resizeObservable.next();
 	}
 }

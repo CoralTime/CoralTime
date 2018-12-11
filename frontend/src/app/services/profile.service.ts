@@ -23,7 +23,7 @@ export class DateFormat {
 export class ProfileProjects {
 	color: number;
 	id: number;
-	isMemberListShown: boolean;
+	isMemberLoading: boolean;
 	isPrivate: boolean;
 	isPrimary: boolean;
 	managersNames: string[];
@@ -38,7 +38,7 @@ export class ProfileProjects {
 
 		this.color = data.color;
 		this.id = data.id;
-		this.isMemberListShown = false;
+		this.isMemberLoading = false;
 		this.isPrivate = data.isPrivate;
 		this.isPrimary = data.isPrimary;
 		this.managersNames = data.managersNames;

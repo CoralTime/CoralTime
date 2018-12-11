@@ -63,7 +63,7 @@ export class SelectComponent implements ControlValueAccessor {
 	private _controlValueAccessorChangeFn: (value: any) => void = () => {};
 	private onTouched: () => any = () => {};
 
-	constructor(private el: ElementRef,
+	constructor(public el: ElementRef,
 	            private ref: ChangeDetectorRef,
 	            private renderer: Renderer) {
 		setTimeout(() => {

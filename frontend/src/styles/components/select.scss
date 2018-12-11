@@ -1,6 +1,4 @@
 .ct-select-component {
-  //Added to allow select be focused
-  margin-top: -16px;
   height: $selectHeight;
   font-size: 14px;
   font-weight: 700;
@@ -26,14 +24,18 @@
       cursor: pointer;
     }
 
+    .slimscroll-wrapper {
+      display: flex !important;
+    }
+
+    .slimscroll-grid {
+      position: relative !important;
+    }
+
     .ct-select-options-wrapper {
       max-height: 145px;
       transition-duration: .3s;
-    }
-
-    .slimscroll-wrapper {
-      float: left;
-      margin: 0 0 -2px 0 !important;
+      flex: 1 0 0;
     }
 
     .ct-select-option {
@@ -44,7 +46,7 @@
         top: 0;
         bottom: 0;
         left: 15px;
-        right: 30px;
+        right: 15px;
         content: '';
         border-radius: 2px;
       }

@@ -1,4 +1,4 @@
-.ct-profile.ct-profile-page {
+ct-profile-page {
   h3 {
     color: $gray-text;;
     font-weight: normal;
@@ -29,10 +29,6 @@
   .ct-blue-button {
     width: 140px;
     margin-top: 30px;
-  }
-
-  .ct-profile-no-project {
-    margin: 24px;
   }
 
   .ct-profile-project {
