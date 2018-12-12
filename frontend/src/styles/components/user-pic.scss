@@ -1,21 +1,23 @@
 ct-user-pic {
   display: inline-block;
   position: relative;
-  overflow: hidden;
-  border-radius: 50%;
   width: 30px;
   height: 30px;
   border: 1px solid #ccc;
+  border-radius: 50%;
 
   &.ct-user-pic-avatar {
-    width: 199px;
-    height: 200px;
-    border: 1px solid #ccc;
+    width: 140px;
+    height: 140px;
+    padding: 6px;
+    border: 1px dashed $main-grey;
   }
 
   img {
     width: 100%;
     height: 100%;
     vertical-align: top;
+    border-radius: 50%;
+    overflow: hidden;
   }
 }

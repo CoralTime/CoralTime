@@ -1,14 +1,8 @@
 $fieldHeight: 42px;
 
-.ct-header {
-  font-size: 18px;
-  font-weight: bold;
-  color: $dark-blue;
-
-  .ct-page-header & {
-    float: left;
-    margin-right: 40px;
-  }
+.ct-page-header .ct-header {
+  float: left;
+  margin-right: 40px;
 }
 
 .ct-report-filters-block {

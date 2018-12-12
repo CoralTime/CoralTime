@@ -12,11 +12,10 @@ import { FileUploadModule } from 'ng2-file-upload';
 
 @NgModule({
 	imports: [
-		CommonModule,
+		SharedModule,
 		ProfileRoutingModule,
 		FileUploadModule,
 		ImageCropperModule,
-		SharedModule
 	],
 	declarations: [
 		ProfileComponent,

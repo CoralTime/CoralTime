@@ -6,7 +6,7 @@
     display: flex;
     justify-content: space-between;
 
-    > div {
+    > * {
       width: calc(50% - 15px);
     }
   }
@@ -15,12 +15,23 @@
     background: #fff;
     border-radius: 5px;
     margin-bottom: 30px;
+  }
 
-    .ct-header {
-      position: relative;
-      padding: 40px 25px 0;
-      z-index: 1;
-    }
+  .ct-user-settings {
+    min-height: calc(100vh - 165px);
+    margin-left: 320px;
+    border-left: 3px solid #f1f1f1;
+  }
+}
+
+.ct-profile-projects {
+  display: flex;
+  flex-direction: column;
+
+  .ct-header {
+    position: relative;
+    padding: 40px 25px 0;
+    z-index: 1;
   }
 
   .ct-grid-row-border tbody tr:not(.ct-loading-block) td:first-child {
@@ -57,7 +68,7 @@
     }
 
     .ct-select-options-list {
-      width: 230px;
+      width: 270px;
       top: 30px;
     }
 
@@ -74,29 +85,50 @@
       right: 0;
     }
   }
+}
 
-  .ct-user-pic-container {
-    float: left;
-    width: 320px;
-    text-align: center;
+.ct-profile-settings {
+  .ct-profile-block {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    padding: 40px;
 
-    .ct-link-text {
-      margin-top: 15px;
+  }
+
+  .ct-header {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .ct-form {
+    flex: 1 0 0;
+
+    > div:first-child label {
+      margin-top: 10px;
     }
   }
 
-  .ct-user-settings {
-    min-height: calc(100vh - 165px);
-    margin-left: 320px;
-    border-left: 3px solid #f1f1f1;
+  .ct-form-block {
+    position: relative;
+  }
+
+  .ct-reset-password-button {
+    margin-top: 25px;
+
+    & + .ct-hint-text {
+      position: absolute;
+      margin-top: 5px;
+    }
   }
 }
 
-.ct-profile-projects {
-  display: flex;
-  flex-direction: column;
-}
+.ct-user-pic-container {
+  width: 320px;
+  text-align: center;
 
-.ct-profile-settings .ct-profile-block {
-  height: 300px;
+  .ct-link-text {
+    width: 100%;
+    margin-top: 16px;
+  }
 }

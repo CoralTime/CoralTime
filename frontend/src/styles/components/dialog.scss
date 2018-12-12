@@ -10,17 +10,21 @@
     table-layout: auto;
   }
 
-  .ct-popup-table-wrapper {
+  .ct-grid-container {
     .ui-datatable-scrollable-body {
       max-height: calc((100vh - 325px) / 2);
       overflow: hidden;
     }
 
-    .ct-grid-container:only-child {
+    &:only-child {
       .ui-datatable-scrollable-body {
         max-height: calc(100vh - 250px);
       }
     }
+  }
+
+  &.ct-project-tasks-dialog .ct-grid-container .ui-datatable-scrollable-body {
+    max-height: calc(90vh - 210px);
   }
 
   .ct-dialog-message {
@@ -763,8 +767,4 @@
       max-width: 330px;
     }
   }
-}
-
-.ct-project-tasks-dialog .ct-grid .ui-datatable-scrollable-body {
-  max-height: calc(90vh - 146px);
 }

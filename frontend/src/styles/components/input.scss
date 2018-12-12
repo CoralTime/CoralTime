@@ -1,14 +1,17 @@
+$inputHeight: 42px;
+
 .ct-input {
-  background: #ffffff;
-  border: 1px solid $form-border;
-  padding: 5px 10px;
-  width: auto;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid $inputBorderColor;
+  padding: 5px 10px 5px 0;
   box-sizing: border-box;
   outline: none;
-  height: $selectHeight;
+  height: $inputHeight;
   font-size: 14px;
   font-family: inherit;
-  color: #374456;
+  font-weight: bold;
+  color: $black;
 
   &[disabled] {
     background-color: #ececec;
@@ -18,12 +21,12 @@
 }
 
 .ct-input:focus {
-  border: 1px solid $main-blue;
+  border-color: $main-blue;
 }
 
 .ct-required-field-container {
   position: relative;
-  max-height: $selectHeight;
+  max-height: $inputHeight;
 
   .ct-select-opened-control {
     display: inline !important;

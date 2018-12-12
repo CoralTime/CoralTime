@@ -71,16 +71,20 @@ h5 {
 
 //===========================
 
-.clearfix {
-  &:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.ct-header {
+  font-weight: bold;
+  font-size: 24px;
+  color: $dark-blue;
 }
 
 .ct-full-width {
-  width: 100% !important;
+  width: 100%;
 }
 
 .ct-bold {
@@ -102,33 +106,27 @@ h5 {
 }
 
 .ct-link-text {
+  display: inline-block;
   background: none;
   padding: 0;
   cursor: pointer;
-  color: #374456;
-  text-decoration: none;
   border: none;
-  border-bottom: 1px dotted;
-  display: inline-block;
-  line-height: 15px;
-  text-transform: capitalize;
   font-family: inherit;
+  font-weight: bold;
+  color: $main-grey;
+  text-transform: capitalize;
 
   &:focus, &:hover {
     outline: none;
-    color: $main-blue;
-    border-bottom-color: $main-blue;
+    color: $black;
   }
 }
 
 .ct-form-label {
-  color: $main-blue;
   display: block;
-  margin: 0;
-  padding: 12px 0;
+  margin-top: 25px;
   font-size: $smallFont;
-  font-family: inherit;
-  text-transform: uppercase;
+  color: $gray-text;
 }
 
 .ct-info-message {
