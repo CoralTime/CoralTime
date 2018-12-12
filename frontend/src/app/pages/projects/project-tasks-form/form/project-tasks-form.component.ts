@@ -15,7 +15,7 @@ export class ProjectTasksFormComponent {
 	@Input() projectTasks: Task[];
 
 	@Output() onTaskSubmitted = new EventEmitter();
-	@Output() onHeightChanged: EventEmitter<any> = new EventEmitter();
+	@Output() onHeightChanged: EventEmitter<number> = new EventEmitter();
 
 	form: FormGroup;
 
@@ -42,7 +42,7 @@ export class ProjectTasksFormComponent {
 		}
 
 		const arrayControl = <FormArray>this.form.controls['tasks'];
-		let newControl = new FormControl('', Validators.required);
+		const newControl = new FormControl('', Validators.required);
 		arrayControl.push(newControl);
 		this.onFormHeightChanged();
 
@@ -66,7 +66,7 @@ export class ProjectTasksFormComponent {
 			return;
 		}
 
-		let projectTask: Task = new Task({
+		const projectTask: Task = new Task({
 			projectId: this.project.id,
 			name: control.value,
 			isActive: true
@@ -87,15 +87,11 @@ export class ProjectTasksFormComponent {
 	get tasks(): FormArray { return this.form.get('tasks') as FormArray; }
 
 	private isTaskAlreadyExist(inputValue: string): boolean {
-		let assignedTask = this.projectTasks.filter((compareTask: Task) => {
+		const assignedTask = this.projectTasks.filter((compareTask: Task) => {
 			return compareTask && inputValue && inputValue.toLowerCase() === compareTask.name.toLowerCase();
 		});
 
-		if (assignedTask.length > 0) {
-			return true;
-		}
-
-		return false;
+		return assignedTask.length > 0;
 	}
 
 	private onFormHeightChanged(): void {

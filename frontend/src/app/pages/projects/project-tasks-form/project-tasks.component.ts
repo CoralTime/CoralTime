@@ -59,7 +59,6 @@ export class ProjectTasksComponent implements OnInit {
 	}
 
 	onFormHeightChanged(tasksNumber: number): void {
-		this.changeScrollableContainer(tasksNumber);
 		this.resizeObservable.next();
 	}
 
@@ -121,12 +120,5 @@ export class ProjectTasksComponent implements OnInit {
 
 	onResize(): void {
 		this.resizeObservable.next();
-	}
-
-	private changeScrollableContainer(tasksNumber: number): void {
-		let grid = this.gridContainer.nativeElement;
-		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
-
-		wrappers[0].setAttribute('style', 'max-height: calc(100vh - 290px - ' + tasksNumber * 40 + 'px)');
 	}
 }

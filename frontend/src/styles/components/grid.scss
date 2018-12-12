@@ -1,42 +1,12 @@
-.ct-user-circle-icon {
-  display: inline-block;
-  position: absolute;
-  top: -3px;
-  width: 25px;
-  height: 19px;
-  overflow: hidden;
-
-  & + * {
-    margin-left: 25px;
-  }
-
-  &:before, &:after {
-    position: absolute;
-    content: '';
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    border: 2px solid $main-blue;
-    left: 7px;
-    top: 3px;
-  }
-
-  &:after {
-    width: 12px;
-    height: 10px;
-    top: 13px;
-    left: 3px;
-  }
-}
-
-.ui-column-title, .ui-sortable-column-icon {
-  color: $grid-text;
-}
-
 .ct-grid-container {
+  display: block;
+
   .ui-datatable {
-    background: #fff;
+    display: flex;
+    max-height: 100%;
+    width: 100%;
     padding-bottom: 20px;
+    background: #fff;
   }
 
   td {
@@ -63,26 +33,38 @@
     top: -8px;
   }
 
+  .ui-datatable-scrollable-view {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+  }
+
   .ui-datatable-scrollable-header {
     background: none;
   }
 
+  .ui-widget-header {
+    flex-shrink: 0;
+  }
+
   .ui-datatable-scrollable-body {
-    padding-right: 0;
-    max-height: calc(100vh - 254px);
+    width: 100%;
   }
 
   .ui-datatable-scrollable-wrapper {
+    width: 100%;
+
     .slimscroll-wrapper {
+      display: flex !important;
       height: 100% !important;
+    }
 
-      .slimscroll-grid {
-        right: 0 !important;
-      }
+    .slimscroll-grid {
+      right: 0 !important;
+    }
 
-      .slimscroll-bar {
-        right: 3px !important;
-      }
+    .slimscroll-bar {
+      right: 3px !important;
     }
   }
 
@@ -333,7 +315,45 @@
 
 .ct-data-table-wrapper {
   border-radius: 5px;
+
+  > .ct-grid-container {
+    height: calc(100vh - 165px);
+  }
+}
+
+.ct-user-circle-icon {
+  display: inline-block;
+  position: absolute;
+  top: -3px;
+  width: 25px;
+  height: 19px;
   overflow: hidden;
+
+  & + * {
+    margin-left: 25px;
+  }
+
+  &:before, &:after {
+    position: absolute;
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    border: 2px solid $main-blue;
+    left: 7px;
+    top: 3px;
+  }
+
+  &:after {
+    width: 12px;
+    height: 10px;
+    top: 13px;
+    left: 3px;
+  }
+}
+
+.ui-column-title, .ui-sortable-column-icon {
+  color: $grid-text;
 }
 
 .ct-projects-page {

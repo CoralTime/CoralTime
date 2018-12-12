@@ -251,22 +251,14 @@ export class UserProjectAssignmentComponent implements OnInit {
 	}
 
 	private changeScrollableContainer(): void {
-		const HEIGHT = 325;
-		let grid = this.gridContainer.nativeElement;
-		let wrappers = grid.querySelectorAll('.ui-datatable-scrollable-body');
+		const gridContainer = this.gridContainer.nativeElement;
+		const grids = gridContainer.querySelectorAll('.ct-grid-container');
+		const wrappers = gridContainer.querySelectorAll('.ui-datatable-scrollable-wrapper');
 
-		if (wrappers.length === 1) {
-			return;
-		}
-
-		wrappers[0].setAttribute('style', 'max-height: calc((100vh - ' + HEIGHT + 'px)/2)');
-		wrappers[1].setAttribute('style', 'max-height: calc((100vh - ' + HEIGHT + 'px)/2)');
-
-		if (wrappers[0].scrollHeight < (window.innerHeight - HEIGHT) / 2) {
-			wrappers[1].setAttribute('style', 'max-height: calc(100vh - ' + HEIGHT + 'px - ' + wrappers[0].scrollHeight + 'px)');
-		}
-		if (wrappers[1].scrollHeight < (window.innerHeight - HEIGHT) / 2) {
-			wrappers[0].setAttribute('style', 'max-height: calc(100vh - ' + HEIGHT + 'px - ' + wrappers[1].scrollHeight + 'px)');
-		}
+		wrappers.forEach((wrapper, i) => {
+			if (wrapper.scrollHeight > wrapper.children[i].scrollHeight) {
+				grids[i].setAttribute('style', 'flex: initial')
+			}
+		});
 	}
 }
