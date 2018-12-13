@@ -207,7 +207,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 	private changeScrollableContainer(): void {
 		const gridContainer = this.gridContainer.nativeElement;
 		const grids = gridContainer.querySelectorAll('.ct-grid-container');
-		const wrappers = gridContainer.querySelectorAll('.ui-datatable-scrollable-wrapper');
+		const wrappers = gridContainer.querySelectorAll('.ui-datatable-scrollable-body');
 
 		wrappers.forEach((wrapper, i) => {
 			grids[i].removeAttribute('style');
