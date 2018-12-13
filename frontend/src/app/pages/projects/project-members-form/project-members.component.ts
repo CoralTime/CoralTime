@@ -1,18 +1,18 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Project } from '../../../models/project';
-import { UserProject } from '../../../models/user-project';
-import { UsersService } from '../../../services/users.service';
-import { NotificationService } from '../../../core/notification.service';
+import { Subject } from 'rxjs/Subject';
 import { AuthUser } from '../../../core/auth/auth-user';
-import { AuthService } from '../../../core/auth/auth.service';
-import { ProjectRolesService } from '../../../services/project-roles.service';
-import { SettingsService } from '../../../services/settings.service';
+import { Project } from '../../../models/project';
 import { ProjectRole } from '../../../models/project-role';
 import { User } from '../../../models/user';
-import { PagedResult } from '../../../services/odata';
-import { Subject } from 'rxjs/Subject';
-import { ArrayUtils } from '../../../core/object-utils';
+import { UserProject } from '../../../models/user-project';
+import { AuthService } from '../../../core/auth/auth.service';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
+import { NotificationService } from '../../../core/notification.service';
+import { ProjectRolesService } from '../../../services/project-roles.service';
+import { UsersService } from '../../../services/users.service';
+import { SettingsService } from '../../../services/settings.service';
+import { PagedResult } from '../../../services/odata';
+import { ArrayUtils } from '../../../core/object-utils';
 
 @Component({
 	selector: 'ct-project-members',
@@ -31,14 +31,16 @@ export class ProjectUsersComponent implements OnInit {
 	wrapperHeightObservable: Subject<any> = new Subject();
 
 	assignedUsersPagedResult: PagedResult<UserProject>;
-	updatingAssignedUsersGrid: boolean = false;
-	isAllAssignedUsers: boolean = false;
+	updatingAssignedUsersGrid: boolean;
+	isAllAssignedUsers: boolean;
+	isAssignedUsersLoading: boolean;
 	private assignedUsersSubject = new Subject<any>();
 	private assignedUsersLastEvent: any;
 
 	notAssignedUsersPagedResult: PagedResult<User>;
-	updatingNotAssignedUsersGrid: boolean = false;
-	isAllNotAssignedUsers: boolean = false;
+	updatingNotAssignedUsersGrid: boolean;
+	isAllNotAssignedUsers: boolean;
+	isNotAssignedUsersLoading: boolean;
 	private notAssignedUsersLastEvent: any;
 	private notAssignedUsersSubject = new Subject<any>();
 
@@ -55,9 +57,11 @@ export class ProjectUsersComponent implements OnInit {
 		this.loadAssignedUsers();
 		this.loadNotAssignedUsers();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
-			this.changeScrollableContainer();
-			this.resizeObservable.next();
+		this.wrapperHeightObservable.debounceTime(50).subscribe(() => {
+			if (!this.isAssignedUsersLoading && !this.isNotAssignedUsersLoading) {
+				this.changeScrollableContainer();
+				this.resizeObservable.next();
+			}
 		});
 	}
 
@@ -75,6 +79,7 @@ export class ProjectUsersComponent implements OnInit {
 
 	loadAssignedUsers(): void {
 		this.assignedUsersSubject.debounceTime(500).switchMap(() => {
+			this.isAssignedUsersLoading = true;
 			return this.usersService.getProjectUsersWithCount(this.assignedUsersLastEvent, this.filterStr, this.project.id);
 		})
 			.subscribe((res: PagedResult<UserProject>) => {
@@ -89,6 +94,7 @@ export class ProjectUsersComponent implements OnInit {
 					}
 
 					this.assignedUsersLastEvent.first = this.assignedUsersPagedResult.data.length;
+					this.isAssignedUsersLoading = false;
 					this.updatingAssignedUsersGrid = false;
 					this.wrapperHeightObservable.next();
 					this.checkIsAllAssignedUsers();
@@ -114,7 +120,6 @@ export class ProjectUsersComponent implements OnInit {
 		if (event || updatePage) {
 			this.isAllAssignedUsers = false;
 			this.assignedUsersPagedResult = null;
-			this.resizeObservable.next(true);
 		}
 		this.assignedUsersLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedUsers) {
@@ -137,6 +142,7 @@ export class ProjectUsersComponent implements OnInit {
 
 	loadNotAssignedUsers(): void {
 		this.notAssignedUsersSubject.debounceTime(500).switchMap(() => {
+			this.isNotAssignedUsersLoading = true;
 			return this.usersService.getUnassignedUsersWithCount(this.notAssignedUsersLastEvent, this.filterStr, this.project.id);
 		})
 			.subscribe((res: PagedResult<User>) => {
@@ -147,6 +153,7 @@ export class ProjectUsersComponent implements OnInit {
 					}
 
 					this.notAssignedUsersLastEvent.first = this.notAssignedUsersPagedResult.data.length;
+					this.isNotAssignedUsersLoading = false;
 					this.updatingNotAssignedUsersGrid = false;
 					this.wrapperHeightObservable.next();
 					this.checkIsAllUnassignedUsers();
@@ -172,7 +179,6 @@ export class ProjectUsersComponent implements OnInit {
 		if (event || updatePage) {
 			this.isAllNotAssignedUsers = false;
 			this.notAssignedUsersPagedResult = null;
-			this.resizeObservable.next(true);
 		}
 		this.notAssignedUsersLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedUsers) {
@@ -254,7 +260,7 @@ export class ProjectUsersComponent implements OnInit {
 	}
 
 	onResize(): void {
-		this.resizeObservable.next();
+		this.wrapperHeightObservable.next();
 	}
 
 	private changeScrollableContainer(): void {
@@ -263,8 +269,9 @@ export class ProjectUsersComponent implements OnInit {
 		const wrappers = gridContainer.querySelectorAll('.ui-datatable-scrollable-wrapper');
 
 		wrappers.forEach((wrapper, i) => {
-			if (wrapper.scrollHeight > wrapper.children[i].scrollHeight) {
-				grids[i].setAttribute('style', 'flex: initial')
+			grids[i].removeAttribute('style');
+			if (wrapper.scrollHeight > wrapper.children[0].scrollHeight) {
+				grids[i].setAttribute('style', 'flex: initial');
 			}
 		});
 	}

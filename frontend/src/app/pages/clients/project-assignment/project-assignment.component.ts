@@ -4,8 +4,8 @@ import { Client } from '../../../models/client';
 import { Project } from '../../../models/project';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
 import { NotificationService } from '../../../core/notification.service';
-import { PagedResult } from '../../../services/odata';
 import { ProjectsService } from '../../../services/projects.service';
+import { PagedResult } from '../../../services/odata';
 
 @Component({
 	selector: 'ct-client-project-assignment',
@@ -21,14 +21,16 @@ export class ClientProjectAssignmentComponent implements OnInit {
 	wrapperHeightObservable: Subject<any> = new Subject();
 
 	assignedProjectsPagedResult: PagedResult<Project>;
-	updatingAssignedProjectsGrid: boolean = false;
-	isAllAssignedProjects: boolean = false;
+	updatingAssignedProjectsGrid: boolean;
+	isAllAssignedProjects: boolean;
+	isAssignedProjectsLoading: boolean;
 	private assignedProjectsSubject = new Subject<any>();
 	private assignedProjectsLastEvent: any;
 
 	notAssignedProjectsPagedResult: PagedResult<Project>;
-	updatingNotAssignedProjectsGrid: boolean = false;
-	isAllNotAssignedProjects: boolean = false;
+	updatingNotAssignedProjectsGrid: boolean;
+	isAllNotAssignedProjects: boolean;
+	isNotAssignedProjectsLoading: boolean;
 	private notAssignedProjectsLastEvent: any;
 	private notAssignedProjectsSubject = new Subject<any>();
 
@@ -40,9 +42,11 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		this.loadAssignedProjects();
 		this.loadNotAssignedProjects();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
-			this.changeScrollableContainer();
-			this.resizeObservable.next();
+		this.wrapperHeightObservable.debounceTime(50).subscribe(() => {
+			if (!this.isAssignedProjectsLoading && !this.isNotAssignedProjectsLoading) {
+				this.changeScrollableContainer();
+				this.resizeObservable.next();
+			}
 		});
 	}
 
@@ -50,6 +54,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 
 	loadAssignedProjects(): void {
 		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
+			this.isAssignedProjectsLoading = true;
 			return this.projectsService.getClientProjects(this.assignedProjectsLastEvent, this.filterStr, this.client.isActive, this.client.id);
 		})
 			.subscribe(
@@ -65,6 +70,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 					}
 
 					this.assignedProjectsLastEvent.first = this.assignedProjectsPagedResult.data.length;
+					this.isAssignedProjectsLoading = false;
 					this.updatingAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
 					this.checkIsAllAssignedProjects();
@@ -90,7 +96,6 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		if (event || updatePage) {
 			this.isAllAssignedProjects = false;
 			this.assignedProjectsPagedResult = null;
-			this.resizeObservable.next(true);
 		}
 		this.assignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllAssignedProjects) {
@@ -113,6 +118,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 
 	loadNotAssignedProjects(): void {
 		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
+			this.isNotAssignedProjectsLoading = true;
 			return this.projectsService.getClientProjects(this.notAssignedProjectsLastEvent, this.filterStr, true, null);
 		})
 			.subscribe((res: PagedResult<Project>) => {
@@ -123,6 +129,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 					}
 
 					this.notAssignedProjectsLastEvent.first = this.notAssignedProjectsPagedResult.data.length;
+					this.isNotAssignedProjectsLoading = false;
 					this.updatingNotAssignedProjectsGrid = false;
 					this.wrapperHeightObservable.next();
 					this.checkIsAllUnassignedProjects();
@@ -150,7 +157,6 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		if (event || updatePage) {
 			this.isAllNotAssignedProjects = false;
 			this.notAssignedProjectsPagedResult = null;
-			this.resizeObservable.next(true);
 		}
 		this.notAssignedProjectsLastEvent.rows = ROWS_ON_PAGE;
 		if (!updatePage && this.isAllNotAssignedProjects) {
@@ -195,7 +201,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 	}
 
 	onResize(): void {
-		this.resizeObservable.next();
+		this.wrapperHeightObservable.next();
 	}
 
 	private changeScrollableContainer(): void {
@@ -204,8 +210,9 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		const wrappers = gridContainer.querySelectorAll('.ui-datatable-scrollable-wrapper');
 
 		wrappers.forEach((wrapper, i) => {
-			if (wrapper.scrollHeight > wrapper.children[i].scrollHeight) {
-				grids[i].setAttribute('style', 'flex: initial')
+			grids[i].removeAttribute('style');
+			if (wrapper.scrollHeight > wrapper.children[0].scrollHeight) {
+				grids[i].setAttribute('style', 'flex: initial');
 			}
 		});
 	}
