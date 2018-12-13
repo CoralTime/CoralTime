@@ -28,6 +28,7 @@
 .mat-checkbox-indeterminate.mat-accent, .mat-checkbox-checked.mat-accent {
   .mat-checkbox-background {
     background-color: $main-blue;
+    border-radius: 2px;
   }
 }
 
@@ -122,8 +123,8 @@ div.ui-shadow {
 
 .mat-checkbox {
   .mat-checkbox-frame {
-    border: 1px solid #ccc;
-    border-radius: 0;
+    border: 2px solid $inputBorderColor;
+    border-radius: 2px;
   }
 
   &.mat-checkbox-checked {
@@ -139,6 +140,7 @@ div.ui-shadow {
 
 .mat-checkbox-label, .mat-radio-label-content {
   font-family: $baseFontFamily;
+  color: $black;
 }
 
 .cdk-overlay-container {

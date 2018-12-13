@@ -193,7 +193,7 @@ tr:hover {
   display: inline-block;
   width: 15px;
   height: 15px;
-  border: 2px solid $formInputColor;
+  border: 2px solid $inputColor;
   border-radius: 50%;
 
   &:after {
@@ -203,7 +203,7 @@ tr:hover {
     content: '';
     width: 2px;
     height: 6px;
-    background: $formInputColor;
+    background: $inputColor;
     transform: rotate(-45deg);
   }
 }

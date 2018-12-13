@@ -113,7 +113,7 @@
     }
 
     &[disabled] {
-      color: $form-border;
+      opacity: .5;
       cursor: not-allowed;
     }
   }

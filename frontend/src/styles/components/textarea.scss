@@ -1,12 +1,12 @@
 $textAreaHeight: 116px;
 
 .ct-textarea-component {
-  padding: 4px 4px 4px 9px;
-  border: 1px solid $form-border;
+  padding: 4px 0;
+  border-bottom: 2px solid $inputBorderColor;
   background: #fff;
 
   &.ct-focused {
-    border-color: $main-blue !important;
+    border-color: $main-blue;
   }
 
   .ct-textarea {

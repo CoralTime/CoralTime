@@ -19,7 +19,7 @@ $fieldHeight: 42px;
   .mat-select-value-text {
     line-height: $fieldHeight;
     font-weight: 700;
-    color: #8994b3;
+    color: $main-grey;
   }
 
   [class*="fa-angle"] {
@@ -35,8 +35,6 @@ $fieldHeight: 42px;
   .ct-select {
     height: $fieldHeight;
     background: none;
-    border: none;
-    border-bottom: 2px solid $gray-page-background !important;
   }
 
   .ct-filter-label {
@@ -49,9 +47,12 @@ $fieldHeight: 42px;
   }
 
   .ct-select-selected-options-text {
-    padding-left: 0;
     line-height: $fieldHeight;
-    color: $formInputColor;
+  }
+
+  .ct-select-options-list .mat-list-item-content,
+  .ct-select-selected-options-text {
+    color: $main-grey;
   }
 }
 
@@ -66,7 +67,7 @@ $fieldHeight: 42px;
   justify-content: space-between;
   height: 35px;
   font-weight: 700;
-  color: #8994b3;
+  color: $main-grey;
   line-height: 35px;
 
   > div {

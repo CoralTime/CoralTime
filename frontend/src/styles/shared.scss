@@ -126,7 +126,7 @@ h5 {
   display: block;
   margin-top: 25px;
   font-size: $smallFont;
-  color: $gray-text;
+  color: $grid-text;
 }
 
 .ct-info-message {
@@ -193,7 +193,7 @@ h5 {
 }
 
 .ct-primary-button:hover, .ct-primary-button:active, .ct-primary-button.active {
-  background: $primary-btn-hover !important;
+  background: $main-blue-hover !important;
   color: $primary-btn-text;
 }
 
@@ -272,33 +272,6 @@ h5 {
   font-family: inherit;
   font-size: 14px;
   color: #374456;
-}
-
-.ct-paginator-container {
-  position: fixed;
-  bottom: 19px;
-  height: 25px;
-  right: 20px;
-  left: 20px;
-  width: calc(100% - 40px);
-  border-top: 1px solid $border-color;
-  padding-top: 17px;
-
-  .ct-paginator-label {
-    position: relative;
-    bottom: 0;
-  }
-
-  .ui-paginator {
-    display: inline-block;
-    border: 0;
-    background: none;
-  }
-
-  .ui-paginator-page.ui-state-active {
-    background: $primary-btn;
-    border-color: $primary-btn-hover;
-  }
 }
 
 .slimscroll-grid {

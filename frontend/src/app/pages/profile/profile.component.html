@@ -7,14 +7,14 @@
         <div class="ct-page-content">
             <ct-profile-settings></ct-profile-settings>
 
-            <div class="ct-profile-block ct-profile-projects" (window:resize)="onResize()">
+            <div class="ct-profile-block ct-profile-projects">
                 <h3 class="ct-header">My Projects</h3>
 
                 <p-dataTable class="ct-grid-container ct-grid-row-border" #tableWrapper
                              [emptyMessage]="'You haven\'t assigned to any project yet.'"
                              [value]="projects"
                              [resizeObservable]="resizeObservable"
-                             scrollable="true" [sortField]="'name'"
+                             [sortField]="'name'"
                              [responsive]="true" [lazy]="true"
                              (onLazyLoad)="loadLazy($event)">
                     <p-column field="name" header="Project" [sortable]="true" styleClass="ct-info-col">

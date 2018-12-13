@@ -107,14 +107,10 @@ ct-entry-time {
 
     .ct-select {
       height: $selectHeight;
-      border: 0;
-      border-bottom: 1px solid $gray-page-background;
     }
 
     .ct-select-selected-options-text {
       line-height: $selectHeight;
-      height: $selectHeight;
-      padding-left: 0;
     }
 
     [class *= "fa-angle"] {
@@ -146,21 +142,15 @@ ct-entry-time {
   .ct-title {
     .ct-project {
       height: 42px;
-      border-bottom: 1px solid $gray-page-background;
+      border-bottom: 2px solid $inputBorderColor;
       font-size: 14px;
-      font-weight: 700;
-      color: $grid-text;
+      font-weight: bold;
+      color: $black;
       line-height: 42px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-  }
-
-  .ct-textarea-component {
-    padding: 4px 0;
-    border: 0;
-    border-bottom: 1px solid $gray-page-background;
   }
 
   .ct-task-name {

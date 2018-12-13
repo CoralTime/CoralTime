@@ -22,7 +22,7 @@
       padding-left: 30px;
       font-size: inherit;
       font-weight: 700;
-      color: $formInputColor;
+      color: $inputColor;
       border-bottom: 2px solid $gray-page-background;
 
       &::-webkit-input-placeholder {
@@ -198,52 +198,6 @@
   }
 
   .ct-form {
-    .ct-form-container .ct-grid-container {
-      padding: 0 15px 20px 36px;
-      background: $border-color;
-      position: relative;
-      top: -3px;
-      margin-top: 20px;
-      margin-bottom: 18px;
-
-      .ct-remove-task-button {
-        cursor: pointer;
-      }
-
-      > .ct-link {
-        margin-top: 10px;
-        display: inline-block;
-      }
-
-      h4 {
-        margin: 0 0 20px;
-      }
-
-      table {
-        tr, tr:hover {
-          background-color: transparent !important;
-        }
-
-        tr {
-          > td:nth-child(1) {
-            .ct-select-component {
-              width: 283px;
-            }
-          }
-
-          > td {
-            padding: 5px 15px 5px 0 !important;
-          }
-        }
-
-        thead {
-          th {
-            padding: 20px 8px 7px 11px !important;
-          }
-        }
-      }
-    }
-
     .ct-hide-form {
       display: none;
     }
@@ -565,10 +519,10 @@ ct-project-tasks-form {
     }
 
     &:hover {
-      color: $primary-btn-hover;
+      color: $main-blue-hover;
 
       .material-icons {
-        background: $primary-btn-hover;
+        background: $main-blue-hover;
       }
     }
 

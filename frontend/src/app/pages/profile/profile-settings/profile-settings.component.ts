@@ -44,7 +44,6 @@ export class ProfileSettingsComponent implements OnInit {
 	dateFormatModel: DateFormat;
 	emailPattern = EMAIL_PATTERN;
 	isEmailChanged: boolean;
-	isFormShownArray: boolean[] = [true, true, true];
 	isTasksLoading: boolean;
 	numberMask = [/\d/, /\d/];
 	projects: Project[];
@@ -112,10 +111,6 @@ export class ProfileSettingsComponent implements OnInit {
 			this.dialogRef.close();
 			this.updateAvatar(avatarUrl);
 		});
-	}
-
-	toggleForm(formIndex: number): void {
-		this.isFormShownArray[formIndex] = !this.isFormShownArray[formIndex];
 	}
 
 	updateAvatar(avatarUrl: string): void {

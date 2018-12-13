@@ -83,8 +83,4 @@ export class ProfileComponent implements OnInit {
 	numberToHex(value: number): string {
 		return numberToHex(value);
 	}
-
-	onResize(): void {
-		this.resizeObservable.next();
-	}
 }

@@ -89,11 +89,7 @@
 
 .ct-profile-settings {
   .ct-profile-block {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row-reverse;
     padding: 40px;
-
   }
 
   .ct-header {
@@ -102,7 +98,9 @@
   }
 
   .ct-form {
-    flex: 1 0 0;
+    display: inline-block;
+    width: 100%;
+    max-width: 370px;
 
     > div:first-child label {
       margin-top: 10px;
@@ -121,9 +119,18 @@
       margin-top: 5px;
     }
   }
+
+  .mat-checkbox-label {
+    font-weight: bold;
+  }
+
+  .mat-checkbox-layout {
+    margin-top: 25px;
+  }
 }
 
 .ct-user-pic-container {
+  float: right;
   width: 320px;
   text-align: center;
 
