@@ -42,9 +42,9 @@ namespace CoralTime
         public static IWebHostBuilder CreateDefaultBuilder(string[] args)
         {
             var builder = new WebHostBuilder()
-                .UseApplicationInsights()
-                .UseKestrel()
+                .UseApplicationInsights()                
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseKestrel()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;

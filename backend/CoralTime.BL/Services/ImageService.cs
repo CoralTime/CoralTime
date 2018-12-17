@@ -8,12 +8,12 @@ using CoralTime.DAL.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using CoralTime.DAL.Models.Member;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace CoralTime.BL.Services
 {

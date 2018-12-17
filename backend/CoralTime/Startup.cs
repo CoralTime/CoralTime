@@ -50,6 +50,7 @@ using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
 using Microsoft.IdentityModel.Logging;
 using CoralTime.ViewModels.Vsts;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CoralTime
 {
@@ -98,7 +99,7 @@ namespace CoralTime
             AddApplicationServices(services);
             services.AddMemoryCache();
             services.AddAutoMapper();
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2); 
 
             // Add OData
             services.AddOData();
@@ -112,6 +113,8 @@ namespace CoralTime
                 {
                     inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
                 }
+
+                options.EnableEndpointRouting = false; // TODO: Remove when OData does not causes exceptions anymore
             })
             .AddJsonOptions(options =>
             {
@@ -130,10 +133,6 @@ namespace CoralTime
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-#if DEBUG
-            loggerFactory.AddConsole();
-#endif
-
             //add NLog to ASP.NET Core
             loggerFactory.AddNLog();
 
