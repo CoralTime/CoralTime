@@ -18,6 +18,6 @@ export class Notification {
 
         setTimeout(() => {
             $(".ct-" + target + " + .ct-message").remove();
-        }, 5000);
+        }, 3000);
     }
 }

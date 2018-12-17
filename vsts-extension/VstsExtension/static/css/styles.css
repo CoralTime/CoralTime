@@ -17,7 +17,7 @@
 }
 
 .ct-coraltime {
-  display: none;
+  display: flex;
   padding: 20px;
 }
 
@@ -82,9 +82,12 @@ label {
   line-height: initial;
 }
 
-.ct-submit-button {
-  float: right;
+.ct-form-actions-container {
   margin-top: 10px;
+  text-align: right;
+}
+
+.ct-submit-button {
   background-color: var(--main-blue);
   border: none;
   color: #fff;
@@ -184,4 +187,27 @@ label {
 
 .ct-toggle-page-button.ct-configuration-opened:before {
   content: "\E98F";
+}
+
+/* LOADING STYLES */
+
+.ct-loading {
+  position: relative;
+}
+
+.ct-loading:not(.ct-form-actions-container) .big-status-progress + * {
+  opacity: .3;
+}
+
+.ct-loading .big-status-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  top: calc(50% - 18px);
+}
+
+.ct-loading.ct-form-actions-container .big-status-progress {
+  left: auto;
+  right: 70px;
 }

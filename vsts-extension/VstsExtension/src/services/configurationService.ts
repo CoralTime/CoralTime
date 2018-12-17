@@ -1,42 +1,51 @@
 import Q = require("q");
 import { IPromise } from "q";
+import RestClient = require("TFS/Core/RestClient");
 import Services = require("TFS/WorkItemTracking/Services");
+import Contracts = require("VSS/WebApi/Contracts");
 import { IProjectContext, ISettings, IUserSettings, IWorkItemOptions } from "../models/settings";
+import { Loading } from "../utils/loading";
 import { Notification } from "../utils/notification";
 
 export class ConfigurationService {
     accessTokenPromise: PromiseLike<void>;
     extensionSettingsPromise: IPromise<ISettings>;
+    userDetailsPromise: PromiseLike<boolean>;
     workItemFormPromise: PromiseLike<void>;
 
-    protected projectContext: IProjectContext = this.getExtensionContext();
-    protected userSettings: IUserSettings;
     private accessToken: string;
     private extensionSettings: ISettings;
+    private isTeamAdmin: boolean;
+    private userSettings: IUserSettings;
     private workItemOptions: IWorkItemOptions;
 
     constructor() {
-        this.loadWorkItemOptions();
+        this.getUserRole();
         this.loadAccessToken();
-        this.loadUserSettings().then((userSettings: IUserSettings) => {
-            this.userSettings = userSettings;
-        });
+        this.loadExtensionSettings();
+        this.loadUserSettings();
+        this.loadWorkItemOptions();
     }
 
-    getAccessToken(): string {
-        return this.accessToken;
-    }
-
-    getExtensionContext(): IProjectContext {
-        const webContext = VSS.getWebContext();
-        return {
-            projectId: webContext.project.id,
-            userId: webContext.user.id,
-        };
+    isUserTeamAdmin(): boolean {
+        return this.isTeamAdmin;
     }
 
     getExtensionSettings(): ISettings {
         return this.extensionSettings;
+    }
+
+    getProjectContext(): IProjectContext {
+        const webContext = VSS.getWebContext();
+        return {
+            projectId: webContext.project.id,
+            teamId: webContext.team.id,
+            userId: webContext.user.id,
+        };
+    }
+
+    getUserSettings(): IUserSettings {
+        return this.userSettings;
     }
 
     getWorkItemOptions(): IWorkItemOptions {
@@ -81,19 +90,26 @@ export class ConfigurationService {
         $.ajaxSetup({
             headers: {
                 "Content-Type": "application/json",
-                "VSTSToken": this.getAccessToken(),
+                "VSTSToken": this.accessToken,
             },
         });
     }
 
-    // EXTENSION SETTINGS
+    // USER SETTINGS
 
-    getUserSettings(): IUserSettings {
-        return this.userSettings;
+    getUserRole(): void {
+        const client = RestClient.getClient();
+        this.userDetailsPromise = client.getTeamMembersWithExtendedProperties(this.getProjectContext().projectId, this.getProjectContext().teamId)
+            .then((teamMembers: Contracts.TeamMember[]) => {
+                const user = teamMembers.find((member) => member.identity.id === this.getProjectContext().userId);
+                return this.isTeamAdmin = !!user && user.isTeamAdmin === true;
+            });
     }
 
-    loadUserSettings(): IPromise<IUserSettings> {
+    loadUserSettings(): void {
         const deferred = Q.defer<IUserSettings>();
+        const $form = $(".ct-form");
+        Loading.addLoading($form);
         this.getKeyValueFromStorage("userSettings", "User").then((res: IUserSettings) => {
             if (res && res.expirationDate > new Date().getTime()) {
                 deferred.resolve(res);
@@ -104,14 +120,17 @@ export class ConfigurationService {
             }
         });
 
-        return deferred.promise;
+        deferred.promise.then((userSettings: IUserSettings) => {
+            Loading.removeLoading($form);
+            this.userSettings = userSettings;
+        });
     }
 
     updateUserSettings(): IPromise<IUserSettings> {
         const deferred = Q.defer<IUserSettings>();
         const data = {
-            VstsProjectId: this.getExtensionContext().projectId,
-            VstsUserId: this.getExtensionContext().userId,
+            VstsProjectId: this.getProjectContext().projectId,
+            VstsUserId: this.getProjectContext().userId,
         };
 
         Promise.all([this.accessTokenPromise, this.extensionSettingsPromise]).then(() => {
@@ -134,29 +153,42 @@ export class ConfigurationService {
         return deferred.promise;
     }
 
-    // USER SETTINGS
+    // EXTENSION SETTINGS
 
     loadExtensionSettings(): IPromise<ISettings> {
         const deferred = Q.defer<ISettings>();
-        this.getKeyValueFromStorage("extensionSettings", null).then((res: ISettings) => {
-            this.extensionSettings = {
-                siteUrl: "https://" + res.siteUrl,
-            };
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            dataService.getDocument("extensionSettings", this.getProjectContext().projectId).then((res: ISettings) => {
+                this.extensionSettings = {
+                    id: res.id,
+                    siteUrl: res.siteUrl ? "https://" + res.siteUrl : "",
+                };
 
-            deferred.resolve(this.extensionSettings);
+                deferred.resolve(this.extensionSettings);
+            }, () => {
+                deferred.reject(null);
+            });
         });
 
         return this.extensionSettingsPromise = deferred.promise;
     }
 
     setExtensionSettings(siteUrl: string): IPromise<any> {
-        const deferred = Q.defer();
-        this.setKeyValueInStorage("extensionSettings", {siteUrl}, null).then(() => {
-            this.extensionSettings = {
-                siteUrl: "https://" + siteUrl,
+        const deferred = Q.defer<void>();
+        VSS.getService(VSS.ServiceIds.ExtensionData).then((dataService: IExtensionDataService) => {
+            const settings = {
+                __etag: -1,
+                id: this.getProjectContext().projectId,
+                siteUrl,
             };
 
-            deferred.resolve();
+            dataService.setDocument("extensionSettings", settings).then(() => {
+                this.extensionSettings = {
+                    id: this.getProjectContext().projectId,
+                    siteUrl: "https://" + siteUrl,
+                };
+                deferred.resolve();
+            });
         });
 
         return deferred.promise;

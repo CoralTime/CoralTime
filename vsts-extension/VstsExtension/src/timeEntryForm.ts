@@ -8,6 +8,7 @@ import { IGridColumn, IGridRowInfo } from "VSS/Controls/Grids";
 import { ISettings } from "./models/settings";
 import { ITask, ITime, ITimeEntryFormValues, ITimeEntryRow, ITimeValues } from "./models/timeEntry";
 import { TimeEntryService } from "./services/timeEntryService";
+import { Loading } from "./utils/loading";
 import { Notification } from "./utils/notification";
 
 export class TimeEntryForm {
@@ -27,6 +28,7 @@ export class TimeEntryForm {
     private timeEntryRows: ITimeEntryRow[];
     private timeEntryService: TimeEntryService;
 
+    // FORM CONTROLS
     private dateCombo: ComboO<any>;
     private taskCombo: ComboO<any>;
     private actHoursCombo: ComboO<any>;
@@ -36,28 +38,49 @@ export class TimeEntryForm {
     private urlCombo: ComboO<any>;
     private gridControl: Grid;
 
+    private $configurationPage = $(".ct-coraltime-configuration");
+    private $coraltimeFormPage = $(".ct-coraltime");
+    private $gridContainer = $(".ct-grid");
+    // BUTTONS
     private $description = $("#description");
-    private $submitButton = $("#submitButton");
-    private $submitButton2 = $("#submitButton2");
+    private $configFormButton = this.$configurationPage.find(".ct-submit-button");
+    private $timeEntryFormButton = this.$coraltimeFormPage.find(".ct-submit-button");
+    private $toggleButton: JQuery;
+    // ERRORS
+    private $actualHoursError = $(".ct-actual-time-container .ct-validation-error").first();
+    private $actualMinutesError = this.$actualHoursError.next();
+    private $estimatedHoursError = $(".ct-estimated-time-container .ct-validation-error").first();
+    private $estimatedMinutesError = this.$estimatedHoursError.next();
+    private $dateError = $(".ct-date-container .ct-validation-error");
+    private $taskError = $(".ct-task-container .ct-validation-error");
+    private $urlError = $(".ct-url-container .ct-validation-error");
 
     constructor() {
+        this.timeEntryService = new TimeEntryService();
+        this.initConfigurationForm();
+        this.initCoralTimeForm();
         this.checkExtensionSettings();
-        $(".ct-toggle-page-button").on("click", () => {
-            this.togglePage(!this.isConfigurationOpened);
-        });
     }
 
-    private checkExtensionSettings(): void {
-        this.timeEntryService = new TimeEntryService();
-        this.timeEntryService.loadExtensionSettings().then((data: ISettings) => {
-            this.initConfigurationForm();
-            this.initCoralTimeForm();
-            if (data) {
-                this.togglePage(false);
-            } else {
-                this.togglePage(true);
-            }
-        });
+    checkExtensionSettings(): void {
+        Promise.all([this.timeEntryService.extensionSettingsPromise, this.timeEntryService.userDetailsPromise])
+            .then(([settings, isUserTeamAdmin]) => {
+                if (isUserTeamAdmin) {
+                    this.initTogglePageButton();
+                }
+                if (!settings || !settings.siteUrl) {
+                    if (isUserTeamAdmin) {
+                        this.togglePage(true);
+                    } else {
+                        Notification.showGlobalError("Settings is not defined.", "form");
+                    }
+                    return;
+                }
+
+                this.getTasksForProject();
+                this.getTimeEntries();
+                this.urlCombo.setInputText(this.getSiteUrl(settings), true);
+            });
     }
 
     initCoralTimeForm(): void {
@@ -68,30 +91,28 @@ export class TimeEntryForm {
         this.initActualMinutes();
         this.initEstimatedHours();
         this.initEstimatedMinutes();
-        this.getTasksForProject();
-        this.getTimeEntries();
         this.validateForm();
 
-        this.$submitButton2.on("click", () => {
+        this.$timeEntryFormButton.on("click", () => {
             this.saveForm();
         });
     }
 
     initConfigurationForm(): void {
         this.initSiteUrlInput();
-        this.$submitButton.on("click", () => this.saveUrl());
+        this.$configFormButton.on("click", () => this.saveUrl());
     }
 
-    saveForm(): void {
-        this.timeEntryService.saveTimeEntry(this.timeEntry)
-            .done(() => {
-                Notification.showNotification("Time entry saved successfully.", "success", "form");
-                this.resetForm();
-                this.getTimeEntries();
-            })
-            .fail(() => {
-                Notification.showNotification("Time entry creation failed.", "error", "form");
-            });
+    initTogglePageButton(): void {
+        this.$configurationPage.before($("<button/>", {
+            class: "ct-toggle-page-button",
+            title: "Configuration form",
+            type: "button",
+        }));
+        this.$toggleButton = $(".ct-toggle-page-button");
+        this.$toggleButton.on("click", () => {
+            this.togglePage(!this.isConfigurationOpened);
+        });
     }
 
     resetForm(): void {
@@ -105,9 +126,35 @@ export class TimeEntryForm {
         this.timeEntry.timeEstimated = 0;
     }
 
+    saveForm(): void {
+        Loading.addLoading(this.$timeEntryFormButton);
+        this.$timeEntryFormButton.prop("disabled", true);
+        this.timeEntryService.saveTimeEntry(this.timeEntry)
+            .done(() => {
+                Notification.showNotification("Time entry saved successfully.", "success", "form");
+                this.resetForm();
+                this.getTimeEntries();
+            })
+            .fail(() => {
+                Notification.showNotification("Time entry creation failed.", "error", "form");
+            })
+            .always(() => {
+                Loading.removeLoading(this.$timeEntryFormButton);
+            });
+    }
+
     saveUrl(): void {
+        if (!this.timeEntryService.isUserTeamAdmin()) {
+            Notification.showNotification("You haven't access to change configuration.", "error", "configuration");
+            return;
+        }
+
+        Loading.addLoading(this.$configFormButton);
+        this.$configFormButton.prop("disabled", true);
         this.timeEntryService.setExtensionSettings(this.siteUrl).then(() => {
+            Loading.removeLoading(this.$configFormButton);
             Notification.showNotification("Site url changed.", "success", "configuration");
+            this.$configFormButton.prop("disabled", false);
 
             setTimeout(() => {
                 Notification.removeGlobalErrors();
@@ -115,20 +162,24 @@ export class TimeEntryForm {
                 this.getTimeEntries();
                 this.timeEntryService.updateUserSettings();
                 this.togglePage(false);
-            }, 5000);
+            }, 3000);
         });
     }
 
     togglePage(isConfigurationPage: boolean): void {
-        this.isConfigurationOpened = isConfigurationPage;
-        $(".ct-toggle-page-button").toggleClass("ct-configuration-opened", isConfigurationPage);
-        if (isConfigurationPage) {
-            $(".ct-coraltime-configuration").show();
-            $(".ct-coraltime").hide();
-        } else {
-            $(".ct-coraltime-configuration").hide();
-            $(".ct-coraltime").css("display", "flex");
+        if (!this.timeEntryService.isUserTeamAdmin()) {
+            return;
         }
+        if (isConfigurationPage) {
+            this.$configurationPage.show();
+            this.$coraltimeFormPage.hide();
+        } else {
+            this.$configurationPage.hide();
+            this.$coraltimeFormPage.css("display", "flex");
+        }
+
+        this.isConfigurationOpened = isConfigurationPage;
+        this.$toggleButton.toggleClass("ct-configuration-opened", isConfigurationPage);
     }
 
     private validateForm(): void {
@@ -141,14 +192,12 @@ export class TimeEntryForm {
         const isTimeValuesValid = !!this.timeEntry.timeActual || !!this.timeEntry.timeEstimated;
         const isFormValid = isDateValid && isTaskValid && isActHoursValid && isActMinValid
             && isEstHoursValid && isEstMinValid && isTimeValuesValid;
-        this.$submitButton2.prop("disabled", !isFormValid);
+        this.$timeEntryFormButton.prop("disabled", !isFormValid);
     }
 
-    // SITE URL
+    // SITE URL CONTROL
 
     private initSiteUrlInput(): void {
-        this.siteUrl = this.timeEntryService.getExtensionSettings()
-            && this.timeEntryService.getExtensionSettings().siteUrl.substr(8);
         const urlOptions: Combos.IDateTimeComboOptions = {
             change: () => {
                 this.siteUrl = this.urlCombo.getValue();
@@ -162,8 +211,11 @@ export class TimeEntryForm {
         this.validateUrl(this.urlCombo);
     }
 
+    private getSiteUrl(settings: ISettings): string {
+        return settings && settings.siteUrl.substr(8);
+    }
+
     private validateUrl(urlCombo: ComboO<any>): void {
-        const $urlError = $(".ct-url-container .ct-validation-error");
         let errorMessage: string = "";
 
         if (!urlCombo.getValue()) {
@@ -175,12 +227,12 @@ export class TimeEntryForm {
         }
 
         urlCombo.setInvalid(!!errorMessage);
-        $urlError.text(errorMessage);
-        $urlError.css("visibility", !!errorMessage ? "visible" : "hidden");
-        this.$submitButton.prop("disabled", !!errorMessage);
+        this.$urlError.text(errorMessage);
+        this.$urlError.css("visibility", !!errorMessage ? "visible" : "hidden");
+        this.$configFormButton.prop("disabled", !!errorMessage);
     }
 
-    // DATE
+    // DATE CONTROL
 
     private initDatePicker(): void {
         const dateTimeOptions: Combos.IDateTimeComboOptions = {
@@ -199,7 +251,6 @@ export class TimeEntryForm {
     }
 
     private validateDate(dateCombo: ComboO<any>): void {
-        const $dateError = $(".ct-date-container .ct-validation-error");
         let errorMessage: string = "";
 
         if (!dateCombo.getValue()) {
@@ -207,12 +258,12 @@ export class TimeEntryForm {
         }
 
         dateCombo.setInvalid(!!errorMessage);
-        $dateError.text(errorMessage);
-        $dateError.css("visibility", !!errorMessage ? "visible" : "hidden");
+        this.$dateError.text(errorMessage);
+        this.$dateError.css("visibility", !!errorMessage ? "visible" : "hidden");
         this.validateForm();
     }
 
-    // TASK
+    // TASK CONTROL
 
     private initTaskSelect(tasks?: string[]): void {
         const makeOptions = {
@@ -237,7 +288,8 @@ export class TimeEntryForm {
             .then((options: ITask[]) => {
                 this.tasksOptions = options;
                 this.initTaskSelect(this.getTaskNames());
-            }, () => {
+            })
+            .catch(() => {
                 Notification.showGlobalError("Error loading tasks.", "form");
             });
     }
@@ -252,7 +304,6 @@ export class TimeEntryForm {
     }
 
     private validateTask(taskCombo: ComboO<any>): void {
-        const $taskError = $(".ct-task-container .ct-validation-error");
         const value: string = taskCombo.getValue();
         let errorMessage: string = "";
 
@@ -265,12 +316,12 @@ export class TimeEntryForm {
         }
 
         taskCombo.setInvalid(!!errorMessage);
-        $taskError.text(errorMessage);
-        $taskError.css("visibility", errorMessage ? "visible" : "hidden");
+        this.$taskError.text(errorMessage);
+        this.$taskError.css("visibility", errorMessage ? "visible" : "hidden");
         this.validateForm();
     }
 
-    // DESCRIPTION
+    // DESCRIPTION CONTROL
 
     private initDescription(): void {
         this.$description.on("change", () => {
@@ -278,16 +329,15 @@ export class TimeEntryForm {
         });
     }
 
-    // ACTUAL
+    // ACTUAL CONTROL
 
     private initActualHours(): void {
-        const $actualTimeError = $(".ct-actual-time-container .ct-validation-error").first();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeActual.hours = this.actHoursCombo.getValue();
                 this.timeEntry.timeActual = this.convertTimeToNumber(this.timeActual);
-                this.validateTime(this.actHoursCombo, $actualTimeError, 24, "Actual hours");
+                this.validateTime(this.actHoursCombo, this.$actualHoursError, 24, "Actual hours");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -296,13 +346,12 @@ export class TimeEntryForm {
     }
 
     private initActualMinutes(): void {
-        const $actualTimeError = $(".ct-actual-time-container .ct-validation-error").last();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeActual.minutes = this.actMinCombo.getValue();
                 this.timeEntry.timeActual = this.convertTimeToNumber(this.timeActual);
-                this.validateTime(this.actMinCombo, $actualTimeError, 60, "Actual minutes");
+                this.validateTime(this.actMinCombo, this.$actualMinutesError, 60, "Actual minutes");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -310,16 +359,15 @@ export class TimeEntryForm {
         this.actMinCombo = Controls.create(Combos.Combo, $(".ct-actual-time-minutes"), makeOptions);
     }
 
-    // ESTIMATED
+    // ESTIMATED CONTROL
 
     private initEstimatedHours(): void {
-        const $estimatedTimeError = $(".ct-estimated-time-container .ct-validation-error").first();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeEstimated.hours = this.estHoursCombo.getValue();
                 this.timeEntry.timeEstimated = this.convertTimeToNumber(this.timeEstimated);
-                this.validateTime(this.estHoursCombo, $estimatedTimeError, 24, "Estimated hours");
+                this.validateTime(this.estHoursCombo, this.$estimatedHoursError, 24, "Estimated hours");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -328,13 +376,12 @@ export class TimeEntryForm {
     }
 
     private initEstimatedMinutes(): void {
-        const $estimatedTimeError = $(".ct-estimated-time-container .ct-validation-error").last();
         const makeOptions = {
             autoComplete: false,
             change: () => {
                 this.timeEstimated.minutes = this.estMinCombo.getValue();
                 this.timeEntry.timeEstimated = this.convertTimeToNumber(this.timeEstimated);
-                this.validateTime(this.estMinCombo, $estimatedTimeError, 60, "Estimated minutes");
+                this.validateTime(this.estMinCombo, this.$estimatedMinutesError, 60, "Estimated minutes");
             },
             mode: "text",
         } as Combos.IComboOptions;
@@ -377,7 +424,6 @@ export class TimeEntryForm {
     // GRID
 
     private initGrid(): void {
-        const container = $(".ct-grid");
         const gridOptions: Grids.IGridOptions = {
             columns: [
                 {
@@ -464,7 +510,7 @@ export class TimeEntryForm {
         };
 
         if (!this.gridControl) {
-            this.gridControl = Controls.create(Grids.Grid, container, gridOptions);
+            this.gridControl = Controls.create(Grids.Grid, this.$gridContainer, gridOptions);
         } else {
             this.gridControl.setDataSource(this.timeEntryRows);
         }
@@ -472,12 +518,17 @@ export class TimeEntryForm {
     }
 
     private getTimeEntries(): void {
+        Loading.addLoading(this.$gridContainer);
         this.timeEntryService.getTimeEntries()
             .then((rows: ITimeEntryRow[]) => {
                 this.timeEntryRows = rows;
                 this.initGrid();
-            }, () => {
+            })
+            .catch(() => {
                 Notification.showGlobalError("Error loading Time entries.", "grid");
+            })
+            .then(() => {
+                Loading.removeLoading(this.$gridContainer);
             });
     }
 }

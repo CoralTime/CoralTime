@@ -34,6 +34,6 @@ We thank the following contributor(s) for this widget: Denis Gavrilov, Roman Chu
 
 We need your feedback! Here are some ways to connect with us:
 
-- Add a comment in the Q&A section below and please add an actionable review.
-- [GitHub Repository](https://github.com/CoralTime/CoralTime/tree/vsts-extension/vsts-extension/VstsExtension)
+- Add a review below.
+- Report issues in [GitHub](https://github.com/CoralTime/CoralTime/issues).
 - Send us an [email](mailto://denis.gavrilov@coral.team).

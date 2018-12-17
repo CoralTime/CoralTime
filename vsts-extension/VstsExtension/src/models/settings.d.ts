@@ -1,9 +1,11 @@
 ﻿export interface IProjectContext {
     projectId: string;
+    teamId: string;
     userId: string;
 }
 
 export interface ISettings {
+    id: string;
     siteUrl: string;
 }
 
