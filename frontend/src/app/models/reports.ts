@@ -2,10 +2,17 @@ import { TimeValues } from './calendar';
 
 export interface ReportDropdowns {
 	values: ReportDropdownsDetails;
-	currentQuery: ReportFilters;
+	currentQuery: ReportQuery;
 }
 
-export class ReportFilters {
+export interface ReportFiltersRequest {
+	currentQuery: ReportQuery;
+	date: string;
+	dateFormatId?: number;
+	fileTypeId?: number;
+}
+
+export class ReportQuery {
 	clientIds: number[];
 	dateFrom: string;
 	dateStaticId: number;
@@ -32,7 +39,7 @@ export class ReportFilters {
 }
 
 export interface ReportDropdownsDetails {
-	customQueries: ReportFilters[];
+	customQueries: ReportQuery[];
 	dateStatic: DateStatic[];
 	filters: ClientDetail[];
 	groupBy: GroupByItem[];

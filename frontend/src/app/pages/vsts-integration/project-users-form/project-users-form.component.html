@@ -1,1 +1,41 @@
-project-members-form.component
+<div class="ct-dialog ct-data-dialog">
+    <div class="ct-dialog-title">
+        <span>Team members of</span><span>{{connection.projectName}}</span>
+        <button class="ct-dialog-close" mat-dialog-close ctClickClose></button>
+    </div>
+
+    <div class="ct-search-container">
+        <div class="ct-grid-search-filter">
+            <input class="ct-input-element" #gb placeholder="Search teammates" [(ngModel)]="filterStr">
+            <i class="ct-search-icon"></i>
+        </div>
+    </div>
+
+    <div class="ct-grid" #grid>
+        <div class="ct-popup-table-wrapper" (window:resize)="onResize()">
+            <p-dataTable class="ct-grid-container ct-grid-row-border ct-grid-blue" #tableWrapper
+                         [value]="assignedUsersPagedResult?.data"
+                         scrollable="true" [sortField]="'fullName'"
+                         [responsive]="true" [lazy]="true"
+                         [loading]="!isAllAssignedUsers"
+                         [globalFilter]="gb"
+                         [resizeObservable]="resizeObservable"
+                         (onLazyLoad)="updateAssignedUsers($event)"
+                         (onMoreContent)="updateAssignedUsers()"
+                         (onEndScrollEvent)="onAssignedUsersEndScroll()">
+
+                <p-column field="fullName" header="{{assignedUsersPagedResult?.count}} team members"
+                          [sortable]="true" [style]="{'width':'330px'}" styleClass="ct-info-col">
+                    <ng-template let-col let-user="rowData" pTemplate="body">
+                        <span class="ct-grid-userpic">
+                            <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>
+                        </span>
+                        <span class="ct-grid-link-text">
+                            {{user.fullName}}
+                        </span>
+                    </ng-template>
+                </p-column>
+            </p-dataTable>
+        </div>
+    </div>
+</div>

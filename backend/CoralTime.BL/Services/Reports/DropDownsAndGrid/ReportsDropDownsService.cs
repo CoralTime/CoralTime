@@ -71,25 +71,25 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
         #endregion
 
-        public ReportDropDownView GetReportsDropDowns()
+        public ReportDropDownView GetReportsDropDowns(DateTime? today)
         {
             return new ReportDropDownView
             {
-                CurrentQuery = GetCurrentQuery() ?? CreateQueryWithDefaultValues(),
-                Values = CreateDropDownValues()
+                CurrentQuery = GetCurrentQuery(today) ?? CreateQueryWithDefaultValues(today),
+                Values = CreateDropDownValues(today)
             };
         }
 
-        private ReportDropDownValues CreateDropDownValues()
+        private ReportDropDownValues CreateDropDownValues(DateTime? today)
         {
             return new ReportDropDownValues
             {
                 Filters = CreateFilters(),
                 UserDetails = CreateUserDetails(),
-                CustomQueries = GetCustomQueries().OrderBy(x => x.QueryName).ToList(),
+                CustomQueries = GetCustomQueries(today).OrderBy(x => x.QueryName).ToList(),
                 GroupBy = groupByInfo,
                 ShowColumns = showColumnsInfo,
-                DateStatic = GetDatesStaticInfo()
+                DateStatic = GetDatesStaticInfo(today)
             };
         }
 
@@ -227,17 +227,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             };
         }
 
-        private List<ReportsSettingsView> GetCustomQueries()
+        private List<ReportsSettingsView> GetCustomQueries(DateTime? today)
         {
             var customQueries = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(ReportMemberImpersonated.Id).Where(x => x.QueryName != null);
             var companyReportStartOfWeek = (Constants.WeekStart)int.Parse(_config["CompanyReportStartOfWeek"]);
-            var cq = customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek))).ToList();
-            return customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek))).ToList();
+            var cq = customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek), today)).ToList();
+            return customQueries.Select(x => x.GetView(GetDayOfWeek(companyReportStartOfWeek), today)).ToList();
         }
 
-        private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId)
+        private ReportDropDownsDateStaticExtendView CreateDateStaticExtend(int? dateStaticId, DateTime? today)
         {
-            var datesStaticInfo = GetDatesStaticInfo();
+            var datesStaticInfo = GetDatesStaticInfo(today);
             var dateStaticPeriod = datesStaticInfo.FirstOrDefault(x => x.Id == dateStaticId);
             
             if (dateStaticPeriod == null) 
@@ -259,17 +259,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private static DayOfWeek GetDayOfWeek(Constants.WeekStart day) => 
             (day == Constants.WeekStart.Monday)? DayOfWeek.Monday : DayOfWeek.Sunday;
         
-        private ReportDropDownsDateStaticView[] GetDatesStaticInfo()
+        private ReportDropDownsDateStaticView[] GetDatesStaticInfo(DateTime? todayDate)
         {
             var companyReportStratOfWeek = GetCompanyReportStartOfWeek();
-            var today = CommonHelpers.GetPeriod(DatesStaticIds.Today);
-            var yesterday = CommonHelpers.GetPeriod(DatesStaticIds.Yesterday);
-            var thisWeek = CommonHelpers.GetPeriod(DatesStaticIds.ThisWeek, companyReportStratOfWeek);
-            var thisMonth = CommonHelpers.GetPeriod(DatesStaticIds.ThisMonth);
-            var thisYear = CommonHelpers.GetPeriod(DatesStaticIds.ThisYear);
-            var lastWeek = CommonHelpers.GetPeriod(DatesStaticIds.LastWeek, companyReportStratOfWeek);
-            var lastMonth = CommonHelpers.GetPeriod(DatesStaticIds.LastMonth);
-            var lastYear = CommonHelpers.GetPeriod(DatesStaticIds.LastYear);
+            var today = CommonHelpers.GetPeriod(DatesStaticIds.Today, todayDate);
+            var yesterday = CommonHelpers.GetPeriod(DatesStaticIds.Yesterday, todayDate);
+            var thisWeek = CommonHelpers.GetPeriod(DatesStaticIds.ThisWeek, todayDate, companyReportStratOfWeek);
+            var thisMonth = CommonHelpers.GetPeriod(DatesStaticIds.ThisMonth, todayDate);
+            var thisYear = CommonHelpers.GetPeriod(DatesStaticIds.ThisYear, todayDate);
+            var lastWeek = CommonHelpers.GetPeriod(DatesStaticIds.LastWeek, todayDate, companyReportStratOfWeek);
+            var lastMonth = CommonHelpers.GetPeriod(DatesStaticIds.LastMonth, todayDate);
+            var lastYear = CommonHelpers.GetPeriod(DatesStaticIds.LastYear, todayDate);
             
             ReportDropDownsDateStaticView[] datesStaticInfo =
             {
@@ -341,18 +341,18 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             return datesStaticInfo;
         }
 
-        private ReportsSettingsView GetCurrentQuery()
+        private ReportsSettingsView GetCurrentQuery(DateTime? today)
         {
             var reportsSettings = Uow.ReportsSettingsRepository.LinkedCacheGetByMemberId(ReportMemberImpersonated.Id).FirstOrDefault(x => x.IsCurrentQuery);
 
-            return reportsSettings?.GetView(GetCompanyReportStartOfWeek());
+            return reportsSettings?.GetView(GetCompanyReportStartOfWeek(), today);
         }
 
-        private ReportsSettingsView CreateQueryWithDefaultValues()
+        private ReportsSettingsView CreateQueryWithDefaultValues(DateTime? today)
         {
             var reportsSettingsView = new ReportsSettingsView().GetViewWithDefaultValues();
 
-            var dateStaticExtend = CreateDateStaticExtend(reportsSettingsView.DateStaticId);
+            var dateStaticExtend = CreateDateStaticExtend(reportsSettingsView.DateStaticId, today);
             reportsSettingsView.DateFrom = dateStaticExtend.DateFrom;
             reportsSettingsView.DateTo = dateStaticExtend.DateTo;
 
@@ -362,7 +362,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             Uow.Save();
             Uow.ReportsSettingsRepository.LinkedCacheClear();
 
-            reportsSettingsView = reportsSettings.GetView(GetCompanyReportStartOfWeek());
+            reportsSettingsView = reportsSettings.GetView(GetCompanyReportStartOfWeek(), today);
 
             return reportsSettingsView;
         }

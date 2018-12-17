@@ -40,13 +40,23 @@
 
             <p-column field="vstsCompanyUrl" header="VSTS Company Url">
                 <ng-template let-col let-connection="rowData" pTemplate="body">
-                    <div markdown [data]="connection.vstsCompanyUrl"></div>
+                    <div markdown [data]="formatUrlForMarkdown(connection.vstsCompanyUrl)"></div>
                 </ng-template>
             </p-column>
 
-            <p-column field="vstsPat" header="VSTS Pat"></p-column>
+            <p-column [style]="{'width':'300px'}" field="vstsPat" header="VSTS Pat"></p-column>
 
-            <p-column header="Actions" styleClass="ct-small-padding">
+            <p-column [style]="{'width':'150px'}" header="Team" styleClass="ct-info-col ct-small-padding">
+                <ng-template let-col let-connection="rowData" pTemplate="body">
+                    <a class="ct-grid-link ct-grid-count"
+                       (click)="openProjectAssignmentDialog(connection)">
+                        {{connection.membersCount}}
+                        <span class="ct-manage-text">View</span>
+                    </a>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'110px'}" header="Actions" styleClass="ct-small-padding">
                 <ng-template let-col let-connection="rowData" pTemplate="body">
                     <a #removeBtn class="ct-grid-link ct-grid-delete"
                        (click)="removeConnection(connection, removeBtn)">

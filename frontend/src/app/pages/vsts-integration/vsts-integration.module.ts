@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-
 import { SharedModule } from '../../shared/shared.module';
 import { VstsIntegrationFormComponent } from './form/vsts-integration-form.component';
 import { VstsIntegrationRoutingModule } from './vsts-integration-routing.module';
@@ -15,11 +14,11 @@ import { VstsIntegrationService } from '../../services/vsts-integration.service'
 	declarations: [
 		VstsIntegrationComponent,
 		VstsIntegrationFormComponent,
-		ProjectUsersFormComponent
+		ProjectUsersFormComponent,
 	],
 	entryComponents: [
 		VstsIntegrationFormComponent,
-		ProjectUsersFormComponent
+		ProjectUsersFormComponent,
 	],
 	providers: [
 		VstsIntegrationService

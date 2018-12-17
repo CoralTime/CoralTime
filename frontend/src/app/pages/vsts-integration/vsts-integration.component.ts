@@ -2,15 +2,13 @@ import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 import { PagedResult } from '../../services/odata';
-import { User } from '../../models/user';
 import { VstsProjectConnection } from '../../models/vsts-project-connection';
 import { ROWS_ON_PAGE } from '../../core/constant.service';
-import { AclService } from '../../core/auth/acl.service';
-import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../../core/notification.service';
 import { VstsIntegrationService } from '../../services/vsts-integration.service';
 import { VstsIntegrationFormComponent } from './form/vsts-integration-form.component';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
+import { ProjectUsersFormComponent } from './project-users-form/project-users-form.component';
 
 @Component({
 	selector: 'ct-vsts-integration',
@@ -30,11 +28,9 @@ export class VstsIntegrationComponent implements OnInit {
 	private lastEvent: any;
 
 	private dialogRef: MatDialogRef<VstsIntegrationFormComponent>;
-	private dialogProjectAssignmentRef: MatDialogRef<any>;
+	private dialogProjectAssignmentRef: MatDialogRef<ProjectUsersFormComponent>;
 
-	constructor(private aclService: AclService,
-	            private authService: AuthService,
-	            private dialog: MatDialog,
+	constructor(private dialog: MatDialog,
 	            private loadingService: LoadingMaskService,
 	            private notificationService: NotificationService,
 	            private vstsIntegrationService: VstsIntegrationService
@@ -127,9 +123,9 @@ export class VstsIntegrationComponent implements OnInit {
 		});
 	}
 
-	openProjectAssignmentDialog(user: User = null): void {
-		// this.dialogProjectAssignmentRef = this.dialog.open(UserProjectAssignmentComponent);
-		this.dialogProjectAssignmentRef.componentInstance.user = user;
+	openProjectAssignmentDialog(connection: VstsProjectConnection = null): void {
+		this.dialogProjectAssignmentRef = this.dialog.open(ProjectUsersFormComponent);
+		this.dialogProjectAssignmentRef.componentInstance.connection = connection;
 	}
 
 	private onSubmit(response: any): void {
@@ -140,14 +136,18 @@ export class VstsIntegrationComponent implements OnInit {
 
 		if (response.isNewConnection) {
 			this.notificationService.success('New connection has been successfully created.');
+			this.loadLazy(null, true);
 		} else {
 			this.notificationService.success('Connection has been successfully changed.');
+			this.loadLazy(null);
 		}
-
-		this.loadLazy(null, true);
 	}
 
 	// GENERAL
+
+	formatUrlForMarkdown(url: string): string {
+		return '<' + url + '>';
+	}
 
 	onResize(): void {
 		this.resizeObservable.next();

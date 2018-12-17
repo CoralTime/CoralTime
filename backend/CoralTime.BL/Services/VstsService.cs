@@ -201,7 +201,7 @@ namespace CoralTime.BL.Services
             foreach (var item in existVstsProjects)
             {
                 var projectUrl = item.VstsCompanyUrl + Constants.VstsProjectsUrl;
-                var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: item.VstsPat, out bool isSuccessStatusCode);
+                var projectResponce = GetVstsData(projectUrl, item.VstsPat, out bool isSuccessStatusCode);
                 var projects = JsonConvert.DeserializeObject<VstsProjectList>(projectResponce);
                 foreach (var vstsProject in projects.Value)
                 {
@@ -238,11 +238,11 @@ namespace CoralTime.BL.Services
         public bool UpdateVstsProject(int projectId)
         {
             var existVstsProject = _uow.VstsProjectRepository
-                .GetQuery(withIncludes: false, asNoTracking: true)
+                .GetQuery(withIncludes: false)
                 .FirstOrDefault(x => x.Id == projectId);
 
             var projectUrl = existVstsProject.VstsCompanyUrl + Constants.VstsProjectsUrl;
-            var projectResponce = GetVstsData(url: projectUrl, personalaccesstoken: existVstsProject.VstsPat, out bool isSuccessStatusCode);
+            var projectResponce = GetVstsData(projectUrl, existVstsProject.VstsPat, out bool isSuccessStatusCode);
 
             if (!isSuccessStatusCode)
                 return isSuccessStatusCode;
@@ -270,7 +270,7 @@ namespace CoralTime.BL.Services
             var allMembers = new List<VstsMember>();
 
             var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
-            var teamResponce = GetVstsData(url: teamUrl, personalaccesstoken: project.VstsPat, out bool isSuccessStatusCode);
+            var teamResponce = GetVstsData(teamUrl, project.VstsPat, out bool isSuccessStatusCode);
             if (!isSuccessStatusCode)
                 return isSuccessStatusCode;
 
@@ -278,7 +278,7 @@ namespace CoralTime.BL.Services
             foreach (var team in teams.Value)
             {
                 var memberUrl = team.Url + Constants.VstsMembersUrl;
-                var memberResponce = GetVstsData(url: memberUrl, personalaccesstoken: project.VstsPat, out isSuccessStatusCode);
+                var memberResponce = GetVstsData(memberUrl, project.VstsPat, out isSuccessStatusCode);
 
                 if (!isSuccessStatusCode)
                     return isSuccessStatusCode;
@@ -330,6 +330,21 @@ namespace CoralTime.BL.Services
                         _uow.VstsUserRepository.Delete(user);  
                         _uow.Save();
                     }
+                    else
+                    {
+                        var item = _uow.VstsProjectUserRepository.GetQuery()
+                            .FirstOrDefault(x => x.VstsProjectId == project.Id && x.VstsUserId == user.Id);
+                        if (item == null)
+                        {
+                            var vstsProjectUser = new VstsProjectUser
+                            {
+                                VstsProjectId = project.Id,
+                                VstsUserId = user.Id
+                            };
+                            _uow.VstsProjectUserRepository.Insert(vstsProjectUser);
+                            _uow.Save();
+                        }
+                    }
                 }
             }
             return isSuccessStatusCode;
@@ -342,12 +357,12 @@ namespace CoralTime.BL.Services
             foreach (var project in projects)
             {
                 var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
-                var teamResponce = GetVstsData(url: teamUrl, personalaccesstoken: project.VstsPat, out bool isSuccessStatusCode);
+                var teamResponce = GetVstsData(teamUrl, project.VstsPat, out bool isSuccessStatusCode);
                 var teams = JsonConvert.DeserializeObject<VstsTeamList>(teamResponce);
                 foreach (var team in teams.Value)
                 {
                     var memberUrl = team.Url + Constants.VstsMembersUrl;
-                    var memberResponce = GetVstsData(url: memberUrl, personalaccesstoken: project.VstsPat, out isSuccessStatusCode);
+                    var memberResponce = GetVstsData(memberUrl, project.VstsPat, out isSuccessStatusCode);
                     var members = JsonConvert.DeserializeObject<VstsMemberList>(memberResponce);
                     members.Value.ForEach(x => allMembers.Add(x));
                 }
@@ -432,9 +447,17 @@ namespace CoralTime.BL.Services
 
         public bool Delete(int id)
         {
-            var item = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
+            var projectToDelete = _uow.VstsProjectRepository.GetQuery(withIncludes: false)
                 .SingleOrDefault(x => x.Id == id);
-            _uow.VstsProjectRepository.Delete(item);
+
+            var linksToDelete = _uow.VstsProjectUserRepository.GetQuery()
+                .Where(x => x.VstsProjectId == projectToDelete.Id).ToList();
+            var vstsUsersToDelete = _uow.VstsUserRepository.GetQuery()
+                .Where(x => x.VstsProjectUsers.Count == 0)
+                .ToList();
+            _uow.VstsProjectUserRepository.DeleteRange(linksToDelete);
+            _uow.VstsProjectRepository.Delete(projectToDelete);
+            _uow.VstsUserRepository.DeleteRange(vstsUsersToDelete);
             return _uow.Save() > 0;
         }
 
@@ -486,20 +509,20 @@ namespace CoralTime.BL.Services
             item.VstsPat = string.IsNullOrEmpty(view.VstsPat) ? item.VstsPat : view.VstsPat;
 
             var res = _uow.Save();
-            if (res > 0)
-            {
+            //if (res > 0)
+            //{
                 return VstsProjectMapToView(
                     _uow.VstsProjectRepository.GetQuery()
                     .FirstOrDefault(x => x.Id == view.Id));
-            }
-            return null;
+            //}
+            //return null;
         }
 
-        public IEnumerable<VstsMemberView> GetMembersByProjectId(int id)
+        public IEnumerable<VstsMemberView> GetMembersByProjectId(int vstsProjectId)
         {
             var members =_uow.VstsProjectUserRepository
                 .GetQuery()
-                .Where(x => x.Id == id)
+                .Where(x => x.VstsProjectId == vstsProjectId)
                 .Select(x => new VstsMemberView
                 {
                     Id = x.Id,

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System;
 using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1.Reports
@@ -17,7 +18,10 @@ namespace CoralTime.Api.v1.Reports
             : base(logger, service) { }
 
         [HttpGet]
-        public IActionResult GetReportsDropdowns() => new JsonResult(_service.GetReportsDropDowns());
+        public IActionResult GetReportsDropdowns(DateTimeOffset? date)
+        {
+            return new JsonResult(_service.GetReportsDropDowns(date?.DateTime));
+        } 
 
         [HttpPost]
         public IActionResult GetReportsGridAndSaveCurrentQuery([FromBody] ReportsGridView reportsGridView)
