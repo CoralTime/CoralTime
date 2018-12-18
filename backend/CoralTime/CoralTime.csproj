@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
-    <!--<AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>-->
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <Version>2.2.0</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

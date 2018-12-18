@@ -69,14 +69,14 @@ namespace CoralTime
             if (useMySql)
             {
                 // Add MySQL support (At first create DB on MySQL server.)
-                services.AddDbContext<AppDbContext>(options =>
+                services.AddDbContextPool<AppDbContext>(options =>
                     options.UseMySql(Configuration.GetConnectionString("DefaultConnectionMySQL"),
                     b => b.MigrationsAssembly("CoralTime.MySqlMigrations")));
             }
             else
             {
                 // Sql Server
-                services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             }
 
             IdentityModelEventSource.ShowPII = true; 
