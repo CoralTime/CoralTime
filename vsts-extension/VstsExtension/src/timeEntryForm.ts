@@ -63,11 +63,11 @@ export class TimeEntryForm {
     }
 
     checkExtensionSettings(): void {
-        Promise.all([this.timeEntryService.extensionSettingsPromise, this.timeEntryService.userDetailsPromise])
-            .then(([settings, isUserTeamAdmin]) => {
-                if (isUserTeamAdmin) {
-                    this.initTogglePageButton();
-                }
+        this.timeEntryService.userDetailsPromise.then((isUserTeamAdmin) => {
+            if (isUserTeamAdmin) {
+                this.initTogglePageButton();
+            }
+            this.timeEntryService.extensionSettingsPromise.then((settings) => {
                 if (!settings || !settings.siteUrl) {
                     if (isUserTeamAdmin) {
                         this.togglePage(true);
@@ -80,7 +80,14 @@ export class TimeEntryForm {
                 this.getTasksForProject();
                 this.getTimeEntries();
                 this.urlCombo.setInputText(this.getSiteUrl(settings), true);
+            }, () => {
+                if (isUserTeamAdmin) {
+                    this.togglePage(true);
+                } else {
+                    Notification.showGlobalError("Settings is not defined.", "form");
+                }
             });
+        });
     }
 
     initCoralTimeForm(): void {
