@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { ArrayUtils } from '../../../core/object-utils';
@@ -12,10 +13,8 @@ import { ProjectsService } from '../../../services/projects.service';
 import { TasksService } from '../../../services/tasks.service';
 import { DateFormat, NOT_FULL_WEEK_DAYS, ProfileService, TimeFormat, WeekDay } from '../../../services/profile.service';
 import { EnterEmailService } from '../../set-password/enter-email/enter-email.service';
-import { SelectComponent } from '../../../shared/form/select/select.component';
 import { UserPicService } from '../../../services/user-pic.service';
 import { UsersService } from '../../../services/users.service';
-import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 import { ProfilePhotoComponent } from './profile-photo/profile-photo.component';
 
 const STANDART_TIME_ARRAY = [
@@ -37,6 +36,7 @@ const TWELVE_CLOCK_TIME_ARRAY = [
 })
 
 export class ProfileSettingsComponent implements OnInit {
+	user: User;
 	userModel: User = new User();
 
 	avatarUrl: string;
@@ -44,6 +44,8 @@ export class ProfileSettingsComponent implements OnInit {
 	dateFormatModel: DateFormat;
 	emailPattern = EMAIL_PATTERN;
 	isEmailChanged: boolean;
+	preferencesFormStatus = {};
+	personalInfoFormStatus = {};
 	isTasksLoading: boolean;
 	numberMask = [/\d/, /\d/];
 	projects: Project[];
@@ -53,7 +55,7 @@ export class ProfileSettingsComponent implements OnInit {
 	sendEmailDays: boolean[] = [];
 	sendEmailTimeModel: string;
 	sendEmailTimeArray: string[];
-	showWrongEmailMessage: boolean = false;
+	showWrongEmailMessage: boolean;
 	tasks: Task[];
 	taskModel: Task;
 	timeFormats: TimeFormat[] = [new TimeFormat(12), new TimeFormat(24)];
@@ -63,10 +65,12 @@ export class ProfileSettingsComponent implements OnInit {
 
 	private dialogRef: MatDialogRef<ProfilePhotoComponent>;
 
+	@ViewChild('personalInfoForm') personalInfoForm: NgForm;
+	@ViewChild('preferencesForm') preferencesForm: NgForm;
+
 	constructor(private dialog: MatDialog,
 	            private enterEmailService: EnterEmailService,
 	            private impersonationService: ImpersonationService,
-	            private loadingService: LoadingMaskService,
 	            private notificationService: NotificationService,
 	            private projectsService: ProjectsService,
 	            private profileService: ProfileService,
@@ -78,7 +82,8 @@ export class ProfileSettingsComponent implements OnInit {
 
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {
-			this.userModel = new User(this.impersonationService.impersonationUser || data.user);
+			this.user = this.impersonationService.impersonationUser || data.user;
+			this.userModel = new User(this.user);
 		});
 
 		this.avatarUrl = this.userModel.urlIcon && this.userModel.urlIcon.replace('Icons', 'Avatars');
@@ -91,8 +96,6 @@ export class ProfileSettingsComponent implements OnInit {
 		this.setSendEmailTimeData(this.userModel.timeFormat);
 		this.setSendEmailWeekDaysArray(this.userModel.weekStart);
 	}
-
-	// GENERAL
 
 	getAvatar(): Promise<string> {
 		return this.userPicService.loadUserPicture(this.userModel.id)
@@ -113,32 +116,6 @@ export class ProfileSettingsComponent implements OnInit {
 		});
 	}
 
-	updateAvatar(avatarUrl: string): void {
-		this.avatarUrl = avatarUrl;
-		let iconObject = {
-			urlIcon: avatarUrl.replace('Avatars', 'Icons').replace('s=200', 's=40')
-		};
-
-		if (this.impersonationService.impersonationId) {
-			let impersonateUser = Object.assign(this.impersonationService.impersonationUser, iconObject);
-			this.impersonationService.setStorage(impersonateUser);
-		} else {
-			this.usersService.setUserInfo(iconObject);
-		}
-	}
-
-	// FORM CHANGED
-
-	dateFormatOnChange(dateFormat: DateFormat): void {
-		this.userModel.dateFormatId = dateFormat.dateFormatId;
-		this.userModel.dateFormat = dateFormat.dateFormat;
-	}
-
-	defaultProjectOnChange(project: Project): void {
-		this.userModel.defaultProjectId = project.id;
-		this.loadTasks(project.id);
-	}
-
 	resetPassword(): void {
 		this.enterEmailService.sendEmail(this.userModel.email).subscribe(
 			(emailResponse) => {
@@ -152,67 +129,98 @@ export class ProfileSettingsComponent implements OnInit {
 			() => this.notificationService.danger('Error when resetting the password.'));
 	}
 
-	sendEmailDayOnChange(): void {
-		let sendEmailDays = [];
-		this.sendEmailDays.forEach((dayChecked: boolean, i: number) => {
-			if (dayChecked) {
-				sendEmailDays.push(i);
-			}
-		});
+	updateAvatar(avatarUrl: string): void {
+		this.avatarUrl = avatarUrl;
+		const iconObject = {
+			urlIcon: avatarUrl.replace('Avatars', 'Icons').replace('s=200', 's=40')
+		};
 
-		this.userModel.sendEmailDays = sendEmailDays.join(',');
+		if (this.impersonationService.impersonationId) {
+			let impersonateUser = Object.assign(this.impersonationService.impersonationUser, iconObject);
+			this.impersonationService.setStorage(impersonateUser);
+		} else {
+			this.usersService.setUserInfo(iconObject);
+		}
 	}
 
-	sendEmailTimeOnChange(select: SelectComponent): void {
-		this.userModel.sendEmailTime = select.getOptionIndex(this.sendEmailTimeModel);
+	// FORM CHANGED
+
+	fullNameOnChange(): void {
+		this.submitPersonalInfo('fullName');
+	}
+
+	emailOnBlur(): void {
+		this.submitPersonalInfo('email');
+	}
+
+	emailOnChange(): void {
+		this.isEmailChanged = true;
+		this.showWrongEmailMessage = false;
+	}
+
+	defaultProjectOnChange(): void {
+		this.loadTasks(this.projectModel.id);
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['defaultProjectId'] = this.projectModel.id;
+		this.submitPreferences(preferencesObject, 'defaultProject');
+	}
+
+	defaultTaskOnChange(): void {
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['defaultTaskId'] = this.taskModel.id;
+		this.submitPreferences(preferencesObject, 'defaultTask');
+	}
+
+	dateFormatOnChange(): void {
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['dateFormat'] = this.dateFormatModel.dateFormat;
+		preferencesObject['dateFormatId'] = this.dateFormatModel.dateFormatId;
+		this.submitPreferences(preferencesObject, 'dateFormat');
 	}
 
 	timeFormatOnChange(): void {
-		this.userModel.timeFormat = this.timeFormatModel.timeFormat;
 		this.setSendEmailTimeData(this.timeFormatModel.timeFormat);
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['timeFormat'] = this.timeFormatModel.timeFormat;
+		this.submitPreferences(preferencesObject, 'timeFormat');
 	}
 
 	weekStartDayOnChange(): void {
-		this.userModel.weekStart = this.weekStartDays.indexOf(this.weekStartDayModel);
 		this.setSendEmailWeekDaysArray(this.userModel.weekStart);
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['weekStart'] = this.weekStartDays.indexOf(this.weekStartDayModel);
+		this.submitPreferences(preferencesObject, 'weekStartDay');
+	}
+
+	isWeeklyTimeEntryUpdatesSendOnChange(): void {
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['isWeeklyTimeEntryUpdatesSend'] = this.userModel.isWeeklyTimeEntryUpdatesSend;
+		this.submitPreferences(preferencesObject, 'isWeeklyTimeEntryUpdatesSend');
+	}
+
+	workingHoursPerDayOnChange(): void {
+		const preferencesObject = this.getPreferencesObject();
+		preferencesObject['workingHoursPerDay'] = this.userModel.workingHoursPerDay;
+		this.submitPreferences(preferencesObject, 'workingHoursPerDay');
 	}
 
 	// SUBMIT
 
-	submitNotifications(): void {
-		let notificationsObject = {
-			isWeeklyTimeEntryUpdatesSend: this.userModel.isWeeklyTimeEntryUpdatesSend,
-			sendEmailTime: this.userModel.sendEmailTime,
-			sendEmailDays: this.userModel.sendEmailDays
+	submitPersonalInfo(fieldChanged: string): void {
+		if (this.personalInfoForm.invalid) {
+			return;
+		}
+
+		const personalInfoObject = {
+			email: this.user.email,
+			fullName: this.user.fullName
 		};
+		personalInfoObject[fieldChanged] = this.userModel[fieldChanged];
 
-		this.profileService.submitNotifications(notificationsObject, this.userModel.id)
-			.subscribe(() => {
-					if (this.impersonationService.impersonationId) {
-						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, notificationsObject);
-						this.impersonationService.setStorage(impersonateUser);
-					} else {
-						this.usersService.setUserInfo(notificationsObject);
-					}
-
-					this.notificationService.success('Profile settings has been successfully changed.');
-				},
-				() => {
-					this.notificationService.danger('Error changing profile settings.');
-				});
-	}
-
-	submitPersonalInfo(): void {
-		this.showWrongEmailMessage = false;
-		let personalInfoObject = {
-			email: this.userModel.email,
-			fullName: this.userModel.fullName
-		};
-
-		this.loadingService.addLoading();
+		this.personalInfoFormStatus[fieldChanged] = 'loading';
 		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
-			.finally(() => this.loadingService.removeLoading())
 			.subscribe((userModel: User) => {
+					this.personalInfoFormStatus[fieldChanged] = 'success';
 					if (this.isEmailChanged && this.isGravatarIcon(this.avatarUrl)) {
 						this.getAvatar().then((avatarUrl) => this.updateAvatar(avatarUrl));
 					}
@@ -228,47 +236,50 @@ export class ProfileSettingsComponent implements OnInit {
 					} else {
 						this.usersService.setUserInfo(personalInfoObject);
 					}
-
-					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				errResponse => {
+					this.personalInfoFormStatus[fieldChanged] = 'error';
 					if (errResponse.error.includes('Duplicate email.')) {
 						this.showWrongEmailMessage = true;
 					}
-
-					this.notificationService.danger('Error changing profile settings.');
 				});
 	}
 
-	submitPreferences(): void {
-		let preferencesObject = {
-			defaultProjectId: this.userModel.defaultProjectId,
-			defaultTaskId: this.userModel.defaultTaskId,
-			dateFormat: this.userModel.dateFormat,
-			dateFormatId: this.userModel.dateFormatId,
-			isWeeklyTimeEntryUpdatesSend: this.userModel.isWeeklyTimeEntryUpdatesSend,
-			timeFormat: this.userModel.timeFormat,
-			weekStart: this.userModel.weekStart,
-			workingHoursPerDay: this.userModel.workingHoursPerDay
-		};
+	submitPreferences(preferencesObject: any, fieldChanged: string): void {
+		if (this.preferencesForm.invalid) {
+			return;
+		}
 
-		this.loadingService.addLoading();
+		this.preferencesFormStatus[fieldChanged] = 'loading';
 		this.profileService.submitPreferences(preferencesObject, this.userModel.id)
-			.finally(() => this.loadingService.removeLoading())
 			.subscribe(() => {
+					this.preferencesFormStatus[fieldChanged] = 'success';
 					if (this.impersonationService.impersonationId) {
-						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
+						const impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
 						this.impersonationService.setStorage(impersonateUser);
 					} else {
 						this.usersService.setUserInfo(preferencesObject);
 					}
-
-					this.notificationService.success('Profile settings has been successfully changed.');
 				},
 				() => {
-					this.notificationService.danger('Error changing profile settings.');
+					this.preferencesFormStatus[fieldChanged] = 'error';
 				});
 	}
+
+	private getPreferencesObject() {
+		return {
+			defaultProjectId: this.user.defaultProjectId,
+			defaultTaskId: this.user.defaultTaskId,
+			dateFormat: this.user.dateFormat,
+			dateFormatId: this.user.dateFormatId,
+			isWeeklyTimeEntryUpdatesSend: this.user.isWeeklyTimeEntryUpdatesSend,
+			timeFormat: this.user.timeFormat,
+			weekStart: this.user.weekStart,
+			workingHoursPerDay: this.user.workingHoursPerDay
+		}
+	}
+
+	// GENERAL
 
 	private getProjects(): void {
 		this.projectsService.getProjects().subscribe((projects: Project[]) => {
@@ -279,9 +290,7 @@ export class ProfileSettingsComponent implements OnInit {
 			}));
 
 			this.projectModel = this.projects.find((project: Project) => project.id === this.userModel.defaultProjectId) || this.projects[0];
-			if (!this.projectModel) {
-				this.loadTasks();
-			}
+			this.loadTasks(this.projectModel && this.projectModel.id);
 		});
 	}
 
@@ -297,18 +306,19 @@ export class ProfileSettingsComponent implements OnInit {
 		this.tasksService.getActiveTasks(projectId)
 			.finally(() => this.isTasksLoading = false)
 			.subscribe((res) => {
-			this.tasks = this.filterTasks(res.data);
-			this.tasks.unshift(new Task({
-				id: 0,
-				name: 'No task'
-			}));
-			this.taskModel = ArrayUtils.findByProperty(this.tasks, 'id', this.userModel.defaultTaskId) || this.tasks[0];
-		});
+				this.tasks = this.filterTasks(res.data);
+				this.tasks.unshift(new Task({
+					id: 0,
+					name: 'No task'
+				}));
+				this.taskModel = ArrayUtils.findByProperty(this.tasks, 'id', this.userModel.defaultTaskId) || this.tasks[0];
+			});
 	}
 
 	private filterTasks(tasks: Task[]): Task[] {
-		let filteredTasks: Task[] = [];
+		const filteredTasks: Task[] = [];
 		let isAdded: boolean = false;
+
 		tasks.forEach((task1, index1) => {
 			isAdded = false;
 			if (task1.projectId) {

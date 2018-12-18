@@ -124,7 +124,8 @@ h5 {
 
 .ct-form-label {
   display: block;
-  margin-top: 25px;
+  margin-top: 23px;
+  padding-bottom: 2px;
   font-size: $smallFont;
   color: $grid-text;
 }
@@ -419,6 +420,17 @@ h5 {
       background-size: contain;
     }
   }
+
+  &.ct-result-message i {
+    &:before {
+      display: block;
+      content: '';
+      width: 18px;
+      height: 18px;
+      background: url(./assets/rolling-blue.gif) no-repeat center;
+      background-size: contain;
+    }
+  }
 }
 
 .ct-color-empty {
@@ -444,9 +456,8 @@ h5 {
 }
 
 .ct-hint-text {
-  font-family: inherit;
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 13px;
+  color: $grid-text;
+  font-size: 12px;
 }
 
 .ct-see-more {

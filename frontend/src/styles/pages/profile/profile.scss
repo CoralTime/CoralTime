@@ -100,7 +100,7 @@
   .ct-form {
     display: inline-block;
     width: 100%;
-    max-width: 370px;
+    max-width: 470px;
 
     > div:first-child label {
       margin-top: 10px;
@@ -109,6 +109,7 @@
 
   .ct-form-block {
     position: relative;
+    max-width: 290px;
   }
 
   .ct-reset-password-button {
@@ -127,6 +128,10 @@
   .mat-checkbox-layout {
     margin-top: 25px;
   }
+
+  .ct-error-text {
+    margin-top: 5px;
+  }
 }
 
 .ct-user-pic-container {
@@ -136,6 +141,31 @@
 
   .ct-link-text {
     width: 100%;
-    margin-top: 16px;
+    margin-top: 18px;
+  }
+}
+
+.ct-result-message {
+  display: inline-block;
+  position: absolute;
+  left: calc(100% + 20px);
+  top: 25px;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: bold;
+
+  .fa {
+    margin-right: 5px;
+  }
+
+  &.ct-success {
+    color: $main-blue;
+  }
+
+  &.ct-error {
+    color: $error-text;
   }
 }

@@ -42,7 +42,7 @@ import { FocusInputDirective } from './focus-input.directive';
 		NgForIn,
 		ClickCloseDirective,
 		SlimscrollArrowsDirective,
-		FocusInputDirective
+		FocusInputDirective,
 	],
 	exports: [
 		IsGrantedDirective,
@@ -64,7 +64,7 @@ import { FocusInputDirective } from './focus-input.directive';
 		NgForIn,
 		ClickCloseDirective,
 		SlimscrollArrowsDirective,
-		FocusInputDirective
+		FocusInputDirective,
 	]
 })
 

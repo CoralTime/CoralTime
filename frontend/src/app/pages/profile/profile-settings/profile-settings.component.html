@@ -7,22 +7,27 @@
             <span class="ct-link-text" (click)="openPhotoDialog()">Change Profile Picture</span>
         </div>
 
-        <form class="ct-form">
+        <form class="ct-form" #personalInfoForm="ngForm">
             <div class="ct-form-block">
                 <label class="ct-form-label">Full Name</label>
-                <input class="ct-input ct-full-width" name="name"
-                       [(ngModel)]="userModel.fullName" pattern=".*[^\s]+.*" required/>
+                <input class="ct-input ct-full-width" name="fullName" #fullName="ngModel"
+                       [(ngModel)]="userModel.fullName" pattern=".*[^\s]+.*" required
+                       (blur)="fullNameOnChange()"/>
+                <div class="ct-error-text" *ngIf="!fullName.pristine && fullName.errors?.required">Full name can't be empty</div>
+                <ct-show-status [status]="personalInfoFormStatus['fullName']"></ct-show-status>
             </div>
 
             <div class="ct-form-block">
                 <label class="ct-form-label">Email Address</label>
                 <input class="ct-input ct-full-width" #contactEmail="ngModel" type="email"
                        name="email" [(ngModel)]="userModel.email"
-                       (focus)="showWrongEmailMessage = false"
-                       (ngModelChange)="isEmailChanged = true"
+                       (ngModelChange)="emailOnChange()"
+                       (blur)="emailOnBlur()"
                        [pattern]="emailPattern" required>
                 <div class="ct-error-text" *ngIf="isEmailChanged && showWrongEmailMessage">User with this email already exists</div>
-                <div class="ct-error-text" *ngIf="!contactEmail.pristine && !userModel.email">Email can't be empty</div>
+                <div class="ct-error-text" *ngIf="!contactEmail.pristine && contactEmail.errors?.required">Email can't be empty</div>
+                <div class="ct-error-text" *ngIf="!contactEmail.pristine && contactEmail.errors?.pattern">Invalid email</div>
+                <ct-show-status [status]="personalInfoFormStatus['email']"></ct-show-status>
             </div>
 
             <div class="ct-form-block">
@@ -35,67 +40,77 @@
     <div class="ct-profile-block">
         <h3 class="ct-header">Preferences</h3>
 
-        <form class="ct-form">
-            <div>
+        <form class="ct-form" #preferencesForm="ngForm">
+            <div class="ct-form-block">
                 <label class="ct-form-label">Default Project</label>
                 <ct-select [name]="'defaultProject'"
                            [displayName]="'name'" [trackBy]="'id'"
                            [(ngModel)]="projectModel"
-                           (ngModelChange)="defaultProjectOnChange(projectModel)"
+                           (change)="defaultProjectOnChange()"
                            [options]="projects">
                 </ct-select>
+                <ct-show-status [status]="preferencesFormStatus['defaultProject']"></ct-show-status>
             </div>
 
-            <div>
+            <div class="ct-form-block">
                 <label class="ct-form-label">Default Task</label>
                 <ct-select [name]="'defaultTask'"
                            [class.ct-loading]="isTasksLoading"
                            [displayName]="'name'" [trackBy]="'id'"
                            [(ngModel)]="taskModel"
-                           (ngModelChange)="userModel.defaultTaskId = taskModel.id"
+                           (change)="defaultTaskOnChange()"
                            [options]="tasks">
                 </ct-select>
+                <ct-show-status [status]="preferencesFormStatus['defaultTask']"></ct-show-status>
             </div>
 
-            <div>
+            <div class="ct-form-block">
                 <label class="ct-form-label">Date Format</label>
                 <ct-select [name]="'dateFormat'" [trackBy]="'dateFormat'"
                            [defaultValue]="'None'"
                            [(ngModel)]="dateFormatModel"
-                           (ngModelChange)="dateFormatOnChange(dateFormatModel)"
+                           (change)="dateFormatOnChange()"
                            [options]="dateFormats">
                 </ct-select>
+                <ct-show-status [status]="preferencesFormStatus['dateFormat']"></ct-show-status>
             </div>
 
-            <div>
+            <div class="ct-form-block">
                 <label class="ct-form-label">Time Format</label>
                 <ct-select [name]="'timeFormat'" [trackBy]="'timeFormat'"
                            [(ngModel)]="timeFormatModel"
-                           (ngModelChange)="timeFormatOnChange()"
+                           (change)="timeFormatOnChange()"
                            [options]="timeFormats">
                 </ct-select>
+                <ct-show-status [status]="preferencesFormStatus['timeFormat']"></ct-show-status>
             </div>
 
-            <div>
+            <div class="ct-form-block">
                 <label class="ct-form-label">Week Starts On</label>
                 <ct-select [name]="'weekStartDay'"
                            [(ngModel)]="weekStartDayModel"
-                           (ngModelChange)="weekStartDayOnChange()"
+                           (change)="weekStartDayOnChange()"
                            [options]="weekStartDays">
                 </ct-select>
+                <ct-show-status [status]="preferencesFormStatus['weekStartDay']"></ct-show-status>
             </div>
 
-            <div>
-                <mat-checkbox name="isWeeklyTimeEntryUpdatesSend" [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend">
+            <div class="ct-form-block">
+                <mat-checkbox name="isWeeklyTimeEntryUpdatesSend"
+                              [(ngModel)]="userModel.isWeeklyTimeEntryUpdatesSend"
+                              (change)="isWeeklyTimeEntryUpdatesSendOnChange()">
                     Send weekly time entry updates
                 </mat-checkbox>
+                <ct-show-status [status]="preferencesFormStatus['isWeeklyTimeEntryUpdatesSend']"></ct-show-status>
             </div>
 
-            <div>
+            <div class="ct-form-block">
                 <label class="ct-form-label">Working hours/day</label>
                 <input class="ct-input ct-full-width" name="workingHoursPerDay" autocomplete="off"
                        [(ngModel)]="userModel.workingHoursPerDay" [ctTime]="24" required [enableFormat]="false"
-                       [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"/>
+                       [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
+                       (blur)="workingHoursPerDayOnChange()"/>
+                <ct-show-status [status]="preferencesFormStatus['workingHoursPerDay']"></ct-show-status>
             </div>
         </form>
     </div>

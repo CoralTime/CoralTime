@@ -11,6 +11,7 @@ import { NgSlimScrollModule } from 'ngx-slimscroll';
 import { MaterialModule } from '../material.module';
 import { ColorPickerModule } from './color-picker/color-picker.module';
 import { UserPicComponent } from '../user-pic/user-pic.component';
+import { ShowStatusComponent } from './show-status.component';
 
 @NgModule({
 	imports: [
@@ -28,7 +29,8 @@ import { UserPicComponent } from '../user-pic/user-pic.component';
 		MultiSelectComponent,
 		SelectComponent,
 		UserPicComponent,
-		TextareaComponent
+		TextareaComponent,
+		ShowStatusComponent,
 	],
 	exports: [
 		FormsModule,
@@ -42,6 +44,7 @@ import { UserPicComponent } from '../user-pic/user-pic.component';
 		ColorPickerModule,
 		NgSlimScrollModule,
 		UserPicComponent,
+		ShowStatusComponent,
 	]
 })
 
