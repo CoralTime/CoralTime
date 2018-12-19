@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using CoralTime.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -41,9 +42,10 @@ namespace CoralTime
 
         public static IWebHostBuilder CreateDefaultBuilder(string[] args)
         {
+            CurrentDirectoryHelpers.SetCurrentDirectory();
             var builder = new WebHostBuilder()
-                .UseApplicationInsights()                
-                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseApplicationInsights()
+                .UseContentRoot(Environment.CurrentDirectory)
                 .UseKestrel()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
