@@ -46,7 +46,6 @@ namespace CoralTime
             var builder = new WebHostBuilder()
                 .UseApplicationInsights()
                 .UseContentRoot(Environment.CurrentDirectory)
-                .UseKestrel()
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
@@ -79,7 +78,7 @@ namespace CoralTime
                     logging.AddConsole();
                     logging.AddDebug();
                 })
-                .UseIISIntegration()
+                .UseIIS()
                 .UseDefaultServiceProvider((context, options) =>
                 {
                     options.ValidateScopes = context.HostingEnvironment.IsDevelopment();

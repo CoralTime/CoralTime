@@ -23,9 +23,9 @@ namespace CoralTime.BL.Services
 
         private readonly IConfiguration _config;
 
-        private static string PathAvatars() => $"{Path.Combine(Directory.GetCurrentDirectory(), Constants.Folders.StaticFilesFolder, Constants.Folders.AvatarFolder)}";
+        private static string PathAvatars() => $"{Path.Combine(Environment.CurrentDirectory, Constants.Folders.StaticFilesFolder, Constants.Folders.AvatarFolder)}";
 
-        private static string PathIcons() => $"{Path.Combine(Directory.GetCurrentDirectory(), Constants.Folders.StaticFilesFolder, Constants.Folders.IconFolder)}";
+        private static string PathIcons() => $"{Path.Combine(Environment.CurrentDirectory, Constants.Folders.StaticFilesFolder, Constants.Folders.IconFolder)}";
         
 
         
