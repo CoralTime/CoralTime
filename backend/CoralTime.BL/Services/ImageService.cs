@@ -8,12 +8,12 @@ using CoralTime.DAL.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using CoralTime.DAL.Models.Member;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace CoralTime.BL.Services
 {
@@ -23,9 +23,9 @@ namespace CoralTime.BL.Services
 
         private readonly IConfiguration _config;
 
-        private static string PathAvatars() => $"{Path.Combine(Directory.GetCurrentDirectory(), Constants.Folders.StaticFilesFolder, Constants.Folders.AvatarFolder)}";
+        private static string PathAvatars() => $"{Path.Combine(Environment.CurrentDirectory, Constants.Folders.StaticFilesFolder, Constants.Folders.AvatarFolder)}";
 
-        private static string PathIcons() => $"{Path.Combine(Directory.GetCurrentDirectory(), Constants.Folders.StaticFilesFolder, Constants.Folders.IconFolder)}";
+        private static string PathIcons() => $"{Path.Combine(Environment.CurrentDirectory, Constants.Folders.StaticFilesFolder, Constants.Folders.IconFolder)}";
         
 
         
