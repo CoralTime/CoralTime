@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -78,12 +77,28 @@ namespace CoralTime
                     logging.AddConsole();
                     logging.AddDebug();
                 })
-                .UseIIS()
                 .UseDefaultServiceProvider((context, options) =>
                 {
                     options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
                 });
 
+            var isIIS = (Environment.GetEnvironmentVariable("ASPNETCORE_IIS")?? "0") == "1";
+            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+            if (isDevelopment)
+            {
+                if (isIIS)
+                {
+                    builder.UseIIS();
+                }
+                else
+                {
+                    builder.UseKestrel();
+                }
+            }
+            else
+            {
+                builder.UseIIS();
+            }
             return builder;
         }
     }
