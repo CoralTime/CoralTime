@@ -434,7 +434,7 @@ namespace CoralTime.BL.Services
 
             timeEntry.Description = timeEntryView.Description;
             timeEntry.IsFromToShow = timeEntryView.TimeOptions.IsFromToShow;
-            timeEntry.WorkItemId = timeEntryView.WorkItemId;
+            timeEntry.WorkItemId = string.IsNullOrWhiteSpace(timeEntryView.WorkItemId) ? timeEntry.WorkItemId : timeEntryView.WorkItemId;
 
             #endregion
         }
