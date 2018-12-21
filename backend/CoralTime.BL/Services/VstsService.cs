@@ -16,6 +16,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using CoralTime.Common.Helpers;
 
 namespace CoralTime.BL.Services
 {
@@ -102,7 +103,7 @@ namespace CoralTime.BL.Services
                 .Select(x => new VstsTimeEntry
                 {
                     Date = x.Date,
-                    Description = x.Description,
+                    Description = StringHandler.RemoveMarkdown(x.Description),
                     MemberId = x.MemberId,
                     MemberName = x.Member.FullName,
                     ProjectId = x.ProjectId,
