@@ -56,6 +56,19 @@ namespace CoralTime.Common.Helpers
             return (firstDay, lastDay);
         }
 
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfQuarterByDate(DateTime date)
+        {
+            var quarterId = (date.Month -1) / 3;
+            var firstDay = new DateTime(date.Year, quarterId * 3 + 1, 1);
+            var lastDay = firstDay.AddMonths(3).AddMilliseconds(-1).Date;
+            return (firstDay, lastDay);
+        }
+
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLastQuarterByDate(DateTime date)
+        {
+            return GetRangeOfQuarterByDate(date.AddMonths(-3));
+        }
+
         private static (DateTime DateFrom, DateTime DateTo) GetRangeOfYearByDate(DateTime date)
         {
             var firstDay = new DateTime(date.Year, 1, 1);
@@ -83,28 +96,34 @@ namespace CoralTime.Common.Helpers
             {
                 case DatesStaticIds.Today:
                     return (today, today);
-                        
+
                 case DatesStaticIds.Yesterday:
                     return (yesterday, yesterday);
-                
+
                 case DatesStaticIds.ThisWeek:
                     return GetRangeOfThisWeek(today, startOfWeek);
-  
+
                 case DatesStaticIds.ThisMonth:
                     return GetRangeOfThisMonth(today);
-                
+
                 case DatesStaticIds.ThisYear:
                     return GetRangeOfThisYear(today);
-                
+
                 case DatesStaticIds.LastWeek:
                     return GetRangeOfLastWeek(today, startOfWeek);
-                
+
                 case DatesStaticIds.LastMonth:
-                    return GetRangeOfLastMonth(today);  
+                    return GetRangeOfLastMonth(today);
 
                 case DatesStaticIds.LastYear:
-                    return GetRangeOfLastYear(today);  
-                
+                    return GetRangeOfLastYear(today);
+
+                case DatesStaticIds.ThisQuarter:
+                    return GetRangeOfQuarterByDate(today);
+
+                case DatesStaticIds.LastQuarter:
+                    return GetRangeOfLastQuarterByDate(today);
+
                 default:
                     return (today, today);
             }

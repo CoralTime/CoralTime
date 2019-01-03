@@ -243,7 +243,10 @@ namespace CoralTime.Common.Constants
             Yesterday = 5,
             LastWeek = 6,
             LastMonth = 7,
-            LastYear = 9
+            LastYear = 9,
+
+            ThisQuarter = 10,
+            LastQuarter = 11
         }
 
         #region DayOfWeek (BitMask).
