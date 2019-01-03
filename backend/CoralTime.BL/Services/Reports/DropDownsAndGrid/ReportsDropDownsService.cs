@@ -1,15 +1,15 @@
-﻿using System;
-using CoralTime.Common.Constants;
-using CoralTime.DAL.ConvertModelToView;
-using CoralTime.DAL.Models;
-using System.Collections.Generic;
-using System.Linq;
-using CoralTime.Common.Helpers;
+﻿using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
+using CoralTime.Common.Helpers;
+using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.ConvertViewToModel;
+using CoralTime.DAL.Models;
 using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.ViewModels.Reports.Request.ReportsSettingsView;
 using CoralTime.ViewModels.Reports.Responce.DropDowns;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using DatesStaticIds = CoralTime.Common.Constants.Constants.DatesStaticIds;
 
 namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
@@ -69,7 +69,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         };
 
-        #endregion
+        #endregion Values of groupByInfo, showColumnsInfo, datesStaticInfo.
 
         public ReportDropDownView GetReportsDropDowns(DateTime? today)
         {
@@ -114,7 +114,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 projects = projectsWithAssignUsersAndPublicProjects;
             }
 
-            #endregion
+            #endregion GetProjects allProjectsForAdmin or projectsWithAssignUsersAndPublicProjects.
 
             #region Get Clients from Projects of clients.
 
@@ -149,7 +149,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                 clients.Add(clientWithoutProjects);
             }
 
-            #endregion
+            #endregion Get Clients from Projects of clients.
 
             return clients;
         }
@@ -196,7 +196,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                         reportProjectView.UsersDetails = usersDetailsView;
                     }
 
-                    #endregion
+                    #endregion Set all users at Project constrain only for: Admin, Manager at this project.
 
                     reportProjectView.IsUserManagerOnProject = isManagerOnProject;
                     reportProjectViewByUserId.Add(reportProjectView);
@@ -239,10 +239,10 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         {
             var datesStaticInfo = GetDatesStaticInfo(today);
             var dateStaticPeriod = datesStaticInfo.FirstOrDefault(x => x.Id == dateStaticId);
-            
-            if (dateStaticPeriod == null) 
+
+            if (dateStaticPeriod == null)
                 throw new CoralTimeDangerException($"Incorrect DateStaticId = {dateStaticId}");
-            
+
             var dateStaticExtend = new ReportDropDownsDateStaticExtendView
             {
                 DateStatic = datesStaticInfo,
@@ -252,13 +252,11 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             };
 
             return dateStaticExtend;
-            
-
         }
-        
-        private static DayOfWeek GetDayOfWeek(Constants.WeekStart day) => 
-            (day == Constants.WeekStart.Monday)? DayOfWeek.Monday : DayOfWeek.Sunday;
-        
+
+        private static DayOfWeek GetDayOfWeek(Constants.WeekStart day) =>
+            (day == Constants.WeekStart.Monday) ? DayOfWeek.Monday : DayOfWeek.Sunday;
+
         private ReportDropDownsDateStaticView[] GetDatesStaticInfo(DateTime? todayDate)
         {
             var companyReportStratOfWeek = GetCompanyReportStartOfWeek();
@@ -275,14 +273,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
             ReportDropDownsDateStaticView[] datesStaticInfo =
             {
-                new ReportDropDownsDateStaticView
-                {
-                    Id = (int) DatesStaticIds.Today,
-                    Description = "Today",
-                    DateFrom = today.DateFrom,
-                    DateTo = today.DateTo
-                },
-
                 new ReportDropDownsDateStaticView
                 {
                     Id = (int) DatesStaticIds.ThisWeek,
@@ -317,14 +307,6 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
                 new ReportDropDownsDateStaticView
                 {
-                    Id = (int) DatesStaticIds.Yesterday,
-                    Description = "Yesterday",
-                    DateFrom = yesterday.DateFrom,
-                    DateTo = yesterday.DateTo
-                },
-
-                new ReportDropDownsDateStaticView
-                {
                     Id = (int) DatesStaticIds.LastWeek,
                     Description = "Last Week",
                     DateFrom = lastWeek.DateFrom,
@@ -353,7 +335,23 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     Description = "Last Year",
                     DateFrom = lastYear.DateFrom,
                     DateTo = lastYear.DateTo
-                }
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) DatesStaticIds.Today,
+                    Description = "Today",
+                    DateFrom = today.DateFrom,
+                    DateTo = today.DateTo
+                },
+
+                new ReportDropDownsDateStaticView
+                {
+                    Id = (int) DatesStaticIds.Yesterday,
+                    Description = "Yesterday",
+                    DateFrom = yesterday.DateFrom,
+                    DateTo = yesterday.DateTo
+                },
             };
 
             return datesStaticInfo;
