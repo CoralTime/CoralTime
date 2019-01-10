@@ -48,6 +48,7 @@ using CoralTime.BL.Services.Notifications;
 using CoralTime.ViewModels.MemberActions;
 using Microsoft.IdentityModel.Tokens;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
+using Microsoft.IdentityModel.Logging;
 
 namespace CoralTime
 {
@@ -120,7 +121,9 @@ namespace CoralTime
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
             });
-            
+
+            IdentityModelEventSource.ShowPII = true; //To show detail of error and see the problem
+
             return services.BuildServiceProvider();
         }
 
