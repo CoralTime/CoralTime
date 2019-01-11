@@ -99,7 +99,7 @@ namespace CoralTime.Services
                     IssuerSigningKey = certificate,
                     ValidateAudience = true,
                     ValidAudience = _config["Authentication:AzureAd:Audience"]
-            };
+                };
 
                 var jwtHandler = new JwtSecurityTokenHandler();
                 jwtHandler.ValidateToken(jwtToken, tokenValidationParameters, out var securityToken);
@@ -107,7 +107,7 @@ namespace CoralTime.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Azure Token validation: {ex.Message}");
+                _logger.LogError(ex, $"Azure Token validation: {ex.Message}");
                 return null;
             }
 
@@ -123,10 +123,11 @@ namespace CoralTime.Services
             {
                 var url = _config["Authentication:AzureAd:CertificatesUrl"];
                 var client = new HttpClient();
+                _logger.LogInformation($"Try get certificates from {url}");
                 var json = await client.GetStringAsync(url);
-
+                _logger.LogInformation($"Received certificates: {json}");
                 certificates = JsonConvert.DeserializeObject<CertificateKeys>(json);
-                
+
                 _memoryCache.Set(Constants.CertificateKeysTime, DateTime.Now);
                 _memoryCache.Set(Constants.CertificateKeys, certificates);
             }
