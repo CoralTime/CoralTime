@@ -38,11 +38,11 @@ namespace CoralTime.Services
             _memoryCache = memoryCache;
         }
 
-        public string GrantType => "azureAuth";
+        public string GrantType => Constants.Authorization.CoralTimeAzure.GrantType;
 
         public async Task ValidateAsync(ExtensionGrantValidationContext context)
         {
-            var userToken = context.Request.Raw.Get("id_token");
+            var userToken = context.Request.Raw.Get(Constants.Authorization.CoralTimeAzure.UserTokenHeader);
 
             if (string.IsNullOrEmpty(userToken))
             {
@@ -59,13 +59,13 @@ namespace CoralTime.Services
                     return;
                 }
 
-                var userName = token.Claims.FirstOrDefault(m => m.Type == "unique_name")?.Value;
+                var userName = token.Claims.FirstOrDefault(m => m.Type == Constants.Authorization.CoralTimeAzure.UserNameClaim)?.Value;
 
                 var user = await _userManager.FindByNameAsync(userName);
 
                 if (user != null && ((user?.IsActive) ?? false))
                 {
-                    context.Result = new GrantValidationResult(user.Id, "azure");
+                    context.Result = new GrantValidationResult(user.Id, Constants.Authorization.CoralTimeAzure.AuthenticationMethod);
                     return;
                 }
 

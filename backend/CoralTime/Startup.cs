@@ -146,8 +146,8 @@ namespace CoralTime
             }
 
             // Disable ApplicationInsights messages if it isn't configured
-            var IsApplicationInsights = Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey") != null;
-            if (!IsApplicationInsights)
+            var isApplicationInsights = Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey") != null;
+            if (!isApplicationInsights)
             {
                 var configuration = app.ApplicationServices.GetService<Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration>();
                 configuration.DisableTelemetry = true;
@@ -280,19 +280,18 @@ namespace CoralTime
                 options.User.RequireUniqueEmail = true;
             });
 
-            var accessTokenLifetime = int.Parse(Configuration["AccessTokenLifetime"]);
-            var refreshTokenLifetime = int.Parse(Configuration["RefreshTokenLifetime"]);
-            var slidingRefreshTokenLifetime = int.Parse(Configuration["SlidingRefreshTokenLifetime"]);
+
 
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidIssuer = Configuration["Authority"],
                 ValidateAudience = true,
-                ValidAudience = "WebAPI",
+                ValidAudience = Constants.Authorization.WebApiScope,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
+            var clients = Config.GetClients(Configuration);
 
             if (isDemo)
             {
@@ -300,7 +299,7 @@ namespace CoralTime
                     .AddDeveloperSigningCredential()
                     .AddInMemoryIdentityResources(Config.GetIdentityResources())
                     .AddInMemoryApiResources(Config.GetApiResources())
-                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime: accessTokenLifetime, refreshTokenLifetime: refreshTokenLifetime, slidingRefreshTokenLifetime: slidingRefreshTokenLifetime))
+                    .AddInMemoryClients(clients)
                     .AddAspNetIdentity<ApplicationUser>()
                     .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
                     .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
@@ -312,7 +311,7 @@ namespace CoralTime
                 services.AddIdentityServer()
                     .AddInMemoryIdentityResources(Config.GetIdentityResources())
                     .AddInMemoryApiResources(Config.GetApiResources())
-                    .AddInMemoryClients(Config.GetClients(accessTokenLifetime: accessTokenLifetime, refreshTokenLifetime: refreshTokenLifetime, slidingRefreshTokenLifetime: slidingRefreshTokenLifetime))
+                    .AddInMemoryClients(clients)
                     .AddAspNetIdentity<ApplicationUser>()
                     .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
                     .AddSigningCredential(cert)
@@ -329,22 +328,19 @@ namespace CoralTime
 
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = "Bearer";
-                options.DefaultChallengeScheme = "Bearer";
+                options.DefaultAuthenticateScheme = Constants.Authorization.AuthenticateScheme;
+                options.DefaultChallengeScheme = Constants.Authorization.AuthenticateScheme;
                 options.DefaultForbidScheme = "Identity.Application";
             }).AddJwtBearer(options =>
                 {
                     // name of the API resource
-                    options.Audience = "WebAPI";
+                    options.Audience = Constants.Authorization.WebApiScope;
                     options.Authority = Configuration["Authority"];
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = tokenValidationParameters;
                 });
 
-            services.AddAuthorization(options =>
-            {
-                Config.CreateAuthorizatoinOptions(options);
-            });
+            services.AddAuthorization(Config.CreateAuthorizationOptions);
         }
 
         private static IEdmModel SetupODataEntities(IServiceProvider serviceProvider)

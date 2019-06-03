@@ -252,7 +252,7 @@ namespace CoralTime.Common.Constants
         #region DayOfWeek (BitMask).
 
         [Flags]
-        public enum DaysOfWeekForBinaryMask : short
+        private enum DaysOfWeekForBinaryMask : short
         {
             Sunday = 1,
             Monday = 2,
@@ -318,6 +318,32 @@ namespace CoralTime.Common.Constants
         public const string VstsMembersUrl = "/members";
 
         #endregion VSTS
+
+        public static class Authorization
+        {
+            public static class CoralTimeApp
+            {
+                public const string ClientId = "coraltimeapp";
+            }
+            
+            public static class CoralTimeBot
+            {
+                public const string ClientId = "coraltimebot";
+            }
+            
+            public static class CoralTimeAzure
+            {
+                public const string ClientId = "coraltimeazure";
+                public const string GrantType = "azureAuth";
+                public const string AuthenticationMethod = "azure";
+                public const string UserTokenHeader = "id_token";
+                public const string UserNameClaim = "unique_name";
+            }
+            public const string RolesScope = "roles";
+            public const string WebApiScope = "WebAPI";
+            public const string RoleClaimType = "role";
+            public const string AuthenticateScheme = "Bearer";
+        }
 
     }
 }
