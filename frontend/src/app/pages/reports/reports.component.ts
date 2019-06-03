@@ -167,8 +167,8 @@ export class ReportsComponent implements OnInit {
 	// GRID DISPLAYING
 
 	getReportGrid(isCustomQuery?: boolean): void {
-		this.reportQuery.dateFrom = this.convertMomentToString(this.dateResponse.datePeriod.dateFrom);
-		this.reportQuery.dateTo = this.convertMomentToString(this.dateResponse.datePeriod.dateTo);
+		this.reportQuery.dateFrom = ReportsComponent.convertMomentToString(this.dateResponse.datePeriod.dateFrom);
+		this.reportQuery.dateTo = ReportsComponent.convertMomentToString(this.dateResponse.datePeriod.dateTo);
 		this.reportQuery.dateStaticId = this.dateResponse.dateStaticId;
 
 		if (!isCustomQuery) {
@@ -408,7 +408,7 @@ export class ReportsComponent implements OnInit {
 		setTimeout(() => this.canToggleDatepicker = true, 300);
 	}
 
-	private convertMomentToString(moment: Moment): string {
+	private static convertMomentToString(moment: Moment): string {
 		return moment ? DateUtils.formatDateToString(moment) : null;
 	}
 
@@ -517,10 +517,12 @@ export class ReportsComponent implements OnInit {
 	resetFilters(): void {
 		this.queryModel = null;
 		this.reportQuery = new ReportQuery({});
-		const period = this.reportDropdowns.values.dateStatic[1];
+		const defaultDateStaticId = 2;
+		const period = this.reportDropdowns.values.dateStatic.find(x=> x.id === defaultDateStaticId);
+		
 		const dateResponse = {
 			datePeriod: new DatePeriod(moment(period.dateFrom), moment(period.dateTo)),
-			dateStaticId: 2
+			dateStaticId: defaultDateStaticId
 		};
 		this.datePeriodOnChange(dateResponse);
 		this.groupModel = this.groupByItems.find((group: GroupByItem) => group.id === 3);
@@ -570,7 +572,7 @@ export class ReportsComponent implements OnInit {
 		return (this.calcTrackedHours(maxTotalTrackedTime) + 'h').length * 7.5;
 	}
 
-	private getNumberOfWorkingDays(period: DatePeriod): number {
+	private static getNumberOfWorkingDays(period: DatePeriod): number {
 		let day = period.dateFrom.clone();
 		let result = 0;
 
@@ -590,7 +592,7 @@ export class ReportsComponent implements OnInit {
 		const maxChartWidth = 240 - 61 - chartNumberWidth;
 		this.chartWidthParam = maxChartWidth / maxTotalValue;
 
-		this.numberOfWorkingDays = this.getNumberOfWorkingDays(this.dateResponse.datePeriod);
+		this.numberOfWorkingDays = ReportsComponent.getNumberOfWorkingDays(this.dateResponse.datePeriod);
 	}
 
 	// FILTERS
