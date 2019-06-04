@@ -124,6 +124,9 @@
                                         [selectedItemsLabel]="'Users ({0})'">
                                 </ct-multiselect>
                             </div>
+                            <div>
+                                <mat-checkbox name="isTotalsOnly" [(ngModel)]="isTotalsOnly" (click)="onTotalsOnlyChange()">Totals Only</mat-checkbox>                                
+                            </div>
                         </div>
 
                         <div class="ct-report-filters-block">
@@ -193,20 +196,23 @@
 
                     </div>
                 </div>
-
+                
                 <div class="ct-reports-data" #scrollContainer>
                     <ct-reports-grid *ngFor="let grid of gridData"
                                      class="ct-reports-grid"
                                      [gridData]="grid.gridData"
                                      [groupById]="groupModel?.id"
                                      [rowsNumber]="grid.rows"
-                                     [showColumnIds]="showColumnIds"></ct-reports-grid>
+                                     [showColumnIds]="showColumnIds"
+                                     [isTotalsOnly]="reportQuery.isTotalsOnly"
+                                     style="display: inherit">                        
+                    </ct-reports-grid>
 
                     <div *ngIf="reportGridData?.groupedItems.length == 0" class="ct-nodata">
                         Sorry, you don't have any reports at this time period.
                     </div>
                 </div>
-
+                
                 <div *ngIf="reportGridData?.timeTotal.timeActualTotal > 0" class="ct-grid-container ct-total-footer ct-total-time-container">
                     <label>Total Hours</label>
 

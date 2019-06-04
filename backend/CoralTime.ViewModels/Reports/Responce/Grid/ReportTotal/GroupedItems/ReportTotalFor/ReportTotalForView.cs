@@ -16,5 +16,7 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.Re
         public TimeTotalForView TimeTotalFor { get; set; }
 
         public List<ReportItemsView> Items { get; set; }
+
+        public bool IsTotalsOnly { get; set; }
     }
 }

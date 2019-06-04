@@ -23,6 +23,7 @@ export class ReportQuery {
 	queryId: number;
 	queryName: string;
 	showColumnIds: number[];
+	isTotalsOnly: boolean;
 
 	constructor(obj: any) {
 		this.clientIds = obj.clientIds || [];
@@ -35,6 +36,7 @@ export class ReportQuery {
 		this.queryId = obj.queryId;
 		this.queryName = obj.queryName;
 		this.showColumnIds = obj.showColumnIds || [1, 2, 3, 4];
+		this.isTotalsOnly = obj.isTotalsOnly;
 	}
 }
 

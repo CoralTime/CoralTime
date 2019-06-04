@@ -108,10 +108,18 @@ namespace CoralTime.DAL.ConvertModelToView
 
                 reportTotalView.TimeTotal.TimeActualTotal += reportItemsGroupByTypeView.TimeTotalFor.TimeActualTotalFor;
                 reportTotalView.TimeTotal.TimeEstimatedTotal += reportItemsGroupByTypeView.TimeTotalFor.TimeEstimatedTotalFor;
+                if (reportTotalView.IsTotalsOnly)
+                 {
+                     reportItemsGroupByTypeView.Items = new List<ReportItemsView>();           
+                 }
                 reportTotalView.GroupedItems.Add(reportItemsGroupByTypeView);
 
                 reportItemsGroupByTypeView.DisplayNames = reportTotalView.DisplayNames;
             }
+            
+
+
+
 
             reportTotalView.TimeTotal.TimeEstimatedTotal = showColumnIds.Contains((int) Constants.ShowColumnModelIds.ShowEstimatedTime)
                 ? reportTotalView.TimeTotal.TimeEstimatedTotal
@@ -201,6 +209,7 @@ namespace CoralTime.DAL.ConvertModelToView
                 ? reportTotalForView.TimeTotalFor.TimeEstimatedTotalFor
                 : null;
 
+            reportTotalForView.Items = reportTotalForView.IsTotalsOnly ? new List<ReportItemsView>() : reportTotalForView.Items;
             return reportTotalForView;
         }
 
