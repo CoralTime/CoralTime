@@ -32,64 +32,67 @@
             </thead>
         </table>
         <table class="tableNestedHeaders">
+        @if (!Model.ReportTotalView.IsTotalsOnly)
+        {
             <thead>
-                <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
-                    @if (groupedItems.DisplayNames.DisplayNameDate != null)
-                    {
+            <tr style="border: 1px solid black;" class="rowNestedEntityHeaders">
+                @if (groupedItems.DisplayNames.DisplayNameDate != null)
+                {
                     <td>
                         <span>@groupedItems.DisplayNames.DisplayNameDate</span>
                     </td>
-                    }
-                    @if (groupedItems.DisplayNames.DisplayNameClient != null)
-                    {
+                }
+                @if (groupedItems.DisplayNames.DisplayNameClient != null)
+                {
                     <td>
                         <span>@groupedItems.DisplayNames.DisplayNameClient</span>
                     </td>
-                    }
-                    @if (groupedItems.DisplayNames.DisplayNameProject != null)
-                    {
-                        <td>
-                            <span>@groupedItems.DisplayNames.DisplayNameProject</span>
-                        </td>
-                    }
-                    @if (groupedItems.DisplayNames.DisplayNameMember != null)
-                    {
-                        <td>
-                            <span>@groupedItems.DisplayNames.DisplayNameMember</span>
-                        </td>
-                    }
+                }
+                @if (groupedItems.DisplayNames.DisplayNameProject != null)
+                {
                     <td>
-                        <span>@groupedItems.DisplayNames.DisplayNameTask</span>
+                        <span>@groupedItems.DisplayNames.DisplayNameProject</span>
                     </td>
-                    @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
-                    {
-                        <td>
-                            <span>@groupedItems.DisplayNames.DisplayNameTimeFrom</span>
-                        </td>
-                    }
-                    @if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
-                    {
-                        <td>
-                            <span>@groupedItems.DisplayNames.DisplayNameTimeTo</span>
-                        </td>
-                    }
+                }
+                @if (groupedItems.DisplayNames.DisplayNameMember != null)
+                {
                     <td>
-                        <span>@groupedItems.DisplayNames.DisplayNameTimeActual</span>
+                        <span>@groupedItems.DisplayNames.DisplayNameMember</span>
                     </td>
-                    @if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
-                    {
-                        <td>
-                            <span>@groupedItems.DisplayNames.DisplayNameTimeEstimated</span>
-                        </td>
-                    }
-                    @if (groupedItems.DisplayNames.DisplayNameNotes != null)
-                    {
-                        <td>
-                            <span>@groupedItems.DisplayNames.DisplayNameNotes</span>
-                        </td>
-                    }
-                </tr>
+                }
+                <td>
+                    <span>@groupedItems.DisplayNames.DisplayNameTask</span>
+                </td>
+                @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
+                {
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameTimeFrom</span>
+                    </td>
+                }
+                @if (groupedItems.DisplayNames.DisplayNameTimeTo != null)
+                {
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameTimeTo</span>
+                    </td>
+                }
+                <td>
+                    <span>@groupedItems.DisplayNames.DisplayNameTimeActual</span>
+                </td>
+                @if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
+                {
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameTimeEstimated</span>
+                    </td>
+                }
+                @if (groupedItems.DisplayNames.DisplayNameNotes != null)
+                {
+                    <td>
+                        <span>@groupedItems.DisplayNames.DisplayNameNotes</span>
+                    </td>
+                }
+            </tr>
             </thead>
+        }
             <tbody>
             @foreach (var groupedItem in groupedItems.Items)
             {
@@ -186,41 +189,44 @@
         </table>
     </div>
 }
-<div class="divIncludeTable">
-    <table class="tableEntityHeaders">
-        <tr>
-            <td style="text-align: left;">
-                <span>@Model.ReportTotalView.TimeTotal.DisplayNameTimeActualTotal</span>
-            </td>
-            @if (Model.ReportTotalView.DisplayNames.DisplayNameDate != null || Model.ReportTotalView.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
-            {
-                <td></td>
-            }
-            <td></td>
-            <td></td>
-            @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeFrom != null)
-            {
-                <td></td>
-            }
-            @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeTo != null)
-            {
-                <td></td>
-            }
-            <td>
-                <span>@ConvertModelToView.UpdateTimeFormatForValue(Model.ReportTotalView.TimeTotal.TimeActualTotal.ToString())</span>
-            </td>
-            @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeEstimated != null)
-            {
-                <td>
-                    <span>@(Model.ReportTotalView.TimeTotal.TimeEstimatedTotal == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(Model.ReportTotalView.TimeTotal.TimeEstimatedTotal.ToString()))</span>
+@if (!Model.ReportTotalView.IsTotalsOnly)
+{
+    <div class="divIncludeTable">
+        <table class="tableEntityHeaders">
+            <tr>
+                <td style="text-align: left;">
+                    <span>@Model.ReportTotalView.TimeTotal.DisplayNameTimeActualTotal</span>
                 </td>
-            }
-            @if (Model.ReportTotalView.DisplayNames.DisplayNameNotes != null)
-            {
+                @if (Model.ReportTotalView.DisplayNames.DisplayNameDate != null || Model.ReportTotalView.GroupByTypeId == (int) Constants.ReportsGroupByIds.Date)
+                {
+                    <td></td>
+                }
                 <td></td>
-            }
-        </tr>
-    </table>
-</div>
+                <td></td>
+                @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeFrom != null)
+                {
+                    <td></td>
+                }
+                @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeTo != null)
+                {
+                    <td></td>
+                }
+                <td>
+                    <span>@ConvertModelToView.UpdateTimeFormatForValue(Model.ReportTotalView.TimeTotal.TimeActualTotal.ToString())</span>
+                </td>
+                @if (Model.ReportTotalView.DisplayNames.DisplayNameTimeEstimated != null)
+                {
+                    <td>
+                        <span>@(Model.ReportTotalView.TimeTotal.TimeEstimatedTotal == 0 ? null : ConvertModelToView.UpdateTimeFormatForValue(Model.ReportTotalView.TimeTotal.TimeEstimatedTotal.ToString()))</span>
+                    </td>
+                }
+                @if (Model.ReportTotalView.DisplayNames.DisplayNameNotes != null)
+                {
+                    <td></td>
+                }
+            </tr>
+        </table>
+    </div>
+}
 </body>
 </html>

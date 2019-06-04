@@ -32,6 +32,7 @@ namespace CoralTime.DAL.ConvertModelToView
                 ShowColumnIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterShowColumnIds),
 
                 DateStaticId = reportsSettings.DateStaticId,
+                IsTotalsOnly = reportsSettings.IsTotalsOnly,
 
                 ClientIds = CommonHelpers.ConvertStringToArrayOfNullableInts(reportsSettings.FilterClientIds),
                 ProjectIds = CommonHelpers.ConvertStringToArrayOfInts(reportsSettings.FilterProjectIds),

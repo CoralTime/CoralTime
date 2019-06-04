@@ -1,19 +1,19 @@
-<div *ngIf="gridData?.items.length" class="ct-grid-header clearfix">
-    <div *ngIf="groupById == 1 && gridData.items.length">
+<div *ngIf="gridData?.items.length || isTotalsOnly" class="ct-grid-header clearfix">
+    <div *ngIf="groupById == 1 && (gridData?.items.length || isTotalsOnly)">
         <span>{{gridData?.groupByType.projectName}}</span>
     </div>
-    <div *ngIf="groupById == 2 && gridData?.items.length">
+    <div *ngIf="groupById == 2 && (gridData?.items.length || isTotalsOnly)">
         <span>{{gridData?.groupByType.memberName}}</span>
     </div>
-    <div *ngIf="groupById == 3 && gridData?.items.length">
+    <div *ngIf="groupById == 3 && (gridData?.items.length || isTotalsOnly)">
         <span>{{formatDate(gridData?.groupByType.date)}}</span>
     </div>
-    <div *ngIf="groupById == 4 && gridData?.items.length">
+    <div *ngIf="groupById == 4 && (gridData?.items.length || isTotalsOnly)">
         <label *ngIf="gridData.groupByType.clientId !== 0"></label><span>{{gridData?.groupByType.clientName}}</span>
     </div>
 </div>
 
-<p-dataTable class="ct-grid-container ct-table"
+<p-dataTable *ngIf="!isTotalsOnly" class="ct-grid-container ct-table"
              [value]="gridDataRows"
              [responsive]="true"
              [lazy]="true" (onLazyLoad)="loadLazy($event)">
@@ -62,14 +62,14 @@
     </p-column>
 </p-dataTable>
 
-<div class="ct-grid-container ct-total-time-container" *ngIf="groupById != 0 && gridData?.items.length > 0">
+<div class="ct-grid-container ct-total-time-container" *ngIf="groupById != 0 && (gridData?.items.length > 0 || isTotalsOnly)">
     <label>
-        Total actual hours for
-        <span>{{gridData?.groupByType.projectName || gridData?.groupByType.memberName
+        Total actual hours
+        <span *ngIf="!isTotalsOnly"> for&nbsp;{{gridData?.groupByType.projectName || gridData?.groupByType.memberName
             || formatDate(gridData?.groupByType.date) || gridData?.groupByType.clientName}}</span>
     </label>
 
     <div class="ct-total-hours-tracked" *ngIf="gridData.timeTotalFor">
         <span class="ct-actual-label">{{getTimeString(gridData.timeTotalFor.timeActualTotalFor, true)}}</span>
     </div>
-</div>
+</div>    

@@ -128,9 +128,11 @@ namespace CoralTime.BL.Services.Reports.Export
                     ++RowIndex;
 
                     // LIST OF HEADERS
-                    CreateRowsOfListOfHeaders(groupedItems, sheet, workbook);
-
-                    ++RowIndex;
+                    if (!reportTotalView.IsTotalsOnly)
+                    {
+                        CreateRowsOfListOfHeaders(groupedItems, sheet, workbook);
+                        ++RowIndex;
+                    }
 
                     if (!groupedItems.Items.Select(x => x.TaskId).Contains(Constants.MockId))
                     {

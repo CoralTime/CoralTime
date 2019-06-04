@@ -21,6 +21,7 @@ export class ReportsGridComponent implements OnChanges {
 	@Input() groupById: number;
 	@Input() rowsNumber: number;
 	@Input() showColumnIds: number[] = [];
+	@Input() isTotalsOnly: boolean;
 
 	gridDataRows: ReportItem[] = [];
 	user: User;
@@ -68,6 +69,8 @@ export class ReportsGridComponent implements OnChanges {
 	loadLazy(event: any): void {
 		this.lastEvent = event;
 
+		console.info('is totals - ',this.isTotalsOnly);
+		
 		if (event && this.gridData) {
 			event.sortField = event.sortField || 'date';
 			this.gridData.items = [...ArrayUtils.sortByField(this.gridData.items, event.sortField, event.sortOrder)];

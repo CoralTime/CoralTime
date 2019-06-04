@@ -132,8 +132,8 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var showColumnIds = reportsGridView.CurrentQuery.ShowColumnIds;
 
             var dateFormatId = reportsGridView.DateFormatId;
-
-            var reportTotalView = new ReportTotalView(groupById, showColumnIds, dateFormatId, dateFrom, dateTo);
+            var isTotalsOnly = reportsGridView.CurrentQuery.IsTotalsOnly;
+            var reportTotalView = new ReportTotalView(groupById, showColumnIds, dateFormatId, dateFrom, dateTo, isTotalsOnly);
             return reportTotalView;
         }
 

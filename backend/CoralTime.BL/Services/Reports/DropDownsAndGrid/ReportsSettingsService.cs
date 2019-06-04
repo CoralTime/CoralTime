@@ -79,7 +79,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             }
         }
 
-        private bool IsDefaultQuery(string queryName) => string.IsNullOrEmpty(queryName);
+        private static bool IsDefaultQuery(string queryName) => string.IsNullOrEmpty(queryName);
 
         private void ResetIsCustomQueryForAllQueryThisMember()
         {

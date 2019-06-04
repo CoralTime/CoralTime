@@ -8,7 +8,7 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal
 {
     public class ReportTotalView : ReportTotalForGroupTypeView
     {
-        public ReportTotalView(int? groupById, int[] showColumnIds, int? dateFormatId, DateTime? dateFrom, DateTime? dateTo)
+        public ReportTotalView(int? groupById, int[] showColumnIds, int? dateFormatId, DateTime? dateFrom, DateTime? dateTo, bool isTotalsOnly)
             : base(groupById,showColumnIds,dateFormatId)
         { 
             TimeTotal = new TimeTotalView();
@@ -19,6 +19,7 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal
             };
 
             PeriodCell =  new ReportPeriodView(dateFrom, dateTo);
+            IsTotalsOnly = isTotalsOnly;
         }
 
         public TimeTotalView TimeTotal { get; }
@@ -26,5 +27,6 @@ namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal
         [JsonIgnore] public ReportPeriodView PeriodCell { get; set; }
 
         public List<ReportTotalForGroupTypeView> GroupedItems { get; set; }
+        
     }
 }

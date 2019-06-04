@@ -23,5 +23,6 @@ namespace CoralTime.ViewModels.Reports.Request.ReportsSettingsView
         int? QueryId { get; set; }
 
         string QueryName { get; set; }
+        bool IsTotalsOnly { get; set; }
     }
 }

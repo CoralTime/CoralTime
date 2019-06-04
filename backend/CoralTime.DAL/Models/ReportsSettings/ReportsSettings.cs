@@ -34,5 +34,7 @@ namespace CoralTime.DAL.Models.ReportsSettings
         public string FilterShowColumnIds { get; set; }
 
         public bool IsCurrentQuery { get; set; }
+
+        public bool IsTotalsOnly { get; set; }
     }
 }
