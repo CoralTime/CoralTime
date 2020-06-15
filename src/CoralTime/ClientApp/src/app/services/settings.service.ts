@@ -16,6 +16,10 @@ export class SettingsService {
 		return 0;
 	}
 
+	getDefaultProjectIsPrivate(): boolean {
+		return true;
+	}
+
 	getIsEstimatedTimeEnabled(): boolean {
 		return true;
 	}

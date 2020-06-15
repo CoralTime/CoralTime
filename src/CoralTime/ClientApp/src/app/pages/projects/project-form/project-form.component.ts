@@ -10,6 +10,7 @@ import { Project } from '../../../models/project';
 import { Client } from '../../../models/client';
 import { ClientsService } from '../../../services/clients.service';
 import { ProjectsService } from '../../../services/projects.service';
+import { SettingsService } from '../../../services/settings.service';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
 import { hexToNumber, numberToHex } from '../../../shared/form/color-picker/color-picker.component';
 
@@ -88,6 +89,7 @@ export class ProjectFormComponent implements OnInit {
 	constructor(private clientsService: ClientsService,
 	            private loadingService: LoadingMaskService,
 	            private projectsService: ProjectsService,
+	            private settingsService: SettingsService,
 	            private translatePipe: TranslatePipe) {
 	}
 
@@ -96,7 +98,7 @@ export class ProjectFormComponent implements OnInit {
 
 		let project = this.project;
 		this.isNewProject = !project;
-		this.project = project ? project : new Project({});
+		this.project = project ? project : new Project({ isPrivate: this.settingsService.getDefaultProjectIsPrivate() });
 		this.submitButtonText = this.project.id ? 'Save' : 'Create';
 		this.dialogHeader = this.project.id ? 'Edit' : this.translatePipe.transform('Create New Project');
 		this.model = FormProject.formProject(this.project);

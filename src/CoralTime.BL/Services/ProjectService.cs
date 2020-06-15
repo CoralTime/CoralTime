@@ -139,13 +139,12 @@ namespace CoralTime.BL.Services
             {
                 ClientId = projectView.ClientId,
                 Color = projectView.Color,
-                IsActive = true,
+                IsPrivate = projectView.IsPrivate,
                 Name = localName,
                 ClientIsActive = projectView.ClientIsActive
             });
 
             project.IsActive = true;
-            project.IsPrivate = true;
 
             BLHelpers.CheckProjectsErrors(project, isNameUnique);
 
