@@ -1,6 +1,8 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { UserProjectAssignmentComponent } from './project-assignment/project-assignment.component';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { User } from '../../models/user';
 import { PagedResult } from '../../services/odata';
@@ -27,7 +29,7 @@ export class UsersComponent implements OnInit {
 	resizeObservable: Subject<any> = new Subject();
 	updatingGrid: boolean = false;
 
-	@ViewChild('pageContainer') pageContainer: ElementRef;
+	@ViewChild('pageContainer', { static: true }) pageContainer: ElementRef;
 
 	private subject = new Subject<any>();
 	private lastEvent: any;
@@ -88,9 +90,9 @@ export class UsersComponent implements OnInit {
 	}
 
 	private getUsers(): void {
-		this.subject.debounceTime(500).switchMap(() => {
+		this.subject.pipe(debounceTime(500),switchMap(() => {
 			return this.userService.getUsersWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-		})
+		}),)
 			.subscribe((res: PagedResult<User>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;

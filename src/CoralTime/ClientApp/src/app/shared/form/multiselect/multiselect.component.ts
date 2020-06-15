@@ -1,6 +1,7 @@
 import {
 	Component, Input, Output, EventEmitter, forwardRef, ViewChild, HostListener
 } from '@angular/core';
+import { trigger, state, style, transition, animate, AnimationEvent } from '@angular/animations';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { SelectItem } from 'primeng/components/common/api';
 import { MultiSelect } from 'primeng/components/multiselect/multiselect';
@@ -28,6 +29,20 @@ export const MULTISELECT_VALUE_ACCESSOR: any = {
 @Component({
 	selector: 'ct-multiselect',
 	templateUrl: 'multiselect.component.html',
+  animations: [
+    trigger('overlayAnimation', [
+      state('void', style({
+        transform: 'translateY(5%)',
+        opacity: 0
+      })),
+      state('visible', style({
+        transform: 'translateY(0)',
+        opacity: 1
+      })),
+      transition('void => visible', animate('{{showTransitionParams}}')),
+      transition('visible => void', animate('{{hideTransitionParams}}'))
+    ])
+  ],
 	providers: [DomHandler, ObjectUtils, MULTISELECT_VALUE_ACCESSOR]
 })
 
@@ -41,7 +56,7 @@ export class MultiSelectComponent extends MultiSelect {
 	@Output() onExtraAction: EventEmitter<any> = new EventEmitter();
 	@Output() onSubmitAction: EventEmitter<any> = new EventEmitter();
 
-	@ViewChild('slimScroll') slimScroll: any;
+	@ViewChild('slimScroll', { static: true }) slimScroll: any;
 
 	isSubmitted: boolean = false;
 	oldValue: any[];
@@ -71,21 +86,40 @@ export class MultiSelectComponent extends MultiSelect {
 		this.redrowSlimScroll();
 	}
 
-	onFilter(event): void {
-		super.onFilter(event);
+	onFilter(): void {
+		super.onFilter();
 		this.redrowSlimScroll();
 	}
 
+	onItemClick(event, option): void {
+		super.onOptionClick({
+			originalEvent: event,
+			option: option
+    	});
+	}
+
 	selectAll(event: MouseEvent): void {
-		super.toggleAll(event, {
-			checked: false
-		});
+		if (!this.isAllChecked()) {
+			super.toggleAll(event);
+		}
+		else {
+			//They're already all checked, we don't need to do anything
+		}
 	}
 
 	selectNone(event: MouseEvent): void {
-		super.toggleAll(event, {
-			checked: true
-		});
+		if (this.isAllChecked()) {
+			super.toggleAll(event);
+		}
+		else {
+			//Mostly copied from the 'toggleall' function here.
+			//https://github.com/primefaces/primeng/blob/7.1.3/src/app/components/multiselect/multiselect.ts
+			this.value = [];
+			this.onModelChange(this.value);
+			this.onChange.emit({ originalEvent: event, value: this.value });
+			this.updateFilledState();
+			this.updateLabel();
+		}
 	}
 
 	doExtraAction(event): void {

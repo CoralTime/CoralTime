@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, HostBinding, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -28,7 +30,7 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 	projectTimeEntries: TimeEntry[] = [];
 	timeEntries: TimeEntry[];
 
-	@ViewChild('calendarDay') calendarDay: CalendarDayComponent;
+	@ViewChild('calendarDay', { static: true }) calendarDay: CalendarDayComponent;
 
 	private timeEntriesSubscription: Subscription;
 
@@ -58,11 +60,11 @@ export class CalendarDailyViewComponent implements OnInit, OnDestroy {
 		this.animationDisabled = true;
 		this.animationState = 'hide';
 		this.loadingService.addLoading();
-		this.calendarService.getTimeEntries(this.date)
-			.finally(() => {
+		this.calendarService.getTimeEntries(this.date).pipe(
+			finalize(() => {
 				this.loadingService.removeLoading();
 				this.animationDisabled = false;
-			})
+			}))
 			.subscribe((res) => {
 				this.timeEntries = res;
 

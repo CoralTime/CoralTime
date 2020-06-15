@@ -1,3 +1,5 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PagedResult } from '../../../services/odata';
@@ -42,9 +44,9 @@ export class MemberActionsComponent implements OnInit {
 	}
 
 	getMemberActions(): void {
-		this.subject.debounceTime(500).switchMap(() => {
+		this.subject.pipe(debounceTime(500),switchMap(() => {
 			return this.memberActionsService.getMemberActions(this.lastEvent, this.filterStr);
-		})
+		}),)
 			.subscribe((res: PagedResult<MemberAction>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;

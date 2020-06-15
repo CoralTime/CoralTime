@@ -7,7 +7,7 @@ import { ProfileSettingsComponent } from './profile-settings/profile-settings.co
 import { ProfileService } from '../../services/profile.service';
 import { EnterEmailService } from '../set-password/enter-email/enter-email.service';
 import { ProfilePhotoComponent } from './profile-settings/profile-photo/profile-photo.component';
-import { ImageCropperModule } from 'ng2-img-cropper';
+import { ImageCropperModule } from 'ngx-img-cropper';
 import { FileUploadModule } from 'ng2-file-upload';
 
 @NgModule({

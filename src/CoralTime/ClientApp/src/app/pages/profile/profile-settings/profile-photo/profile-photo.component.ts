@@ -1,6 +1,8 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { Bounds, CropperSettings, ImageCropperComponent } from 'ng2-img-cropper';
+import { MatDialog } from '@angular/material/dialog';
+import { Bounds, CropperSettings, ImageCropperComponent } from 'ngx-img-cropper';
 import { NotificationService } from '../../../../core/notification.service';
 import { UserPicService } from '../../../../services/user-pic.service';
 import { LoadingMaskService } from '../../../../shared/loading-indicator/loading-mask.service';
@@ -17,7 +19,7 @@ export class ProfilePhotoComponent {
 	fileType: string;
 
 	@Output() onSubmit = new EventEmitter();
-	@ViewChild(ImageCropperComponent) cropper: ImageCropperComponent;
+	@ViewChild(ImageCropperComponent, { static: true }) cropper: ImageCropperComponent;
 
 	constructor(private loadingService: LoadingMaskService,
 	            private matDialog: MatDialog,
@@ -52,8 +54,8 @@ export class ProfilePhotoComponent {
 
 	changeProfileImg(base64String: string): void {
 		this.loadingService.addLoading();
-		this.userPicService.uploadUserPicture(this.createCroppedImg(base64String))
-			.finally(() => this.loadingService.removeLoading())
+		this.userPicService.uploadUserPicture(this.createCroppedImg(base64String)).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe((avatar: string) => {
 					let avatarUrl = avatar;
 					this.notificationService.success('Your profile photo was changed.');

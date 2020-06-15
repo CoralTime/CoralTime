@@ -1,6 +1,7 @@
+
+import {timer as observableTimer,  Observable, Subscription } from 'rxjs';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
 import { CalendarDay, DateUtils, Time, TimeEntry, TimerResponse } from '../../../models/calendar';
 import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
@@ -158,7 +159,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	}
 
 	startTimerFront(): void {
-		const timer = Observable.timer(0, 1000);
+		const timer = observableTimer(0, 1000);
 		this.timerSubscription = timer.subscribe(() => {
 			this.ticks = DateUtils.getSecondsFromStartDay(true) - this.timeEntry.timeOptions.timeTimerStart
 				+ this.timeEntry.timeValues.timeActual;

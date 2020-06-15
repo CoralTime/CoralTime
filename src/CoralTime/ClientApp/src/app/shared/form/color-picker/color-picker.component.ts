@@ -64,7 +64,7 @@ export class ColorPickerComponent implements ControlValueAccessor, Validator, Af
 	}
 
 	@Output() change: EventEmitter<ColorPickerChange> = new EventEmitter<ColorPickerChange>();
-	@ViewChild('colorPicker') colorPicker: ColorPicker;
+	@ViewChild('colorPicker', { static: true }) colorPicker: ColorPicker;
 
 	colorMask = ['#', /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/, /[a-fA-F0-9]/];
 	modelValue: string;
@@ -80,11 +80,13 @@ export class ColorPickerComponent implements ControlValueAccessor, Validator, Af
 
 	updateColorSelector(): void {
 		let that = this.colorPicker;
-		that.colorSelectorViewChild.nativeElement.style.backgroundColor = '#' + that.HSBtoHEX({
-			h: that.value.h,
-			s: 100,
-			b: 100
-		});
+		if (that.colorSelectorViewChild) {
+			that.colorSelectorViewChild.nativeElement.style.backgroundColor = '#' + that.HSBtoHEX({
+				h: that.value.h,
+				s: 100,
+				b: 100
+			});
+		}
 	}
 
 	/**

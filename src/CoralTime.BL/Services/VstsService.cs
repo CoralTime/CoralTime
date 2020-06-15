@@ -7,7 +7,6 @@ using CoralTime.DAL.Repositories;
 using CoralTime.ViewModels.TimeEntries;
 using CoralTime.ViewModels.Vsts;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -16,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using CoralTime.Common.Helpers;
 
 namespace CoralTime.BL.Services
@@ -203,7 +203,7 @@ namespace CoralTime.BL.Services
             {
                 var projectUrl = item.VstsCompanyUrl + Constants.VstsProjectsUrl;
                 var projectResponce = GetVstsData(projectUrl, item.VstsPat, out bool isSuccessStatusCode);
-                var projects = JsonConvert.DeserializeObject<VstsProjectList>(projectResponce);
+                var projects = JsonSerializer.Deserialize<VstsProjectList>(projectResponce);
                 foreach (var vstsProject in projects.Value)
                 {
                     // update existing records
@@ -248,7 +248,7 @@ namespace CoralTime.BL.Services
             if (!isSuccessStatusCode)
                 return isSuccessStatusCode;
 
-            var projects = JsonConvert.DeserializeObject<VstsProjectList>(projectResponce);
+            var projects = JsonSerializer.Deserialize<VstsProjectList>(projectResponce);
             foreach (var vstsProject in projects.Value)
             {
                 // update existing records
@@ -275,7 +275,7 @@ namespace CoralTime.BL.Services
             if (!isSuccessStatusCode)
                 return isSuccessStatusCode;
 
-            var teams = JsonConvert.DeserializeObject<VstsTeamList>(teamResponce);
+            var teams = JsonSerializer.Deserialize<VstsTeamList>(teamResponce);
             foreach (var team in teams.Value)
             {
                 var memberUrl = team.Url + Constants.VstsMembersUrl;
@@ -284,7 +284,7 @@ namespace CoralTime.BL.Services
                 if (!isSuccessStatusCode)
                     return isSuccessStatusCode;
 
-                var members = JsonConvert.DeserializeObject<VstsMemberList>(memberResponce);
+                var members = JsonSerializer.Deserialize<VstsMemberList>(memberResponce);
                 members.Value.ForEach(x => allMembers.Add(x));
             }
 
@@ -359,12 +359,12 @@ namespace CoralTime.BL.Services
             {
                 var teamUrl = $"{project.VstsCompanyUrl}{Constants.VstsProjectsUrl}/{project.VstsProjectId}{Constants.VstsTeamsUrl}";
                 var teamResponce = GetVstsData(teamUrl, project.VstsPat, out bool isSuccessStatusCode);
-                var teams = JsonConvert.DeserializeObject<VstsTeamList>(teamResponce);
+                var teams = JsonSerializer.Deserialize<VstsTeamList>(teamResponce);
                 foreach (var team in teams.Value)
                 {
                     var memberUrl = team.Url + Constants.VstsMembersUrl;
                     var memberResponce = GetVstsData(memberUrl, project.VstsPat, out isSuccessStatusCode);
-                    var members = JsonConvert.DeserializeObject<VstsMemberList>(memberResponce);
+                    var members = JsonSerializer.Deserialize<VstsMemberList>(memberResponce);
                     members.Value.ForEach(x => allMembers.Add(x));
                 }
             }

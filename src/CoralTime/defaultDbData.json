@@ -8,11 +8,13 @@
   "AddXRefProjectsClients": true,
   "AddXRefMemberProjectRoles": true,
   "AddXRefTimeEntries": true,
-  
-  "Settings": {
-    "Name": "DefaulProjectRoleId",
-    "Value": ""
-  },
+
+  "Settings": [
+    {
+      "Name": "DefaulProjectRoleId",
+      "Value": ""
+    }
+  ],
 
   "Tasks": [
     {

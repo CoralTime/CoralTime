@@ -1,42 +1,48 @@
-﻿using GeekLearning.Testavior.Environment;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using CoralTime.DAL.Models.Member;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Xunit;
+using CoralTime.ViewModels.Member;
 
 namespace CoralTime.Tests
 {
-    [TestClass]
-    public class UnitTest1
+    public class UnitTest1 : IClassFixture<TestApplicationFactory>
     {
-        [TestMethod]
-        public void TestMethodNonAuth()
+        private readonly TestApplicationFactory _factory;
+
+        public UnitTest1(TestApplicationFactory factory)
         {
-            var testEnvironment = new TestEnvironment<Startup, TestStartupConfigurationService>();
-
-            var response = testEnvironment.Client.GetAsync("/api/v1/Test/ping").Result;
-            response.EnsureSuccessStatusCode();
-
-            // Test result content
-            var result = JsonConvert.DeserializeObject<string>(response.Content.ReadAsStringAsync().Result);
-
-            Assert.AreEqual(result, "I'm alive!");
+            _factory = factory;
         }
 
-        [TestMethod]
-        public void TestMethodAuth()
+        [Fact]
+        public async Task TestMethodNonAuth()
         {
-            var testEnvironment = new TestEnvironment<Startup, TestStartupConfigurationService>();
+            var client = _factory.CreateClient();
 
-            var response = testEnvironment.Client.GetAsync("/api/v1/odata/Members").Result;
+            var response = await client.GetAsync("/api/v1/Test/ping");
             response.EnsureSuccessStatusCode();
 
             // Test result content
-            var result = (JObject)JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().Result);
-            var membersList = JsonConvert.DeserializeObject<List<Member>>(result["value"].ToString());
+            var result = await response.Content.ReadAsStringAsync();
 
-            Assert.AreNotEqual(membersList.Count, 0);
+            Assert.Equal("I'm alive!", result);
+        }
+
+        [Fact]
+        public async Task TestMethodAuth()
+        {
+            var client = _factory.CreateClient();
+
+            var response = await client.GetAsync("/api/v1/odata/Members");
+            response.EnsureSuccessStatusCode();
+
+            // Test result content
+            var result = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("value").GetRawText();
+            var membersList = JsonSerializer.Deserialize<List<MemberView>>(result, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+            Assert.NotEmpty(membersList);
         }
     }
 }

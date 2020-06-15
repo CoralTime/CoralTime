@@ -12,13 +12,13 @@ namespace CoralTime.DAL.PersistedGrantStore
 {
     public class PersistedGrantStore : IPersistedGrantStore
     {
-        private readonly IPersistedGrantDbContext _context;
+        private readonly AppDbContext _context;
         private readonly ILogger _logger;
         private readonly AppDbContext _appContext;
 
-        public PersistedGrantStore(IPersistedGrantDbContext context, AppDbContext appContext, ILogger<PersistedGrantStore> logger)
+        public PersistedGrantStore(AppDbContext appContext, ILogger<PersistedGrantStore> logger)
         {
-            _context = context;
+            _context = appContext;
             _logger = logger;
             _appContext = appContext;
         }

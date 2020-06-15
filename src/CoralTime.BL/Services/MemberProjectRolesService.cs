@@ -238,8 +238,7 @@ namespace CoralTime.BL.Services
             throw new CoralTimeForbiddenException($"Member with id = {BaseMemberImpersonated.Id} is not allowed to create MemberProjectRole on project with id = {memberProjectRoleView.ProjectId} and role with id = {memberProjectRoleView.RoleId}");
         }
 
-        // TODO remove dynamic!
-        public MemberProjectRoleView Update(dynamic projectRole)
+        public MemberProjectRoleView Update(MemberProjectRoleView projectRole)
         {
             if (BaseMemberImpersonated == null)
             {
@@ -262,16 +261,7 @@ namespace CoralTime.BL.Services
 
             if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
             {
-                if (projectRole.roleId == null)
-                {
-                    //var defaultRoleId =  _context.ProjectRoles.FirstOrDefault(r => r.Name.Equals(Constants.MemberRole)).Id;
-                    memberProjectRoleById.RoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
-                }
-                else
-                {
-                    var roleId = (int)projectRole.roleId;
-                    memberProjectRoleById.RoleId = roleId;
-                }
+                memberProjectRoleById.RoleId = projectRole.RoleId;
 
                 Uow.MemberProjectRoleRepository.Update(memberProjectRoleById);
                 Uow.Save();

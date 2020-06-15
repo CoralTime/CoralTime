@@ -8,13 +8,13 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CoralTime.Services
@@ -125,7 +125,7 @@ namespace CoralTime.Services
                 var client = new HttpClient();
                 var json = await client.GetStringAsync(url);
 
-                certificates = JsonConvert.DeserializeObject<CertificateKeys>(json);
+                certificates = JsonSerializer.Deserialize<CertificateKeys>(json);
                 
                 _memoryCache.Set(Constants.CertificateKeysTime, DateTime.Now);
                 _memoryCache.Set(Constants.CertificateKeys, certificates);

@@ -1,9 +1,10 @@
+
+import {finalize} from 'rxjs/operators';
 import { Injectable, Injector } from '@angular/core';
 import { HttpClient, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { Subscriber } from 'rxjs/Subscriber';
+import { Observable ,  Subscriber } from 'rxjs';
 import { AuthService } from './auth/auth.service';
-import { NotificationService } from 'app/core/notification.service';
+import { NotificationService } from './notification.service';
 import { LoadingMaskService } from '../shared/loading-indicator/loading-mask.service';
 
 interface CallerRequest {
@@ -85,10 +86,10 @@ export class RefreshTokenInterceptor implements HttpInterceptor {
 		this.requests.push({subscriber, failedRequest: request});
 		if (!this.refreshInProgress) {
 			this.refreshInProgress = true;
-			this.authService.refreshToken()
-				.finally(() => {
+			this.authService.refreshToken().pipe(
+				finalize(() => {
 					this.refreshInProgress = false;
-				})
+				}))
 				.subscribe((authHeader) => {
 						this.repeatFailedRequests();
 					},

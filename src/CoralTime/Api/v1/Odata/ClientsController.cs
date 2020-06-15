@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Text.Json;
 using static CoralTime.Common.Constants.Constants;
 using static CoralTime.Common.Constants.Constants.Routes;
 using static CoralTime.Common.Constants.Constants.Routes.OData;
@@ -38,6 +39,11 @@ namespace CoralTime.Api.v1.Odata
         [Authorize(Roles = ApplicationRoleAdmin)]
         public IActionResult Create([FromBody] ClientView clientData)
         {
+            if (!ModelState.IsValid)
+            {
+                return SendInvalidModelResponse();
+            }
+
             try
             {
                 var result = _service.Create(clientData);
@@ -71,13 +77,16 @@ namespace CoralTime.Api.v1.Odata
         [ODataRoute(ClientsWithIdRoute)]
         [HttpPut(IdRoute)]
         [Authorize(Roles = ApplicationRoleAdmin)]
-        public IActionResult Update([FromODataUri]int id, [FromBody]dynamic clientData)
+        public IActionResult Update([FromODataUri]int id, [FromBody] JsonElement clientData)
         {
-            clientData.Id = id;
+            if (!ModelState.IsValid)
+            {
+                return SendInvalidModelResponse();
+            }
 
             try
             {
-                var result = _service.Update(clientData);
+                var result = _service.Update(id, clientData);
                 return new ObjectResult(result);
             }
             catch (Exception e)
@@ -90,13 +99,16 @@ namespace CoralTime.Api.v1.Odata
         [ODataRoute(ClientsWithIdRoute)]
         [HttpPatch(IdRoute)]
         [Authorize(Roles = ApplicationRoleAdmin)]
-        public IActionResult Patch([FromODataUri]int id, [FromBody]dynamic clientData)
+        public IActionResult Patch([FromODataUri]int id, [FromBody] JsonElement clientData)
         {
-            clientData.Id = id;
+            if (!ModelState.IsValid)
+            {
+                return SendInvalidModelResponse();
+            }
 
             try
             {
-                var result = _service.Update(clientData);
+                var result = _service.Update(id, clientData);
                 return new ObjectResult(result);
             }
             catch (Exception e)

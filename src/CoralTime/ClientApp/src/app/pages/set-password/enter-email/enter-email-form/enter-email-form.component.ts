@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { EMAIL_PATTERN } from '../../../../core/constant.service';
 import { EnterEmailService, EmailSendingStatus } from '../enter-email.service';
@@ -42,8 +44,8 @@ export class EnterEmailFormComponent implements OnInit, OnDestroy {
 			this.errorMessage = 'A valid email address is required.';
 		} else if (this.isEmailValid) {
 			this.loadingService.addLoading();
-			this.enterEmailService.sendEmail(this.email)
-				.finally(() => this.loadingService.removeLoading())
+			this.enterEmailService.sendEmail(this.email).pipe(
+				finalize(() => this.loadingService.removeLoading()))
 				.subscribe((emailResponse) => {
 					this.errorMessage = null;
 

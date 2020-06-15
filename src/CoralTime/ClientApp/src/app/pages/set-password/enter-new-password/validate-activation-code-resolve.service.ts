@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -17,10 +19,10 @@ export class ValidateRestoreCodeResolve implements Resolve<boolean> {
 		}
 
 		this.loadingService.addLoading();
-		return this.service.validateRestoreCode(restoreCode)
-			.map((restoreCodeValid: boolean) => {
+		return this.service.validateRestoreCode(restoreCode).pipe(
+			map((restoreCodeValid: boolean) => {
 				this.loadingService.removeLoading();
 				return restoreCodeValid;
-			});
+			}));
 	}
 }

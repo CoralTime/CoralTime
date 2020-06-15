@@ -1,8 +1,11 @@
+
+import {of as observableOf, throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {mergeMap, catchError, map} from 'rxjs/operators';
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
 import { AuthUser } from './auth-user';
 import { ImpersonationService } from '../../services/impersonation.service';
 import { NotificationService } from '../notification.service';
@@ -62,12 +65,12 @@ export class AuthService {
 		};
 		let body = this.objectToString(params);
 
-		return this.http.post('/connect/token', body, {headers: headers})
-			.map(response => {
+		return this.http.post('/connect/token', body, {headers: headers}).pipe(
+			map(response => {
 				this.authUser = new AuthUser(response, false);
 				this.appInsightsService.setAuthenticatedUserContext(this.authUser.id.toString(), this.authUser.nickname);
 				return true;
-			});
+			}));
 	}
 
 	loginSSO(id_token: string): Observable<boolean> {
@@ -83,18 +86,18 @@ export class AuthService {
 		};
 		let body = this.objectToString(params);
 
-		return this.http.post('/connect/token', body, {headers: headers})
-			.map(response => {
+		return this.http.post('/connect/token', body, {headers: headers}).pipe(
+			map(response => {
 				this.authUser = new AuthUser(response, true);
                 this.setupAppInsights();
                 this.appInsightsService.setAuthenticatedUserContext(this.authUser.id.toString(), this.authUser.nickname);
 				return true;
-			}).catch(() => this.router.navigate(['/error']));
+			}),catchError(() => this.router.navigate(['/error'])),);
 	}
 
 	refreshToken(): Observable<Object> {
 		if (!this.isLoggedIn()) {
-			return Observable.throw(new Error('User data not found.'));
+			return observableThrowError(new Error('User data not found.'));
 		}
 
 		let headers = {
@@ -110,20 +113,20 @@ export class AuthService {
 		};
 		let body = this.objectToString(params);
 
-		return this.http.post('/connect/token', body, {headers: headers})
-			.flatMap((response: Object) => {
+		return this.http.post('/connect/token', body, {headers: headers}).pipe(
+			mergeMap((response: Object) => {
 				if (response) {
 					this.authUser = new AuthUser(response, this.authUser.isSso);
 					this.setupAppInsights();
-					return Observable.of(response);
+					return observableOf(response);
 				}
 
 				this.logout();
-				return Observable.of(null);
-			})
-			.catch(error => {
-				return Observable.throw(error);
-			})
+				return observableOf(null);
+			}),
+			catchError(error => {
+				return observableThrowError(error);
+			}),)
 	}
 
 	logout(ignoreRedirect?: boolean, isSessionExpired?: boolean): void {

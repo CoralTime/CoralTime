@@ -1,5 +1,8 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {catchError, map} from 'rxjs/operators';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { ODataConfiguration } from './config';
 import { NotificationService } from '../../core/notification.service';
 
@@ -63,15 +66,15 @@ export class ODataQuery<T> {
 		let params = this.getQueryParams();
 		let config = this.config;
 
-		return this.httpClient.get(this.buildResourceURL(), {params: params})
-			.map(res => this.extractArrayData(res, config))
-			.catch((err: Response, caught: Observable<Array<T>>) => {
+		return this.httpClient.get(this.buildResourceURL(), {params: params}).pipe(
+			map(res => this.extractArrayData(res, config)),
+			catchError((err: Response, caught: Observable<Array<T>>) => {
 				if (this.config.handleError) {
 					this.config.handleError(err, caught);
 				}
 
-				return Observable.throw(err);
-			});
+				return observableThrowError(err);
+			}),);
 	}
 
 	ExecWithCount(): Observable<PagedResult<T>> {
@@ -79,9 +82,9 @@ export class ODataQuery<T> {
 			.set('$count', 'true'); // OData v4 only
 		let config = this.config;
 
-		return this.httpClient.get<HttpResponse<T>>(this.buildResourceURL(), {params: params})
-			.map(res => this.extractArrayDataWithCount(res, config))
-			.catch((err: any, caught: Observable<PagedResult<T>>) => {
+		return this.httpClient.get<HttpResponse<T>>(this.buildResourceURL(), {params: params}).pipe(
+			map(res => this.extractArrayDataWithCount(res, config)),
+			catchError((err: any, caught: Observable<PagedResult<T>>) => {
 				if (this.config.handleError) {
 					if (err.status === 500) {
 						this.notificationService.danger('Server error. Try again later.');
@@ -89,8 +92,8 @@ export class ODataQuery<T> {
 					this.config.handleError(err, caught);
 				}
 
-				return Observable.throw(err);
-			});
+				return observableThrowError(err);
+			}),);
 	}
 
 	getQueryParams(): HttpParams {

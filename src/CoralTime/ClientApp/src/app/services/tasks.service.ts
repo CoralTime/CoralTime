@@ -1,5 +1,8 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {mergeMap, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Task } from '../models/task';
 
@@ -25,10 +28,10 @@ export class TasksService {
 		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
-		});
+		}));
 	}
 
 	getProjectTasks(event, filterStr = '', projectId: number): Observable<PagedResult<Task>> {
@@ -52,10 +55,10 @@ export class TasksService {
 		filters.push('(projectId eq ' + projectId + ' or projectId eq null)');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
-		});
+		}));
 	}
 
 	getTaskByName(name: string): Observable<Task> {
@@ -70,11 +73,11 @@ export class TasksService {
 
 		query.Filter('tolower(name) eq \'' + name + '\' and projectId eq null');
 
-		return query.Exec()
-			.flatMap(result => {
+		return query.Exec().pipe(
+			mergeMap(result => {
 				let task = result[0] ? new Task(result[0]) : null;
-				return Observable.of(task);
-			});
+				return observableOf(task);
+			}));
 	}
 
 	getTasksWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Task>> {
@@ -98,10 +101,10 @@ export class TasksService {
 		filters.push('projectId eq null');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Task(x));
 			return res;
-		});
+		}));
 	}
 
 	toggleActive(task: Task): Observable<any> {

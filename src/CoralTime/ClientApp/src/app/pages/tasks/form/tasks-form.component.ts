@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {map, finalize} from 'rxjs/operators';
 import { Component, Output, EventEmitter, OnInit, Input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 import { Task } from '../../../models/task';
 import { ArrayUtils } from '../../../core/object-utils';
 import { TasksService } from '../../../services/tasks.service';
@@ -80,8 +83,8 @@ export class TaskFormComponent implements OnInit {
 
 	validateAndSubmit(): void {
 		this.isValidateLoading = true;
-		this.validateForm()
-			.finally(() => this.isValidateLoading = false)
+		this.validateForm().pipe(
+			finalize(() => this.isValidateLoading = false))
 			.subscribe((isFormInvalid: boolean) => {
 				if (!isFormInvalid) {
 					this.submit();
@@ -101,7 +104,7 @@ export class TaskFormComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		submitObservable.finally(() => this.loadingService.removeLoading())
+		submitObservable.pipe(finalize(() => this.loadingService.removeLoading()))
 			.subscribe(
 				() => {
 					this.isRequestLoading = false;
@@ -121,12 +124,12 @@ export class TaskFormComponent implements OnInit {
 		let isNameValidObservable: Observable<any>;
 
 		if (!this.model.name.trim()) {
-			isNameValidObservable = Observable.of(false);
+			isNameValidObservable = observableOf(false);
 		} else {
-			isNameValidObservable = this.tasksService.getTaskByName(this.model.name)
-				.map((task) => !task || (task.id === this.model.id));
+			isNameValidObservable = this.tasksService.getTaskByName(this.model.name).pipe(
+				map((task) => !task || (task.id === this.model.id)));
 		}
 
-		return isNameValidObservable.map((isControlValid) => this.showNameError = !isControlValid);
+		return isNameValidObservable.pipe(map((isControlValid) => this.showNameError = !isControlValid));
 	}
 }

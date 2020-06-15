@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -77,11 +79,11 @@ export class CalendarWeeklyViewComponent implements OnInit, OnDestroy {
 	getTimeEntries(projIds?: number[], disableAnimation: boolean = false): void {
 		this.animationDisabled = disableAnimation;
 		this.loadingService.addLoading();
-		this.calendarService.getTimeEntries(this.startDay, this.daysInCalendar)
-			.finally(() => {
+		this.calendarService.getTimeEntries(this.startDay, this.daysInCalendar).pipe(
+			finalize(() => {
 				this.loadingService.removeLoading();
 				setTimeout(() => this.animationDisabled = false, 500);
-			})
+			}))
 			.subscribe((res) => {
 				this.timeEntries = res;
 

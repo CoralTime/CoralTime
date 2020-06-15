@@ -4,17 +4,28 @@ using CoralTime.DAL.Models.Member;
 using CoralTime.DAL.Models.ReportsSettings;
 using CoralTime.DAL.Models.Vsts;
 using IdentityServer4.EntityFramework.Entities;
+using IdentityServer4.EntityFramework.Extensions;
 using IdentityServer4.EntityFramework.Interfaces;
+using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
 
 namespace CoralTime.DAL
 {
+    //The implementation of IPersistedGrantDbContext was copied from the GitHub source code below.
+    //https://github.com/IdentityServer/IdentityServer4/blob/master/src/EntityFramework.Storage/src/DbContexts/PersistedGrantDbContext.cs
     public partial class AppDbContext : IdentityDbContext<ApplicationUser>, IPersistedGrantDbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
-            : base(options) { }
+        private readonly OperationalStoreOptions storeOptions;
+
+        public AppDbContext(DbContextOptions<AppDbContext> options, OperationalStoreOptions storeOptions)
+            : base(options)
+        {
+            if (storeOptions == null) throw new ArgumentNullException(nameof(storeOptions));
+            this.storeOptions = storeOptions;
+        }
 
         public DbSet<Member> Members { get; set; }
 
@@ -38,6 +49,8 @@ namespace CoralTime.DAL
 
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
 
+        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
+
         public DbSet<ReportsSettings> ReportsSettings { get; set; }
 
         public DbSet<MemberAction> MemberActions { get; set; }
@@ -55,6 +68,8 @@ namespace CoralTime.DAL
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ConfigurePersistedGrantContext(storeOptions);
+
             builder.Entity<TimeEntry>()
                 .HasOne(p => p.Project)
                 .WithMany(p => p.TimeEntries).HasForeignKey(k => k.ProjectId).OnDelete(DeleteBehavior.Restrict);
@@ -120,9 +135,6 @@ namespace CoralTime.DAL
             builder.Entity<MemberProjectRole>()
                 .HasOne(wp => wp.Project)
                 .WithMany(p => p.MemberProjectRoles).HasForeignKey(k => k.ProjectId).OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<PersistedGrant>()
-                .HasKey(p => p.Key);
 
             builder.Entity<ReportsSettings>()
                 .HasIndex(t => new { ReportsSettingsId = t.MemberId, t.QueryName }).IsUnique();

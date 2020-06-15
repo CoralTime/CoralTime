@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -96,18 +98,18 @@ export class ProfileService {
 	}
 
 	getDateFormats(): Observable<DateFormat[]> {
-		return this.http.get(this.constantService.profileApi + '/DateFormats')
-			.map((res: Object[]) => res.map(x => new DateFormat(x)));
+		return this.http.get(this.constantService.profileApi + '/DateFormats').pipe(
+			map((res: Object[]) => res.map(x => new DateFormat(x))));
 	}
 
 	getProjects(): Observable<ProfileProjects[]> {
-		return this.http.get(this.constantService.profileApi + '/Projects')
-			.map((res: Object[]) => res ? res.map(x => new ProfileProjects(x)) : []);
+		return this.http.get(this.constantService.profileApi + '/Projects').pipe(
+			map((res: Object[]) => res ? res.map(x => new ProfileProjects(x)) : []));
 	}
 
 	getProjectMembers(projectId: number): Observable<ProfileProjectMember[]> {
-		return this.http.get(this.constantService.profileApi + '/ProjectMembers/' + projectId)
-			.map((res: Object[]) => res.map(x => new ProfileProjectMember(x)));
+		return this.http.get(this.constantService.profileApi + '/ProjectMembers/' + projectId).pipe(
+			map((res: Object[]) => res.map(x => new ProfileProjectMember(x))));
 	}
 
 	submitNotifications(obj: any, userId: number): Observable<any> {

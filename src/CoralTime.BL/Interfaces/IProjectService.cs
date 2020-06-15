@@ -1,6 +1,7 @@
 ﻿using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Projects;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace CoralTime.BL.Interfaces
 {
@@ -12,11 +13,11 @@ namespace CoralTime.BL.Interfaces
 
         ProjectView GetById(int id);
 
-        ProjectView Update(dynamic project);
+        ProjectView Update(int projectId, JsonElement project);
 
-        ProjectView Create(dynamic newProject);
+        ProjectView Create(ProjectView newProject);
 
-        ProjectView Patch(dynamic project);
+        ProjectView Patch(int projectId, JsonElement project);
 
         IEnumerable<MemberView> GetMembers(int projectId);
 

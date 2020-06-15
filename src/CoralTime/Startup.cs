@@ -34,6 +34,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OData.Edm;
@@ -63,8 +64,14 @@ namespace CoralTime
 
         private IConfiguration Configuration { get; }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
+            // In production, the Angular files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+
             bool.TryParse(Configuration["UseMySql"], out var useMySql);
             if (useMySql)
             {
@@ -97,9 +104,17 @@ namespace CoralTime
             });
 
             AddApplicationServices(services);
+            
+            // Add ApplicationInsights messages if it is configured
+            var applicationInsightsKey = Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey");
+            if (!string.IsNullOrEmpty(applicationInsightsKey))
+            {
+                services.AddApplicationInsightsTelemetry(applicationInsightsKey);
+            }
+            
             services.AddMemoryCache();
-            services.AddAutoMapper();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2); 
+            services.AddAutoMapper(typeof(CoralTime.DAL.Mapper.MappingProfile));
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); 
 
             // Add OData
             services.AddOData();
@@ -113,47 +128,27 @@ namespace CoralTime
                 {
                     inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
                 }
-
-                options.EnableEndpointRouting = false; // TODO: Remove when OData does not causes exceptions anymore
             })
             .AddJsonOptions(options =>
             {
-                options.SerializerSettings.Converters.Insert(0, new TrimmingStringConverter());
+                options.JsonSerializerOptions.Converters.Insert(0, new TrimmingStringConverter());
             });
 
             SetupIdentity(services);
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "CoralTime", Version = "v1" });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo() { Title = "CoralTime", Version = "v1" });
             });
-            
-            return services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            //add NLog to ASP.NET Core
-            loggerFactory.AddNLog();
-
-            // Configure NLog
-            env.ConfigureNLog("nlog.config");
-            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
-
-            // Disable ApplicationInsights messages if it isn't configured
-            var isApplicationInsights = Configuration.GetValue<string>("ApplicationInsights:InstrumentationKey") != null;
-            if (!isApplicationInsights)
-            {
-                var configuration = app.ApplicationServices.GetService<Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration>();
-                configuration.DisableTelemetry = true;
-            }
-
-            SetupAngularRouting(app);
 
             app.UseDefaultFiles();
 
@@ -165,24 +160,27 @@ namespace CoralTime
                 FileProvider = new PhysicalFileProvider(Path.Combine(Environment.CurrentDirectory, "StaticFiles")),
                 RequestPath = "/StaticFiles"
             });
-
-            app.UseIdentityServer();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             // Add middleware exceptions
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
-            // Add OData
-            var edmModel = SetupODataEntities(app.ApplicationServices);
-
-            //Make sure you add app.UseCors before app.UseMvc otherwise the request will be finished before the CORS middleware is applied
+            // Set up routing. The order of these calls is important.
+            //https://docs.microsoft.com/en-us/aspnet/core/migration/22-to-30?view=aspnetcore-3.1&tabs=visual-studio#routing-startup-code
+            app.UseRouting();
             app.UseCors("AllowAllOrigins");
 
-            app.UseMvc();
+            app.UseIdentityServer();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseMvc(routeBuilder =>
+            app.UseEndpoints(routeBuilder =>
             {
                 routeBuilder.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
-                routeBuilder.MapODataServiceRoute("ODataRoute", BaseODataRoute, edmModel);
+                routeBuilder.MapODataRoute("ODataRoute", BaseODataRoute, SetupODataEntities(app.ApplicationServices));
                 routeBuilder.EnableDependencyInjection();
             });
 
@@ -199,6 +197,22 @@ namespace CoralTime
             CombineFileWkhtmltopdf(env);
 
             AppDbContext.InitializeFirstTimeDataBaseAsync(app.ApplicationServices, Configuration).Wait();
+        
+            app.UseSpa(spa =>
+            {
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+
+                    //This will also work but it is much slower.
+                    //spa.UseAngularCliServer(npmScript: "start");
+                }
+            });
         }
 
         private void AddApplicationServices(IServiceCollection services)
@@ -206,10 +220,8 @@ namespace CoralTime
             // Add application services.
             services.AddSingleton<IConfiguration>(sp => Configuration);
 
-            services.AddScoped<BaseService>();
-            
             services.AddScoped<UnitOfWork>();
-            services.AddScoped<IPersistedGrantDbContext, AppDbContext>();
+            services.AddScoped<AppDbContext>();
 
             services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
             services.AddTransient<IdentityServer4.Services.IProfileService, IdentityWithAdditionalClaimsProfileService>();
@@ -235,22 +247,6 @@ namespace CoralTime
             services.AddScoped<IMemberActionService, MemberActionService>();
             services.AddScoped<IVstsService, VstsService>();
             services.AddScoped<IVstsAdminService, VstsService>();
-        }
-
-        private static void SetupAngularRouting(IApplicationBuilder app)
-        {
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path.HasValue && null != Constants.AngularRoutes.FirstOrDefault(ar => context.Request.Path.Value.StartsWith(ar, StringComparison.OrdinalIgnoreCase)))
-                {
-                    context.Request.Path = new PathString("/");
-
-                    context.Response.Headers.Add("Cache-Control", "no-cache, no-store");
-                    context.Response.Headers.Add("Expires", "-1");
-                }
-
-                await next();
-            });
         }
 
         private void SetupIdentity(IServiceCollection services)
@@ -296,13 +292,18 @@ namespace CoralTime
             if (isDemo)
             {
                 services.AddIdentityServer()
-                    .AddDeveloperSigningCredential()
+                    .AddDeveloperSigningCredential(persistKey: false)
                     .AddInMemoryIdentityResources(Config.GetIdentityResources())
                     .AddInMemoryApiResources(Config.GetApiResources())
                     .AddInMemoryClients(clients)
                     .AddAspNetIdentity<ApplicationUser>()
                     .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
-                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
+                    .AddProfileService<IdentityWithAdditionalClaimsProfileService>()
+                    .AddOperationalStore<AppDbContext>(options =>
+                        {
+                            options.EnableTokenCleanup = true;
+                        }
+                    );
             }
             else
             {
@@ -362,7 +363,7 @@ namespace CoralTime
             return builder.GetEdmModel();
         }
 
-        private void CombineFileWkhtmltopdf(IHostingEnvironment environment)
+        private void CombineFileWkhtmltopdf(IWebHostEnvironment environment)
         {
             var fileNameWkhtmltopdf = "wkhtmltopdf.exe";
             var patchContentRoot = environment.ContentRootPath;

@@ -1,5 +1,5 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems
 {

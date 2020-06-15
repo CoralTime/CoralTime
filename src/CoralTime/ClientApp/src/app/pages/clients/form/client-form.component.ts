@@ -1,7 +1,10 @@
+
+import {forkJoin as observableForkJoin, of as observableOf,  Observable } from 'rxjs';
+
+import {map, finalize} from 'rxjs/operators';
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 import { Client } from '../../../models/client';
 import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ArrayUtils } from '../../../core/object-utils';
@@ -86,8 +89,8 @@ export class ClientFormComponent implements OnInit {
 
 	validateAndSubmit(form: NgForm): void {
 		this.isValidateLoading = true;
-		this.validateForm(form)
-			.finally(() => this.isValidateLoading = false)
+		this.validateForm(form).pipe(
+			finalize(() => this.isValidateLoading = false))
 			.subscribe((isFormValid: boolean) => {
 				if (isFormValid) {
 					this.submit();
@@ -107,7 +110,7 @@ export class ClientFormComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		submitObservable.finally(() => this.loadingService.removeLoading())
+		submitObservable.pipe(finalize(() => this.loadingService.removeLoading()))
 			.subscribe(
 				() => {
 					this.isRequestLoading = false;
@@ -125,20 +128,20 @@ export class ClientFormComponent implements OnInit {
 	private validateForm(form: NgForm): Observable<boolean> {
 		this.showErrors = [false, false];
 
-		let isEmailValidObservable = Observable.of(!form.controls['email'].errors);
+		let isEmailValidObservable = observableOf(!form.controls['email'].errors);
 		let isNameValidObservable: Observable<any>;
 
 		if (!this.model.name.trim()) {
-			isNameValidObservable = Observable.of(false);
+			isNameValidObservable = observableOf(false);
 		} else {
-			isNameValidObservable = this.clientsService.getClientByName(this.model.name)
-				.map((client) => !client || (client.id === this.model.id));
+			isNameValidObservable = this.clientsService.getClientByName(this.model.name).pipe(
+				map((client) => !client || (client.id === this.model.id)));
 		}
 
-		return Observable.forkJoin(isEmailValidObservable, isNameValidObservable)
-			.map((response: boolean[]) =>
+		return observableForkJoin(isEmailValidObservable, isNameValidObservable).pipe(
+			map((response: boolean[]) =>
 				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
 					.every((showError) => showError === false)
-			);
+			));
 	}
 }

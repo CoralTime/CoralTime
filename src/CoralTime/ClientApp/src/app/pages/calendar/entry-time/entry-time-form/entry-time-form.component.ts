@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import {
 	Component, Input, OnInit, HostBinding, EventEmitter, Output, ElementRef
 } from '@angular/core';
@@ -314,8 +316,8 @@ export class EntryTimeFormComponent implements OnInit {
 
 	private loadTasks(projectId?: number): void {
 		this.isTasksLoading = true;
-		this.tasksService.getActiveTasks(projectId)
-			.finally(() => this.isTasksLoading = false)
+		this.tasksService.getActiveTasks(projectId).pipe(
+			finalize(() => this.isTasksLoading = false))
 			.subscribe((res) => {
 				this.taskList = this.filterTasks(res.data);
 				this.taskModel = ArrayUtils.findByProperty(this.taskList, 'id', this.currentTimeEntry.taskTypesId || this.userInfo.defaultTaskId);

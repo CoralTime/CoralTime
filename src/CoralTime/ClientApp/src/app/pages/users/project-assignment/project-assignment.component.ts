@@ -1,5 +1,7 @@
+
+import {finalize, switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { ArrayUtils } from '../../../core/object-utils';
 import { Project } from '../../../models/project';
 import { ProjectRole } from '../../../models/project-role';
@@ -19,7 +21,7 @@ import { SettingsService } from '../../../services/settings.service';
 
 export class UserProjectAssignmentComponent implements OnInit {
 	@Input() user: User;
-	@ViewChild('grid') gridContainer: ElementRef;
+	@ViewChild('grid', { static: true }) gridContainer: ElementRef;
 
 	defaultProjectRole: ProjectRole;
 	filterStr: string = '';
@@ -50,7 +52,7 @@ export class UserProjectAssignmentComponent implements OnInit {
 		this.loadAssignedProjects();
 		this.loadNotAssignedProjects();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
+		this.wrapperHeightObservable.pipe(debounceTime(100)).subscribe(() => {
 			this.changeScrollableContainer();
 			this.resizeObservable.next();
 		});
@@ -69,9 +71,9 @@ export class UserProjectAssignmentComponent implements OnInit {
 	// ASSIGNED PROJECTS GRID
 
 	loadAssignedProjects(): void {
-		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
+		this.assignedProjectsSubject.pipe(debounceTime(500),switchMap(() => {
 			return this.usersService.getUserProjectsWithCount(this.assignedProjectsLastEvent, this.filterStr, this.user.id);
-		})
+		}),)
 			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedProjectsPagedResult || !this.assignedProjectsLastEvent.first || this.updatingAssignedProjectsGrid) {
 						this.assignedProjectsPagedResult = res;
@@ -131,9 +133,9 @@ export class UserProjectAssignmentComponent implements OnInit {
 	// NOT ASSIGNED PROJECTS GRID
 
 	loadNotAssignedProjects(): void {
-		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
+		this.notAssignedProjectsSubject.pipe(debounceTime(500),switchMap(() => {
 			return this.usersService.getUnassignedProjectsWithCount(this.notAssignedProjectsLastEvent, this.filterStr, this.user.id);
-		})
+		}),)
 			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;
@@ -205,8 +207,8 @@ export class UserProjectAssignmentComponent implements OnInit {
 
 	assignToPublic(userProject: UserProject, target: HTMLElement): void {
 		target.classList.add('ct-loading');
-		this.usersService.assignProjectToUser(userProject.memberId, userProject.projectId, userProject.roleId)
-			.finally(() => target.classList.remove('ct-loading'))
+		this.usersService.assignProjectToUser(userProject.memberId, userProject.projectId, userProject.roleId).pipe(
+			finalize(() => target.classList.remove('ct-loading')))
 			.subscribe(() => {
 					this.notificationService.success('Access level has been changed.');
 					this.updateAssignedProjects();
@@ -219,8 +221,8 @@ export class UserProjectAssignmentComponent implements OnInit {
 
 	changeRole(userProject: UserProject, target: HTMLElement): void {
 		target.classList.add('ct-loading');
-		this.usersService.changeRole(userProject.id, userProject.role.id)
-			.finally(() => target.classList.remove('ct-loading'))
+		this.usersService.changeRole(userProject.id, userProject.role.id).pipe(
+			finalize(() => target.classList.remove('ct-loading')))
 			.subscribe(() => {
 					this.notificationService.success('Access level has been changed.');
 					this.updateAssignedProjects();

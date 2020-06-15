@@ -1,5 +1,7 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import Moment = moment.Moment;
@@ -111,8 +113,8 @@ export class ReportsComponent implements OnInit {
 		this.isUsersFilterShown = this.authService.isUserAdminOrManager;
 
 		this.loadingService.addLoading();
-		this.reportsService.getReportDropdowns()
-			.finally(() => this.loadingService.removeLoading())
+		this.reportsService.getReportDropdowns().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe((reportFilters: ReportDropdowns) => {
 				this.setReportDropdowns(reportFilters);
 				this.getReportGrid(!!this.reportQuery.queryId);
@@ -183,8 +185,8 @@ export class ReportsComponent implements OnInit {
 		};
 
 		this.loadingService.addLoading();
-		this.reportsService.getReportGrid(filters)
-			.finally(() => this.loadingService.removeLoading())
+		this.reportsService.getReportGrid(filters).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe((res: ReportGrid) => {
 					this.reportGridData = res;
 					this.gridData = this.getNextGridDataPage(this.reportGridData.groupedItems, []);
@@ -315,8 +317,8 @@ export class ReportsComponent implements OnInit {
 
 	deleteQuery(queryModel: ReportQuery): void {
 		this.loadingService.addLoading();
-		this.reportsService.deleteQuery(queryModel.queryId)
-			.finally(() => this.loadingService.removeLoading())
+		this.reportsService.deleteQuery(queryModel.queryId).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Report query has been successfully deleted.');
 					this.updateQueryItems();
@@ -333,8 +335,8 @@ export class ReportsComponent implements OnInit {
 
 	private updateQueryItems(): void {
 		this.loadingService.addLoading();
-		this.reportsService.getReportDropdowns()
-			.finally(() => this.loadingService.removeLoading())
+		this.reportsService.getReportDropdowns().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe((reportDropdowns: ReportDropdowns) => {
 				this.setReportQueryItems(reportDropdowns);
 			});
@@ -500,8 +502,8 @@ export class ReportsComponent implements OnInit {
 		};
 
 		this.loadingService.addLoading();
-		this.reportsService.exportAs(filters)
-			.finally(() => this.loadingService.removeLoading())
+		this.reportsService.exportAs(filters).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe();
 	}
 

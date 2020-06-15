@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -31,11 +33,11 @@ export class SetPasswordService {
 		this.restoreCode = restoreCode;
 		let url = '/api/v1/Password/checkforgotpasswordtoken/';
 
-		return this.http.get(url + restoreCode)
-			.map(res => {
+		return this.http.get(url + restoreCode).pipe(
+			map(res => {
 				this.restoreCodeIsExpired = res['isTokenValid'];
 				return this.restoreCodeIsExpired;
-			});
+			}));
 	}
 }
 

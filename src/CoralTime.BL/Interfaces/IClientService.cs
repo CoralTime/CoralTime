@@ -1,5 +1,6 @@
 ﻿using CoralTime.ViewModels.Clients;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace CoralTime.BL.Interfaces
 {
@@ -11,6 +12,6 @@ namespace CoralTime.BL.Interfaces
 
         ClientView GetById(int clientId);
 
-        ClientView Update(dynamic clientData);
+        ClientView Update(int clientId, JsonElement clientData);
     }
 }

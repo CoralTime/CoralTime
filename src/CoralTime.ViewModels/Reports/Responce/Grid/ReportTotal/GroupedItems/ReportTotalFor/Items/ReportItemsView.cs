@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items.TimeValues;
-using Newtonsoft.Json;
 
 namespace CoralTime.ViewModels.Reports.Responce.Grid.ReportTotal.GroupedItems.ReportTotalFor.Items
 {

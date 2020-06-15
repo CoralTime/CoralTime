@@ -1,7 +1,9 @@
+
+import {first, map, switchMap, take, debounceTime} from 'rxjs/operators';
 import { Task } from '../../models/task';
 import { Directive, forwardRef, Input } from '@angular/core';
 import { Validator, AbstractControl, NG_ASYNC_VALIDATORS } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { TasksService } from '../../services/tasks.service';
 
 @Directive({
@@ -22,19 +24,19 @@ export class TaskNameValidator implements Validator {
 	}
 
 	validate(control: AbstractControl): Observable<{ [key: string]: any }> {
-		return control.valueChanges
-			.debounceTime(500)
-			.take(1)
-			.switchMap(() => {
+		return control.valueChanges.pipe(
+			debounceTime(500),
+			take(1),
+			switchMap(() => {
 				return this.tasksService.getTaskByName(control.value);
-			})
-			.map(task => {
+			}),
+			map(task => {
 				if (task && (!this.task || task.id !== this.task.id)) {
 					return {ctTaskNameInvalid: true};
 				}
 
 				return null;
-			})
-			.first()
+			}),
+			first(),)
 	}
 }

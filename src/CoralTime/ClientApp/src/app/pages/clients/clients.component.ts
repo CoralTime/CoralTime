@@ -1,5 +1,7 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { PagedResult } from '../../services/odata';
 import { Client } from '../../models/client';
@@ -30,7 +32,7 @@ export class ClientsComponent implements OnInit {
 	private dialogRef: MatDialogRef<ClientFormComponent>;
 	private dialogProjectAssignmentRef: MatDialogRef<ClientProjectAssignmentComponent>;
 
-	@ViewChild('pageContainer') pageContainer: ElementRef;
+	@ViewChild('pageContainer', { static: true }) pageContainer: ElementRef;
 
 	constructor(private aclService: AclService,
 	            private clientsService: ClientsService,
@@ -82,9 +84,9 @@ export class ClientsComponent implements OnInit {
 	}
 
 	private getClients(): void {
-		this.subject.debounceTime(500).switchMap(() => {
+		this.subject.pipe(debounceTime(500),switchMap(() => {
 			return this.clientsService.getClientsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-		})
+		}),)
 			.subscribe((res: PagedResult<Client>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;

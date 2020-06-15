@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CoralTime.DAL.ConvertModelToView;
+using System.Text.Json;
 
 namespace CoralTime.BL.Services
 {
@@ -71,13 +72,13 @@ namespace CoralTime.BL.Services
             return result;
         }
 
-        public ClientView Update(dynamic clientData)
+        public ClientView Update(int id, JsonElement clientData)
         {
-            var client = Uow.ClientRepository.GetById((int)clientData.Id);
+            var client = Uow.ClientRepository.GetById(id);
 
             if (client == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Client with id {clientData.Id} not found");
+                throw new CoralTimeEntityNotFoundException($"Client with id {id} not found");
             }
 
             UpdateService<Client>.UpdateObject(clientData, client);
@@ -105,11 +106,12 @@ namespace CoralTime.BL.Services
 
         #region help methods
 
-        private void RememberProjectStatusBeforeArchiving(dynamic clientData, Client client)
+        private void RememberProjectStatusBeforeArchiving(JsonElement clientData, Client client)
         {
-            if (UpdateService<Client>.HasField(clientData, "isActive"))
+            JsonElement isActiveProperty;
+            if (clientData.TryGetProperty("isActive", out isActiveProperty))
             {
-                var isActive = (bool)clientData["isActive"];
+                var isActive = isActiveProperty.GetBoolean();
                 var clientProjects = Uow.ClientRepository.GetQuery()
                     .Include(c => c.Projects)
                     .FirstOrDefault(c => c.Id == client.Id)

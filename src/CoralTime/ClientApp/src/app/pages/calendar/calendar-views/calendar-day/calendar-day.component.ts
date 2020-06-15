@@ -1,7 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { CalendarDay, DateUtils, TimeEntry } from '../../../../models/calendar';
 import { User } from '../../../../models/user';
 import { NotificationService } from '../../../../core/notification.service';
@@ -32,7 +32,7 @@ export class CalendarDayComponent implements OnInit {
 	newTimeEntry: TimeEntry;
 	user: User;
 
-	@ViewChild('calendarTask', {read: ElementRef}) calendarTask: ElementRef;
+	@ViewChild('calendarTask', { read: ElementRef }) calendarTask: ElementRef;
 
 	constructor(private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,

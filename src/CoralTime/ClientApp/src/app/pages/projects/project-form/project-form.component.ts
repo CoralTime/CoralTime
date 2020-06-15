@@ -1,7 +1,10 @@
+
+import {forkJoin as observableForkJoin, of as observableOf,  Observable } from 'rxjs';
+
+import {map, finalize} from 'rxjs/operators';
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 import { ArrayUtils } from '../../../core/object-utils';
 import { Project } from '../../../models/project';
 import { Client } from '../../../models/client';
@@ -93,7 +96,7 @@ export class ProjectFormComponent implements OnInit {
 
 		let project = this.project;
 		this.isNewProject = !project;
-		this.project = project ? project : new Project();
+		this.project = project ? project : new Project({});
 		this.submitButtonText = this.project.id ? 'Save' : 'Create';
 		this.dialogHeader = this.project.id ? 'Edit' : this.translatePipe.transform('Create New Project');
 		this.model = FormProject.formProject(this.project);
@@ -103,8 +106,8 @@ export class ProjectFormComponent implements OnInit {
 
 	getClients(): void {
 		this.isClientsLoading = true;
-		this.clientsService.getClients()
-			.finally(() => this.isClientsLoading = false)
+		this.clientsService.getClients().pipe(
+			finalize(() => this.isClientsLoading = false))
 			.subscribe((clients) => {
 				this.clients = clients;
 				this.clientModel = this.clients.filter((client) => client.id === this.project.clientId)[0];
@@ -128,8 +131,8 @@ export class ProjectFormComponent implements OnInit {
 
 	validateAndSubmit(form: NgForm): void {
 		this.isValidateLoading = true;
-		this.validateForm(form)
-			.finally(() => this.isValidateLoading = false)
+		this.validateForm(form).pipe(
+			finalize(() => this.isValidateLoading = false))
 			.subscribe((isFormValid: boolean) => {
 				if (isFormValid) {
 					this.submit();
@@ -149,10 +152,10 @@ export class ProjectFormComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		submitObservable.finally(() => {
+		submitObservable.pipe(finalize(() => {
 			this.isRequestLoading = false;
 			this.loadingService.removeLoading();
-		})
+		}))
 			.subscribe(() => {
 					this.onSubmit.emit({
 						isNewProject: this.isNewProject
@@ -167,20 +170,20 @@ export class ProjectFormComponent implements OnInit {
 	private validateForm(form: NgForm): Observable<boolean> {
 		this.showErrors = [false, false];
 
-		let isColorValidObservable = Observable.of(form.controls['color'].valid);
+		let isColorValidObservable = observableOf(form.controls['color'].valid);
 		let isNameValidObservable: Observable<any>;
 
 		if (!this.model.name.trim()) {
-			isNameValidObservable = Observable.of(false);
+			isNameValidObservable = observableOf(false);
 		} else {
-			isNameValidObservable = this.projectsService.getProjectByName(this.model.name)
-				.map((project) => !project || (project.id === this.model.id));
+			isNameValidObservable = this.projectsService.getProjectByName(this.model.name).pipe(
+				map((project) => !project || (project.id === this.model.id)));
 		}
 
-		return Observable.forkJoin(isColorValidObservable, isNameValidObservable)
-			.map((response: boolean[]) =>
+		return observableForkJoin(isColorValidObservable, isNameValidObservable).pipe(
+			map((response: boolean[]) =>
 				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
 					.every((showError) => showError === false)
-			);
+			));
 	}
 }

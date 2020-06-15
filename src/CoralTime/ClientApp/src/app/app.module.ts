@@ -1,4 +1,3 @@
-import '../vendors'
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -47,7 +46,7 @@ export function httpFactory(http: HttpClient) {
 			}
 		}),
 		ApplicationInsightsModule.forRoot({
-			instrumentationKeySetlater: true
+			instrumentationKeySetLater: true
 		})
 	],
 	bootstrap: [AppComponent],

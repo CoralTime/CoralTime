@@ -65,6 +65,7 @@ $linkColor: #0099cf;
 
     label {
       display: inline-block;
+      vertical-align: middle;
       max-width: calc(100% - 35px);
       overflow: hidden;
       text-overflow: ellipsis;

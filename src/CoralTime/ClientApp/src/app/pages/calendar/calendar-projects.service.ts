@@ -1,4 +1,7 @@
-import { Observable } from 'rxjs';
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 
 import { ODataService } from '../../services/odata/odata';
@@ -40,7 +43,7 @@ export class CalendarProjectsService {
 
 	getProjects(showOnlyActive): Observable<Project[]> {
 		if (this.projects.length) {
-			return Observable.of(this.projects);
+			return observableOf(this.projects);
 		}
 		return this.loadProjects(showOnlyActive);
 	}
@@ -58,10 +61,10 @@ export class CalendarProjectsService {
 
 		query.Filter(filters.join(' and '));
 
-		return query.Exec().map(res => {
+		return query.Exec().pipe(map(res => {
 			this.projects = res.map((x: any) => new Project(x));
 			return this.projects;
-		});
+		}));
 	}
 
 	setDefaultProject(project: Project): void {

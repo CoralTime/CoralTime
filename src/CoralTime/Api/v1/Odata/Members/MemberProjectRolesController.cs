@@ -79,8 +79,13 @@ namespace CoralTime.Api.v1.Odata.Members
 
         // POST: api/v1/odata/MemberProjectRoles
         [HttpPost]
-        public IActionResult Create([FromBody]MemberProjectRoleView projectRole)
+        public IActionResult Create([FromBody] MemberProjectRoleView projectRole)
         {
+            if (!ModelState.IsValid)
+            {
+                return SendInvalidModelResponse();
+            }
+
             try
             {
                 var value = _service.Create(projectRole);
@@ -97,8 +102,13 @@ namespace CoralTime.Api.v1.Odata.Members
         // PUT: api/v1/odata/MemberProjectRoles(2)
         [ODataRoute(MemberProjectRolesWithIdRoute)]
         [HttpPut(IdRoute)]
-        public IActionResult Update([FromODataUri] int id, [FromBody]dynamic projectRole)
+        public IActionResult Update([FromODataUri] int id, [FromBody] MemberProjectRoleView projectRole)
         {
+            if (!ModelState.IsValid)
+            {
+                return SendInvalidModelResponse();
+            }
+
             projectRole.Id = id;
             try
             {
@@ -117,6 +127,11 @@ namespace CoralTime.Api.v1.Odata.Members
         [HttpPatch(IdRoute)]
         public IActionResult Patch([FromODataUri] int id, [FromBody] MemberProjectRoleView projectRole)
         {
+            if (!ModelState.IsValid)
+            {
+                return SendInvalidModelResponse();
+            }
+
             projectRole.Id = id;
 
             try

@@ -12,14 +12,14 @@
 
             <p>
                 Lock time entries in
-                <mat-input-container>
+                <mat-form-field>
                     <input matInput name="daysBeforeStopEditJobs"
                            placeholder="0"
                            [(ngModel)]="model.daysBeforeStopEditTimeEntries"
                            [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isTimeLockEnabled"
                            [disabled]="!model.isTimeLockEnabled"/>
-                </mat-input-container>
+                </mat-form-field>
                 day(s) after the end of
                 <ct-select class="ct-select-inline" required
                            [name]="'lockPeriod'"
@@ -39,14 +39,14 @@
             </mat-checkbox>
             <p>
                 Send notification email if the time entries missed for more than
-                <mat-input-container>
+                <mat-form-field>
                     <input matInput name="notificationDay"
                            placeholder="0"
                            [(ngModel)]="model.notificationDay"
                            [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"
                            [required]="model.isNotificationEnabled"
                            [disabled]="!model.isNotificationEnabled">
-                </mat-input-container>
+                </mat-form-field>
                 working days.
             </p>
         </div>

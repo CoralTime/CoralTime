@@ -1,6 +1,9 @@
+
+import {forkJoin as observableForkJoin, of as observableOf,  Observable } from 'rxjs';
+
+import {map, finalize} from 'rxjs/operators';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { Project } from '../../../models/project';
 import { VstsProjectConnection } from '../../../models/vsts-project-connection';
 import { URL_PATTERN } from '../../../core/constant.service';
@@ -88,8 +91,8 @@ export class VstsIntegrationFormComponent implements OnInit {
 
 	getProjects(): void {
 		this.isProjectsLoading = true;
-		this.projectsService.getProjects()
-			.finally(() => this.isProjectsLoading = false)
+		this.projectsService.getProjects().pipe(
+			finalize(() => this.isProjectsLoading = false))
 			.subscribe((projects) => {
 				this.projects = projects;
 				this.projectModel = this.projects.filter((project) => project.id === this.connection.projectId)[0];
@@ -114,8 +117,8 @@ export class VstsIntegrationFormComponent implements OnInit {
 
 	validateAndSubmit(form: NgForm): void {
 		this.isValidateLoading = true;
-		this.validateForm(form)
-			.finally(() => this.isValidateLoading = false)
+		this.validateForm(form).pipe(
+			finalize(() => this.isValidateLoading = false))
 			.subscribe((isFormValid: boolean) => {
 				if (isFormValid) {
 					this.submit(form);
@@ -136,10 +139,10 @@ export class VstsIntegrationFormComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		submitObservable.finally(() => {
+		submitObservable.pipe(finalize(() => {
 			this.isRequestLoading = false;
 			this.loadingService.removeLoading();
-		})
+		}))
 			.subscribe((res: VstsProjectConnection) => {
 					this.connection = new VstsProjectConnection(res);
 					this.onSubmit.emit({
@@ -155,35 +158,35 @@ export class VstsIntegrationFormComponent implements OnInit {
 	private validateForm(form: NgForm): Observable<boolean> {
 		this.showErrors = [false, false, false, false];
 
-		const isCoralTimeProjectObservable = Observable.of(form.controls['project'].valid);
-		const isCompanyUrlValidObservable = Observable.of(form.controls['vstsCompanyUrl'].valid);
+		const isCoralTimeProjectObservable = observableOf(form.controls['project'].valid);
+		const isCompanyUrlValidObservable = observableOf(form.controls['vstsCompanyUrl'].valid);
 		const isVstsPatChanged: boolean = !form.controls['vstsPat'].pristine;
 
 		let isVstsProjectValidObservable: Observable<any>;
-		let isVstsPatValidObservable = Observable.of(form.controls['vstsPat'].valid);
+		let isVstsPatValidObservable = observableOf(form.controls['vstsPat'].valid);
 
 		if (!this.model.vstsProjectName || !this.model.vstsProjectName.trim()) {
-			isVstsProjectValidObservable = Observable.of(false);
+			isVstsProjectValidObservable = observableOf(false);
 		} else {
-			isVstsProjectValidObservable = this.vstsIntegrationService.getConnectionsByProjectName(this.model.vstsProjectName)
-				.map((connection) => !connection || (connection.id === this.model.id));
+			isVstsProjectValidObservable = this.vstsIntegrationService.getConnectionsByProjectName(this.model.vstsProjectName).pipe(
+				map((connection) => !connection || (connection.id === this.model.id)));
 		}
 
 		if (this.model.id && !isVstsPatChanged) {
-			isVstsPatValidObservable = Observable.of(true);
+			isVstsPatValidObservable = observableOf(true);
 		} else {
-			isVstsPatValidObservable = Observable.of(form.controls['vstsPat'].valid);
+			isVstsPatValidObservable = observableOf(form.controls['vstsPat'].valid);
 		}
 
-		return Observable.forkJoin(
+		return observableForkJoin(
 			isCoralTimeProjectObservable,
 			isVstsProjectValidObservable,
 			isCompanyUrlValidObservable,
 			isVstsPatValidObservable
-		).map((response: boolean[]) => {
+		).pipe(map((response: boolean[]) => {
 				return response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
 					.every((showError) => showError === false)
 			}
-		);
+		));
 	}
 }

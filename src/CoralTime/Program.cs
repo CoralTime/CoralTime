@@ -1,104 +1,57 @@
-﻿using CoralTime.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using NLog.Web;
 
 namespace CoralTime
 {
     public class Program
     {
-        [DllImport("Kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
-
-        [DllImport("User32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int cmdShow);
-
         public static void Main(string[] args)
         {
-#if DEBUG
-            // Hide Kestrel console.
-            var hWnd = GetConsoleWindow();
-            if (hWnd != IntPtr.Zero)
+            //https://github.com/NLog/NLog/wiki/Getting-started-with-ASP.NET-Core-3
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+            try
             {
-                ShowWindow(hWnd, 0);
+                logger.Debug("init main");
+                CreateHostBuilder(args).Build().Run();
             }
-
-            // Run application at browser tab instead of new window.
-            Process.Start(new ProcessStartInfo("cmd", "/c start http://localhost:5000"));
-#endif
-
-            BuildWebHost(args).Run();
+            catch (Exception exception)
+            {
+                //NLog: catch setup errors
+                logger.Error(exception, "Stopped program because of exception");
+                throw;
+            }
+            finally
+            {
+                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                NLog.LogManager.Shutdown();
+            }
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
-
-        public static IWebHostBuilder CreateDefaultBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            CurrentDirectoryHelpers.SetCurrentDirectory();
-            var builder = new WebHostBuilder()
-                .UseApplicationInsights()
-                .UseContentRoot(Environment.CurrentDirectory)
+            var builder = Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    var env = hostingContext.HostingEnvironment;
-
-                    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                          .AddJsonFile("defaultDbData.json", optional: true); 
-
-                    if (env.IsDevelopment())
-                    {
-                        var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
-                        if (appAssembly != null)
-                        {
-                            config.AddUserSecrets(appAssembly, optional: true);
-                        }
-                    }
-
-                    config.AddEnvironmentVariables();
-
-                    if (args != null)
-                    {
-                        config.AddCommandLine(args);
-                    }
+                    config.AddJsonFile("defaultDbData.json", optional: true);
                 })
-                .ConfigureLogging((hostingContext, logging) =>
+                .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
                     logging.SetMinimumLevel(LogLevel.Trace);
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
-                    logging.AddDebug();
                 })
-                .UseDefaultServiceProvider((context, options) =>
-                {
-                    options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
-                });
+                .UseNLog();
 
-            var isIIS = (Environment.GetEnvironmentVariable("ASPNETCORE_IIS")?? "0") == "1";
-            var isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-            if (isDevelopment)
-            {
-                if (isIIS)
-                {
-                    builder.UseIIS();
-                }
-                else
-                {
-                    builder.UseKestrel();
-                }
-            }
-            else
-            {
-                builder.UseIIS();
-            }
             return builder;
         }
     }

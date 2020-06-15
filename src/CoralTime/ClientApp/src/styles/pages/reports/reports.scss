@@ -148,21 +148,8 @@ $fieldHeight: 42px;
 }
 
 .ct-reports-multiselect {
-  .ui-multiselect-panel {
-    position: fixed;
+  .ui-multiselect-panel {    
     margin-left: -11px;
-  }
-
-  &.ct-clients .ui-multiselect-panel {
-    top: 234px;
-  }
-
-  &.ct-projects .ui-multiselect-panel {
-    top: 293px;
-  }
-
-  &.ct-users .ui-multiselect-panel {
-    top: 352px;
   }
 }
 

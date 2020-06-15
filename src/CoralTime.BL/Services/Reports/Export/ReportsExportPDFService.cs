@@ -36,7 +36,7 @@ namespace CoralTime.BL.Services.Reports.Export
                 #region Parse view.
 
                 var engine = new RazorLightEngineBuilder()
-                              .UseFilesystemProject(pathContentPDF)
+                              .UseFileSystemProject(pathContentPDF)
                               .UseMemoryCachingProvider()
                               .Build();
 

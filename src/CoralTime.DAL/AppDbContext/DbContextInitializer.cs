@@ -31,31 +31,34 @@ namespace CoralTime.DAL
 
         public static async Task InitializeFirstTimeDataBaseAsync(IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            using (DbContext = serviceProvider.GetRequiredService<AppDbContext>())
+            using (var scope = serviceProvider.CreateScope())
             {
-                var isExistDataBase = (DbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+                using (DbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+                {
+                    var isExistDataBase = (DbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
 
-                if (!isExistDataBase)
-                {
-                    await InitializeDataBase(serviceProvider, configuration);
-                }
-                else
-                {
-                    // DB will be refreshed after clearing __EFMigrationsHistory table in Demo mode
-                    var isDemo = bool.Parse(configuration["DemoSiteMode"]);
-                    if (isDemo)
+                    if (!isExistDataBase)
                     {
-                        var x = DbContext.Database.GetPendingMigrations().Count();
-                        var y = DbContext.Database.GetMigrations().Count();
-
-                        var isMigrationsHistoryEmpty = y == x;
-
-                        if (isMigrationsHistoryEmpty)
+                        await InitializeDataBase(scope.ServiceProvider, configuration);
+                    }
+                    else
+                    {
+                        // DB will be refreshed after clearing __EFMigrationsHistory table in Demo mode
+                        var isDemo = bool.Parse(configuration["DemoSiteMode"]);
+                        if (isDemo)
                         {
-                            await InitializeDataBase(serviceProvider, configuration);
-                            Environment.Exit(1);
+                            var x = DbContext.Database.GetPendingMigrations().Count();
+                            var y = DbContext.Database.GetMigrations().Count();
+
+                            var isMigrationsHistoryEmpty = y == x;
+
+                            if (isMigrationsHistoryEmpty)
+                            {
+                                await InitializeDataBase(scope.ServiceProvider, configuration);
+                                Environment.Exit(1);
+                            }
                         }
-                    }                   
+                    }
                 }
             }
         }

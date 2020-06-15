@@ -12,59 +12,59 @@ export const appRoutes: Routes = [
 	},
 	{
 		path: 'home',
-		loadChildren: 'app/pages/home/home.module#HomeModule'
+		loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)
 	},
 	{
 		path: 'signin-oidc',
-		loadChildren: 'app/pages/signin-oidc/signin-oidc.module#SignInOidcModule'
+		loadChildren: () => import('./pages/signin-oidc/signin-oidc.module').then(m => m.SignInOidcModule)
 	},
 	{
 		path: 'profile',
-		loadChildren: 'app/pages/profile/profile.module#ProfileModule'
+		loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfileModule)
 	},
 	{
 		path: 'projects',
-		loadChildren: 'app/pages/projects/projects.module#ProjectsModule'
+		loadChildren: () => import('./pages/projects/projects.module').then(m => m.ProjectsModule)
 	},
 	{
 		path: 'clients',
-		loadChildren: 'app/pages/clients/clients.module#ClientsModule'
+		loadChildren: () => import('./pages/clients/clients.module').then(m => m.ClientsModule)
 	},
 	{
 		path: 'calendar',
-		loadChildren: 'app/pages/calendar/calendar.module#CalendarModule'
+		loadChildren: () => import('./pages/calendar/calendar.module').then(m => m.CalendarModule)
 	},
 	{
 		path: 'about',
-		loadChildren: 'app/pages/about/about.module#AboutModule'
+		loadChildren: () => import('./pages/about/about.module').then(m => m.AboutModule)
 	},
 	{
 		path: 'login',
-		loadChildren: 'app/pages/login/login.module#LoginModule'
+		loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
 	},
 	{
 		path: 'set-password',
-		loadChildren: 'app/pages/set-password/set-password.module#SetPasswordModule'
+		loadChildren: () => import('./pages/set-password/set-password.module').then(m => m.SetPasswordModule)
 	},
 	{
 		path: 'tasks',
-		loadChildren: 'app/pages/tasks/tasks.module#TasksModule'
+		loadChildren: () => import('./pages/tasks/tasks.module').then(m => m.TasksModule)
 	},
 	{
 		path: 'users',
-		loadChildren: 'app/pages/users/users.module#UsersModule'
+		loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule)
 	},
 	{
 		path: 'admin',
-		loadChildren: 'app/pages/admin/admin.module#AdminModule'
+		loadChildren: () => import('./pages/admin/admin.module').then(m => m.AdminModule)
 	},
 	{
 		path: 'reports',
-		loadChildren: 'app/pages/reports/reports.module#ReportsModule'
+		loadChildren: () => import('./pages/reports/reports.module').then(m => m.ReportsModule)
 	},
 	{
 		path: 'vsts-integration',
-		loadChildren: 'app/pages/vsts-integration/vsts-integration.module#VstsIntegrationModule'
+		loadChildren: () => import('./pages/vsts-integration/vsts-integration.module').then(m => m.VstsIntegrationModule)
 	},
 	{
 		path: 'error',

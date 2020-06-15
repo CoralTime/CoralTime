@@ -119,17 +119,21 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             #region Get Clients from Projects of clients.
 
             // 1. Get all clients from targeted projects where project is assign to client.
+            //After the 3.1 upgrade, we can no longer use Distinct() because each Project record will have a unique Client instance (even if IDs match).
+            //"No-tracking queries no longer perform identity resolution"
+            //"Starting with EF Core 3.0, different entity instances will be created when an entity with a given type and ID is encountered at different places in the returned graph."
+            //https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-3.0/breaking-changes#notrackingresolution
             var clientsWithProjects = projects.Where(project => project.Client != null)
-                .Select(project => project.Client)
-                .Distinct()
-                .Select(client => new Client
+                .GroupBy(project => project.ClientId)
+                .Select(grouping => new { grouping.First().Client, Projects = grouping.ToList() })
+                .Select(x => new Client
                 {
-                    Id = client.Id,
-                    Name = client.Name,
-                    Email = client.Email,
-                    IsActive = client.IsActive,
-                    Description = client.Description,
-                    Projects = new List<Project>(client.Projects.Where(projectOfClient => projects.Select(project => project.Id).Contains(projectOfClient.Id)).ToList())
+                    Id = x.Client.Id,
+                    Name = x.Client.Name,
+                    Email = x.Client.Email,
+                    IsActive = x.Client.IsActive,
+                    Description = x.Client.Description,
+                    Projects = x.Projects
                 }).ToList();
 
             clients.AddRange(clientsWithProjects);

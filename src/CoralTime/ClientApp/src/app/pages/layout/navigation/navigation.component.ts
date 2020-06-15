@@ -1,5 +1,7 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { User } from '../../../models/user';
 import { AclService } from '../../../core/auth/acl.service';
 import { AuthUser } from '../../../core/auth/auth-user';
@@ -150,8 +152,8 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		}
 
 		this.loadingService.addLoading();
-		this.projectsService.getManagerProjectsCount()
-			.finally(() => this.loadingService.removeLoading())
+		this.projectsService.getManagerProjectsCount().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(count => {
 				this.showManageMenu = !!count;
 				this.authService.isUserAdminOrManager = !!count;
@@ -165,7 +167,11 @@ export class NavigationComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.subscriptionUserInfo.unsubscribe();
-		this.subscriptionImpersonation.unsubscribe();
+		if (this.subscriptionUserInfo) {
+			this.subscriptionUserInfo.unsubscribe();
+		}
+		if (this.subscriptionImpersonation) {
+			this.subscriptionImpersonation.unsubscribe();
+		}
 	}
 }

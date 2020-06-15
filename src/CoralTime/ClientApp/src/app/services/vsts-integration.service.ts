@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {mergeMap, map} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { VstsProjectConnection, VstsUser } from '../models/vsts-project-connection';
 import { ConstantService } from '../core/constant.service';
@@ -37,10 +40,10 @@ export class VstsIntegrationService {
 
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new VstsProjectConnection(x));
 			return res;
-		});
+		}));
 	}
 
 	getConnectionsByProjectName(name: string): Observable<VstsProjectConnection> {
@@ -55,11 +58,11 @@ export class VstsIntegrationService {
 
 		query.Filter('tolower(vstsProjectName) eq \'' + name + '\'');
 
-		return query.Exec()
-			.flatMap(result => {
+		return query.Exec().pipe(
+			mergeMap(result => {
 				let project = result[0] ? new VstsProjectConnection(result[0]) : null;
-				return Observable.of(project);
-			});
+				return observableOf(project);
+			}));
 	}
 
 	getConnectionsMembersWithCount(event, filterStr = '', connectionId: number): Observable<PagedResult<any>> {
@@ -83,10 +86,10 @@ export class VstsIntegrationService {
 
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new VstsUser(x));
 			return res;
-		});
+		}));
 	}
 
 	updateVstsUsers(): Observable<any> {

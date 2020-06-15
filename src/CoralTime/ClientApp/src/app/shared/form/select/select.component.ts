@@ -1,7 +1,4 @@
-import {
-	Component, Input, Output, EventEmitter, forwardRef, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, Renderer,
-	ElementRef
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ChangeDetectorRef, ChangeDetectionStrategy, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
@@ -44,8 +41,8 @@ export class SelectComponent implements ControlValueAccessor {
 	isListShowToTop: boolean = false;
 	selectedObject: any;
 
-	@ViewChild('slimScroll') slimScroll: any;
-	@ViewChild('matList', {read: ElementRef}) matList: ElementRef;
+	@ViewChild('slimScroll', { static: true }) slimScroll: any;
+	@ViewChild('matList', { read: ElementRef, static: true }) matList: ElementRef;
 
 	private _disabled: boolean = false;
 	@Input()
@@ -65,7 +62,7 @@ export class SelectComponent implements ControlValueAccessor {
 
 	constructor(private el: ElementRef,
 	            private ref: ChangeDetectorRef,
-	            private renderer: Renderer) {
+	            private renderer: Renderer2) {
 		setTimeout(() => {
 			this.slimScroll.scrollContent = this.scrollContent.bind(this);
 		}, 0);
@@ -253,7 +250,7 @@ export class SelectComponent implements ControlValueAccessor {
 		}
 
 		delta = Math.min(Math.max(delta, 0), maxTop);
-		this.renderer.setElementStyle(bar, 'top', delta + 'px');
+		this.renderer.setStyle(bar, 'top', delta + 'px');
 	}
 
 	private _emitChangeEvent() {

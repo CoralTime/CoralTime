@@ -775,9 +775,7 @@ $titleDayHeight: 145px;
 }
 
 .ct-calendar-multiselect.ui-multiselect-panel > div {
-  position: fixed;
-  top: 127px !important;
-  right: 19px;
+  margin-left: 19px;
   font-family: inherit;
 }
 

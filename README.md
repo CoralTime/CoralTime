@@ -11,8 +11,8 @@ http://coraltime.azurewebsites.net/login <br />
 (login as admin/password or user/password or pm/password)
 
 <h1>The technology stack</h1>
-.NET Core 2.0 <br>
-Angular 5
+.NET Core 3.1 <br>
+Angular 9
 
 <h1>How To Run CoralTime</h1> 
 https://github.com/CoralTime/CoralTime/wiki/How-to-run-CoralTime

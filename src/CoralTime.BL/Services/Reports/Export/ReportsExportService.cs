@@ -19,11 +19,11 @@ namespace CoralTime.BL.Services.Reports.Export
 {
     public partial class ReportsExportService : BaseService, IReportExportService
     {
-        private IHostingEnvironment _environment { get; }
+        private IWebHostEnvironment _environment { get; }
         private readonly IConfiguration _configuration;
         private readonly IReportsService _reportService;
 
-        public ReportsExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IHostingEnvironment environment, IReportsService reportService)
+        public ReportsExportService(UnitOfWork uow, IMapper mapper, IConfiguration configuration, IWebHostEnvironment environment, IReportsService reportService)
             : base(uow, mapper)
         {
             _configuration = configuration;

@@ -1,5 +1,7 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { ArrayUtils } from '../../../core/object-utils';
 import { User } from '../../../models/user';
@@ -215,8 +217,8 @@ export class ProfileSettingsComponent implements OnInit {
 		};
 
 		this.loadingService.addLoading();
-		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id)
-			.finally(() => this.loadingService.removeLoading())
+		this.profileService.submitPersonalInfo(personalInfoObject, this.userModel.id).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe((userModel: User) => {
 					if (this.isEmailChanged && this.isGravatarIcon(this.avatarUrl)) {
 						this.getAvatar().then((avatarUrl) => this.updateAvatar(avatarUrl));
@@ -258,8 +260,8 @@ export class ProfileSettingsComponent implements OnInit {
 		};
 
 		this.loadingService.addLoading();
-		this.profileService.submitPreferences(preferencesObject, this.userModel.id)
-			.finally(() => this.loadingService.removeLoading())
+		this.profileService.submitPreferences(preferencesObject, this.userModel.id).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					if (this.impersonationService.impersonationId) {
 						let impersonateUser = Object.assign(this.impersonationService.impersonationUser, preferencesObject);
@@ -299,8 +301,8 @@ export class ProfileSettingsComponent implements OnInit {
 
 	private loadTasks(projectId?: number): void {
 		this.isTasksLoading = true;
-		this.tasksService.getActiveTasks(projectId)
-			.finally(() => this.isTasksLoading = false)
+		this.tasksService.getActiveTasks(projectId).pipe(
+			finalize(() => this.isTasksLoading = false))
 			.subscribe((res) => {
 			this.tasks = this.filterTasks(res.data);
 			this.tasks.unshift(new Task({

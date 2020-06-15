@@ -1,11 +1,12 @@
+
+import {forkJoin as observableForkJoin,  Observable } from 'rxjs';
 import {
 	Component, Input, ViewChild, EventEmitter, Output, OnInit, QueryList, ViewChildren, ElementRef
 } from '@angular/core';
-import { MatDialogRef, MatDialog } from '@angular/material';
+import { MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import Moment = moment.Moment;
-import { Observable } from 'rxjs';
 import { TimeEntry, DateUtils, CalendarDay } from '../../../../models/calendar';
 import { User } from '../../../../models/user';
 import { NotificationService } from '../../../../core/notification.service';
@@ -28,7 +29,7 @@ export class CalendarTaskComponent implements OnInit {
 	@Output() closeEntryTimeForm: EventEmitter<void> = new EventEmitter<void>();
 	@Output() timeEntryDeleted: EventEmitter<void> = new EventEmitter<void>();
 
-	@ViewChild('form') form: EntryTimeComponent;
+	@ViewChild('form', { static: true }) form: EntryTimeComponent;
 	@ViewChildren(MenuComponent) menuList: QueryList<MenuComponent>;
 
 	dialogRef: MatDialogRef<MultipleDatepickerComponent>;
@@ -157,7 +158,7 @@ export class CalendarTaskComponent implements OnInit {
 			observableList.push(this.calendarService.Post(currentTimeEntry));
 		});
 
-		Observable.forkJoin(observableList).subscribe(
+		observableForkJoin(observableList).subscribe(
 			() => {
 				this.notificationService.success('New Time Entry has been successfully dublicated.');
 				this.calendarService.timeEntriesUpdated.emit();

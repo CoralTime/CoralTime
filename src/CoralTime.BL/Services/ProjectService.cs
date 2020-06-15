@@ -11,6 +11,7 @@ using CoralTime.ViewModels.Projects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 
 namespace CoralTime.BL.Services
 {
@@ -126,18 +127,18 @@ namespace CoralTime.BL.Services
             return memberView;
         }
 
-        public ProjectView Create(dynamic projectView)
+        public ProjectView Create(ProjectView projectView)
         {
-            var localName = (string) projectView.name;
+            var localName = projectView.Name;
             var isNameUnique = Uow.ProjectRepository.LinkedCacheGetByName(localName) == null;
 
             var project = Mapper.Map<ProjectView, Project>(new ProjectView
             {
-                ClientId = projectView.clientId,
-                Color = projectView.color,
-                IsActive = projectView.isActive,
-                Name = projectView.name,
-                ClientIsActive = projectView.clientIsActive
+                ClientId = projectView.ClientId,
+                Color = projectView.Color,
+                IsActive = true,
+                Name = localName,
+                ClientIsActive = projectView.ClientIsActive
             });
 
             project.IsActive = true;
@@ -154,26 +155,24 @@ namespace CoralTime.BL.Services
             return projectById.GetViewTimeTrackerAllProjects(Mapper, CountActiveMembers());
         }
 
-        // TODO remove dynamic!
-        public ProjectView Update(dynamic projectView)
+        public ProjectView Update(int id, JsonElement projectView)
         {
-            var projectById = Uow.ProjectRepository.GetById((int)projectView.Id);
+            var projectById = Uow.ProjectRepository.GetById(id);
 
             if (projectById == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Project with id = {projectView.Id} not found.");
+                throw new CoralTimeEntityNotFoundException($"Project with id = {id} not found.");
             }
 
             return CommonLogicForPatchUpdateMethods(projectView, projectById);
         }
 
-        // TODO remove dynamic!
-        public ProjectView Patch(dynamic projectView)
+        public ProjectView Patch(int id, JsonElement projectView)
         {
-            var projectById = Uow.ProjectRepository.GetById((int)projectView.Id);
+            var projectById = Uow.ProjectRepository.GetById(id);
             if (projectById == null)
             {
-                throw new CoralTimeEntityNotFoundException($"Project with id = {projectView.Id} not found.");
+                throw new CoralTimeEntityNotFoundException($"Project with id = {id} not found.");
             }
 
             // Don't activate project if client is Inactive.
@@ -221,13 +220,13 @@ namespace CoralTime.BL.Services
             return projects;
         }
 
-        private ProjectView CommonLogicForPatchUpdateMethods(dynamic projectView, Project projectById)
+        private ProjectView CommonLogicForPatchUpdateMethods(JsonElement projectView, Project projectById)
         {
-            var newProjectName = (string)projectView.name;
+            var newProjectName = projectView.GetNullableProperty("name")?.GetString();
 
             var isNameUnique = Uow.ProjectRepository.LinkedCacheGetByName(newProjectName) == null || projectById.Name == newProjectName;
 
-            if (projectView.isActive != null && !(bool)projectView.isActive)
+            if (projectView.TryGetProperty("isActive", out JsonElement isActiveProperty) && !isActiveProperty.GetBoolean())
             {
                 var timeEntries = Uow.TimeEntryRepository.GetQuery()
                     .Where(t => t.ProjectId == projectById.Id && t.Date.Date == DateTime.Now.Date)

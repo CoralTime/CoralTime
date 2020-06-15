@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -23,11 +25,11 @@ export class ReportsService {
 
 	getReportDropdowns(): Observable<ReportDropdowns> {
 		const date = DateUtils.formatDateToString(new Date());
-		return this.http.get(this.constantService.reportsApi + '?date=' + date).map((res) => <ReportDropdowns>res);
+		return this.http.get(this.constantService.reportsApi + '?date=' + date).pipe(map((res) => <ReportDropdowns>res));
 	}
 
 	getReportGrid(filters: ReportFiltersRequest): Observable<ReportGrid> {
-		return this.http.post(this.constantService.reportsApi, filters).map((res) => <ReportGrid>res);
+		return this.http.post(this.constantService.reportsApi, filters).pipe(map((res) => <ReportGrid>res));
 	}
 
 	exportAs(filters: ReportFiltersRequest): Observable<void> {
@@ -36,8 +38,8 @@ export class ReportsService {
 			responseType: 'blob' as 'blob'
 		};
 
-		return this.http.post(this.constantService.reportsApi + 'ExportFile', filters, options)
-			.map((data: HttpResponse<Blob>) => {
+		return this.http.post(this.constantService.reportsApi + 'ExportFile', filters, options).pipe(
+			map((data: HttpResponse<Blob>) => {
 				let filename = 'reports';
 
 				if (data.headers.has('Content-Disposition')) {
@@ -46,7 +48,7 @@ export class ReportsService {
 				}
 
 				importedSaveAs(data.body, filename);
-			});
+			}));
 	}
 
 	sendReports(filters: SendReportsFormModel): Observable<any> {

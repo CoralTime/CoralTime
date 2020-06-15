@@ -1,11 +1,11 @@
-<div #container [ngClass]="{'ct-multiselect ui-multiselect ct-full-width':true,'ui-state-disabled': disabled, 'active': overlayVisible}"
+<div #container [ngClass]="{'ct-multiselect ui-multiselect ct-full-width':true,'ui-multiselect-open':overlayVisible,'ui-state-disabled': disabled, 'active': overlayVisible}"
      [ngStyle]="style" [class]="styleClass" (click)="onMouseclick($event, input)">
     <div class="ui-helper-hidden-accessible">
-        <input #input readonly="readonly" [attr.id]="inputId"
+        <input #input readonly="readonly" [attr.id]="inputId" [attr.name]="name"
                [disabled]="disabled" [attr.tabindex]="tabindex"
                (focus)="onInputFocus($event)"
                (blur)="onInputBlur($event)"
-               (keydown)="onInputKeydown($event)">
+               (keydown)="onKeydown($event)">
     </div>
 
     <div class="ct-select" [title]="toString(valuesAsString)">
@@ -15,14 +15,14 @@
         </label>
     </div>
 
-    <div #panel [ngClass]="['ui-multiselect-panel', panelStyleClass||'']" [ngStyle]="panelStyle"
-         [style.display]="overlayVisible ? 'block' : 'none'" (click)="panelClick = true">
+    <div *ngIf="overlayVisible" [ngClass]="['ui-multiselect-panel']" [@overlayAnimation]="{value: 'visible', params: {showTransitionParams: showTransitionOptions, hideTransitionParams: hideTransitionOptions}}" (@overlayAnimation.start)="onOverlayAnimationStart($event)"
+         [ngStyle]="panelStyle" [class]="panelStyleClass" (click)="panelClick = true">
         <div class="ui-multiselect-panel ui-widget ui-widget-content ui-shadow">
             <div class="ct-search-filter" *ngIf="showFilterSearch">
-                <input #filterInput
+                <input #filterInput [value]="filterValue||''" [attr.aria-label]="ariaFilterLabel"
                        [attr.placeholder]="'Search'"
                        [(ngModel)]="filterValue"
-                       (input)="onFilter($event)">
+                       (input)="onFilter()">
                 <i class="fa fa-search"></i>
                 <i class="fa fa-times" (click)="clearFilter()"></i>
             </div>
@@ -34,13 +34,13 @@
                 </ul>
             </div>
 
-            <div #slimScroll="slimScroll" slimScroll [ctSlimScrollArrows]="slimScroll">
-                <ul class="ui-multiselect-items ui-helper-reset" [style.max-height]="scrollHeight||'auto'">
-                    <li *ngFor="let option of options; let index = i" class="ui-multiselect-item" (click)="onItemClick($event,option.value)"
-                        [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'selected':isSelected(option.value)}">
+            <div #slimScroll="slimScroll" slimScroll [ctSlimScrollArrows]="slimScroll" [style.max-height]="scrollHeight||'auto'">
+                <ul class="ui-multiselect-items ui-helper-reset">
+                    <li *ngFor="let option of options; let i = index" class="ui-multiselect-item" (click)="onItemClick($event,option)"
+                        [style.display]="isItemVisible(option) ? 'block' : 'none'" [ngClass]="{'selected':isSelected(option.value), 'ui-state-disabled': option.disabled || (maxSelectionLimitReached && !isSelected(option.value))}">
                         <div class="ui-chkbox">
                             <div class="ui-helper-hidden-accessible">
-                                <input #itemcb type="checkbox" [checked]="isSelected(option.value)" (focus)="focusedItemCheckbox=itemcb" (blur)="focusedItemCheckbox=null" [attr.aria-label]="option.label">
+                                <input #itemcb type="checkbox" [checked]="isSelected(option.value)" (focus)="focusedItemCheckbox=itemcb" (blur)="focusedItemCheckbox=null" [attr.aria-label]="option.label" [disabled]="option.disabled || (maxSelectionLimitReached && !isSelected(option.value))">
                             </div>
                             <div class="ui-chkbox-box" [ngClass]="{'ui-state-focus': (focusedItemCheckbox === itemcb)}">
                                 <span class="ui-chkbox-icon ui-clickable" [ngClass]="{'fa fa-check':isSelected(option.value)}"></span>

@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component } from '@angular/core';
 import { NotificationService } from '../../core/notification.service';
 import { AdminService } from '../../services/admin.service';
@@ -19,8 +21,8 @@ export class AdminComponent {
 
 	updateManagersRoles(): void {
 		this.loadingService.addLoading();
-		this.adminService.updateManagersRoles()
-			.finally(() => this.loadingService.removeLoading())
+		this.adminService.updateManagersRoles().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
@@ -31,8 +33,8 @@ export class AdminComponent {
 
 	resetCache(): void {
 		this.loadingService.addLoading();
-		this.adminService.resetCache()
-			.finally(() => this.loadingService.removeLoading())
+		this.adminService.resetCache().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
@@ -43,8 +45,8 @@ export class AdminComponent {
 
 	updateClaims(): void {
 		this.loadingService.addLoading();
-		this.adminService.updateClaims()
-			.finally(() => this.loadingService.removeLoading())
+		this.adminService.updateClaims().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
@@ -55,8 +57,8 @@ export class AdminComponent {
 
 	updateAvatars(): void {
 		this.loadingService.addLoading();
-		this.adminService.updateAvatars()
-			.finally(() => this.loadingService.removeLoading())
+		this.adminService.updateAvatars().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
@@ -67,8 +69,8 @@ export class AdminComponent {
 
 	sendNotificationFromProject(): void {
 		this.loadingService.addLoading();
-		this.adminService.sendNotificationFromProject()
-			.finally(() => this.loadingService.removeLoading())
+		this.adminService.sendNotificationFromProject().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},
@@ -79,8 +81,8 @@ export class AdminComponent {
 
 	sendNotificationsWeekly(): void {
 		this.loadingService.addLoading();
-		this.adminService.sendNotificationsWeekly()
-			.finally(() => this.loadingService.removeLoading())
+		this.adminService.sendNotificationsWeekly().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},

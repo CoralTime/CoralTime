@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -12,10 +14,10 @@ export class LoginResolve implements Resolve<any> {
 
 	resolve(route: ActivatedRouteSnapshot): Observable<LoginSettings> {
 		this.loadingService.addLoading();
-		return this.service.getAuthenticationSettings()
-			.map((loginSettings: LoginSettings) => {
-				this.loadingService.removeLoading();
+		return this.service.getAuthenticationSettings().pipe(
+			map((loginSettings: LoginSettings) => {
+				this.loadingService.removeLoadingCompletely();
 				return loginSettings;
-			});
+			}));
 	}
 }

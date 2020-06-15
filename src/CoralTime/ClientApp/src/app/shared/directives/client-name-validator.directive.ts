@@ -1,7 +1,9 @@
+
+import {first, map, switchMap, take, debounceTime} from 'rxjs/operators';
 import { Client } from '../../models/client';
 import { Directive, forwardRef, Input } from '@angular/core';
 import { Validator, AbstractControl, NG_ASYNC_VALIDATORS } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { ClientsService } from '../../services/clients.service';
 
 @Directive({
@@ -22,19 +24,19 @@ export class ClientNameValidator implements Validator {
 	}
 
 	validate(control: AbstractControl): Observable<{ [key: string]: any }> {
-		return control.valueChanges
-			.debounceTime(500)
-			.take(1)
-			.switchMap(() => {
+		return control.valueChanges.pipe(
+			debounceTime(500),
+			take(1),
+			switchMap(() => {
 				return this.clientsService.getClientByName(control.value);
-			})
-			.map(client => {
+			}),
+			map(client => {
 				if (client && (!this.client || client.id !== this.client.id)) {
 					return {ctClientNameInvalid: true};
 				}
 
 				return null;
-			})
-			.first()
+			}),
+			first(),)
 	}
 }

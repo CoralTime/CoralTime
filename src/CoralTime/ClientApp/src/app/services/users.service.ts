@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {mergeMap, map} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { AuthService } from '../core/auth/auth.service';
 import { ConstantService } from '../core/constant.service';
 import { UserProject } from '../models/user-project';
@@ -109,10 +112,10 @@ export class UsersService {
 		filters.push('isMemberActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new UserProject(x));
 			return res;
-		});
+		}));
 	}
 
 	getUsersWithCount(event, filterStr = '', isActive?: boolean): Observable<PagedResult<User>> {
@@ -144,10 +147,10 @@ export class UsersService {
 			query.Filter(filters.join(' and '));
 		}
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new User(x));
 			return res;
-		});
+		}));
 	}
 
 	getUserByEmail(email: string): Observable<User> {
@@ -162,16 +165,16 @@ export class UsersService {
 
 		query.Filter('tolower(email) eq \'' + email + '\'');
 
-		return query.Exec()
-			.flatMap(result => {
+		return query.Exec().pipe(
+			mergeMap(result => {
 				let user = result[0] ? new User(result[0]) : null;
-				return Observable.of(user);
-			});
+				return observableOf(user);
+			}));
 	}
 
 	getUserById(id: number): Observable<User> {
-		return this.http.get(this.constantService.apiBaseUrl + '/odata/Members(' + id + ')')
-			.map((user: Object) => new User(user));
+		return this.http.get(this.constantService.apiBaseUrl + '/odata/Members(' + id + ')').pipe(
+			map((user: Object) => new User(user)));
 	}
 
 	getUserByUsername(username: string): Observable<User> {
@@ -186,11 +189,11 @@ export class UsersService {
 
 		query.Filter('tolower(userName) eq \'' + username + '\'');
 
-		return query.Exec()
-			.flatMap(result => {
+		return query.Exec().pipe(
+			mergeMap(result => {
 				let user = result[0] ? new User(result[0]) : null;
-				return Observable.of(user);
-			});
+				return observableOf(user);
+			}));
 	}
 
 	getUserProjectsWithCount(event, filterStr = '', memberId: number): Observable<PagedResult<UserProject>> {
@@ -216,10 +219,10 @@ export class UsersService {
 		filters.push('isProjectActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new UserProject(x));
 			return res;
-		});
+		}));
 	}
 
 	getUnassignedProjectsWithCount(event, filterStr = '', memberId: number): Observable<PagedResult<Project>> {
@@ -245,10 +248,10 @@ export class UsersService {
 		filters.push('isPrivate eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
-		});
+		}));
 	}
 
 	getUnassignedUsersWithCount(event, filterStr = '', projectId: number): Observable<PagedResult<User>> {
@@ -273,10 +276,10 @@ export class UsersService {
 		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new User(x));
 			return res;
-		});
+		}));
 	}
 
 	removeFromProject(userProject: UserProject): Observable<any> {

@@ -1,7 +1,10 @@
+
+import {forkJoin as observableForkJoin, of as observableOf,  Observable } from 'rxjs';
+
+import {map, finalize} from 'rxjs/operators';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Observable } from 'rxjs/Observable';
 import { User } from '../../../models/user';
 import { Roles } from '../../../core/auth/permissions';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -130,8 +133,8 @@ export class UsersFormComponent implements OnInit {
 
 	validateAndSubmit(form: NgForm): void {
 		this.isValidateLoading = true;
-		this.validateForm(form)
-			.finally(() => this.isValidateLoading = false)
+		this.validateForm(form).pipe(
+			finalize(() => this.isValidateLoading = false))
 			.subscribe((isFormValid: boolean) => {
 				if (isFormValid) {
 					this.submit();
@@ -151,7 +154,7 @@ export class UsersFormComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		submitObservable.finally(() => this.loadingService.removeLoading())
+		submitObservable.pipe(finalize(() => this.loadingService.removeLoading()))
 			.subscribe(
 				() => {
 					this.isRequestLoading = false;
@@ -183,23 +186,23 @@ export class UsersFormComponent implements OnInit {
 		let isUserNameValidObservable: Observable<any>;
 
 		if (!this.model.email.trim() || !!form.controls['email'].errors) {
-			isEmailValidObservable = Observable.of(false);
+			isEmailValidObservable = observableOf(false);
 		} else {
-			isEmailValidObservable = this.userService.getUserByEmail(this.model.email)
-				.map((user) => !user || (user.id === this.model.id));
+			isEmailValidObservable = this.userService.getUserByEmail(this.model.email).pipe(
+				map((user) => !user || (user.id === this.model.id)));
 		}
 
 		if (!this.model.userName.trim()) {
-			isUserNameValidObservable = Observable.of(false);
+			isUserNameValidObservable = observableOf(false);
 		} else {
-			isUserNameValidObservable = this.userService.getUserByUsername(this.model.userName)
-				.map((user) => !user || (user.id === this.model.id));
+			isUserNameValidObservable = this.userService.getUserByUsername(this.model.userName).pipe(
+				map((user) => !user || (user.id === this.model.id)));
 		}
 
-		return Observable.forkJoin(isEmailValidObservable, Observable.of(!!this.model.fullName), isUserNameValidObservable)
-			.map((response: boolean[]) =>
+		return observableForkJoin(isEmailValidObservable, observableOf(!!this.model.fullName), isUserNameValidObservable).pipe(
+			map((response: boolean[]) =>
 				response.map((isControlValid, i) => this.showErrors[i] = !isControlValid)
 					.every((showError) => showError === false)
-			);
+			));
 	}
 }

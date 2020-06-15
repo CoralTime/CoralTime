@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
@@ -109,8 +111,8 @@ export class ReportsSendComponent implements OnInit {
 
 		this.isRequestLoading = true;
 		this.loadingService.addLoading();
-		this.reportsService.sendReports(this.model)
-			.finally(() => this.loadingService.removeLoading())
+		this.reportsService.sendReports(this.model).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe((res) => {
 				this.isRequestLoading = false;
 				this.onSubmit.emit(res);

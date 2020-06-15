@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ReportQuery } from '../../../models/reports';
@@ -28,8 +30,8 @@ export class ReportsQueryFormComponent {
 		this.loadingService.addLoading();
 		this.reportsService.createQuery({
 			currentQuery: this.model
-		})
-			.finally(() => this.loadingService.removeLoading())
+		}).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.isRequestLoading = false;
 					this.onSubmit.emit(null);

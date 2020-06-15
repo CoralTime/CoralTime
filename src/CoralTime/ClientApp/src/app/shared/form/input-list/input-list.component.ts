@@ -1,7 +1,4 @@
-import {
-	Component, Input, Output, EventEmitter, forwardRef,
-	ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, forwardRef, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, Renderer2 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
@@ -55,7 +52,7 @@ export class InputListComponent implements ControlValueAccessor {
 	private scrollTopNumber: number = 0;
 	private selectedObject: any;
 
-	@ViewChild('slimScroll') slimScroll: any;
+	@ViewChild('slimScroll', { static: true }) slimScroll: any;
 
 	private _disabled: boolean = false;
 	@Input()
@@ -71,7 +68,7 @@ export class InputListComponent implements ControlValueAccessor {
 	private onTouched: () => any = () => {};
 
 	constructor(private ref: ChangeDetectorRef,
-	            private renderer: Renderer) {
+	            private renderer: Renderer2) {
 		setTimeout(() => {
 			this.slimScroll.scrollContent = this.scrollContent.bind(this);
 		}, 0);
@@ -274,7 +271,7 @@ export class InputListComponent implements ControlValueAccessor {
 		}
 
 		delta = Math.min(Math.max(delta, 0), maxTop);
-		this.renderer.setElementStyle(bar, 'top', delta + 'px');
+		this.renderer.setStyle(bar, 'top', delta + 'px');
 	}
 
 	private _emitChangeEvent(): void {

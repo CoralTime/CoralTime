@@ -1,3 +1,5 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PagedResult } from '../../../services/odata';
@@ -14,7 +16,7 @@ import { VstsIntegrationService } from '../../../services/vsts-integration.servi
 
 export class ProjectUsersFormComponent implements OnInit {
 	@Input() connection: VstsProjectConnection;
-	@ViewChild('grid') gridContainer: ElementRef;
+	@ViewChild('grid', { static: true }) gridContainer: ElementRef;
 
 	filterStr: string = '';
 	resizeObservable: Subject<any> = new Subject();
@@ -33,7 +35,7 @@ export class ProjectUsersFormComponent implements OnInit {
 	ngOnInit() {
 		this.loadAssignedUsers();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
+		this.wrapperHeightObservable.pipe(debounceTime(100)).subscribe(() => {
 			this.resizeObservable.next();
 		});
 	}
@@ -41,9 +43,9 @@ export class ProjectUsersFormComponent implements OnInit {
 	// ASSIGNED USERS GRID
 
 	loadAssignedUsers(): void {
-		this.assignedUsersSubject.debounceTime(500).switchMap(() => {
+		this.assignedUsersSubject.pipe(debounceTime(500),switchMap(() => {
 			return this.vstsIntegrationService.getConnectionsMembersWithCount(this.assignedUsersLastEvent, this.filterStr, this.connection.id);
-		})
+		}),)
 			.subscribe((res: PagedResult<UserProject>) => {
 					if (!this.assignedUsersPagedResult || !this.assignedUsersLastEvent.first || this.updatingAssignedUsersGrid) {
 						this.assignedUsersPagedResult = res;

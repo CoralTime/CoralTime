@@ -105,7 +105,7 @@ namespace CoralTime.BL.Services
             }
 
             // Check ApplicationUser Roles
-            var isExistRolesForMember = await _userManager.GetRolesAsync(applicationUserNew).ToAsyncEnumerable().Any(x => x.Contains(roleUser));
+            var isExistRolesForMember = await _userManager.GetRolesAsync(applicationUserNew).ToAsyncEnumerable().AnyAsync(x => x.Contains(roleUser));
             if (isExistRolesForMember)
             {
                 throw new CoralTimeAlreadyExistsException($"User with userName {memberView.UserName} already exist '{roleUser}' role");

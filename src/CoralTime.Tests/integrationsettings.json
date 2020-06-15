@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost\\SQLEXPRESS;Initial Catalog=CoralTime;Integrated Security=True;"
+  }
+}

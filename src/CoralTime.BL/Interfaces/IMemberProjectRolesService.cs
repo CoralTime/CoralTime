@@ -16,7 +16,7 @@ namespace CoralTime.BL.Interfaces
             
         MemberProjectRoleView Create(MemberProjectRoleView projectRole);
 
-        MemberProjectRoleView Update(dynamic projectRole);
+        MemberProjectRoleView Update(MemberProjectRoleView projectRole);
 
         MemberProjectRoleView Patch(MemberProjectRoleView projectRole);
 

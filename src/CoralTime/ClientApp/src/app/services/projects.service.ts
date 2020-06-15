@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {mergeMap, map} from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { ODataConfiguration } from './odata/config';
 import { Project } from '../models/project';
@@ -24,7 +27,7 @@ export class ProjectsService {
 		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.Exec().map(res => res.map((x: any) => new Project(x)));
+		return query.Exec().pipe(map(res => res.map((x: any) => new Project(x))));
 	}
 
 	getProjectByName(name: string): Observable<Project> {
@@ -41,15 +44,15 @@ export class ProjectsService {
 
 		query.Filter('tolower(name) eq \'' + name + '\'');
 
-		return query.Exec()
-			.flatMap(result => {
+		return query.Exec().pipe(
+			mergeMap(result => {
 				let project = result[0] ? new Project(result[0]) : null;
-				return Observable.of(project);
-			});
+				return observableOf(project);
+			}));
 	}
 
 	getManagerProjectsCount(): Observable<number> {
-		return this.http.get(this.odataConfig.baseUrl + '/ManagerProjects/$count').map(res => parseInt(res.toString()));
+		return this.http.get(this.odataConfig.baseUrl + '/ManagerProjects/$count').pipe(map(res => parseInt(res.toString())));
 	}
 
 	getManagerProjectsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Project>> {
@@ -73,10 +76,10 @@ export class ProjectsService {
 		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
-		});
+		}));
 	}
 
 	//  CLIENTS
@@ -106,9 +109,9 @@ export class ProjectsService {
 		}
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Project(x));
 			return res;
-		});
+		}));
 	}
 }

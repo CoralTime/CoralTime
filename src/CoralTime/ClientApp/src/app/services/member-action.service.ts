@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
@@ -42,10 +44,10 @@ export class MemberActionsService {
         }
         query.Filter(filters.join(' or '));
         
-        return query.ExecWithCount().map(res => {
+        return query.ExecWithCount().pipe(map(res => {
             res.data = res.data.map((x: Object) => new MemberAction(x));
             return res;
-        });
+        }));
     }
     
 }

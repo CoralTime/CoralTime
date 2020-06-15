@@ -16,8 +16,6 @@ export class NgForIn<T> extends NgForOf<T> implements OnChanges {
 			const currentValue = Object.keys(change.currentValue);
 			const previousValue = change.previousValue ? Object.keys(change.previousValue) : undefined;
 			changes.ngForOf = new SimpleChange(previousValue, currentValue, change.firstChange);
-
-			super.ngOnChanges(changes);
 		}
 	}
 }

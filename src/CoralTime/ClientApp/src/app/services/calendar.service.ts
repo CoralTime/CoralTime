@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -31,11 +33,11 @@ export class CalendarService {
 			'dateEnd': newDateTo + 'T23:59:59Z'
 		};
 
-		return this.http.get(this.constantService.timeEntriesApi, {params: params})
-			.map((res: TimeEntry[]) => {
+		return this.http.get(this.constantService.timeEntriesApi, {params: params}).pipe(
+			map((res: TimeEntry[]) => {
 				let timeEntries = this.sortTimeEntries(res);
 				return timeEntries.map((x: any) => new TimeEntry(x)).filter((x) => x.timeOptions.timeTimerStart <= 0)
-			});
+			}));
 	}
 
 	Delete(id: string): Observable<any> {
@@ -43,13 +45,13 @@ export class CalendarService {
 	}
 
 	Post(obj: TimeEntry): Observable<TimeEntry> {
-		return this.http.post(this.constantService.timeEntriesApi, obj)
-			.map((res: Object) => new TimeEntry(res));
+		return this.http.post(this.constantService.timeEntriesApi, obj).pipe(
+			map((res: Object) => new TimeEntry(res)));
 	}
 
 	Put(obj: TimeEntry, id: string): Observable<TimeEntry> {
-		return this.http.put(this.constantService.timeEntriesApi + id, obj)
-			.map((res: Object) => new TimeEntry(res));
+		return this.http.put(this.constantService.timeEntriesApi + id, obj).pipe(
+			map((res: Object) => new TimeEntry(res)));
 	}
 
 	getDayInfoByDate(timeEntryDate: string): CalendarDay {
@@ -60,8 +62,8 @@ export class CalendarService {
 
 	getTimer(): Observable<TimerResponse> {
 		const date = DateUtils.formatDateToString(new Date());
-		return this.http.get(this.constantService.timeEntriesApi + 'TimeEntryTimer?date=' + date)
-			.map((res: Object) => new TimerResponse(res));
+		return this.http.get(this.constantService.timeEntriesApi + 'TimeEntryTimer?date=' + date).pipe(
+			map((res: Object) => new TimerResponse(res)));
 	}
 
 	getTotalTimeForDay(day: CalendarDay, timeField: string): number {

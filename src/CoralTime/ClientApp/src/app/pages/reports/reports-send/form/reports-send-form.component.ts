@@ -1,7 +1,7 @@
 import { FormArray, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Component, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { Client } from '../../../../models/client';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'ct-reports-send-form',

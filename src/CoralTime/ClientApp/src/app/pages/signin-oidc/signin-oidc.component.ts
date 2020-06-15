@@ -1,3 +1,5 @@
+
+import {finalize} from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
@@ -28,8 +30,8 @@ export class SignInOidcComponent implements OnInit {
 
 	loginSSO(id_token: string): void {
 		this.loadingService.addLoading();
-		this.authService.loginSSO(this.id_token)
-			.finally(() => this.loadingService.removeLoading())
+		this.authService.loginSSO(this.id_token).pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.router.navigate(['/' + this.auth.url]);
 				}

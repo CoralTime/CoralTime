@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using CoralTime.ViewModels.Projects;
 using CoralTime.ViewModels.Member;
 using CoralTime.ViewModels.Member.MemberImage;
+using CoralTime.ViewModels.ProjectRole;
+using CoralTime.ViewModels.Projects;
 
 namespace CoralTime.ViewModels.MemberProjectRoles
 {
@@ -36,6 +37,8 @@ namespace CoralTime.ViewModels.MemberProjectRoles
         public int RoleId { get; set; }
 
         public string RoleName { get; set; }
+
+        public ProjectRoleView Role { get; set; }
 
 
         public IEnumerable<MemberView> Members { get; set; }

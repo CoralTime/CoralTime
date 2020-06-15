@@ -1,8 +1,8 @@
 import { LoadingBarService } from '@ngx-loading-bar/core';
 import { Injectable, Injector } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { _finally } from 'rxjs/operator/finally';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Injectable()
 export class LoadingBarInterceptor implements HttpInterceptor {
@@ -26,6 +26,6 @@ export class LoadingBarInterceptor implements HttpInterceptor {
 			return responseSubscribe(...args);
 		};
 
-		return _finally.call(r, () => started && this.loadingService.complete());
+		return finalize.call(r, () => started && this.loadingService.complete());
 	}
 }

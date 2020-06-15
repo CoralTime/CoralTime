@@ -1,5 +1,8 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {catchError, map} from 'rxjs/operators';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { ODataConfiguration } from './config';
 import { ODataQuery } from './query';
 import { NotificationService } from '../../core/notification.service';
@@ -42,13 +45,13 @@ export class ODataService<T> {
 	}
 
 	protected handleResponse(entity: Observable<HttpResponse<T>>): Observable<T> {
-		return entity.map(this.extractData)
-			.catch((err: any, caught: Observable<T>) => {
+		return entity.pipe(map(this.extractData),
+			catchError((err: any, caught: Observable<T>) => {
 				if (this.config.handleError) {
 					this.config.handleError(err, caught);
 				}
-				return Observable.throw(err);
-			});
+				return observableThrowError(err);
+			}),);
 	}
 
 	private extractData(res: HttpResponse<T>): T {

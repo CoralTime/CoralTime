@@ -1,5 +1,7 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { Client } from '../../../models/client';
 import { Project } from '../../../models/project';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
@@ -14,7 +16,7 @@ import { ProjectsService } from '../../../services/projects.service';
 
 export class ClientProjectAssignmentComponent implements OnInit {
 	@Input() client: Client;
-	@ViewChild('grid') gridContainer: ElementRef;
+	@ViewChild('grid', { static: true }) gridContainer: ElementRef;
 
 	filterStr: string = '';
 	resizeObservable: Subject<any> = new Subject();
@@ -40,7 +42,7 @@ export class ClientProjectAssignmentComponent implements OnInit {
 		this.loadAssignedProjects();
 		this.loadNotAssignedProjects();
 
-		this.wrapperHeightObservable.debounceTime(100).subscribe(() => {
+		this.wrapperHeightObservable.pipe(debounceTime(100)).subscribe(() => {
 			this.changeScrollableContainer();
 			this.resizeObservable.next();
 		});
@@ -49,9 +51,9 @@ export class ClientProjectAssignmentComponent implements OnInit {
 	// ASSIGNED PROJECTS GRID
 
 	loadAssignedProjects(): void {
-		this.assignedProjectsSubject.debounceTime(500).switchMap(() => {
+		this.assignedProjectsSubject.pipe(debounceTime(500),switchMap(() => {
 			return this.projectsService.getClientProjects(this.assignedProjectsLastEvent, this.filterStr, this.client.isActive, this.client.id);
-		})
+		}),)
 			.subscribe(
 				(res: PagedResult<Project>) => {
 					if (!this.assignedProjectsPagedResult || !this.assignedProjectsLastEvent.first || this.updatingAssignedProjectsGrid) {
@@ -112,9 +114,9 @@ export class ClientProjectAssignmentComponent implements OnInit {
 	// NOT ASSIGNED PROJECTS GRID
 
 	loadNotAssignedProjects(): void {
-		this.notAssignedProjectsSubject.debounceTime(500).switchMap(() => {
+		this.notAssignedProjectsSubject.pipe(debounceTime(500),switchMap(() => {
 			return this.projectsService.getClientProjects(this.notAssignedProjectsLastEvent, this.filterStr, true, null);
-		})
+		}),)
 			.subscribe((res: PagedResult<Project>) => {
 					if (!this.notAssignedProjectsPagedResult || !this.notAssignedProjectsLastEvent.first || this.updatingNotAssignedProjectsGrid) {
 						this.notAssignedProjectsPagedResult = res;

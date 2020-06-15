@@ -1,6 +1,9 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
 export interface LoginSettings {
 	enableAzure: boolean;
@@ -23,7 +26,7 @@ export class LoginService {
 
 	getAuthenticationSettings(): Observable<LoginSettings> {
 		if (this.authenticationSettings) {
-			return Observable.of(this.authenticationSettings)
+			return observableOf(this.authenticationSettings)
 		}
 
 		return this.loadAuthenticationSettings();
@@ -31,7 +34,7 @@ export class LoginService {
 
 	private loadAuthenticationSettings(): Observable<LoginSettings> {
 		let url = '/api/v1/AuthenticationSettings';
-		return this.http.get<LoginSettings>(url)
-			.map((settings: LoginSettings) => this.authenticationSettings = settings);
+		return this.http.get<LoginSettings>(url).pipe(
+			map((settings: LoginSettings) => this.authenticationSettings = settings));
 	}
 }

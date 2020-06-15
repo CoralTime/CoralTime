@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import Moment = moment.Moment;
 import { DateUtils } from '../../../models/calendar';
 
-const WEEK_DAYS: WeekDays[] = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'st'];
+const WEEK_DAYS: WeekDays[] = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'];
 
 export const INPUT_CONTROL_VALUE_ACCESSOR: any = {
 	provide: NG_VALUE_ACCESSOR,
@@ -37,7 +37,7 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 	@Input() multiselect: boolean = false;
 	@Input() required: boolean = false;
 
-	@ViewChild('dayPicker') datePicker: DatePickerComponent;
+	@ViewChild('dayPicker', { static: true }) datePicker: DatePickerComponent;
 	@Output() closed: EventEmitter<void> = new EventEmitter<void>();
 	@Output() dateAPI: EventEmitter<DatePickerComponent> = new EventEmitter();
 	@Output() dateChanged: EventEmitter<string[] | Moment[]> = new EventEmitter();
@@ -65,13 +65,14 @@ export class DatepickerComponent implements ControlValueAccessor, AfterContentIn
 			allowMultiSelect: this.multiselect,
 			firstDayOfWeek: WEEK_DAYS[this.firstDayOfWeek],
 			format: 'YYYY-MM-DD',
-			weekdayNames: {mo: 'Mo', tu: 'Tu', we: 'We', th: 'Th', fr: 'Fr', sa: 'Sa', su: 'Su'}
+			weekDayFormat: 'dd',
+			showGoToCurrent: false
 		};
 		this.dateAPI.emit(this.datePicker);
 		setTimeout(() => {
 			this.datePicker.api.open();
 			this.datePicker.onBodyClick = this.onBodyClick.bind(this.datePicker);
-			this.datePicker.dayCalendarRef.isDisabledDay = this.isDateDisabled.bind(this);
+			this.datePicker.dayCalendarRef.dayCalendarService.isDateDisabled = this.isDateDisabled.bind(this);
 			this.datePicker.dayCalendarRef.dayClicked = this.dayClicked.bind(this);
 		}, 0);
 	}

@@ -1,5 +1,8 @@
+
+import {of as observableOf,  Observable } from 'rxjs';
+
+import {mergeMap, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { PagedResult, ODataServiceFactory, ODataService } from './odata';
 import { Client } from '../models/client';
 
@@ -20,7 +23,7 @@ export class ClientsService {
 		filters.push('isActive eq true');
 		query.Filter(filters.join(' and '));
 
-		return query.Exec().map(res => res.map((x: Object) => new Client(x)));
+		return query.Exec().pipe(map(res => res.map((x: Object) => new Client(x))));
 	}
 
 	getClientsWithCount(event, filterStr = '', isActive: boolean = true): Observable<PagedResult<Client>> {
@@ -43,10 +46,10 @@ export class ClientsService {
 		filters.push('isActive eq ' + isActive);
 		query.Filter(filters.join(' and '));
 
-		return query.ExecWithCount().map(res => {
+		return query.ExecWithCount().pipe(map(res => {
 			res.data = res.data.map((x: Object) => new Client(x));
 			return res;
-		});
+		}));
 	}
 
 	getClientByName(name: string): Observable<Client> {
@@ -61,10 +64,10 @@ export class ClientsService {
 
 		query.Filter('tolower(name) eq \'' + name + '\'');
 
-		return query.Exec()
-			.flatMap(result => {
+		return query.Exec().pipe(
+			mergeMap(result => {
 				let client = result[0] ? new Client(result[0]) : null;
-				return Observable.of(client);
-			});
+				return observableOf(client);
+			}));
 	}
 }

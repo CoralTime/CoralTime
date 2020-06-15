@@ -1,5 +1,7 @@
+
+import {finalize, switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { PagedResult } from '../../services/odata';
 import { VstsProjectConnection } from '../../models/vsts-project-connection';
@@ -22,7 +24,7 @@ export class VstsIntegrationComponent implements OnInit {
 	resizeObservable: Subject<any> = new Subject();
 	updatingGrid: boolean = false;
 
-	@ViewChild('pageContainer') pageContainer: ElementRef;
+	@ViewChild('pageContainer', { static: true }) pageContainer: ElementRef;
 
 	private subject = new Subject<any>();
 	private lastEvent: any;
@@ -94,9 +96,9 @@ export class VstsIntegrationComponent implements OnInit {
 	}
 
 	private getConnections(): void {
-		this.subject.debounceTime(500).switchMap(() => {
+		this.subject.pipe(debounceTime(500),switchMap(() => {
 			return this.vstsIntegrationService.getConnectionsWithCount(this.lastEvent, this.filterStr);
-		})
+		}),)
 			.subscribe((res: PagedResult<VstsProjectConnection>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;
@@ -155,8 +157,8 @@ export class VstsIntegrationComponent implements OnInit {
 
 	updateVstsUsers(): void {
 		this.loadingService.addLoading();
-		this.vstsIntegrationService.updateVstsUsers()
-			.finally(() => this.loadingService.removeLoading())
+		this.vstsIntegrationService.updateVstsUsers().pipe(
+			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(() => {
 					this.notificationService.success('Done');
 				},

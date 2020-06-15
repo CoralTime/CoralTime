@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, HostListener, Renderer, Output, EventEmitter } from '@angular/core';
+import { Directive, ElementRef, Input, HostListener, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { LIST_ITEM_HEIGHT } from '../form/select/select.component';
 
 @Directive({
@@ -14,7 +14,7 @@ export class SlimscrollArrowsDirective {
 	private parent: Node = this.el.nativeElement.parentNode;
 
 	constructor(private el: ElementRef,
-	            private renderer: Renderer) {
+	            private renderer: Renderer2) {
 	}
 
 	private clearInterval(): void {
@@ -35,7 +35,7 @@ export class SlimscrollArrowsDirective {
 		}
 
 		delta = Math.min(Math.max(delta, 0), maxTop);
-		this.renderer.setElementStyle(bar, 'top', delta + 'px');
+		this.renderer.setStyle(bar, 'top', delta + 'px');
 		this.scroll.emit();
 	}
 

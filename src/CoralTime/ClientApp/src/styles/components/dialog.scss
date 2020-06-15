@@ -97,7 +97,7 @@
       display: none;
     }
 
-    .mat-input-wrapper {
+    .mat-form-field-wrapper {
       margin: 0;
       padding: 0;
     }
@@ -110,7 +110,7 @@
     font-size: 15px;
   }
 
-  .mat-input-container {
+  .mat-form-field {
     margin: 0;
     color: $main-blue;
   }
@@ -544,12 +544,12 @@
     opacity: 0.7;
   }
 
-  .mat-input-container {
+  .mat-form-field {
     width: 35px;
     font-size: $formControlFontSize;
 
     &.mat-form-field-should-float {
-      .mat-input-placeholder {
+      .mat-form-field-label {
         display: none;
       }
     }
@@ -568,14 +568,14 @@
       top: 0;
     }
 
-    .mat-input-placeholder {
+    .mat-form-field-label {
       top: 0;
       text-align: center;
       color: $main-blue;
     }
 
     &.mat-form-field-disabled {
-      .mat-input-placeholder {
+      .mat-form-field-label {
         opacity: .7;
         color: rgba(0, 0, 0, .38);
       }
@@ -587,13 +587,13 @@
     }
   }
 
-  .mat-input-underline {
+  .mat-form-field-underline {
     border: none;
     border-top: 1px solid $main-blue;
     bottom: 0;
     left: 0;
 
-    .mat-input-ripple {
+    .mat-form-field-ripple {
       height: 1px;
     }
 
@@ -602,7 +602,7 @@
     }
   }
 
-  .mat-input-invalid .mat-input-underline {
+  .mat-form-field-invalid .mat-form-field-underline {
     display: block;
     border-color: #f44336;
   }

@@ -1,6 +1,8 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { Subject } from 'rxjs/Subject';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
 import { Project } from '../../models/project';
 import { PagedResult } from '../../services/odata';
 import { AclService } from '../../core/auth/acl.service';
@@ -28,7 +30,7 @@ export class ProjectsComponent implements OnInit {
 	resizeObservable: Subject<any> = new Subject();
 	updatingGrid: boolean = false;
 
-	@ViewChild('pageContainer') pageContainer: ElementRef;
+	@ViewChild('pageContainer', { static: true }) pageContainer: ElementRef;
 
 	private lastEvent: any;
 	private subject = new Subject<any>();
@@ -89,9 +91,9 @@ export class ProjectsComponent implements OnInit {
 	}
 
 	private getProjects(): void {
-		this.subject.debounceTime(500).switchMap(() => {
+		this.subject.pipe(debounceTime(500),switchMap(() => {
 			return this.projectsService.getManagerProjectsWithCount(this.lastEvent, this.filterStr, this.isActiveTab);
-		})
+		}),)
 			.subscribe((res: PagedResult<Project>) => {
 					if (!this.pagedResult || !this.lastEvent.first || this.updatingGrid) {
 						this.pagedResult = res;

@@ -43,6 +43,8 @@ namespace CoralTime.DAL.Mapper
             CreateMap<ProjectView, Project>()
                 .ForMember(x => x.LockPeriod, x => x.MapFrom(m => (LockTimePeriod)m.LockPeriod));
 
+            CreateMap<ProjectView, ManagerProjectsView>();
+
             CreateMap<Client, ClientView>();
             CreateMap<ClientView, Client>();
 

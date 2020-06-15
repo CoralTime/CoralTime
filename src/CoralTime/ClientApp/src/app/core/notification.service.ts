@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
 @Injectable()
 export class NotificationService {
@@ -25,7 +25,7 @@ export class NotificationService {
 
 	private notify(message: string, type: string): void {
 		let config = Object.assign({}, this.config);
-		config.extraClasses = ['snack-bar-' + type];
+		config.panelClass = ['snack-bar-' + type];
 		this.snackBar.open(message, null, config);
 	}
 }

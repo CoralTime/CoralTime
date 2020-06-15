@@ -1,5 +1,7 @@
+
+import {switchMap, debounceTime} from 'rxjs/operators';
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
 import { ROWS_ON_PAGE } from '../../../core/constant.service';
@@ -15,7 +17,7 @@ import { TasksService } from '../../../services/tasks.service';
 export class ProjectTasksComponent implements OnInit {
 	@Input() project: Project;
 
-	@ViewChild('grid') gridContainer: ElementRef;
+	@ViewChild('grid', { static: true }) gridContainer: ElementRef;
 
 	filterStr: string = '';
 	isActive: boolean;
@@ -36,9 +38,9 @@ export class ProjectTasksComponent implements OnInit {
 	}
 
 	loadTasks(): void {
-		this.tasksSubject.debounceTime(500).switchMap(() => {
+		this.tasksSubject.pipe(debounceTime(500),switchMap(() => {
 			return this.tasksService.getProjectTasks(this.tasksLastEvent, this.filterStr, this.project.id);
-		})
+		}),)
 			.subscribe((res: PagedResult<Task>) => {
 					if (!this.tasksPagedResult || !this.tasksLastEvent.first || this.updatingGrid) {
 						this.tasksPagedResult = res;

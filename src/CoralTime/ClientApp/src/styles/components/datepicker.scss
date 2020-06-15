@@ -30,9 +30,10 @@
       button {
         color: #374456;
 
-      &.dp-calendar-nav-right, &.dp-calendar-nav-left {
-        display: inline-block;
-        margin: -2px 6px 0;
+      &.dp-calendar-nav-left,
+      &.dp-calendar-nav-right,
+      &.dp-calendar-secondary-nav-left,
+      &.dp-calendar-secondary-nav-right {
         font-size: 0;
         text-rendering: auto;
         -webkit-font-smoothing: antialiased;
@@ -40,6 +41,9 @@
         transition-duration: .3s;
 
         &:before, &:after {
+          border-style: none;
+          transform: rotate(0deg);
+          font-family: $latoFont;
           font-size: 28px;
           display: inline-block;
         }
@@ -49,25 +53,19 @@
         }
       }
 
-      &.dp-calendar-nav-right {
-        padding-right: 40px;
-        padding-left: 20px;
-
+      &.dp-calendar-nav-right, &.dp-calendar-secondary-nav-right {
         &:before {
           content: '\203A';
         }
       }
 
-      &.dp-calendar-nav-left {
-        padding-right: 20px;
-        padding-left: 40px;
-
+      &.dp-calendar-nav-left, &.dp-calendar-secondary-nav-left {
         &:before {
           content: '\2039';
         }
       }
 
-      &.dp-nav-header {
+      &.dp-nav-header-btn {
         font-size: 14px;
       }
     }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoralTime", "CoralTime\CoralTime.csproj", "{1B3E4245-74EB-41B7-8099-F7F0E5C46928}"
 EndProject
@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoralTime.DAL", "CoralTime.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoralTime.ViewModels", "CoralTime.ViewModels\CoralTime.ViewModels.csproj", "{4636027B-D4AC-4E69-86D6-DF2DF9C34528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoralTime.MySqlMigrations", "CoralTime.MySqlMigrations\CoralTime.MySqlMigrations.csproj", "{8ACF534A-F350-4A75-A768-259BAC3292A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoralTime.MySqlMigrations", "CoralTime.MySqlMigrations\CoralTime.MySqlMigrations.csproj", "{8ACF534A-F350-4A75-A768-259BAC3292A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

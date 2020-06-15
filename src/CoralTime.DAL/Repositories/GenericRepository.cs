@@ -208,7 +208,7 @@ namespace CoralTime.DAL.Repositories
 
         #endregion
 
-        public int ExecuteSqlCommand(string command, params object[] parameters) => _dbContext.Database.ExecuteSqlCommand(command, parameters);
+        public int ExecuteSqlCommand(string command, params object[] parameters) => _dbContext.Database.ExecuteSqlRaw(command, parameters);
 
         private void SetInfoAboutUserThatCratedEntity(ILogChanges entityILogChange, string userId = null)
         {
