@@ -205,6 +205,14 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
         private void FillDatesByDateStaticOrDateFromTo(ReportsGridView reportsGridView, ref DateTime dateFrom, ref DateTime dateTo)
         {
             var dateStaticId = reportsGridView.CurrentQuery.DateStaticId;
+
+            if (dateStaticId.HasValue && dateStaticId.Value == (int)DatesStaticIds.Lifetime)
+            {
+                dateFrom = DateTime.MinValue;
+                dateTo = DateTime.MaxValue;
+                return;
+            }
+
             var isFilledDateStaticIdAndDateFromDateTo = dateStaticId != null && reportsGridView.CurrentQuery?.DateFrom != null && reportsGridView.CurrentQuery?.DateTo != null;
             var isFilledOnlyDateFromDateTo = dateStaticId == null && reportsGridView.CurrentQuery?.DateFrom != null && reportsGridView.CurrentQuery?.DateTo != null;
 

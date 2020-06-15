@@ -82,6 +82,14 @@ namespace CoralTime.Common.Helpers
             return (lastWeek.DateFrom, lastWeek.DateTo.AddDays(-2).Date);
         }
 
+        private static (DateTime DateFrom, DateTime DateTo) GetRangeOfLifetime()
+        {
+            //These values also set the selected range in the date dropdown. If we provide a large range it will take a long time for the control to process that.
+            //That is why we're using 'MinValue' for both the To & From dates.
+            //There's a special condition in 'FillDatesByDateStaticOrDateFromTo' that will apply the correct range when it comes time to run the query.
+            return (DateTime.MinValue, DateTime.MinValue);
+        }
+
         public static (DateTime DateFrom, DateTime DateTo) GetPeriod(int dayStaticId, DateTime? todayDate, DayOfWeek startOfWeek = DayOfWeek.Monday)
         {
             return GetPeriod((DatesStaticIds) dayStaticId, todayDate, startOfWeek);
@@ -94,6 +102,9 @@ namespace CoralTime.Common.Helpers
             var yesterday = today.AddDays(-1).Date;
             switch (dayStaticId)
             {
+                case DatesStaticIds.Lifetime:
+                    return GetRangeOfLifetime();
+
                 case DatesStaticIds.Today:
                     return (today, today);
 

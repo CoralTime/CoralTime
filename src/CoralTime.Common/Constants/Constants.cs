@@ -252,6 +252,8 @@ namespace CoralTime.Common.Constants
 
         public enum DatesStaticIds
         {
+            Lifetime = 0,
+
             Today = 1,
             ThisWeek = 2,
             ThisMonth = 3,

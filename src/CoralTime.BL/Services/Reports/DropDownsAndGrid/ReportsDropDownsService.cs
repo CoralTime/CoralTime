@@ -275,6 +275,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var lastYear = CommonHelpers.GetPeriod(DatesStaticIds.LastYear, todayDate);
             var thisQuarter = CommonHelpers.GetPeriod(DatesStaticIds.ThisQuarter, todayDate);
             var lastQuarter = CommonHelpers.GetPeriod(DatesStaticIds.LastQuarter, todayDate);
+            var lifetime = CommonHelpers.GetPeriod(DatesStaticIds.Lifetime, todayDate);
 
             ReportDropDownsDateStaticView[] datesStaticInfo =
             {
@@ -356,6 +357,14 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                     Description = "Yesterday",
                     DateFrom = yesterday.DateFrom,
                     DateTo = yesterday.DateTo
+                },
+
+                 new ReportDropDownsDateStaticView
+                {
+                    Id = (int) DatesStaticIds.Lifetime,
+                    Description = "Lifetime",
+                    DateFrom = lifetime.DateFrom,
+                    DateTo = lifetime.DateTo
                 },
             };
 
