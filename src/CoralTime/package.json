@@ -1,0 +1,13 @@
+{
+  "name": "clientapp_settings",
+  "version": "v1.0.0",
+  "scripts": {
+    "1_1_Npm_Version": "npm version",
+    "1_2_Npm_Install": "cd ClientApp & npm install",
+    "1_3_Npm_Audit": "cd ClientApp & npm fund",
+    "2_1_Build_ClientApp_Developing": "cd ClientApp & npm start",
+    "2_2_Build_ClientApp_Production": "cd ClientApp & npm run build",
+    "3_1_Npm_Install_WithUpdates": "cd ClientApp & npm install npm install i -g npm-check-updates",
+    "3_2_Npm_After_Install_UpdateFrontfiles": "cd ClientApp & ncu -u"
+  }
+}
