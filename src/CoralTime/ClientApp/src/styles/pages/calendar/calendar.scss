@@ -648,11 +648,22 @@ $titleDayHeight: 145px;
   z-index: 1001;
   margin: auto;
   width: 252px;
-  padding-left: 44px;
-  line-height: 44px;
-  border-radius: 32px;
-  box-sizing: border-box;
-  background-color: $gray-page-background;
+  line-height: 44px;  
+  text-align: center;
+
+  .ct-timer-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .ct-hours-container {
+    position: relative;
+    display: inline-block;
+    padding-right: 36px;
+    border-radius: 32px;
+    box-sizing: border-box;
+    background-color: $gray-page-background;
+  }
 
   .ct-hours-tracked,
   .ct-hours-planned {
@@ -713,9 +724,9 @@ $titleDayHeight: 145px;
   }
 
   .ct-round-button {
-    position: absolute;
-    left: 0;
-    top: 0;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
     cursor: pointer;
     border: none;
 
@@ -725,8 +736,10 @@ $titleDayHeight: 145px;
     }
   }
 
-  .ct-timer-stop-icon {
-    top: 5px;
+  .ct-timer-stop-container {
+    position: absolute;
+    display: inline-block;
+    text-align: right;
     left: -50px;
   }
 
@@ -734,8 +747,11 @@ $titleDayHeight: 145px;
     width: 200px;
     top: 13px;
     background-size: 36px;
-    padding-left: 40px;
     line-height: 36px;
+
+    .ct-hours-container {
+      padding-right: 20px;
+    }
 
     .ct-hours-tracked, .ct-hours-planned {
       margin-left: 30px;
@@ -746,14 +762,13 @@ $titleDayHeight: 145px;
       }
     }
 
-    .ct-timer-stop-icon {
-      top: 1px;
+    .ct-timer-stop-container {
       left: -42px;
     }
   }
 
   @media (min-width: $calendarPhoneWidth) and (max-width: $calendarTabletWidth) {
-    .ct-timer-stop-icon {
+    .ct-timer-stop-container {
       left: auto;
       right: -42px;
     }
@@ -765,8 +780,16 @@ $titleDayHeight: 145px;
   padding: 0;
   width: 195px;
 
+  .ct-hours-container {
+    padding-right: 23px;
+  }
+
   @media (max-width: $calendarTabletWidth) {
     top: 63px;
+
+    .ct-hours-container {
+      padding-right: 8px;
+    }
   }
 }
 

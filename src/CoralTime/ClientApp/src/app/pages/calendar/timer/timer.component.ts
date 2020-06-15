@@ -14,6 +14,7 @@ import { ImpersonationService } from '../../../services/impersonation.service';
 import { NotificationService } from '../../../core/notification.service';
 import { TasksService } from '../../../services/tasks.service';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
+import { SettingsService } from '../../../services/settings.service';
 
 export const MAX_TIMER_VALUE = 86399;
 
@@ -29,6 +30,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 	defaultTask: Task;
 	isTimerLoading: boolean;
 	isTimerLoading2: boolean;
+	isEstimatedTimeEnabled: boolean;
 	timeEntry: TimeEntry;
 	ticks: number = 0;
 	timerValue: Time;
@@ -46,13 +48,16 @@ export class TimerComponent implements OnInit, OnDestroy {
 	            private notificationService: NotificationService,
 	            private projectsService: CalendarProjectsService,
 	            private route: ActivatedRoute,
-	            private tasksService: TasksService) {
+	            private tasksService: TasksService,
+	            private settingsService: SettingsService) {
 	}
 
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {
 			this.userInfo = data.user;
 		});
+
+		this.isEstimatedTimeEnabled = this.settingsService.getIsEstimatedTimeEnabled();
 
 		if (!this.getImpersonationUser()) {
 			this.initTimer();

@@ -7,4 +7,8 @@ export class SettingsService {
 	getDefaultProjectRoleName(): Observable<string> {
 		return observableOf('team member');
 	}
+
+	getIsEstimatedTimeEnabled(): boolean {
+		return true;
+	}
 }

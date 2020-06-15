@@ -17,6 +17,7 @@ import { CalendarService } from '../../../../services/calendar.service';
 import { ImpersonationService } from '../../../../services/impersonation.service';
 import { TasksService } from '../../../../services/tasks.service';
 import { CalendarProjectsService } from '../../calendar-projects.service';
+import { SettingsService } from '../../../../services/settings.service';
 import { numberToHex } from '../../../../shared/form/color-picker/color-picker.component';
 import { MAX_TIMER_VALUE } from '../../timer/timer.component';
 
@@ -35,6 +36,7 @@ export class EntryTimeFormComponent implements OnInit {
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
 	isActualTimeChanged: boolean;
+	isEstimatedTimeEnabled: boolean;
 	isEstimatedTimeShown: boolean;
 	isEstimatedTimeChanged: boolean;
 	isFromToFormChanged: boolean;
@@ -64,13 +66,16 @@ export class EntryTimeFormComponent implements OnInit {
 	            private notificationService: NotificationService,
 	            private projectsService: CalendarProjectsService,
 	            private route: ActivatedRoute,
-	            private tasksService: TasksService) {
+	            private tasksService: TasksService,
+	            private settingsService: SettingsService) {
 	}
 
 	ngOnInit() {
 		this.route.data.forEach((data: { user: User }) => {
 			this.userInfo = this.impersonationService.impersonationUser || data.user;
 		});
+
+		this.isEstimatedTimeEnabled = this.settingsService.getIsEstimatedTimeEnabled();
 
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
 		this.isEstimatedTimeShown = this.timeEntry.timeValues.timeEstimated > 0;

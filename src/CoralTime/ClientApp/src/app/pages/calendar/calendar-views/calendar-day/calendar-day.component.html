@@ -12,7 +12,7 @@
 
         <div class="ct-calendar-day-hours">
             <div class="ct-calendar-hours-tracked" title="Tracked time">{{calcTime('timeActual')}}</div>
-            <div class="ct-calendar-hours-planned" title="Planned time">{{calcTime('timeEstimated')}}</div>
+            <div *ngIf="isEstimatedTimeEnabled" class="ct-calendar-hours-planned" title="Planned time">{{calcTime('timeEstimated')}}</div>
         </div>
     </div>
 

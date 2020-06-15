@@ -7,6 +7,7 @@ import { User } from '../../../../models/user';
 import { NotificationService } from '../../../../core/notification.service';
 import { CalendarService } from '../../../../services/calendar.service';
 import { ImpersonationService } from '../../../../services/impersonation.service';
+import { SettingsService } from '../../../../services/settings.service';
 import { ctCalendarDayAnimation } from '../../calendar.animation';
 import { EntryTimeComponent } from '../../entry-time/entry-time.component';
 import { MAX_TIMER_VALUE } from '../../timer/timer.component';
@@ -27,6 +28,7 @@ export class CalendarDayComponent implements OnInit {
 	changeDragEnterTimeout: any;
 	draggedTimeEntry: TimeEntry;
 	isEntryFormOpened: boolean = false;
+	isEstimatedTimeEnabled: boolean;
 	isDragEnter: boolean;
 	fakeCalendarTaskHeight: number;
 	newTimeEntry: TimeEntry;
@@ -37,6 +39,7 @@ export class CalendarDayComponent implements OnInit {
 	constructor(private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,
 	            private notificationService: NotificationService,
+	            private settingsService: SettingsService,
 	            private route: ActivatedRoute) {
 	}
 
@@ -44,6 +47,8 @@ export class CalendarDayComponent implements OnInit {
 		this.route.data.forEach((data: { user: User }) => {
 			this.user = this.impersonationService.impersonationUser || data.user;
 		});
+
+		this.isEstimatedTimeEnabled = this.settingsService.getIsEstimatedTimeEnabled();
 
 		this.triggerAnimation();
 	}

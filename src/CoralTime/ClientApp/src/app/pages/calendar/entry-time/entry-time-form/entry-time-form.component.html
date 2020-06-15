@@ -79,11 +79,11 @@
                    [textMask]="{mask: timeMask, guide: true, keepCharPositions: true, placeholderChar: ' '}"
                    (timeChanged)="timeActualOnChange()">m
         </div>
-        <button type="button" *ngIf="!isEstimatedTimeShown"
+        <button type="button" *ngIf="isEstimatedTimeEnabled && !isEstimatedTimeShown"
                 class="ct-show-input ct-estimated-time-button"
                 (click)="isEstimatedTimeShown = !isEstimatedTimeShown">Estimate
         </button>
-        <div *ngIf="isEstimatedTimeShown" class="ct-estimated-time">
+        <div *ngIf="isEstimatedTimeEnabled && isEstimatedTimeShown" class="ct-estimated-time">
             <i class="ct-icon ct-timeestimated-icon" title="Planned time"></i>
             <input name="timeEstimatedHours" autocomplete="off" [ctTime]="24"
                    [(ngModel)]="timeEstimated.hours"
