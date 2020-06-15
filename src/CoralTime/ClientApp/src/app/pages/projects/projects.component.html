@@ -1,0 +1,78 @@
+<div class="ct-grid-search-filter">
+    <input class="ct-input-element" #gb placeholder="Search project..." [(ngModel)]="filterStr">
+    <i class="fa fa-search"></i>
+</div>
+
+<div #pageContainer class="ct-page-container ct-projects-page">
+    <div class="ct-page-header">
+        <h3 class="ct-header">Projects</h3>
+
+        <div class="ct-page-tabs">
+            <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Projects</a>
+            <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Projects</a>
+        </div>
+
+        <div *ctIsGranted="'AddProject'" (click)="openProjectDialog()" class="ct-add-link">
+            <a class="ct-manage-add">Create New Project</a>
+        </div>
+    </div>
+
+    <div class="ct-data-table-wrapper" (window:resize)="onResize()">
+        <p-dataTable class="ct-grid-container ct-grid-row-border"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'name'"
+                     [responsive]="true" [lazy]="true"
+                     [loading]="!isAllProjects"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column field="name" header="Project" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-project="rowData" pTemplate="body">
+                    <span class="ct-grid-label ct-color" [ngStyle]="{color: numberToHex(project.color)}"></span>
+                    <span (click)="openProjectDialog(project)" class="ct-grid-link-text" title="{{ project.name }}">{{ project.name }}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="clientName" header="Client" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-project="rowData" pTemplate="body">
+                    <span>{{ project.clientName }}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="description" header="Description" styleClass="ct-description-col">
+                <ng-template let-col let-project="rowData" pTemplate="body" let-index="rowIndex">
+                    <div class="ct-grid-description">
+                        <ct-read-more [text]="project.description"></ct-read-more>
+                    </div>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'140px'}" header="Team" styleClass="ct-info-col ct-small-padding">
+                <ng-template let-col let-project="rowData" pTemplate="body">
+                    <span class="ct-user-circle-icon"></span>
+                    <a (click)="openProjectUsersDialog(project)" class="ct-grid-link ct-grid-count">
+                        {{project.membersCount}}
+                        <span class="ct-manage-text">Manage</span>
+                    </a>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'130px'}" header="Tasks" styleClass="ct-info-col ct-small-padding">
+                <ng-template let-col let-project="rowData" pTemplate="body">
+                    <a (click)="openProjectTasksDialog(project)" class="ct-grid-link ct-grid-count">
+                        {{project.tasksCount}}
+                        <span class="ct-manage-text">Manage</span>
+                    </a>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'90px'}" header="Settings" styleClass="ct-small-padding">
+                <ng-template let-col let-project="rowData" pTemplate="body">
+                    <a (click)="openProjectSettingsDialog(project)" class="ct-grid-settings-icon"></a>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
+</div>

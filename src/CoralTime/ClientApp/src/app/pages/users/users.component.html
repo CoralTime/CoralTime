@@ -1,0 +1,75 @@
+<div class="ct-grid-search-filter">
+    <input class="ct-input-element" #gb placeholder="Search user..." [(ngModel)]="filterStr">
+    <i class="fa fa-search"></i>
+</div>
+
+<div #pageContainer class="ct-page-container ct-users-page">
+    <div class="ct-page-header">
+        <h3 class="ct-header">Users</h3>
+
+        <div class="ct-page-tabs">
+            <a (click)="toggleTab(true)" [class.ct-active-tab]="isActiveTab">Active Users</a>
+            <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Inactive Users</a>
+        </div>
+
+        <div *ctIsGranted="'AddMember'" (click)="openUserDialog()" class="ct-add-link">
+            <a class="ct-manage-add">Create New User</a>
+        </div>
+    </div>
+
+    <div class="ct-data-table-wrapper" (window:resize)="onResize()">
+        <p-dataTable class="ct-grid-container ct-grid-row-border"
+                     [value]="pagedResult?.data"
+                     [resizeObservable]="resizeObservable"
+                     scrollable="true" [sortField]="'fullName'"
+                     [responsive]="true" [lazy]="true"
+                     [loading]="!isAllUsers"
+                     [globalFilter]="gb"
+                     (onLazyLoad)="loadLazy($event)"
+                     (onMoreContent)="loadLazy()"
+                     (onEndScrollEvent)="onEndScroll()">
+            <p-column field="fullName" header="Full Name" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <span (click)="openUserDialog(user)" class="ct-grid-userpic">
+                    <ct-user-pic [urlIcon]="user.urlIcon"></ct-user-pic>
+                    </span>
+                    <span (click)="openUserDialog(user)" class="ct-grid-link-text" title="{{user.userName}}">
+                        {{user.fullName}}
+                    </span>
+                </ng-template>
+            </p-column>
+
+            <p-column field="email" header="Email" [sortable]="true"></p-column>
+
+            <p-column field="userName" header="Username" [sortable]="true" styleClass="ct-info-col">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <span title="{{user.userName}}">{{user.userName}}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'150px'}" header="Role" [sortable]="false" styleClass="ct-info-col">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <span class="ct-lowercase">{{user.role}}</span>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'110px'}" header="Projects" styleClass="ct-info-col ct-small-padding">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <a *ctIsGranted="'EditMember'" class="ct-grid-link ct-grid-count"
+                       (click)="openProjectAssignmentDialog(user)">
+                        {{user.projectsCount}}
+                        <span class="ct-manage-text">Manage</span>
+                    </a>
+                </ng-template>
+            </p-column>
+
+            <p-column [style]="{'width':'70px'}" styleClass="ct-small-padding">
+                <ng-template let-col let-user="rowData" pTemplate="body">
+                    <a *ngIf="user.id !== currentUserId && user.id !== impersonateUserId" class="ct-edit-timesheet-icon"
+                       (click)="impersonateMember(user)">
+                    </a>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
+</div>
