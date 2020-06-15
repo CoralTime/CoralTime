@@ -181,7 +181,7 @@ ct-entry-time {
     > div {
       width: 50%;
       box-sizing: border-box;
-      font-size: 18px;
+      font-size: 16px;
       color: #fff;
       display: inline-block;
 
@@ -193,7 +193,7 @@ ct-entry-time {
           right: 0;
           top: -2px;
           content: '';
-          width: 2px;
+          width: 0px;
           height: 30px;
           background: #3fb7e6;
         }
@@ -256,7 +256,7 @@ ct-entry-time {
     }
 
     input {
-      width: 22px;
+      width: 24px;
       outline: none;
       background: none;
       font-size: 18px;
@@ -265,6 +265,48 @@ ct-entry-time {
       border: none;
       border-bottom: 1px solid rgba(255, 255, 255, .5);
       color: currentColor;
+      padding: 0px;
+      border-radius: 0;
+      caret-color: transparent;
+
+      &:focus {
+        background-color: rgba(255, 255, 255, .2);
+        outline: none;
+      }
+
+      &::placeholder {
+        color: white;
+        opacity: 1;
+      }
+
+      &::-ms-input-placeholder {
+        color: white;
+      }
+    }
+
+    .mat-select {
+      width: 54px;
+      outline: none;
+      background: none;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: .3px;
+      border: none;
+      color: currentColor;
+      font-family: inherit;
+      font-weight: inherit;
+
+      &:focus {
+        background-color: rgba(255, 255, 255, .2);
+      }
+    }
+
+    .mat-select-arrow {
+      color: white;
+    }
+
+    .mat-select-value-text {
+      color: white;
     }
 
     [class*="ct-from-to-form"] {
@@ -277,7 +319,7 @@ ct-entry-time {
       width: 100%;
       height: 26px;
       line-height: 26px;
-      font-size: 12px;
+      font-size: 14px;
 
       > div {
         display: inline-block;
@@ -289,6 +331,12 @@ ct-entry-time {
 
       .ct-label {
         margin-right: 5px;
+      }
+
+      .ct-colon {
+        font-size: 18px;        
+        margin-left: 1px;
+        margin-right: 1px;
       }
 
       .ct-times-icon {
@@ -306,13 +354,23 @@ ct-entry-time {
       }
 
       input {
-        width: 18px;
-        font-size: 14px;
 
         &:first-child {
           margin-left: 5px;
         }
       }
+    }
+
+    .ct-actual-time, .ct-estimated-time {
+      input {
+        width: 20px;
+        font-size: 16px;
+        margin-top: -1px;
+      }
+    }
+
+    .ct-actual-time-inputs {
+      display: inline-block;
     }
   }
 

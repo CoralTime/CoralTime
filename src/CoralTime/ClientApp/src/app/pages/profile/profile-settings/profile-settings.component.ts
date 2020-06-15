@@ -248,6 +248,16 @@ export class ProfileSettingsComponent implements OnInit {
 	}
 
 	submitPreferences(): void {
+		let workingHoursPerDay = this.userModel.workingHoursPerDay;
+		if (workingHoursPerDay <= 0) {
+			this.notificationService.danger('Working Hours must be greater than 0.');
+			return;
+		}
+		else if (workingHoursPerDay > 24) {
+			this.notificationService.danger('Working Hours must be less than or equal to 24.');
+			return;
+		}
+
 		let preferencesObject = {
 			defaultProjectId: this.userModel.defaultProjectId,
 			defaultTaskId: this.userModel.defaultTaskId,

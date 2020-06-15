@@ -19,4 +19,12 @@ export class SettingsService {
 	getIsEstimatedTimeEnabled(): boolean {
 		return true;
 	}
+
+	getIsFromToRequired(): boolean {
+		return false;
+	}
+
+	getTimeEntryMinutesIncrement(): number {
+		return 5;
+	}
 }

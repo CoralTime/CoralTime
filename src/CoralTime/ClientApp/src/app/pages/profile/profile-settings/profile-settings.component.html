@@ -128,8 +128,7 @@
                             <label class="ct-form-label">Working hours/day</label>
                             <div class="ct-required-field-container">
                                 <input class="ct-input ct-full-width" name="workingHoursPerDay" autocomplete="off"
-                                       [(ngModel)]="userModel.workingHoursPerDay" [ctTime]="24" required [enableFormat]="false"
-                                       [textMask]="{mask: numberMask, guide: false, keepCharPositions: true}"/>
+                                       [(ngModel)]="userModel.workingHoursPerDay" type="number" min="1" max="24" required/>
                             </div>
                         </div>
 

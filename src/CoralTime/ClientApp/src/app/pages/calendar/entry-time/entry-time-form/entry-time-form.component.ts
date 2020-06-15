@@ -35,13 +35,20 @@ export class EntryTimeFormComponent implements OnInit {
 
 	currentTimeEntry: TimeEntry;
 	formHeight: number;
+	hoursMax: number;
+	hoursMin: number;
+	minutesMax: number;
+	minutesIncrement: number;
 	isActualTimeChanged: boolean;
 	isEstimatedTimeEnabled: boolean;
 	isEstimatedTimeShown: boolean;
 	isEstimatedTimeChanged: boolean;
 	isFromToFormChanged: boolean;
+	isFromToRequired: boolean;
 	isRequestLoading: boolean;
 	isTasksLoading: boolean;
+	isTimeActualValid: boolean;
+	isTimeEstimatedValid: boolean;
 	projectList: Project[];
 	projectModel: Project;
 	taskList: Task[];
@@ -77,12 +84,31 @@ export class EntryTimeFormComponent implements OnInit {
 
 		this.isEstimatedTimeEnabled = this.settingsService.getIsEstimatedTimeEnabled();
 
+		this.isFromToRequired = this.settingsService.getIsFromToRequired();
+		this.minutesIncrement = this.settingsService.getTimeEntryMinutesIncrement();
+		this.minutesMax = 59 - (59 % this.minutesIncrement);
+
+		if (this.userInfo.timeFormat == 12) {
+			this.hoursMin = 1;
+			this.hoursMax = 12;
+		}
+		else {
+			this.hoursMin = 0; 
+			this.hoursMax = 23;
+		}
+
 		this.currentTimeEntry = new TimeEntry(this.timeEntry);
 		this.isEstimatedTimeShown = this.timeEntry.timeValues.timeEstimated > 0;
 		this.timeActual = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeActual);
 		this.timeEstimated = this.convertSecondsToTimeFormat(this.timeEntry.timeValues.timeEstimated);
+		this.isTimeActualValid = this.timeEntry.timeValues.timeActual > 0;
+		this.isTimeEstimatedValid = this.timeEntry.timeValues.timeEstimated > 0;
 
 		if (this.currentTimeEntry.timeOptions.isFromToShow) {
+			this.fillFromToForm();
+		}
+		else if (this.isFromToRequired) {
+			this.currentTimeEntry.timeOptions.isFromToShow = true;
 			this.fillFromToForm();
 		}
 
@@ -129,6 +155,7 @@ export class EntryTimeFormComponent implements OnInit {
 
 	openFromToForm(): void {
 		this.currentTimeEntry.timeOptions.isFromToShow = true;
+		this.fillFromToForm();
 	}
 
 	closeFromToForm(): void {
@@ -139,9 +166,9 @@ export class EntryTimeFormComponent implements OnInit {
 
 	validateFromToForm(): void {
 		this.isFromToFormChanged = true;
-		this.timeTo = this.getMax(this.timeFrom, this.timeTo);
 		this.setTimeActual();
 		this.timeActual = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeActual);
+		this.isTimeActualValid = this.currentTimeEntry.timeValues.timeActual > 0;
 	}
 
 	private isFromToFormValueValid(): boolean {
@@ -150,16 +177,8 @@ export class EntryTimeFormComponent implements OnInit {
 
 	private fillFromToForm(): void {
 		this.currentTimeEntry.timeOptions.isFromToShow = true;
-		this.timeFrom = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeFrom);
-		this.timeTo = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeTo);
-	}
-
-	private getMax(timeFrom: Time, timeTo: Time): Time {
-		if (this.convertTimeFormatToSeconds(timeFrom) > this.convertTimeFormatToSeconds(timeTo)) {
-			return new Time(timeFrom.hours, timeFrom.minutes);
-		}
-
-		return new Time(timeTo.hours, timeTo.minutes);
+		this.timeFrom = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeFrom, true);
+		this.timeTo = this.convertSecondsToTimeFormat(this.currentTimeEntry.timeValues.timeTo, true);
 	}
 
 	// TRACKING TIME
@@ -170,11 +189,13 @@ export class EntryTimeFormComponent implements OnInit {
 		this.currentTimeEntry.timeValues.timeActual = this.convertTimeFormatToSeconds(this.timeActual);
 		this.currentTimeEntry.timeValues.timeFrom = null;
 		this.currentTimeEntry.timeValues.timeTo = null;
+		this.isTimeActualValid = this.currentTimeEntry.timeValues.timeActual > 0;
 	}
 
 	timeEstimatedOnChange(): void {
 		this.isEstimatedTimeChanged = true;
 		this.currentTimeEntry.timeValues.timeEstimated = this.convertTimeFormatToSeconds(this.timeEstimated);
+		this.isTimeEstimatedValid = this.currentTimeEntry.timeValues.timeEstimated > 0;
 	}
 
 	// SUBMIT TIMEENTRY
@@ -191,7 +212,7 @@ export class EntryTimeFormComponent implements OnInit {
 		let submitObservable: Observable<any>;
 		let isNewTimeEntry: boolean;
 
-		this.currentTimeEntry.timeOptions.isFromToShow = this.currentTimeEntry.timeOptions.isFromToShow && this.isFromToFormValueValid();
+		this.currentTimeEntry.timeOptions.isFromToShow = (this.currentTimeEntry.timeOptions.isFromToShow && this.isFromToFormValueValid()) || this.isFromToRequired;
 		this.currentTimeEntry.memberId = this.impersonationService.impersonationId || this.authService.authUser.id;
 
 		if (this.currentTimeEntry.id) {
@@ -366,19 +387,48 @@ export class EntryTimeFormComponent implements OnInit {
 	private setTimeActual(): void {
 		this.currentTimeEntry.timeValues.timeFrom = this.convertTimeFormatToSeconds(this.timeFrom);
 		this.currentTimeEntry.timeValues.timeTo = this.convertTimeFormatToSeconds(this.timeTo);
-		this.currentTimeEntry.timeValues.timeActual = this.convertTimeFormatToSeconds(this.timeTo) -
-			this.convertTimeFormatToSeconds(this.timeFrom);
+		this.currentTimeEntry.timeValues.timeActual = Math.max(0, this.convertTimeFormatToSeconds(this.timeTo) - this.convertTimeFormatToSeconds(this.timeFrom));
 	}
 
 	private convertTimeFormatToSeconds(time: Time): number {
-		return +time.hours * 3600 + +time.minutes * 60 + (+time.seconds || 0);
+		let h = +time.hours;
+		let m = +time.minutes;
+		let s = (+time.seconds || 0);
+		if (this.hoursMax == 12) {  
+			if (time.period == 'AM') {
+				if (h == 12) {
+					h = 0;
+				}
+			}
+			else if (time.period == 'PM'){
+				if (h != 12) {
+					h = h + 12;
+				}
+			}
+		}
+		return (h * 3600) + (m * 60) + s;
 	}
 
-	private convertSecondsToTimeFormat(time: number): Time {
+	private convertSecondsToTimeFormat(time: number, isFromToTime?: boolean): Time {
 		let h = Math.floor(time / 3600 >> 0);
 		let m = Math.floor(time / 60 >> 0) - h * 60;
 		let s = time - m * 60 - h * 3600;
-		return new Time(('00' + h).slice(-2), ('00' + m).slice(-2), ('00' + s).slice(-2));
+		let period = null;
+		if (isFromToTime && this.hoursMax == 12) {
+			if (h <= 11) {
+				period = 'AM';
+				if (h == 0) {
+					h = 12;
+				}
+			}
+			else {
+				period = 'PM';
+				if (h > 12) {
+					h = h - 12;
+				}
+			}
+		}
+		return new Time(('00' + h).slice(-2), ('00' + m).slice(-2), ('00' + s).slice(-2), period);
 	}
 
 	private removeNonActiveProjects(projectList: Project[]): Project[] {

@@ -23,11 +23,13 @@ export class Time {
 	hours: string;
 	minutes: string;
 	seconds: string;
+	period: string;
 
-	constructor(hours: string, minutes: string, seconds?: string) {
+	constructor(hours: string, minutes: string, seconds?: string, period?: string) {
 		this.hours = hours;
 		this.minutes = minutes;
 		this.seconds = seconds;
+		this.period = period;
 	}
 }
 
