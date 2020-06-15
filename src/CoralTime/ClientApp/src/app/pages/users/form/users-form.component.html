@@ -31,6 +31,17 @@
                 <div *ngIf="showErrors[2] && model.userName.trim()" class="ct-error-text">User with this username already exists.</div>
             </div>
 
+             <!--Role can't be at the bottom because if there are more than 2 roles available, the dropdown is clipped. Maybe not the best fix for the issue but it's the easiest solution.-->
+            <div>
+                <label class="ct-form-label">Role</label>
+                <ct-select [disabled]="user.id === authUser.id || user.id === impersonateUser?.id"
+                           [name]="'role'"
+                           [(ngModel)]="roleModel"
+                           (ngModelChange)="roleOnChange()"
+                           [options]="roles">
+                </ct-select>
+            </div>
+
             <div *ngIf="user.id">
                 <label class="ct-form-label">User Status</label>
                 <ct-select [disabled]="user?.id == authUser.id || user.id == impersonateUser?.id"
@@ -61,17 +72,6 @@
                     <div *ngIf="model.email.trim() && !email.errors?.pattern" class="ct-error-text">User with this email already exists</div>
                     <div *ngIf="model.email.trim() && email.errors?.pattern" class="ct-error-text">Invalid email</div>
                 </ng-template>
-            </div>
-
-            <div>
-                <label class="ct-form-label">Role</label>
-                <ct-select [disabled]="user.id === authUser.id || user.id === impersonateUser?.id"
-                           [name]="'role'"
-                           [displayName]="'title'" [trackBy]="'value'"
-                           [(ngModel)]="roleModel"
-                           (ngModelChange)="roleOnChange()"
-                           [options]="roles">
-                </ct-select>
             </div>
         </div>
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
+using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.Common.Helpers;
 using CoralTime.DAL.ConvertModelToView;
@@ -29,21 +30,17 @@ namespace CoralTime.BL.Services
         // Tab "Projects - Grid". Return projects for manager where it has "manager" role only!
         public IEnumerable<ManagerProjectsView> ManageProjectsOfManager()
         {
-            // If user is not manager at project. return empty list. Tab "Projects - Grid" not be available (Front-end check).
-            if (!BaseMemberImpersonated.User.IsAdmin && !BaseMemberImpersonated.User.IsManager)
-            {
-                return new List<ManagerProjectsView>();
-            }
-
             var projectsView = new List<ProjectView>();
 
-            //Constraint for admin: return all projects. Tab "Projects - Grid".
-            if (BaseMemberImpersonated.User.IsAdmin)
+            var managesAll = Authorize(BaseMemberImpersonated, Constants.PolicyManagesAllProjects);
+
+            //Constraint for admin (or any user with ManagesAllProjects permission): return all projects. Tab "Projects - Grid".
+            if (managesAll)
             {
                 projectsView = Uow.ProjectRepository.LinkedCacheGetList().Select(p => p.GetViewManageProjectsOfManager(Mapper, CountActiveMembers(), GetGlobalActiveTasks())).ToList();
             }
             // Constraint for manager: return all projects for Member where it assing at Manager. Tab "Projects - Grid" available (Front-end check) if return something.
-            else if(!BaseMemberImpersonated.User.IsAdmin && BaseMemberImpersonated.User.IsManager)
+            else
             {
                 // Get All projects ids where member has manager role at this project.
                 var targetedProjects = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
@@ -51,7 +48,11 @@ namespace CoralTime.BL.Services
                     .Select(x => x.Project)
                     .ToList();
 
-                projectsView = targetedProjects.Select(p => p.GetViewManageProjectsOfManager(Mapper, CountActiveMembers(), GetGlobalActiveTasks())).ToList();
+                var isManager = targetedProjects.Count > 0;
+                if (isManager)
+                {
+                    projectsView = targetedProjects.Select(p => p.GetViewManageProjectsOfManager(Mapper, CountActiveMembers(), GetGlobalActiveTasks())).ToList();
+                }
             }
 
             return projectsView.Select(Mapper.Map<ProjectView, ManagerProjectsView>);
@@ -66,9 +67,11 @@ namespace CoralTime.BL.Services
 
             var getGlobalTasks = GetGlobalActiveTasks();
 
+            var managesAll = Authorize(BaseMemberImpersonated, Constants.PolicyManagesAllProjects);
+
             #region Constrain for: admin: return all projects. Tab "TimeTracker -> All Projects".
 
-            if (BaseMemberImpersonated.User.IsAdmin)
+            if (managesAll)
             {
                 return getAllProjects.Select(p => p.GetViewTimeTrackerAllProjects(Mapper, CountActiveMembers(), BaseMemberImpersonated.User.UserName, getGlobalTasks));
             }
@@ -151,6 +154,18 @@ namespace CoralTime.BL.Services
             Uow.ProjectRepository.LinkedCacheClear();
 
             var projectById = Uow.ProjectRepository.LinkedCacheGetById(project.Id);
+
+            //Automatically add current user / creator as a manager of the project.
+            var memberProjectRole = new DAL.Models.Member.MemberProjectRole
+            {
+                MemberId = BaseMemberImpersonated.Id,
+                ProjectId = projectById.Id,
+                RoleId = Uow.ProjectRoleRepository.GetManagerRoleId()
+            };
+
+            Uow.MemberProjectRoleRepository.Insert(memberProjectRole);
+            Uow.Save();
+            Uow.MemberProjectRoleRepository.LinkedCacheClear();
 
             return projectById.GetViewTimeTrackerAllProjects(Mapper, CountActiveMembers());
         }

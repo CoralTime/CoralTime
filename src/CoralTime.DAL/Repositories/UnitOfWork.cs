@@ -4,6 +4,8 @@ using CoralTime.DAL.Models.LogChanges;
 using CoralTime.DAL.Repositories.Member;
 using CoralTime.DAL.Repositories.User;
 using IdentityModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -14,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using MemberActionTypes = CoralTime.Common.Constants.Constants.MemberActionTypes;
 
 namespace CoralTime.DAL.Repositories
@@ -24,16 +27,19 @@ namespace CoralTime.DAL.Repositories
 
         private IMemoryCache MemoryCache { get; }
 
+        private IAuthorizationPolicyProvider PolicyProvider { get; }
+
         private string UserId { get; }
 
         public Models.Member.Member MemberCurrent { get; }
 
         public Models.Member.Member MemberImpersonated { get; }
 
-        public UnitOfWork(AppDbContext appDbContext, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor)
+        public UnitOfWork(AppDbContext appDbContext, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor, IAuthorizationPolicyProvider policyProvider)
         {
             AppDbContext = appDbContext;
             MemoryCache = memoryCache;
+            PolicyProvider = policyProvider;
             UserId = GetUserIdFromHttpContext(httpContextAccessor);
 
             var userNameCurrent = GetUserNameCurrentFromHttpContext(httpContextAccessor);
@@ -45,6 +51,32 @@ namespace CoralTime.DAL.Repositories
 
                 MemberCurrent = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameCurrent);
                 MemberImpersonated = MemberRepository.LinkedCacheGetByUserNameAndCheck(userNameImpersonated);
+            }
+        }
+
+        public bool Authorize(Models.Member.Member user, string policyName)
+        {
+            //We can't use the default AuthorizationService provided by the framework (DefaultAuthorizationService) because we need to handle impersonated users as well.
+
+            if (policyName == null)
+            {
+                throw new ArgumentNullException(nameof(policyName));
+            }
+
+            var policy = PolicyProvider.GetPolicyAsync(policyName).Result;
+            if (policy == null)
+            {
+                throw new InvalidOperationException($"No policy found: {policyName}.");
+            }
+
+            var roleRequirement = policy.Requirements.OfType<ClaimsAuthorizationRequirement>().Where(x=>x.ClaimType == ClaimTypes.Role).FirstOrDefault();
+            if (roleRequirement != null && roleRequirement.AllowedValues.Contains(user.User.Role))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

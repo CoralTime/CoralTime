@@ -115,7 +115,7 @@ export class UsersComponent implements OnInit {
 			this.authService.logout();
 			return;
 		}
-		if (!this.aclService.isGranted('roleEditMember')) {
+		if (!this.aclService.isGranted('EditMember')) {
 			return;
 		}
 

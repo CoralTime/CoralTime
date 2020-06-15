@@ -83,7 +83,8 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"The project with id {projectId} not found or is not active");
             }
 
-            var userHaveAccess = BaseMemberImpersonated.User.IsAdmin
+            var managesAll = Authorize(BaseMemberImpersonated, PolicyManagesAllProjects);
+            var userHaveAccess = managesAll
                 || !project.IsPrivate
                 || Uow.MemberProjectRoleRepository.LinkedCacheGetList().Exists(r => r.ProjectId == projectId && r.MemberId == BaseMemberImpersonated.Id);
 

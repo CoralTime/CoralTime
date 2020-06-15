@@ -12,7 +12,7 @@
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Projects</a>
         </div>
 
-        <div *ctIsGranted="'roleAddProject'" (click)="openProjectDialog()" class="ct-add-link">
+        <div *ctIsGranted="'AddProject'" (click)="openProjectDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New Project</a>
         </div>
     </div>

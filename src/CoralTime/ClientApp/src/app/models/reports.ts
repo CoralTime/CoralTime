@@ -50,8 +50,7 @@ export interface ReportDropdownsDetails {
 export interface CurrentUserDetails {
 	currentUserFullName: string;
 	currentUserId: number;
-	isAdminCurrentUser: boolean;
-	isManagerCurrentUser: boolean;
+	currentUserRole: string;
 }
 
 export interface ClientDetail {

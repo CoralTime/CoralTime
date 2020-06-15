@@ -63,6 +63,38 @@ namespace CoralTime.DAL
             }
         }
 
+        public static async Task InitializeRoleAsync(IServiceProvider serviceProvider, IConfiguration configuration, string roleName)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                using (DbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+                {
+                    var isExistDataBase = (DbContext.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+
+                    Configuration = configuration;
+                    ServiceProvider = scope.ServiceProvider;
+                    UserManager = ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                    RoleManager = ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+                    var sqlDb = DbContext.Database;
+
+                    if (sqlDb != null)
+                    {
+                        var aspNetRoleNew = new IdentityRole(roleName);
+                        var aspNetRoleDb = await RoleManager.FindByNameAsync(aspNetRoleNew.Name);
+                        if (aspNetRoleDb == null)
+                        {
+                            var aspNetRoleCreateResult = await RoleManager.CreateAsync(aspNetRoleNew);
+                            if (!aspNetRoleCreateResult.Succeeded)
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public static async Task InitializeDataBase(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             Configuration = configuration;
@@ -125,9 +157,10 @@ namespace CoralTime.DAL
 
         private static async Task InitializeRoles()
         {
-            foreach (var aspNetRole in Constants.ApplicationRoles)
+            var rolesSection = Configuration.GetSection("Roles");
+            foreach (var roleItem in rolesSection.GetChildren())
             {
-                var aspNetRoleNew = new IdentityRole(aspNetRole);
+                var aspNetRoleNew = new IdentityRole(roleItem.Key);
                 var aspNetRoleDb = await RoleManager.FindByNameAsync(aspNetRoleNew.Name);
                 if (aspNetRoleDb == null)
                 {
@@ -220,8 +253,7 @@ namespace CoralTime.DAL
                 {
                     UserName = userName,
                     Email = userEmail,
-                    IsAdmin = roleUser == Constants.ApplicationRoleAdmin,
-                    IsManager = false,
+                    Role = roleUser,
                     IsActive = bool.Parse(user["IsActive"])
                 };
 
@@ -610,19 +642,19 @@ namespace CoralTime.DAL
 
         private static void UpdateIsManagerRoleForMember(int projectRoleManagerId, List<MemberProjectRole> memberProjectRoleList, Member mprUser, ProjectRole mprProjectRole)
         {
-            var checkManagerRoleFromDb = memberProjectRoleList.Exists(x => x.MemberId == mprUser.Id && x.RoleId == projectRoleManagerId);
+            /*var checkManagerRoleFromDb = memberProjectRoleList.Exists(x => x.MemberId == mprUser.Id && x.RoleId == projectRoleManagerId);
             var checkManagerRoleFromConfig = mprProjectRole.Name == Constants.ProjectRoleManager;
 
             mprUser.User.IsManager = checkManagerRoleFromDb || checkManagerRoleFromConfig;
 
-            DbContext.Members.Update(mprUser);
+            DbContext.Members.Update(mprUser);*/
         }
 
         private static bool CanMemberCreateTimeEntry(List<MemberProjectRole> memberProjectRolesList, Member memberByName)
         {
             var isMemberAssignAtProject = memberProjectRolesList.Exists(x => x.MemberId == memberByName.Id);
 
-            return memberByName.User.IsAdmin || isMemberAssignAtProject;
+            return memberByName.User.Role == Constants.ApplicationRoleAdmin || isMemberAssignAtProject;
         }
 
         private static DateTime? CreateTimeEntryDate(int timeEntryDayOfWeek)

@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Roles } from '../../../../core/auth/permissions';
 import { TimeEntry, CalendarDay, Time } from '../../../../models/calendar';
 import { Project } from '../../../../models/project';
 import { Task } from '../../../../models/task';
@@ -432,12 +431,7 @@ export class EntryTimeFormComponent implements OnInit {
 	}
 
 	private removeNonActiveProjects(projectList: Project[]): Project[] {
-		let isUserAdmin = this.authService.isLoggedIn() && this.authService.authUser.role === Roles.admin;
-		if (isUserAdmin) {
-			return projectList.filter(project => project.isActive === true);
-		} else {
-			return projectList.filter(project => project.isActive === true);
-		}
+		return projectList.filter(project => project.isActive === true);
 	}
 
 	private filterProjects(projectList: Project[]): Project[] {

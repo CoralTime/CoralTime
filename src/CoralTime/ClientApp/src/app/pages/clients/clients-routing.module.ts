@@ -9,7 +9,7 @@ const routes: Routes = [
 		component: ClientsComponent,
 		canActivate: [AuthGuard],
 		data: {
-			role: 'roleViewClient'
+			policy: 'ViewClient'
 		}
 	}
 ];

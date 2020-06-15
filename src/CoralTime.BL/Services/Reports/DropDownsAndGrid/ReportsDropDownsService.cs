@@ -93,14 +93,14 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             };
         }
 
-        private List<Client> CreateClients()
+        private List<Client> CreateClients(bool managesAll)
         {
             var projects = new List<Project>();
             var clients = new List<Client>();
 
             #region GetProjects allProjectsForAdmin or projectsWithAssignUsersAndPublicProjects.
 
-            if (BaseMemberImpersonated.User.IsAdmin)
+            if (managesAll)
             {
                 var allProjectsForAdmin = Uow.ProjectRepository.LinkedCacheGetList().ToList();
                 projects = allProjectsForAdmin;
@@ -166,7 +166,9 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
 
-            var clients = CreateClients();
+			var managesAll = Authorize(ReportMemberImpersonated, Constants.PolicyManagesAllProjects);
+
+            var clients = CreateClients(managesAll);
             foreach (var client in clients)
             {
                 var reportProjectViewByUserId = new List<ReportProjectView>();
@@ -185,7 +187,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
 
                     var isManagerOnProject = project.MemberProjectRoles.Exists(r => r.MemberId == ReportMemberImpersonated.Id && r.RoleId == managerRoleId);
 
-                    if (ReportMemberImpersonated.User.IsAdmin || isManagerOnProject)
+                    if (managesAll || isManagerOnProject)
                     {
                         var usersDetailsView = project.MemberProjectRoles.Select(x => x.Member.GetViewReportUsers(x.RoleId, Mapper)).ToList();
 
@@ -226,8 +228,7 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 CurrentUserFullName = ReportMemberImpersonated.FullName,
                 CurrentUserId = ReportMemberImpersonated.Id,
-                IsAdminCurrentUser = ReportMemberImpersonated.User.IsAdmin,
-                IsManagerCurrentUser = ReportMemberImpersonated.User.IsManager,
+                CurrentUserRole = ReportMemberImpersonated.User.Role,
             };
         }
 

@@ -103,7 +103,7 @@ export class TasksComponent implements OnInit {
 	// FORM
 
 	openTaskDialog(task: Task = null): void {
-		if (!this.aclService.isGranted('roleEditTask')) {
+		if (!this.aclService.isGranted('EditTask')) {
 			return;
 		}
 

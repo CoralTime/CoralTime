@@ -5,6 +5,7 @@ import { Project } from '../../../models/project';
 import { UserProject } from '../../../models/user-project';
 import { UsersService } from '../../../services/users.service';
 import { NotificationService } from '../../../core/notification.service';
+import { AclService } from '../../../core/auth/acl.service';
 import { AuthUser } from '../../../core/auth/auth-user';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ProjectRolesService } from '../../../services/project-roles.service';
@@ -26,6 +27,7 @@ export class ProjectUsersComponent implements OnInit {
 	@ViewChild('grid', { static: true }) gridContainer: ElementRef;
 
 	authUser: AuthUser;
+	canAssignProjectManager: boolean = false;
 	defaultProjectRole: ProjectRole;
 	filterStr: string = '';
 	projectRoles: ProjectRole[];
@@ -44,7 +46,8 @@ export class ProjectUsersComponent implements OnInit {
 	private notAssignedUsersLastEvent: any;
 	private notAssignedUsersSubject = new Subject<any>();
 
-	constructor(private authService: AuthService,
+	constructor(private aclService: AclService,
+	            private authService: AuthService,
 	            private notificationService: NotificationService,
 	            private projectRolesService: ProjectRolesService,
 	            private settingsService: SettingsService,
@@ -53,6 +56,7 @@ export class ProjectUsersComponent implements OnInit {
 
 	ngOnInit() {
 		this.authUser = this.authService.authUser;
+		this.canAssignProjectManager = this.aclService.isGranted("AssignProjectManager");
 		this.getProjectRoles();
 		this.loadAssignedUsers();
 		this.loadNotAssignedUsers();

@@ -66,7 +66,7 @@ namespace CoralTime.Api.v1.Odata.Members
 
         // POST: api/v1/odata/Members
         [HttpPost]
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyAddMember)]
         public async Task<IActionResult> Create([FromBody] MemberView memberView)
         {
             if (!ModelState.IsValid)
@@ -106,7 +106,7 @@ namespace CoralTime.Api.v1.Odata.Members
         //DELETE :api/v1/odata/Members(1)
         [ODataRoute(MembersWithIdRoute)]
         [HttpDelete(IdRoute)]
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyEditMember)]
         public IActionResult Delete([FromODataUri]int id) => BadRequest($"Can't delete the member with Id - {id}");
     }
 }

@@ -112,7 +112,7 @@ export class ProjectsComponent implements OnInit {
 	// FORM
 
 	openProjectDialog(project: Project = null): void {
-		if (!this.aclService.isGranted('roleEditProject')) {
+		if (!this.aclService.isGranted('EditProject')) {
 			return;
 		}
 

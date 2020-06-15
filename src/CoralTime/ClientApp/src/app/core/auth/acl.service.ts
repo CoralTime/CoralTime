@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { Permissions } from './permissions';
 import { ImpersonationService } from '../../services/impersonation.service';
 
 @Injectable()
@@ -9,19 +8,21 @@ export class AclService {
 	            private impersonationService: ImpersonationService) {
 	}
 
-	isGranted(role: string): boolean {
+	isGranted(policy: string): boolean {
 		if (!this.authService.isLoggedIn()) {
 			return false;
 		}
 
-		if (typeof Permissions[role] === 'undefined') {
-			throw new Error('Role "' + role + '" doesn\'t exists.');
-		}
-
 		if (this.impersonationService.impersonationUser) {
-			return !(Permissions[role] % this.impersonationService.impersonationUser.getPermissionRole());
+			return this.isGrantedForRole(policy, this.impersonationService.impersonationUser.role);
 		} else {
-			return !(Permissions[role] % this.authService.authUser.role);
+			return this.isGrantedForRole(policy, this.authService.authUser.role);
 		}
+	}
+
+	isGrantedForRole(policy: string, role: string): boolean {
+		var policies = this.authService.roles[role] as string;
+		var isGranted = (policies && policies.indexOf(policy) != -1);
+		return isGranted;
 	}
 }

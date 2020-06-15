@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static CoralTime.Common.Constants.Constants.Routes;
 
 namespace CoralTime.Api.v1
@@ -23,11 +25,19 @@ namespace CoralTime.Api.v1
         {
             try
             {
+                var roles = new Dictionary<string, string>();
+                var rolesSection = _config.GetSection("Roles");
+                foreach (var roleItem in rolesSection.GetChildren())
+                {
+                    roles.Add(roleItem.Key, roleItem.Value);
+                }                
+
                 bool.TryParse(_config["Authentication:EnableAzure"], out var enableAzure);
                 var settings = new AuthenticationSettings
                 {
                     EnableAzure = enableAzure,
-                    InstrumentationKey = _config["ApplicationInsights:InstrumentationKey"]
+                    InstrumentationKey = _config["ApplicationInsights:InstrumentationKey"],
+                    Roles = roles
                 };
                 if (enableAzure)
                 {

@@ -15,7 +15,7 @@ using static CoralTime.Common.Constants.Constants.Routes.OData;
 namespace CoralTime.Api.v1.Odata
 {
     [Route(BaseODataControllerRoute)]
-    [Authorize(Roles = ApplicationRoleAdmin)]
+    [Authorize(Policy = PolicyViewIntegrationPage)]
     public class VstsProjectIntegrationController : BaseODataController<VstsProjectIntegrationController, IVstsService>
     {
         private readonly IVstsAdminService _vstsAdminService;

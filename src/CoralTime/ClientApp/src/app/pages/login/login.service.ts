@@ -8,7 +8,8 @@ import { HttpClient } from '@angular/common/http';
 export interface LoginSettings {
 	enableAzure: boolean;
 	azureSettings: AzureSettings;
-    instrumentationKey: string;
+	instrumentationKey: string;
+	roles: object;
 }
 
 export interface AzureSettings {

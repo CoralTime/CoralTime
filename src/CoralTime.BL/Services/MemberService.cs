@@ -88,12 +88,11 @@ namespace CoralTime.BL.Services
             {
                 UserName = memberView.UserName,
                 Email = memberView.Email,
-                IsManager = false,
                 IsActive = true,
-                IsAdmin = memberView.IsAdmin
+                Role = memberView.Role
             };
 
-            var roleUser = memberView.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
+            var roleUser = memberView.Role;
 
             #region Check ApplicationUser, Roles, Member
 
@@ -181,7 +180,9 @@ namespace CoralTime.BL.Services
             var currentMember = Uow.MemberRepository.GetQueryByMemberId(BaseMemberCurrent.Id);
             var updatedMember = Uow.MemberRepository.GetQueryByMemberId(memberView.Id);
 
-            if (currentMember.Id != updatedMember.Id && !currentMember.User.IsAdmin)
+            var canEditMember = Authorize(currentMember, PolicyEditMember);
+
+            if (currentMember.Id != updatedMember.Id && !canEditMember)
             {
                 throw new CoralTimeForbiddenException($"Member with userName {BaseMemberCurrent.User.UserName} can't change other user's data.");
             }
@@ -214,15 +215,15 @@ namespace CoralTime.BL.Services
                 }
             }
 
-            if (currentMember.User.IsAdmin)
+            if (canEditMember)
             {
                 var newEmail = memberView.Email;
                 var newUserName = memberView.UserName;
                 var newIsActive = memberView.IsActive;
-                var newIsAdmin = memberView.IsAdmin;
+                var newRole = memberView.Role;
 
                 if (updatedMember.User.Email != newEmail || updatedMember.User.UserName != newUserName ||
-                    updatedMember.User.IsActive != newIsActive || updatedMember.User.IsAdmin != newIsAdmin)
+                    updatedMember.User.IsActive != newIsActive || updatedMember.User.Role != newRole)
                 {
                     updatedMember.User.Email = newEmail;
                     updatedMember.User.UserName = newUserName;
@@ -230,15 +231,15 @@ namespace CoralTime.BL.Services
                     var updateResult = await _userManager.UpdateAsync(updatedMember.User);
                     if (updateResult.Succeeded)
                     {
-                        var startRole = updatedMember.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
+                        var startRole = updatedMember.User.Role;
 
                         if (currentMember.Id != updatedMember.Id)
                         {
                             updatedMember.User.IsActive = newIsActive;
-                            updatedMember.User.IsAdmin = newIsAdmin;
+                            updatedMember.User.Role = newRole;
                         }
 
-                        var finishRole = updatedMember.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser;
+                        var finishRole = updatedMember.User.Role;
 
                         Uow.MemberRepository.Update(updatedMember);
                         Uow.Save();
@@ -679,7 +680,7 @@ namespace CoralTime.BL.Services
                 CheckIdentityResultErrors(removeClaimsForMember);
             }
 
-            var claimsForMemberNew = ClaimsCreator.CreateUserClaims(memberById.User.UserName, memberById.FullName, memberById.User.Email, memberById.User.IsAdmin ? ApplicationRoleAdmin : ApplicationRoleUser, memberById.Id);
+            var claimsForMemberNew = ClaimsCreator.CreateUserClaims(memberById.User.UserName, memberById.FullName, memberById.User.Email, memberById.User.Role, memberById.Id);
             var addClaimsForMember = _userManager.AddClaimsAsync(memberById.User, claimsForMemberNew).GetAwaiter().GetResult();
             if (!addClaimsForMember.Succeeded)
             {
@@ -759,7 +760,8 @@ namespace CoralTime.BL.Services
 
         private IEnumerable<Member> GetAllMembersCommon()
         {
-            if (BaseMemberImpersonated.User.IsAdmin || BaseMemberImpersonated.User.IsManager)
+            var viewMember = Authorize(BaseMemberImpersonated, PolicyViewMember);
+            if (viewMember)
             {
                 var membersAll = Uow.MemberRepository.LinkedCacheGetList();
                 if (membersAll == null)

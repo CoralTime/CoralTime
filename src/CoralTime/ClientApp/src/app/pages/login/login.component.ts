@@ -31,7 +31,8 @@ export class LoginComponent implements OnInit {
 
 	ngOnInit() {
 		this.route.data.forEach((data: { loginSettings: LoginSettings }) => {
-            this.setupAppInsights(data.loginSettings.instrumentationKey);
+			this.setupAppInsights(data.loginSettings.instrumentationKey);
+			this.authService.roles = data.loginSettings.roles;
 			if (data.loginSettings.enableAzure) {
 				this.enableAzure = true;                
 				this.createConfig(data.loginSettings.azureSettings);
@@ -89,7 +90,7 @@ export class LoginComponent implements OnInit {
 
 		return;
 	}
-	
+
 	private setupAppInsights(instrumentationKey: string ): void {
         localStorage.setItem('instrumentationKey', instrumentationKey);
 		if (instrumentationKey!= null && instrumentationKey !='') {

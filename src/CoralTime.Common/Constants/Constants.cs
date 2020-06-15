@@ -14,7 +14,25 @@ namespace CoralTime.Common.Constants
         public const string ApplicationRoleAdmin = "admin";
         public const string ApplicationRoleUser = "user";
 
-        public static readonly IEnumerable<string> ApplicationRoles = new[] {ApplicationRoleAdmin, ApplicationRoleUser};
+        public const string PolicyAuthenticatedUser = "AuthenticatedUser";
+        public const string PolicyViewProject = "ViewProject";
+        public const string PolicyAddProject = "AddProject";
+        public const string PolicyEditProject = "EditProject";
+        public const string PolicyChangeProjectStatus = "ChangeProjectStatus";
+        public const string PolicyAssignProjectManager = "AssignProjectManager";
+        public const string PolicyAssignProjectMember = "AssignProjectMember";
+        public const string PolicyViewClient = "ViewClient";
+        public const string PolicyAddClient = "AddClient";
+        public const string PolicyEditClient = "EditClient";
+        public const string PolicyViewTask = "ViewTask";
+        public const string PolicyAddTask = "AddTask";
+        public const string PolicyEditTask = "EditTask";
+        public const string PolicyViewMember = "ViewMember";
+        public const string PolicyAddMember = "AddMember";
+        public const string PolicyEditMember = "EditMember";
+        public const string PolicyViewAdminPanel = "ViewAdminPanel";
+        public const string PolicyViewIntegrationPage = "ViewIntegrationPage";
+        public const string PolicyManagesAllProjects = "ManagesAllProjects";
 
         #endregion
 
@@ -124,7 +142,6 @@ namespace CoralTime.Common.Constants
 
         #endregion
 
-        public const string JwtIsManagerClaimType = "isManager";
         public const string JwtRefreshTokenLifeTimeClaimType = "refreshTokenLifeTime";
         public const string ImpersonatedUserNameHeader = "Impersonate";
 
@@ -341,7 +358,6 @@ namespace CoralTime.Common.Constants
             }
             public const string RolesScope = "roles";
             public const string WebApiScope = "WebAPI";
-            public const string RoleClaimType = "role";
             public const string AuthenticateScheme = "Bearer";
         }
 

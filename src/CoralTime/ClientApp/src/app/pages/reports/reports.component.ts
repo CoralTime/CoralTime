@@ -1,4 +1,4 @@
-
+import { Subscription } from 'rxjs';
 import {finalize} from 'rxjs/operators';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -20,6 +20,7 @@ import {
 } from '../../models/reports';
 import { User } from '../../models/user';
 import { ArrayUtils } from '../../core/object-utils';
+import { AclService } from '../../core/auth/acl.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { LoadingMaskService } from '../../shared/loading-indicator/loading-mask.service';
 import { NotificationService } from '../../core/notification.service';
@@ -92,8 +93,10 @@ export class ReportsComponent implements OnInit {
 	private reportsConfirmationRef: MatDialogRef<ConfirmationComponent>;
 	private reportsQueryRef: MatDialogRef<ReportsQueryFormComponent>;
 	private reportsSendRef: MatDialogRef<ReportsSendComponent>;
+	private subscriptionAdminOrManager: Subscription;
 
-	constructor(private authService: AuthService,
+	constructor(private aclService: AclService,
+	            private authService: AuthService,
 	            private dialog: MatDialog,
 	            private impersonationService: ImpersonationService,
 	            private loadingService: LoadingMaskService,
@@ -111,6 +114,9 @@ export class ReportsComponent implements OnInit {
 			this.firstDayOfWeek = this.userInfo.weekStart;
 		});
 		this.isUsersFilterShown = this.authService.isUserAdminOrManager;
+		this.subscriptionAdminOrManager = this.authService.adminOrManagerParameterOnChange.subscribe(() => {
+			this.isUsersFilterShown = this.authService.isUserAdminOrManager;
+		});
 
 		this.loadingService.addLoading();
 		this.reportsService.getReportDropdowns().pipe(
@@ -120,6 +126,10 @@ export class ReportsComponent implements OnInit {
 				this.getReportGrid(!!this.reportQuery.queryId);
 				this.onResize();
 			});
+	}
+
+	ngOnDestroy() {
+		this.subscriptionAdminOrManager.unsubscribe();
 	}
 
 	onResize(): void {
@@ -644,10 +654,7 @@ export class ReportsComponent implements OnInit {
 	toggleArchivedProjects(): void {
 		this.showOnlyActiveProjects = !this.showOnlyActiveProjects;
 		this.getProjectItems(this.selectedClients.length ? this.selectedClients : this.reportDropdowns.values.filters);
-
-		if (this.reportDropdowns.values.userDetails.isAdminCurrentUser || this.reportDropdowns.values.userDetails.isManagerCurrentUser) {
-			this.getUserItems(this.projects);
-		}
+		this.getUserItems(this.projects);
 	}
 
 	toggleUser(): void {
@@ -688,7 +695,7 @@ export class ReportsComponent implements OnInit {
 	private getUsersFromProjects(projects: ProjectDetail[]): UserDetail[] {
 		let users = [];
 
-		if (!this.reportDropdowns.values.userDetails.isAdminCurrentUser && this.reportDropdowns.values.userDetails.isManagerCurrentUser) {
+		if (!this.aclService.isGrantedForRole("ManagesAllProjects", this.reportDropdowns.values.userDetails.currentUserRole)) {
 			projects = projects.filter((project: ProjectDetail) => project.isUserManagerOnProject === true);
 		}
 

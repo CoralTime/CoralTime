@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CoralTime.BL.Helpers;
 using CoralTime.BL.Interfaces;
+using CoralTime.Common.Constants;
 using CoralTime.Common.Exceptions;
 using CoralTime.DAL.ConvertModelToView;
 using CoralTime.DAL.ConvertViewToModel;
@@ -37,19 +38,20 @@ namespace CoralTime.BL.Services
             IsTaskTypeNameHasChars(taskTypeView.Name);
             IsNameUnique(taskTypeView);
 
-            if (taskTypeView.ProjectId != null && !BaseMemberCurrent.User.IsAdmin)
+            if (taskTypeView.ProjectId != null)
             {
-                if (taskTypeView.ProjectId != null)
+                var project = Uow.ProjectRepository.LinkedCacheGetById((int)taskTypeView.ProjectId);
+                if (project == null)
                 {
-                    var project = Uow.ProjectRepository.LinkedCacheGetById((int) taskTypeView.ProjectId);
-                    if (project == null)
-                    {
-                        throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeView.ProjectId} not found");
-                    }
+                    throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeView.ProjectId} not found");
+                }
 
+                var managesAll = Authorize(BaseMemberImpersonated, Constants.PolicyManagesAllProjects);
+                if (!managesAll)
+                {
                     var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
 
-                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == BaseMemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList().FirstOrDefault(r => r.MemberId == BaseMemberImpersonated.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
                     if (memberProjectRole == null)
                     {
                         throw new CoralTimeForbiddenException("Forbidden");
@@ -91,7 +93,7 @@ namespace CoralTime.BL.Services
 
             #endregion We shouldn't change projectId for Tasks
 
-            if (taskTypeView.ProjectId != null && !BaseMemberCurrent.User.IsAdmin)
+            if (taskTypeView.ProjectId != null)
             {
                 var project = Uow.ProjectRepository.LinkedCacheGetById((int)taskTypeView.ProjectId);
                 if (project == null)
@@ -99,14 +101,18 @@ namespace CoralTime.BL.Services
                     throw new CoralTimeEntityNotFoundException($"Project with id {taskTypeView.ProjectId} not found");
                 }
 
-                var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
-
-                var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
-                    .FirstOrDefault(r => r.MemberId == BaseMemberCurrent.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
-
-                if (memberProjectRole == null)
+                var managesAll = Authorize(BaseMemberImpersonated, Constants.PolicyManagesAllProjects);
+                if (!managesAll)
                 {
-                    throw new CoralTimeForbiddenException("Forbidden");
+                    var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
+
+                    var memberProjectRole = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
+                        .FirstOrDefault(r => r.MemberId == BaseMemberImpersonated.Id && r.ProjectId == project.Id && r.RoleId == managerRoleId);
+
+                    if (memberProjectRole == null)
+                    {
+                        throw new CoralTimeForbiddenException("Forbidden");
+                    }
                 }
             }
 

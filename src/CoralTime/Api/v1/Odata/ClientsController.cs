@@ -36,7 +36,7 @@ namespace CoralTime.Api.v1.Odata
 
         // POST: api/v1/odata/Clients
         [HttpPost]
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyAddClient)]
         public IActionResult Create([FromBody] ClientView clientData)
         {
             if (!ModelState.IsValid)
@@ -76,7 +76,7 @@ namespace CoralTime.Api.v1.Odata
         // PUT: api/v1/odata/Clients(2)
         [ODataRoute(ClientsWithIdRoute)]
         [HttpPut(IdRoute)]
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyEditClient)]
         public IActionResult Update([FromODataUri]int id, [FromBody] JsonElement clientData)
         {
             if (!ModelState.IsValid)
@@ -98,7 +98,7 @@ namespace CoralTime.Api.v1.Odata
         // PATCH: api/v1/odata/Clients(30)
         [ODataRoute(ClientsWithIdRoute)]
         [HttpPatch(IdRoute)]
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyEditClient)]
         public IActionResult Patch([FromODataUri]int id, [FromBody] JsonElement clientData)
         {
             if (!ModelState.IsValid)
@@ -120,7 +120,7 @@ namespace CoralTime.Api.v1.Odata
         //DELETE :api/v1/odata/Clients(1)
         [HttpDelete(IdRoute)]
         [ODataRoute(ClientsWithIdRoute)]
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyEditClient)]
         public IActionResult Delete([FromODataUri]int id)
         {
             return BadRequest($"Can't delete the client with Id - {id}");

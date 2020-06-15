@@ -41,9 +41,11 @@ using Microsoft.OData.Edm;
 using NLog.Extensions.Logging;
 using NLog.Web;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using CoralTime.BL.Services.Notifications;
 using CoralTime.ViewModels.MemberActions;
@@ -341,7 +343,25 @@ namespace CoralTime
                     options.TokenValidationParameters = tokenValidationParameters;
                 });
 
-            services.AddAuthorization(Config.CreateAuthorizationOptions);
+            services.AddAuthorization(options =>
+            {
+                var roles = new Dictionary<string, string[]>();
+                var rolesSection = Configuration.GetSection("Roles");
+                foreach (var roleItem in rolesSection.GetChildren())
+                {
+                    roles.Add(roleItem.Key,  roleItem.Value.Split(','));
+                }
+
+                var policies = roles.SelectMany(x => x.Value).Distinct().ToArray();
+                foreach (var policyName in policies)
+                {
+                    var policyRoles = roles.Where(x => x.Value.Contains(policyName)).Select(x=>x.Key).ToArray();
+                    options.AddPolicy(policyName, policy =>
+                    {
+                        policy.RequireClaim(ClaimTypes.Role, policyRoles);
+                    });
+                }
+            });
         }
 
         private static IEdmModel SetupODataEntities(IServiceProvider serviceProvider)

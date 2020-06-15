@@ -24,38 +24,38 @@ const FULL_MANAGE_ITEMS = [
 		label: 'Projects',
 		icon: 'ct-projects-icon',
 		routerLink: ['/projects'],
-		permission: 'roleViewProject'
+		permission: 'ViewProject'
 	},
 	{
 		label: 'Clients',
 		icon: 'ct-clients-icon',
 		routerLink: ['/clients'],
-		permission: 'roleViewClient'
+		permission: 'ViewClient'
 
 	},
 	{
 		label: 'Tasks',
 		icon: 'ct-tasks-icon',
 		routerLink: ['/tasks'],
-		permission: 'roleViewTask'
+		permission: 'ViewTask'
 	},
 	{
 		label: 'Users',
 		icon: 'ct-users-icon',
 		routerLink: ['/users'],
-		permission: 'roleViewMember'
+		permission: 'ViewMember'
 	},
 	{
 		label: 'Admin',
 		icon: 'ct-admin-icon',
 		routerLink: ['/admin'],
-		permission: 'roleViewAdminPanel'
+		permission: 'ViewAdminPanel'
 	},
 	{
 		label: 'VSTS Integration',
 		icon: 'ct-integration-icon',
 		routerLink: ['/vsts-integration'],
-		permission: 'roleViewIntegrationPage'
+		permission: 'ViewIntegrationPage'
 	}
 ];
 
@@ -133,29 +133,17 @@ export class NavigationComponent implements OnInit, OnDestroy {
 		this.impersonationUser = this.impersonationService.impersonationUser;
 		this.manageItems = FULL_MANAGE_ITEMS;
 
-		if (this.impersonationUser) {
-			let isManager = this.impersonationUser.isManager;
-			let isAdmin = this.impersonationUser.isAdmin;
-			this.showManageMenu = isManager || isAdmin;
-			this.authService.isUserAdminOrManager = true;
-
-			if (isManager && !isAdmin) {
-				this.manageItems = [FULL_MANAGE_ITEMS[0]];
-			}
-
-			return;
-		}
-
-		if (this.aclService.isGranted('roleAddProject')) {
+		if (this.aclService.isGranted('ViewProject') || this.aclService.isGranted('ViewClient') || this.aclService.isGranted('ViewTask') || this.aclService.isGranted('ViewMember')) {
 			this.showManageMenu = true;
-			this.authService.isUserAdminOrManager = true;
+		}
+		else {
+			this.showManageMenu = false;
 		}
 
 		this.loadingService.addLoading();
 		this.projectsService.getManagerProjectsCount().pipe(
 			finalize(() => this.loadingService.removeLoading()))
 			.subscribe(count => {
-				this.showManageMenu = !!count;
 				this.authService.isUserAdminOrManager = !!count;
 				this.authService.adminOrManagerParameterOnChange.emit();
 			});

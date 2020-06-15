@@ -9,7 +9,7 @@ const routes: Routes = [
 		component: AdminComponent,
 		canActivate: [AuthGuard],
 		data: {
-			role: 'roleViewAdminPanel'
+			policy: 'ViewAdminPanel'
 		}
 	}
 ];

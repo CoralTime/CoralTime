@@ -6,6 +6,7 @@ import { CalendarDay, DateUtils, Time, TimeEntry, TimerResponse } from '../../..
 import { Project } from '../../../models/project';
 import { Task } from '../../../models/task';
 import { User } from '../../../models/user';
+import { AclService } from '../../../core/auth/acl.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ArrayUtils, ObjectUtils } from '../../../core/object-utils';
 import { CalendarService } from '../../../services/calendar.service';
@@ -42,7 +43,8 @@ export class TimerComponent implements OnInit, OnDestroy {
 	private subscriptionImpersonation: Subscription;
 	private timerSubscription: Subscription;
 
-	constructor(private authService: AuthService,
+	constructor(private aclService: AclService,
+	            private authService: AuthService,
 	            private calendarService: CalendarService,
 	            private impersonationService: ImpersonationService,
 	            private loadingService: LoadingMaskService,
@@ -311,7 +313,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 		let errorMessage: string;
 
 		let isTimeEntryAvailable: boolean;
-		if (this.userInfo.isAdmin || this.timeEntry.isUserManagerOnProject) {
+		if (this.aclService.isGranted("ManagesAllProjects") || this.timeEntry.isUserManagerOnProject) {
 			isTimeEntryAvailable = true;
 		} else {
 			isTimeEntryAvailable = !this.timeEntry.isLocked

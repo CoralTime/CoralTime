@@ -105,7 +105,7 @@ export class ClientsComponent implements OnInit {
 	// FORM
 
 	openClientDialog(client: Client = null): void {
-		if (!this.aclService.isGranted('roleEditClient')) {
+		if (!this.aclService.isGranted('EditClient')) {
 			return;
 		}
 

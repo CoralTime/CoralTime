@@ -6,7 +6,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { User } from '../../../models/user';
-import { Roles } from '../../../core/auth/permissions';
 import { AuthService } from '../../../core/auth/auth.service';
 import { AuthUser } from '../../../core/auth/auth-user';
 import { ArrayUtils } from '../../../core/object-utils';
@@ -21,7 +20,7 @@ class FormUser {
 	fullName: string;
 	id: number;
 	isActive: boolean;
-	role: number;
+	role: string;
 	userName: string;
 
 	static fromUser(user: User) {
@@ -31,12 +30,7 @@ class FormUser {
 		instance.userName = user.userName;
 		instance.email = user.email;
 		instance.isActive = user.id ? user.isActive : true;
-
-		if (user.isAdmin) {
-			instance.role = Roles.admin;
-		} else if (user.id) {
-			instance.role = Roles.user;
-		}
+		instance.role = user.role;
 
 		return instance;
 	}
@@ -51,8 +45,7 @@ class FormUser {
 			fullName: this.fullName,
 			id: this.id,
 			isActive: this.isActive,
-			isAdmin: this.role === Roles.admin,
-			isManager: user.isManager,
+			role: this.role,
 			isWeeklyTimeEntryUpdatesSend: user.isWeeklyTimeEntryUpdatesSend,
 			projectsCount: user.projectsCount,
 			sendEmailDays: user.sendEmailDays,
@@ -84,16 +77,12 @@ export class UsersFormComponent implements OnInit {
 	isActive: boolean;
 	isNewUser: boolean;
 	model: FormUser;
-	roleModel: any;
+	roleModel: string;
 	showErrors: boolean[] = []; // [showEmailError, showFullNameError, showUserNameError]
 	stateModel: any;
 	stateText: string;
 	userNotification: string;
-
-	roles = [
-		{value: Roles.admin, title: 'admin'},
-		{value: Roles.user, title: 'user'}
-	];
+	roles: string[];
 
 	states = [
 		{value: true, title: 'active'},
@@ -117,7 +106,8 @@ export class UsersFormComponent implements OnInit {
 		this.submitButtonText = this.user.id ? 'Save' : 'Create';
 
 		this.model = FormUser.fromUser(this.user);
-		this.roleModel = this.user.id ? this.roles.filter((role) => role.value === this.model.role)[0] : this.roles[1];
+		this.roles = Object.keys(this.authService.roles);
+		this.roleModel = this.model.role;
 		this.dialogHeader = this.user.id ? 'Edit' : this.translatePipe.transform('Create New User');
 		this.userNotification = this.user.id ? 'Send update account email' : 'Send invitation email';
 		this.stateModel = ArrayUtils.findByProperty(this.states, 'value', this.model.isActive);
@@ -130,7 +120,7 @@ export class UsersFormComponent implements OnInit {
 	}
 
 	roleOnChange(): void {
-		this.model.role = this.roleModel.value;
+		this.model.role = this.roleModel;
 	}
 
 	validateAndSubmit(form: NgForm): void {

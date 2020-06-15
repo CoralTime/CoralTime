@@ -12,7 +12,7 @@
             <a (click)="toggleTab(false)" [class.ct-active-tab]="!isActiveTab">Archived Tasks</a>
         </div>
 
-        <div *ctIsGranted="'roleAddTask'" (click)="openTaskDialog()" class="ct-add-link">
+        <div *ctIsGranted="'AddTask'" (click)="openTaskDialog()" class="ct-add-link">
             <a class="ct-manage-add">Create New task</a>
         </div>
     </div>

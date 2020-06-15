@@ -66,7 +66,7 @@ namespace CoralTime.Api.v1.Odata.Projects
         }
 
         // POST api/v1/odata/Projects
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyAddProject)]
         [HttpPost]
         public IActionResult Create([FromBody] ProjectView projectData)
         {
@@ -131,7 +131,7 @@ namespace CoralTime.Api.v1.Odata.Projects
         }
 
         // DELETE api/v1/odata/Projects(1)
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyEditProject)]
         [ODataRoute(ProjectsWithIdRoute)]
         [HttpDelete(IdRoute)]
         public IActionResult Delete([FromODataUri] int id)

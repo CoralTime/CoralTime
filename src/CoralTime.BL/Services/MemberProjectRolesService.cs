@@ -10,6 +10,7 @@ using CoralTime.ViewModels.Projects;
 using System.Collections.Generic;
 using System.Linq;
 using CoralTime.DAL.Models.Member;
+using CoralTime.Common.Constants;
 
 namespace CoralTime.BL.Services
 {
@@ -38,7 +39,9 @@ namespace CoralTime.BL.Services
 
             #region Constrain for admin:
 
-            if (BaseMemberImpersonated.User.IsAdmin)
+            var managesAll = Authorize(BaseMemberImpersonated, Constants.PolicyManagesAllProjects);
+
+            if (managesAll)
             {
                 // Add MemberProjectRoles from db to result.
                 memberProjectRoleView.AddRange(allMemberProjectRoles);
@@ -62,21 +65,24 @@ namespace CoralTime.BL.Services
 
             #region Constrain for Manager
 
-            if (BaseMemberImpersonated.User.IsManager)
+
+            var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
+
+            #region Get All projects ids where this member(not this user) has "manager role" at projects.
+
+            var targetedProjectIds = allMemberProjectRoles
+                .Where(x => x.RoleId == managerRoleId && x.MemberId == BaseMemberImpersonated.Id)
+                .Select(x => x.ProjectId)
+                .ToArray();
+
+            allMemberProjectRoles = allMemberProjectRoles.Where(x => targetedProjectIds.Contains(x.ProjectId)).ToList();
+
+            #endregion Get All projects ids where this member(not this user) has "manager role" at projects.
+
+            var isManager = targetedProjectIds.Length > 0;
+
+            if (isManager)
             {
-                var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
-
-                #region Get All projects ids where this member(not this user) has "manager role" at projects.
-
-                var targetedProjectIds = allMemberProjectRoles
-                    .Where(x => x.RoleId == managerRoleId && x.MemberId == BaseMemberImpersonated.Id)
-                    .Select(x => x.ProjectId)
-                    .ToArray();
-
-                allMemberProjectRoles = allMemberProjectRoles.Where(x => targetedProjectIds.Contains(x.ProjectId)).ToList();
-
-                #endregion Get All projects ids where this member(not this user) has "manager role" at projects.
-
                 memberProjectRoleView.AddRange(allMemberProjectRoles);
 
                 /*
@@ -210,10 +216,9 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeAlreadyExistsException($"Project role with projectId = {memberProjectRoleView.ProjectId} and memberId = {memberProjectRoleView.MemberId} already exist");
             }
 
-            //check if current user is manager on selected project and is trying to assign team member
-            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, memberProjectRoleView);
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated, memberProjectRoleView);
 
-            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
+            if (hasAccessAsManager)
             {
                 memberProjectRole = new MemberProjectRole
                 {
@@ -256,10 +261,9 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"ProjectRole with id = {projectRole.Id} not found.");
             }
 
-            //check if current user is manager on selected project and is trying to assign team member
-            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, projectRole);
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated, projectRole);
 
-            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
+            if (hasAccessAsManager)
             {
                 memberProjectRoleById.RoleId = projectRole.RoleId;
 
@@ -287,9 +291,9 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"ProjectRole with id = {projectRole.Id} not found");
             }
 
-            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, projectRole);
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated, projectRole);
 
-            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
+            if (hasAccessAsManager)
             {
                 memberProjectRoleById.RoleId = projectRole.RoleId;
 
@@ -316,13 +320,13 @@ namespace CoralTime.BL.Services
                 throw new CoralTimeEntityNotFoundException($"ProjectRole with id {id} not found");
             }
 
-            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated.Id, new MemberProjectRoleView
+            var hasAccessAsManager = HasAccessAsManager(BaseMemberImpersonated, new MemberProjectRoleView
             {
                 ProjectId = projectRole.ProjectId,
                 RoleId = projectRole.RoleId
             });
 
-            if (BaseMemberImpersonated.User.IsAdmin || hasAccessAsManager)
+            if (hasAccessAsManager)
             {
                 Uow.MemberProjectRoleRepository.Delete(id);
                 Uow.Save();
@@ -347,32 +351,27 @@ namespace CoralTime.BL.Services
             return true;
         }
 
-        private bool HasAccessAsManager(int memberId, MemberProjectRoleView projectRole)
+        private bool HasAccessAsManager(Member member, MemberProjectRoleView projectRole)
         {
+            var managesAll = Authorize(member, Constants.PolicyManagesAllProjects);
+            if (managesAll)
+            {
+                return true;
+            }
+
             var managerRoleId = Uow.ProjectRoleRepository.GetManagerRoleId();
             var memberRoleId = Uow.ProjectRoleRepository.GetMemberRoleId();
 
             //check if current user is manager on selected project and is trying to assign team member
             var hasAccessAsManager = Uow.MemberProjectRoleRepository.LinkedCacheGetList()
-                                         .Any(r => r.ProjectId == projectRole.ProjectId && r.MemberId == memberId && r.RoleId == managerRoleId) && projectRole.RoleId == memberRoleId;
+                                         .Any(r => r.ProjectId == projectRole.ProjectId && r.MemberId == member.Id && r.RoleId == managerRoleId) && projectRole.RoleId == memberRoleId;
 
             return hasAccessAsManager;
         }
 
         private void UpdateIsManager(int memberId)
         {
-            var memberById = Uow.MemberRepository.GetQueryByMemberId(memberId);
-
-            var isManager = CountManagerRoles(memberId) > 0;
-
-            if (memberById.User.IsManager != isManager)
-            {
-                memberById.User.IsManager = isManager;
-
-                Uow.MemberRepository.Update(memberById);
-                Uow.Save();
-                Uow.MemberProjectRoleRepository.LinkedCacheClear();
-            }
+            //No longer necessary. Can be removed in a future release.
         }
 
         private int CountManagerRoles(int memberId) => Uow.MemberProjectRoleRepository.LinkedCacheGetList().Count(x => x.MemberId == memberId && x.RoleId == Uow.ProjectRoleRepository.GetManagerRoleId());

@@ -6,8 +6,6 @@
 
         public int CurrentUserId { get; set; }
 
-        public bool IsManagerCurrentUser { get; set; }
-
-        public bool IsAdminCurrentUser { get; set; }
+        public string CurrentUserRole { get; set; }
     }
 }

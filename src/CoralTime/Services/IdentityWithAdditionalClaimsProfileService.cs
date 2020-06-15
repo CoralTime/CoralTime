@@ -38,7 +38,6 @@ namespace CoralTime.Services
                 .GroupBy(x => x.Type + x.Value).Select(x => x.First())
                 .Select(x => new Claim(type: x.Type, value: x.Value)).ToList();
 
-            resultClaims.Add(new Claim(type: Constants.JwtIsManagerClaimType, value: user.IsManager.ToString().ToLower()));
             resultClaims.Add(new Claim(type: Constants.JwtRefreshTokenLifeTimeClaimType, value: _config["SlidingRefreshTokenLifetime"]));
 
             context.IssuedClaims = resultClaims;

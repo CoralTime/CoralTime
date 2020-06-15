@@ -1,4 +1,6 @@
-﻿namespace CoralTime.ViewModels.Settings
+﻿using System.Collections.Generic;
+
+namespace CoralTime.ViewModels.Settings
 {
     public class AuthenticationSettings
     {
@@ -7,6 +9,8 @@
         public AzureSettings AzureSettings { get; set; }
         
         public string InstrumentationKey { get; set; }
+
+        public Dictionary<string, string> Roles { get; set; }
     }
 
     public class AzureSettings

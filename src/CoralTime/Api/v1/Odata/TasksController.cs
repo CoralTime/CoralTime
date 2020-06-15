@@ -109,7 +109,7 @@ namespace CoralTime.Api.v1.Odata
         }
 
         //DELETE :api/v1/odata/Tasks(1)
-        [Authorize(Roles = ApplicationRoleAdmin)]
+        [Authorize(Policy = PolicyEditTask)]
         [ODataRoute(TasksWithIdRoute)]
         [HttpDelete(IdRoute)]
         public IActionResult Delete([FromODataUri] int id)

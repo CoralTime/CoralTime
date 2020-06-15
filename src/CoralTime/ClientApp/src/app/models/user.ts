@@ -1,5 +1,3 @@
-import { Roles } from '../core/auth/permissions';
-
 export class User {
 	dateFormat: string;
 	dateFormatId: number;
@@ -9,8 +7,7 @@ export class User {
 	fullName: string;
 	id: number;
 	isActive: boolean;
-	isAdmin: boolean;
-	isManager: boolean;
+	role: string;
 	isWeeklyTimeEntryUpdatesSend: boolean;
 	projectsCount: number;
 	sendEmailDays: string;
@@ -30,9 +27,8 @@ export class User {
 			this.email = data.email;
 			this.fullName = data.fullName;
 			this.id = data.id;
-			this.isAdmin = data.isAdmin;
+			this.role = data.role;
 			this.isActive = data.isActive;
-			this.isManager = data.isManager;
 			this.isWeeklyTimeEntryUpdatesSend = data.isWeeklyTimeEntryUpdatesSend;
 			this.projectsCount = data.projectsCount;
 			this.sendEmailDays = data.sendEmailDays;
@@ -43,13 +39,5 @@ export class User {
 			this.weekStart = data.weekStart;
 			this.workingHoursPerDay = data.workingHoursPerDay || 8;
 		}
-	}
-
-	getRole(): string {
-		return this.isAdmin ? 'Admin' : 'User';
-	}
-
-	getPermissionRole(): number {
-		return this.isAdmin ? Roles['admin'] : (this.isManager ? Roles['manager'] : Roles['user']);
 	}
 }

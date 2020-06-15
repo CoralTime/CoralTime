@@ -18,7 +18,7 @@ export class ImpersonationService {
 		this.impersonationMember = user.userName;
 		this.impersonationId = user.id;
 		this.impersonationUser = user;
-		this.onChange.emit(user.isAdmin ? 2 : user.isManager ? 1 : 0);
+		this.onChange.emit(user.role);
 		this.setStorage(user);
 		if (navigate) {
 			this.router.navigate(['/calendar']);

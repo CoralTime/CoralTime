@@ -10,7 +10,7 @@ const routes: Routes = [
 		component: VstsIntegrationComponent,
 		canActivate: [AuthGuard],
 		data: {
-			role: 'roleViewIntegrationPage'
+			policy: 'ViewIntegrationPage'
 		}
 	}
 ];

@@ -9,7 +9,7 @@ const routes: Routes = [
 		component: TasksComponent,
 		canActivate: [AuthGuard],
 		data: {
-			role: 'roleViewTask'
+      policy: 'ViewTask'
 		}
 	}
 ];

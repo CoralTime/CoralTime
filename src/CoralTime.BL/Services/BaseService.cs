@@ -21,5 +21,10 @@ namespace CoralTime.BL.Services
             Uow = uow;
             Mapper = mapper;
         }
+
+        protected bool Authorize(Member user, string policyName)
+        {
+            return Uow.Authorize(user, policyName);
+        }
     }
 }
