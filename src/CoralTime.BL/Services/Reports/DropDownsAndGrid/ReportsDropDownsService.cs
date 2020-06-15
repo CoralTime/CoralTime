@@ -42,6 +42,12 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
             {
                 Id = (int) Constants.ReportsGroupByIds.Client,
                 Description = Constants.ReportsGroupByIds.Client.ToString()
+            },
+
+            new ReportCommonDropDownsView
+            {
+                Id = (int) Constants.ReportsGroupByIds.Task,
+                Description = Constants.ReportsGroupByIds.Task.ToString()
             }
         };
 

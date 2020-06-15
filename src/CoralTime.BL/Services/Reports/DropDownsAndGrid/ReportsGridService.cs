@@ -73,6 +73,17 @@ namespace CoralTime.BL.Services.Reports.DropDownsAndGrid
                         reportTotalView =  reportTotalView.GetView(timeEntriesGroupByClients);
                         break;
                     }
+
+                    case (int)ReportsGroupByIds.Task:
+                    {
+                        var timeEntriesGroupByTask = filteredTimeEntries
+                            .GroupBy(i => i.TaskType)
+                            .OrderBy(x => x.Key.Name)
+                            .ToDictionary(key => key.Key, value => value.OrderBy(x => x.Date).ToList());
+
+                        reportTotalView = reportTotalView.GetView(timeEntriesGroupByTask);
+                        break;
+                     }
                 }
             }
 

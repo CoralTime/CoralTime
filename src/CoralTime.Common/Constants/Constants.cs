@@ -239,7 +239,8 @@ namespace CoralTime.Common.Constants
             User = 2,
             Date = 3,
             Client = 4,
-            UnknownGrouping = 5
+            Task = 5,
+            UnknownGrouping = 6
         }
 
         public enum ShowColumnModelIds

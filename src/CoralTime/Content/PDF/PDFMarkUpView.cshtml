@@ -58,9 +58,12 @@
                             <span>@groupedItems.DisplayNames.DisplayNameMember</span>
                         </td>
                     }
-                    <td>
-                        <span>@groupedItems.DisplayNames.DisplayNameTask</span>
-                    </td>
+                    @if (groupedItems.DisplayNames.DisplayNameTask != null)
+                    {
+                        <td>
+                            <span>@groupedItems.DisplayNames.DisplayNameTask</span>
+                        </td>
+                    }
                     @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
                     {
                         <td>
@@ -118,9 +121,12 @@
                             <span>@groupedItem.MemberName</span>
                         </td>
                     }
-                    <td>
-                        <span>@groupedItem.TaskName</span>
-                    </td>
+                    @if (groupedItems.DisplayNames.DisplayNameTask != null)
+                    {
+                        <td>
+                            <span>@groupedItem.TaskName</span>
+                        </td>
+                    }
                     @if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
                     {
                         <td>

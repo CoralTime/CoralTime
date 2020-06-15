@@ -106,6 +106,8 @@ export interface GroupByType {
 	memberUrlIcon: string;
 	projectId: number;
 	projectName: string;
+	taskId: string;
+	taskName: string;
 	workingHoursPerDay: number;
 }
 

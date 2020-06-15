@@ -14,6 +14,9 @@
     <div *ngIf="groupById == 4">
         <label class="ct-reports-grid-header">{{gridData?.groupByType.clientName}}</label>
     </div>
+    <div *ngIf="groupById == 5">
+        <label class="ct-reports-grid-header">{{gridData?.groupByType.taskName}}</label>
+    </div>
 
     <div *ngIf="gridData?.items.length" class="ct-total-time-container">
         Total actual hours:
@@ -47,7 +50,7 @@
     <p-column field="taskName" styleClass="ct-cell-task" [sortable]="true" header="Task/Notes">
         <ng-template let-item="rowData" pTemplate="body">
             <div class="ct-grid-description">
-                <h3>{{ item.taskName }}</h3>
+                <h3 *ngIf="groupById != 5">{{ item.taskName }}</h3>
                 <div class="ct-grid-description">
                     <ct-read-more [text]="item.notes"></ct-read-more>
                 </div>

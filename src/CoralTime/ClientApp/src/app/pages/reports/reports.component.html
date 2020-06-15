@@ -142,6 +142,9 @@
                                     <div *ngIf="reportQuery.groupById === 4" class="ct-reports-chart-title">
                                         {{grid.groupByType.clientName}}
                                     </div>
+                                    <div *ngIf="reportQuery.groupById === 5" class="ct-reports-chart-title">
+                                        {{grid.groupByType.taskName}}
+                                    </div>
 
                                     <div class="ct-reports-chart-value">
                                         <ct-chart [style.width]="getChartWidth(grid.timeTotalFor.timeActualTotalFor)"

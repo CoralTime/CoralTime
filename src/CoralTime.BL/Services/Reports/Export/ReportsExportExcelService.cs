@@ -163,7 +163,7 @@ namespace CoralTime.BL.Services.Reports.Export
 
         private void SetWidthForEachTypeOfColumn(ReportTotalForGroupTypeView groupedItems, ISheet sheet)
         {
-            var сountColumnsOfFirstSize  = 0; // Date, Client, Project, Member.
+            var сountColumnsOfFirstSize  = 0; // Date, Client, Project, Member, Task.
             var сountColumnsOfSecondSize = 0; // Start, Finish, Act, Est
             var сountColumnsOfThirdSize  = 0; // Notes
 
@@ -188,7 +188,11 @@ namespace CoralTime.BL.Services.Reports.Export
                 ++сountColumnsOfFirstSize;
             }
 
-            //listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTask);
+            if (groupedItems.DisplayNames.DisplayNameTask != null)
+            {
+                ++сountColumnsOfFirstSize;
+            }
+
             if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
             {
                 ++сountColumnsOfSecondSize;
@@ -199,7 +203,11 @@ namespace CoralTime.BL.Services.Reports.Export
                 ++сountColumnsOfSecondSize;
             }
 
-            //listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeActual);
+            if (groupedItems.DisplayNames.DisplayNameTimeActual != null)
+            {
+                ++сountColumnsOfSecondSize;
+            }
+
             if (groupedItems.DisplayNames.DisplayNameTimeEstimated != null)
             {
                 ++сountColumnsOfSecondSize;
@@ -257,7 +265,11 @@ namespace CoralTime.BL.Services.Reports.Export
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameMember);
             }
 
-            listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTask);
+            if (groupedItems.DisplayNames.DisplayNameTask != null)
+            {
+                listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTask);
+            }
+
             if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
             {
                 listOfHeaders.Add(groupedItems.DisplayNames.DisplayNameTimeFrom);
@@ -315,7 +327,10 @@ namespace CoralTime.BL.Services.Reports.Export
                 CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.MemberName, CreateDefaultFont(workbook));
             }
 
-            CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.TaskName, CreateDefaultFont(workbook));
+            if (groupedItems.DisplayNames.DisplayNameTask != null)
+            {
+                CreateCellItem(workbook, rowListOfValues, ref cellIndex, groupedItem.TaskName, CreateDefaultFont(workbook));
+            }
             
             // 1
             if (groupedItems.DisplayNames.DisplayNameTimeFrom != null)
@@ -468,16 +483,16 @@ namespace CoralTime.BL.Services.Reports.Export
         private void SetWidthForEachTypeOfColumn(ISheet sheet, int сountColumnsOfFirstSize, int сountColumnsOfSecondSize, int сountColumnsOfThirdSize)
         {
             // Set width for each type of column
-            var startIndexFirtsColumns = 0;
-            var endIndexFirtsColumns = startIndexFirtsColumns + (сountColumnsOfFirstSize == 1 ? 0 : сountColumnsOfFirstSize);
-            SetColumnWidthByRange(sheet, startIndexFirtsColumns, endIndexFirtsColumns, WideColumnsFirstSize);
+            var startIndexFirstColumns = 0;
+            var endIndexFirstColumns = startIndexFirstColumns + сountColumnsOfFirstSize - 1;
+            SetColumnWidthByRange(sheet, startIndexFirstColumns, endIndexFirstColumns, WideColumnsFirstSize);
 
-            var startIndexSecondColumns = сountColumnsOfFirstSize + 1;
-            var endIndexSecondColumns = startIndexSecondColumns + (сountColumnsOfSecondSize == 1 ? 0 : сountColumnsOfSecondSize);
+            var startIndexSecondColumns = endIndexFirstColumns + 1;
+            var endIndexSecondColumns = startIndexSecondColumns + сountColumnsOfSecondSize - 1;
             SetColumnWidthByRange(sheet, startIndexSecondColumns, endIndexSecondColumns, WideColumnsSecondSize);
 
             var startIndexThirdColumns = endIndexSecondColumns + 1;
-            var endIndexThirdColumns = startIndexThirdColumns + (сountColumnsOfThirdSize == 1 ? 0 : сountColumnsOfThirdSize);
+            var endIndexThirdColumns = startIndexThirdColumns + сountColumnsOfThirdSize - 1;
             SetColumnWidthByRange(sheet, startIndexThirdColumns, endIndexThirdColumns, WideColumnsThirdSize);
         }
 
@@ -511,6 +526,11 @@ namespace CoralTime.BL.Services.Reports.Export
                 case (int) Constants.ReportsGroupByIds.Client:
                 {
                     return Constants.ReportsGroupByIds.Client.ToString();
+                }
+
+                case (int) Constants.ReportsGroupByIds.Task:
+                {
+                    return Constants.ReportsGroupByIds.Task.ToString();
                 }
 
                 default:
