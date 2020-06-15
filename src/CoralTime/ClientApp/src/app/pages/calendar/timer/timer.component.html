@@ -13,7 +13,7 @@
               [class.ct-timer-pause-icon]="isTimerActivated()"
               [class.ct-loading]="isTimerLoading"
               [title]="getButtonTitle()"
-              [disabled]="isTimerLoading"
+              [disabled]="isTimerLoading || !isTimerEnabled"
               (click)="toggleTimer()"></button>
       <span *ngIf="isTimerExist()" class="ct-hours-tracked ct-timer-exist"
             title="Timer value"

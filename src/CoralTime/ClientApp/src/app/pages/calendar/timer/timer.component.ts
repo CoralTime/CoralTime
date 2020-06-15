@@ -28,6 +28,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 	defaultProject: Project;
 	defaultTask: Task;
+	isTimerEnabled: boolean;
 	isTimerLoading: boolean;
 	isTimerLoading2: boolean;
 	isEstimatedTimeEnabled: boolean;
@@ -57,6 +58,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 			this.userInfo = data.user;
 		});
 
+		this.isTimerEnabled = this.settingsService.getIsTimerEnabled();
 		this.isEstimatedTimeEnabled = this.settingsService.getIsEstimatedTimeEnabled();
 
 		if (!this.getImpersonationUser()) {
