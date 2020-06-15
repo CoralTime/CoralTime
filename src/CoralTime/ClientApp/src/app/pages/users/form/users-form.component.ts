@@ -14,6 +14,7 @@ import { EMAIL_PATTERN } from '../../../core/constant.service';
 import { ImpersonationService } from '../../../services/impersonation.service';
 import { UsersService } from '../../../services/users.service';
 import { LoadingMaskService } from '../../../shared/loading-indicator/loading-mask.service';
+import { SettingsService } from '../../../services/settings.service';
 
 class FormUser {
 	email: string;
@@ -102,6 +103,7 @@ export class UsersFormComponent implements OnInit {
 	constructor(private authService: AuthService,
 	            private impersonationService: ImpersonationService,
 	            private loadingService: LoadingMaskService,
+	            private settingsService: SettingsService,
 	            private translatePipe: TranslatePipe,
 	            private userService: UsersService) { }
 
@@ -149,6 +151,8 @@ export class UsersFormComponent implements OnInit {
 		if (updatedUser.id) {
 			submitObservable = this.userService.odata.Put(updatedUser, updatedUser.id.toString());
 		} else {
+			updatedUser.dateFormatId = this.settingsService.getDefaultDateFormat();
+			updatedUser.timeFormat = this.settingsService.getDefaultTimeFormat();
 			submitObservable = this.userService.odata.Post(updatedUser);
 		}
 

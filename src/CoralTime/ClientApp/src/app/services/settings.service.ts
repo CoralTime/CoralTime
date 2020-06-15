@@ -8,6 +8,14 @@ export class SettingsService {
 		return observableOf('team member');
 	}
 
+	getDefaultDateFormat(): number {
+		return 0;
+	}
+
+	getDefaultTimeFormat(): number {
+		return 0;
+	}
+
 	getIsEstimatedTimeEnabled(): boolean {
 		return true;
 	}
