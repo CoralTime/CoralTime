@@ -2,7 +2,7 @@
 
 CoralTime is a simple, easy to use web-based Time Tracking system. Use it to track time for yourself, your team, your project or your company. CoralTime allows for tracking the time by Clients, Projects and Tasks.
 
-CoralTime is developed by Coral Team, BV and released as open source product under MIT license. 
+CoralTime is developed by Coral Team and released as open source product under MIT license. 
 
 GitHub: https://github.com/CoralTime/CoralTime
 
